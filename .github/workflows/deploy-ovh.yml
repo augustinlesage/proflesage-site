@@ -18,11 +18,23 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Vérifier les réglages FTP (sans afficher les valeurs)
+        env:
+          S_SERVER: ${{ secrets.FTP_SERVER }}
+          S_USER: ${{ secrets.FTP_USERNAME }}
+          S_PASS: ${{ secrets.FTP_PASSWORD }}
+          V_SERVER: ${{ vars.FTP_SERVER }}
+          V_USER: ${{ vars.FTP_USERNAME }}
+        run: |
+          for n in S_SERVER S_USER S_PASS V_SERVER V_USER; do
+            if [ -n "${!n}" ]; then echo "$n : présent"; else echo "$n : absent"; fi
+          done
+
       - name: Envoi FTP vers www/
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
+          server: ${{ secrets.FTP_SERVER || vars.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME || vars.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           protocol: ftp
           port: 21
