@@ -1,0 +1,22 @@
+# proflesage.fr (hébergement OVH)
+RewriteEngine On
+
+# Toujours en https, sans « www »
+RewriteCond %{HTTPS} off [OR]
+RewriteCond %{HTTP_HOST} ^www\. [NC]
+RewriteRule ^(.*)$ https://proflesage.fr/$1 [R=301,L]
+
+# Laboratoire : reste sur Netlify en attendant la version OVH
+RewriteRule ^labo/?(.*)$ https://lesage-laboratoire.netlify.app/$1 [R=302,L]
+
+# Compression (l'appli flashcards fait ~11 Mo)
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css application/javascript image/svg+xml
+</IfModule>
+
+# Les pages se revérifient à chaque visite (mises à jour visibles tout de suite)
+<IfModule mod_headers.c>
+  <FilesMatch "\.html$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+</IfModule>
