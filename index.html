@@ -135,10 +135,11 @@ a.tuile:hover{border-color:var(--g);transform:translateY(-2px)}
 .page-h{display:flex;align-items:center;gap:12px;padding-bottom:12px;border-bottom:2px solid var(--g);margin-bottom:16px}
 .page-h h2{margin:0;font:700 1.7rem var(--f-titre);color:var(--g)}
 .page-h .puce{width:40px;height:40px;border-radius:10px}
-.onglets{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 18px}
-.onglets a{font-weight:600;font-size:.9rem;text-decoration:none;border:1px solid var(--line);background:var(--card);padding:6px 14px;border-radius:999px}
-.onglets a:hover{border-color:var(--g)}
-.onglets a[aria-current="page"]{background:var(--g);border-color:var(--g);color:var(--card)}
+/* Onglets discrets, comme les sous-vues du Cahier de suivi : groupe teinté, onglet actif en blanc */
+.onglets{display:inline-flex;flex-wrap:wrap;gap:2px;margin:0 0 18px;padding:3px;border-radius:999px;background:color-mix(in srgb,var(--g) 9%,transparent);max-width:100%}
+.onglets a{font-size:.88rem;text-decoration:none;color:var(--muted);padding:4px 13px;border-radius:999px;border:1px solid transparent}
+.onglets a:hover{color:var(--ink)}
+.onglets a[aria-current="page"]{background:var(--card);border-color:var(--line);color:var(--ink);font-weight:600}
 .vide{border:1px dashed var(--line);border-radius:14px;padding:28px 20px;text-align:center;color:var(--muted)}
 .vide b{display:block;color:var(--ink);font:700 1.05rem var(--f-titre);margin-bottom:4px}
 footer.pied{margin-top:44px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:.85rem;display:flex;gap:14px;flex-wrap:wrap;justify-content:space-between}
