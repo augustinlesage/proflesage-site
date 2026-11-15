@@ -20,3 +20,8 @@ RewriteRule ^labo/?(.*)$ https://lesage-laboratoire.netlify.app/$1 [R=302,L]
     Header set Cache-Control "no-cache"
   </FilesMatch>
 </IfModule>
+
+# Empêcher l’indexation du site et de ses fichiers
+<IfModule mod_headers.c>
+    Header always set X-Robots-Tag "noindex"
+</IfModule>
