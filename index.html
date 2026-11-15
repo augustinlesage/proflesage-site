@@ -246,6 +246,7 @@ footer.pied{margin-top:44px;padding-top:16px;border-top:1px solid var(--line);co
 	- Revues de presse | L’actualité racontée par la classe
 	- S’informer | Vérifier une information, lire la presse
 # En bas de la barre latérale
+- Outils | Les outils de la classe
 - Plan du site | Toutes les pages, rubrique par rubrique
 - À propos | Licence et crédits
 </script>
@@ -267,6 +268,7 @@ const ICO = {
   brevet:'<circle cx="12" cy="9" r="6"/><path d="M8.5 13.8 7 22l5-3 5 3-1.5-8.2"/>',
   colonne:'<path d="M3 21h18M4 7h16M12 3 4 7M12 3l8 4"/><path d="M6 7v14M10 7v14M14 7v14M18 7v14"/>',
   etoile:'<path d="M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.4 6.7 19.4l1.2-6L3.4 9.3l6-.7z"/>',
+  outils:'<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.8-3.8a6 6 0 0 1-7.9 7.9l-6.9 6.9a2.1 2.1 0 0 1-3-3l6.9-6.9a6 6 0 0 1 7.9-7.9z"/>',
   plan:'<path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3z"/><path d="M9 3v15M15 6v15"/>',
   info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/>',
   cartes:'<rect x="3" y="6" width="14" height="14" rx="2"/><path d="M7 6V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-2"/>',
@@ -310,7 +312,8 @@ function lirePlan(txt){
   return {rubs, bas};
 }
 const {rubs:PLAN, bas:BAS} = lirePlan(document.getElementById("plan-txt").textContent);
-const VUES_BAS = {"plan du site":"plan","à propos":"apropos"};
+const VUES_BAS = {"outils":"outils","plan du site":"plan","à propos":"apropos"};
+const ICO_BAS = {outils:"outils",plan:"plan",apropos:"info"};
 
 const href = it => it.url ? (/^https?:/.test(it.url) ? it.url : (SUR_SITE ? it.url : SITE + it.url)) : null;
 const horsSite = it => !!it.url && (!SUR_SITE || /^https?:/.test(it.url));
@@ -346,7 +349,7 @@ function construireNav(){
   const bas = (BAS ? BAS.items : [{t:"Plan du site"},{t:"À propos"}]);
   document.getElementById("nav-bas").innerHTML = bas.map(b=>{
     const v = VUES_BAS[b.t.toLowerCase()] || "plan";
-    return '<li><a class="lien" data-vue="'+v+'" href="#'+v+'">'+ic(v==="plan"?"plan":"info")+esc(b.t)+'</a></li>';
+    return '<li><a class="lien" data-vue="'+v+'" href="#'+v+'">'+ic(ICO_BAS[v]||"plan")+esc(b.t)+'</a></li>';
   }).join("");
   document.querySelectorAll("details.grp").forEach(d=>d.addEventListener("toggle", garderOuverts));
 }
@@ -422,6 +425,12 @@ function vuePage(v){
   return h+pied();
 }
 
+function vueOutils(){
+  const b = (BAS ? BAS.items : []).find(i=>i.t.toLowerCase()==="outils");
+  return '<h2 class="grand">Outils</h2>'+(b && b.d ? '<p class="sous">'+esc(b.d)+'</p>' : '')+
+    '<div class="vide"><b>Outils</b>Page en préparation.</div>'+pied();
+}
+
 function vueAPropos(){
   return '<h2 class="grand">À propos</h2>'+
     '<div class="fiche" style="max-width:66ch"><p style="color:var(--ink);font-size:1rem">Ce site rassemble les ressources de français de M.&nbsp;Lesage pour ses classes de collège. Les contenus sont proposés sous licence Creative Commons BY-NC-SA&nbsp;4.0'+NB+': tu peux les partager et les adapter, sans usage commercial, en citant l’auteur.</p></div>'+pied();
@@ -431,12 +440,12 @@ function pied(){
   return '<footer class="pied"><span>La classe de M.&nbsp;Lesage · Contenus sous licence CC BY-NC-SA 4.0</span><a href="#plan">Plan du site</a></footer>';
 }
 
-const TITRES = {plan:"Plan du site", apropos:"À propos"};
+const TITRES = {outils:"Outils", plan:"Plan du site", apropos:"À propos"};
 function afficher(){
   let v = (location.hash||"#accueil").slice(1);
   const page = PAGES[v.split("--")[0]];
-  if(!["accueil","plan","apropos"].includes(v) && !page) v = "accueil";
-  document.getElementById("vue").innerHTML = page ? vuePage(v) : v==="plan" ? vuePlan() : v==="apropos" ? vueAPropos() : vueAccueil();
+  if(!["accueil","outils","plan","apropos"].includes(v) && !page) v = "accueil";
+  document.getElementById("vue").innerHTML = page ? vuePage(v) : v==="outils" ? vueOutils() : v==="plan" ? vuePlan() : v==="apropos" ? vueAPropos() : vueAccueil();
   const cle = page ? page.vue : v;
   document.querySelectorAll("[data-vue]").forEach(a=>{ if(a.dataset.vue===cle) a.setAttribute("aria-current","page"); else a.removeAttribute("aria-current"); });
   if(page){ const d=document.querySelector('details.grp[data-id="'+page.rub.id+'"]'); if(d) d.open=true; }
