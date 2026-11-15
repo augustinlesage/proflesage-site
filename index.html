@@ -129,6 +129,18 @@ a.tuile:hover{border-color:var(--g);transform:translateY(-2px)}
 .code span{display:inline-flex;align-items:center;gap:7px;font-size:.85rem;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px 11px 3px 6px}
 .code i{width:14px;height:14px;border-radius:4px;background:var(--g)}
 
+/* Page intérieure : titre de couleur + onglets horizontaux pour les sous-pages */
+.fil{font-size:.85rem;color:var(--muted);margin:0 0 6px}
+.fil a{color:var(--g);text-decoration:none;font-weight:600}
+.page-h{display:flex;align-items:center;gap:12px;padding-bottom:12px;border-bottom:2px solid var(--g);margin-bottom:16px}
+.page-h h2{margin:0;font:700 1.7rem var(--f-titre);color:var(--g)}
+.page-h .puce{width:40px;height:40px;border-radius:10px}
+.onglets{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 18px}
+.onglets a{font-weight:600;font-size:.9rem;text-decoration:none;border:1px solid var(--line);background:var(--card);padding:6px 14px;border-radius:999px}
+.onglets a:hover{border-color:var(--g)}
+.onglets a[aria-current="page"]{background:var(--g);border-color:var(--g);color:var(--card)}
+.vide{border:1px dashed var(--line);border-radius:14px;padding:28px 20px;text-align:center;color:var(--muted)}
+.vide b{display:block;color:var(--ink);font:700 1.05rem var(--f-titre);margin-bottom:4px}
 footer.pied{margin-top:44px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:.85rem;display:flex;gap:14px;flex-wrap:wrap;justify-content:space-between}
 
 @media (max-width:860px){
@@ -302,15 +314,18 @@ const VUES_BAS = {"plan du site":"plan","à propos":"apropos"};
 
 const href = it => it.url ? (/^https?:/.test(it.url) ? it.url : (SUR_SITE ? it.url : SITE + it.url)) : null;
 const horsSite = it => !!it.url && (!SUR_SITE || /^https?:/.test(it.url));
+/* Chaque page sans lien externe a sa vue dans le site : #p-<rubrique>-<page>, onglet : #p-<rubrique>-<page>--<sous-page> */
+const PAGES = {};
+PLAN.forEach(r=>r.items.forEach(it=>{ it.rub=r; it.vue="p-"+r.id+"-"+slug(it.t); PAGES[it.vue]=it; it.enfants.forEach(e=>{ e.vue=it.vue+"--"+slug(e.t); }); }));
+const lienDe = it => it.url ? href(it) : "#"+it.vue;
 const cible = it => horsSite(it) ? ' target="_blank" rel="noopener"' : '';
 
 function lienNav(it){
   if(it.prof) return "";
   const h = href(it);
   const tete = h ? '<a class="lien" href="'+esc(h)+'"'+cible(it)+'>'+esc(it.t)+(horsSite(it)?ic("ext","ext"):'<i class="pt on" title="En ligne"></i>')+'</a>'
-                 : '<span class="lien bientot">'+esc(it.t)+'<i class="pt off" title="Bientôt"></i></span>';
-  const sous = it.enfants.filter(e=>!e.prof);
-  return '<li>'+tete+(sous.length?'<ul>'+sous.map(lienNav).join("")+'</ul>':'')+'</li>';
+                 : '<a class="lien bientot" data-vue="'+it.vue+'" href="#'+it.vue+'">'+esc(it.t)+'<i class="pt off" title="Bientôt"></i></a>';
+  return '<li>'+tete+'</li>';
 }
 
 function lireOuverts(){ try{ return JSON.parse(localStorage.getItem("classe.ouverts")||"null"); }catch(e){ return null; } }
@@ -354,7 +369,7 @@ function ficheRub(r, detail){
     const h = href(i);
     const enf = i.enfants.filter(e=>detail || !e.prof);
     return '<li><i class="pt '+(h?'on':'off')+'"></i><div>'+
-      (h?'<a href="'+esc(h)+'"'+cible(i)+'>'+esc(i.t)+'</a>':'<span>'+esc(i.t)+'</span>')+
+      (h?'<a href="'+esc(h)+'"'+cible(i)+'>'+esc(i.t)+'</a>':'<a href="#'+i.vue+'" style="font-weight:400;text-decoration:none">'+esc(i.t)+'</a>')+
       (i.prof?'<span class="prof">enseignant</span>':'')+
       (detail && i.d?'<small>'+esc(i.d)+'</small>':'')+
       (detail && enf.length?'<ul>'+enf.map(ligne).join("")+'</ul>':'')+'</div></li>';
@@ -389,6 +404,24 @@ function vuePlan(){
     '<div class="fiches">'+PLAN.map(r=>ficheRub(r,true)).join("")+'</div>'+pied();
 }
 
+function vuePage(v){
+  const [base, sous] = v.split("--");
+  const it = PAGES[base]; if(!it) return vueAccueil();
+  const r = it.rub;
+  const ongl = it.enfants.filter(e=>!e.prof);
+  const actif = ongl.find(e=>slug(e.t)===sous) || null;
+  const qui = actif || it;
+  let h = '<div data-g style="--g:var(--c-'+r.col+')">'+
+    '<p class="fil"><a href="#plan">'+esc(r.t)+'</a></p>'+
+    '<div class="page-h"><span class="puce">'+ic(ICO_RUB[r.t.toLowerCase()])+'</span><h2>'+esc(it.t)+'</h2></div>';
+  if(ongl.length){
+    h += '<nav class="onglets" aria-label="Sous-pages"><a href="#'+it.vue+'"'+(actif?'':' aria-current="page"')+'>Présentation</a>'+
+      ongl.map(e=>'<a href="#'+e.vue+'"'+(e===actif?' aria-current="page"':'')+'>'+esc(e.t)+'</a>').join("")+'</nav>';
+  }
+  h += '<div class="vide"><b>'+esc(qui.t)+'</b>'+(qui.d?esc(qui.d)+'<br>':'')+'Page en préparation.</div></div>';
+  return h+pied();
+}
+
 function vueAPropos(){
   return '<h2 class="grand">À propos</h2>'+
     '<div class="fiche" style="max-width:66ch"><p style="color:var(--ink);font-size:1rem">Ce site rassemble les ressources de français de M.&nbsp;Lesage pour ses classes de collège. Les contenus sont proposés sous licence Creative Commons BY-NC-SA&nbsp;4.0'+NB+': tu peux les partager et les adapter, sans usage commercial, en citant l’auteur.</p></div>'+pied();
@@ -401,10 +434,13 @@ function pied(){
 const TITRES = {plan:"Plan du site", apropos:"À propos"};
 function afficher(){
   let v = (location.hash||"#accueil").slice(1);
-  if(!["accueil","plan","apropos"].includes(v)) v = "accueil";
-  document.getElementById("vue").innerHTML = v==="plan" ? vuePlan() : v==="apropos" ? vueAPropos() : vueAccueil();
-  document.querySelectorAll("[data-vue]").forEach(a=>{ if(a.dataset.vue===v) a.setAttribute("aria-current","page"); else a.removeAttribute("aria-current"); });
-  document.title = (TITRES[v] ? TITRES[v]+" · " : "") + "La classe de M. Lesage";
+  const page = PAGES[v.split("--")[0]];
+  if(!["accueil","plan","apropos"].includes(v) && !page) v = "accueil";
+  document.getElementById("vue").innerHTML = page ? vuePage(v) : v==="plan" ? vuePlan() : v==="apropos" ? vueAPropos() : vueAccueil();
+  const cle = page ? page.vue : v;
+  document.querySelectorAll("[data-vue]").forEach(a=>{ if(a.dataset.vue===cle) a.setAttribute("aria-current","page"); else a.removeAttribute("aria-current"); });
+  if(page){ const d=document.querySelector('details.grp[data-id="'+page.rub.id+'"]'); if(d) d.open=true; }
+  document.title = (page ? page.t+" · " : TITRES[v] ? TITRES[v]+" · " : "") + "La classe de M. Lesage";
   fermerMenu();
   window.scrollTo(0,0);
 }
