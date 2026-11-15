@@ -425,10 +425,15 @@ function vuePage(v){
   return h+pied();
 }
 
-function vueOutils(){
-  const b = (BAS ? BAS.items : []).find(i=>i.t.toLowerCase()==="outils");
-  return '<h2 class="grand">Outils</h2>'+(b && b.d ? '<p class="sous">'+esc(b.d)+'</p>' : '')+
-    '<div class="vide"><b>Outils</b>Page en préparation.</div>'+pied();
+function vueOutils(sous){
+  const b = (BAS ? BAS.items : []).find(i=>i.t.toLowerCase()==="outils") || {t:"Outils",d:"",enfants:[]};
+  const ongl = b.enfants.filter(e=>!e.prof);
+  const actif = ongl.find(e=>slug(e.t)===sous) || null;
+  const qui = actif || b;
+  return '<h2 class="grand">Outils</h2>'+(b.d ? '<p class="sous">'+esc(b.d)+'</p>' : '')+
+    (ongl.length ? '<nav class="onglets" data-g aria-label="Sous-pages"><a href="#outils"'+(actif?'':' aria-current="page"')+'>Présentation</a>'+
+      ongl.map(e=>'<a href="#outils--'+slug(e.t)+'"'+(e===actif?' aria-current="page"':'')+'>'+esc(e.t)+'</a>').join("")+'</nav>' : '')+
+    '<div class="vide"><b>'+esc(qui.t)+'</b>'+(qui.d?esc(qui.d)+'<br>':'')+'Page en préparation.</div>'+pied();
 }
 
 function vueAPropos(){
@@ -444,8 +449,9 @@ const TITRES = {outils:"Outils", plan:"Plan du site", apropos:"À propos"};
 function afficher(){
   let v = (location.hash||"#accueil").slice(1);
   const page = PAGES[v.split("--")[0]];
+  const sousOutil = v.startsWith("outils--") ? v.slice(8) : null; if(sousOutil!==null) v = "outils";
   if(!["accueil","outils","plan","apropos"].includes(v) && !page) v = "accueil";
-  document.getElementById("vue").innerHTML = page ? vuePage(v) : v==="outils" ? vueOutils() : v==="plan" ? vuePlan() : v==="apropos" ? vueAPropos() : vueAccueil();
+  document.getElementById("vue").innerHTML = page ? vuePage(v) : v==="outils" ? vueOutils(sousOutil) : v==="plan" ? vuePlan() : v==="apropos" ? vueAPropos() : vueAccueil();
   const cle = page ? page.vue : v;
   document.querySelectorAll("[data-vue]").forEach(a=>{ if(a.dataset.vue===cle) a.setAttribute("aria-current","page"); else a.removeAttribute("aria-current"); });
   if(page){ const d=document.querySelector('details.grp[data-id="'+page.rub.id+'"]'); if(d) d.open=true; }
