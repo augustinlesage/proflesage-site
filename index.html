@@ -2,55 +2,393 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Français au collège</title>
-<meta name="description" content="Outils de français pour les élèves de M. Lesage : flashcards, Laboratoire de la langue, Lire au collège et Les mots nouveaux.">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>La classe de M. Lesage</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Le site de français de M. Lesage, de la 6ᵉ à la 3ᵉ : cours, langue, lecture, méthode et brevet.">
 <style>
-:root{--paper:#eceff5;--card:#fff;--line:#dce0ea;--soft:#e3e7f0;--ink:#2b3145;--muted:#5d6577;--icon:#5d6890}
-@media (prefers-color-scheme:dark){:root{--paper:#161a24;--card:#222837;--line:#323a4e;--soft:#2a3142;--ink:#e6e9f2;--muted:#a3abbf;--icon:#a9b3dc}}
+/* Mise en page : barre latérale fixe (plan du site) + colonne de contenu ; le tableau noir de la classe en en-tête.
+   Couleurs « La classe de M. Lesage » (Canva) dans la mise en page sobre du Cahier de suivi. */
+:root{
+  --paper:#fbf5ee;   /* mur crème de la classe */
+  --card:#fffdf9;
+  --side:#f4ebe0;
+  --line:#eadfd1;
+  --ink:#373e56;
+  --muted:#6a6f78;
+  --clay:#b27560;    /* bois du tableau, bordures de mise en évidence */
+  --brick:#b25751;
+  --sun:#f7cc73;     /* sol jaune */
+  --board:#5f7d6d;   /* tableau noir (vert) */
+  --chalk:#fbf8f1;
+  --ok:#3d7d58;
+  --f-titre:ui-rounded,"SF Pro Rounded","Nunito","Segoe UI Rounded",system-ui,sans-serif;
+  --f-texte:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#1b1d23;--card:#24272f;--side:#202229;--line:#363944;--ink:#ece6dc;--muted:#a9a8a6;
+  --clay:#c99079;--brick:#d77b74;--sun:#e7bc62;--board:#3f5a4c;--chalk:#f2efe6;--ok:#79c095;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#1b1d23;--card:#24272f;--side:#202229;--line:#363944;--ink:#ece6dc;--muted:#a9a8a6;
+  --clay:#c99079;--brick:#d77b74;--sun:#e7bc62;--board:#3f5a4c;--chalk:#f2efe6;--ok:#79c095;color-scheme:dark}
+
 *{box-sizing:border-box}
-body{margin:0;background:var(--paper);color:var(--ink);font:17px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
-main{max-width:760px;margin:0 auto;padding:56px 16px}
-h1{font-size:2rem;margin:0 0 .3em;letter-spacing:-.01em}
-p.intro{color:var(--muted);margin:0 0 2.2em}
-.grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
-a.tuile{display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;color:inherit;text-decoration:none;transition:transform .15s,border-color .15s}
-a.tuile:hover,a.tuile:focus-visible{transform:translateY(-2px);border-color:var(--icon);outline:none}
-.ico{width:44px;height:44px;border-radius:12px;background:var(--soft);display:grid;place-items:center;margin-bottom:14px;color:var(--icon)}
-.ico svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-h2{font-size:1.2rem;margin:0 0 .25em}
-.tuile p{margin:0;color:var(--muted);font-size:.95rem}
-footer{margin-top:48px;color:var(--muted);font-size:.85rem}
-@media (prefers-reduced-motion:reduce){a.tuile{transition:none}}
+html,body{margin:0}
+body{background:var(--paper);color:var(--ink);font:16px/1.55 var(--f-texte)}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--clay);outline-offset:2px}
+svg.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+.app{display:grid;grid-template-columns:272px minmax(0,1fr);min-height:100vh}
+
+/* ── Barre latérale ── */
+.side{position:sticky;top:0;height:100vh;overflow-y:auto;background:var(--side);border-right:1px solid var(--line);
+  display:flex;flex-direction:column;padding:20px 14px 16px max(14px,env(safe-area-inset-left,0px))}
+.marque{display:flex;gap:10px;align-items:center;text-decoration:none;padding:4px 8px 16px}
+.marque .ardoise{width:38px;height:38px;border-radius:9px;background:var(--board);border:3px solid var(--clay);color:var(--chalk);
+  display:grid;place-items:center;font:700 15px var(--f-titre)}
+.marque b{display:block;font:700 1.02rem/1.2 var(--f-titre)}
+.marque small{color:var(--muted);font-size:.8rem}
+nav ul{list-style:none;margin:0;padding:0}
+.lien{display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:8px;text-decoration:none;font-size:.95rem}
+.lien:hover{background:var(--line)}
+.lien[aria-current="page"]{background:var(--ink);color:var(--paper)}
+.lien .ext{margin-left:auto;opacity:.55;width:14px;height:14px}
+details.grp{margin-top:2px}
+details.grp>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:8px;font-weight:600;font-size:.95rem}
+details.grp>summary::-webkit-details-marker{display:none}
+details.grp>summary:hover{background:var(--line)}
+details.grp>summary .chev{margin-left:auto;width:15px;height:15px;transition:transform .15s;opacity:.6}
+details.grp[open]>summary .chev{transform:rotate(90deg)}
+details.grp ul{margin:2px 0 6px 19px;padding-left:12px;border-left:1px solid var(--line)}
+details.grp ul .lien{padding:5px 10px;font-size:.9rem}
+.bientot{color:var(--muted)}
+.pastille{margin-left:auto;font-size:.68rem;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.side .bas{margin-top:auto;padding-top:14px;border-top:1px solid var(--line)}
+.outils{display:flex;gap:8px;padding:10px 8px 0}
+.rond{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--ink);display:grid;place-items:center;cursor:pointer}
+.rond:hover{border-color:var(--clay)}
+
+/* ── Barre du haut (téléphone) ── */
+.haut{display:none}
+
+/* ── Contenu ── */
+main{min-width:0;padding-block:28px 56px;padding-left:max(28px,env(safe-area-inset-left,0px));padding-right:max(28px,env(safe-area-inset-right,0px))}
+.col{max-width:980px;margin:0 auto}
+
+.tableau{position:relative;background:var(--board);color:var(--chalk);border:10px solid var(--clay);border-radius:14px;
+  padding:34px 34px 30px;overflow:hidden}
+.tableau::after{content:"";position:absolute;left:24px;right:24px;bottom:0;height:8px;background:var(--clay);border-radius:4px 4px 0 0;opacity:.85}
+.tableau .date{font:600 .95rem var(--f-titre);opacity:.85}
+.tableau h1{font:700 clamp(1.9rem,4.4vw,2.8rem)/1.15 var(--f-titre);margin:.25em 0 .2em;text-wrap:balance;letter-spacing:.01em}
+.tableau p{margin:0;max-width:56ch;opacity:.92}
+.craies{position:absolute;right:26px;bottom:10px;display:flex;gap:6px}
+.craies i{display:block;width:26px;height:7px;border-radius:3px;background:var(--chalk)}
+.craies i:nth-child(2){background:var(--sun)}
+.craies i:nth-child(3){background:#e9a08f}
+
+h2.titre{font:700 1.25rem var(--f-titre);margin:38px 0 14px}
+.sous{color:var(--muted);margin:-8px 0 16px;font-size:.95rem}
+
+.tuiles{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(210px,1fr))}
+a.tuile{display:flex;flex-direction:column;gap:6px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;text-decoration:none;transition:border-color .15s,transform .15s}
+a.tuile:hover{border-color:var(--clay);transform:translateY(-2px)}
+.tuile .ic{width:40px;height:40px;border-radius:10px;background:var(--side);display:grid;place-items:center;color:var(--clay);margin-bottom:6px}
+.tuile .ic svg.i{width:22px;height:22px}
+.tuile b{font:700 1.05rem var(--f-titre)}
+.tuile span{color:var(--muted);font-size:.9rem}
+
+.niveaux{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+.niv{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;text-decoration:none;display:flex;flex-direction:column;gap:2px}
+.niv:hover{border-color:var(--clay)}
+.niv b{font:700 1.6rem/1 var(--f-titre)}
+.niv span{color:var(--muted);font-size:.85rem}
+
+.rubriques{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(270px,1fr))}
+.rub{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+.rub h3{display:flex;align-items:center;gap:8px;margin:0 0 8px;font:700 1rem var(--f-titre)}
+.rub h3 svg{color:var(--clay)}
+.rub p{margin:0;color:var(--muted);font-size:.9rem}
+
+/* ── Page Plan ── */
+.plan-intro{max-width:66ch}
+.legende{display:flex;gap:16px;flex-wrap:wrap;font-size:.85rem;color:var(--muted);margin:10px 0 22px}
+.legende span{display:inline-flex;align-items:center;gap:6px}
+.pt{width:9px;height:9px;border-radius:50%;display:inline-block;flex:none}
+.pt.on{background:var(--ok)}
+.pt.off{background:transparent;border:1.5px solid var(--muted)}
+.plan{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));align-items:start}
+.bloc{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+.bloc h3{display:flex;align-items:center;gap:8px;margin:0 0 2px;font:700 1.05rem var(--f-titre)}
+.bloc h3 svg{color:var(--clay)}
+.bloc .rubsrc{color:var(--muted);font-size:.8rem;margin:0 0 10px}
+.bloc ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.bloc li{display:grid;grid-template-columns:9px minmax(0,1fr);gap:10px;align-items:baseline}
+.bloc li a{font-weight:600}
+.bloc li small{display:block;color:var(--muted);font-size:.8rem}
+.sources{margin-top:28px;background:var(--side);border-radius:14px;padding:16px 18px;font-size:.9rem}
+.sources h3{margin:0 0 6px;font:700 1rem var(--f-titre)}
+.sources ul{margin:0;padding-left:1.1em}
+
+footer.pied{margin-top:44px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:.85rem;display:flex;gap:14px;flex-wrap:wrap;justify-content:space-between}
+
+/* ── Téléphone ── */
+@media (max-width:860px){
+  .app{grid-template-columns:minmax(0,1fr)}
+  .haut{display:flex;align-items:center;gap:10px;position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--side);border-bottom:1px solid var(--line);
+    padding-block:10px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+  body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--side)}
+  .haut b{font:700 1rem var(--f-titre)}
+  .haut .rond{margin-left:auto}
+  .side{position:fixed;z-index:40;inset:0 auto 0 0;width:min(300px,86vw);transform:translateX(-102%);transition:transform .2s;padding-top:calc(20px + env(safe-area-inset-top,0px))}
+  body.menu .side{transform:none}
+  .voile{position:fixed;inset:0;z-index:35;background:rgb(0 0 0 / .35)}
+  main{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:18px 44px}
+  .tableau{padding:24px 20px 26px;border-width:8px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
 <body>
-<main>
-  <h1>Français au collège</h1>
-  <p class="intro">Les outils de la classe de M. Lesage, de la 6ᵉ à la 3ᵉ.</p>
-  <div class="grid">
-    <a class="tuile" href="/flashcards/">
-      <div class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="14" height="14" rx="2"/><path d="M7 6V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-2"/></svg></div>
-      <h2>Flashcards</h2>
-      <p>S’entraîner carte par carte : grammaire, conjugaison, homophones, vocabulaire…</p>
-    </a>
-    <a class="tuile" href="/labo/">
-      <div class="ico"><svg viewBox="0 0 24 24"><path d="M9 3h6M10 3v6L4.5 18.5A1.7 1.7 0 0 0 6 21h12a1.7 1.7 0 0 0 1.5-2.5L14 9V3"/><path d="M7.5 15h9"/></svg></div>
-      <h2>Laboratoire de la langue</h2>
-      <p>Parcours, entraînements et ceintures, avec ta progression sauvegardée.</p>
-    </a>
-    <a class="tuile" href="/lire/">
-      <div class="ico"><svg viewBox="0 0 24 24"><path d="M2 5.5A1.5 1.5 0 0 1 3.5 4H9a3 3 0 0 1 3 3v13a2.5 2.5 0 0 0-2.5-2.5h-6A1.5 1.5 0 0 1 2 16z"/><path d="M22 5.5A1.5 1.5 0 0 0 20.5 4H15a3 3 0 0 0-3 3v13a2.5 2.5 0 0 1 2.5-2.5h6a1.5 1.5 0 0 0 1.5-1.5z"/></svg></div>
-      <h2>Lire au collège</h2>
-      <p>Un guide dont tu es le héros pour trouver le livre qui te plaira.</p>
-    </a>
-    <a class="tuile" href="/mots/">
-      <div class="ico"><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/><path d="M14 20h6"/></svg></div>
-      <h2>Les mots nouveaux</h2>
-      <p>Le vocabulaire de la classe, avec des cartes pour le réviser.</p>
-    </a>
+<div class="app">
+  <aside class="side" id="side" aria-label="Plan du site">
+    <a class="marque" href="#accueil"><span class="ardoise">L</span><span><b>La classe de M.&nbsp;Lesage</b><small>Français · 6ᵉ à 3ᵉ</small></span></a>
+    <nav id="nav"></nav>
+    <div class="bas">
+      <ul id="nav-bas" style="list-style:none;margin:0;padding:0"></ul>
+      <div class="outils"><button class="rond" id="theme" type="button" title="Jour / nuit" aria-label="Basculer jour / nuit"></button></div>
+    </div>
+  </aside>
+  <div class="haut">
+    <button class="rond" id="ouvrir" type="button" aria-label="Ouvrir le menu" aria-controls="side" aria-expanded="false"></button>
+    <b>La classe de M.&nbsp;Lesage</b>
   </div>
-  <footer>Contenus sous licence CC BY-NC-SA 4.0.</footer>
-</main>
+  <div class="voile" id="voile" hidden></div>
+  <main><div class="col" id="vue"></div></main>
+</div>
+
+<script>
+(function(){
+const NB = " "; // espace fine insécable avant : ; ! ?
+const SITE = "https://proflesage.fr";
+
+/* Icônes au trait (style Lucide) */
+const ICO = {
+  maison:'<path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/>',
+  classe:'<rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M7 20h10M12 16v4"/><path d="M7 9h5"/>',
+  cours:'<path d="M4 19.5V5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2.5z"/><path d="M8 7h7M8 11h5"/>',
+  langue:'<path d="M9 3h6M10 3v6L4.5 18.5A1.7 1.7 0 0 0 6 21h12a1.7 1.7 0 0 0 1.5-2.5L14 9V3"/><path d="M7.5 15h9"/>',
+  lire:'<path d="M2 5.5A1.5 1.5 0 0 1 3.5 4H9a3 3 0 0 1 3 3v13a2.5 2.5 0 0 0-2.5-2.5h-6A1.5 1.5 0 0 1 2 16z"/><path d="M22 5.5A1.5 1.5 0 0 0 20.5 4H15a3 3 0 0 0-3 3v13a2.5 2.5 0 0 1 2.5-2.5h6a1.5 1.5 0 0 0 1.5-1.5z"/>',
+  methode:'<path d="M9 11l3 3 8-8"/><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9"/>',
+  culture:'<circle cx="13.5" cy="6.5" r="1.5"/><circle cx="17.5" cy="10.5" r="1.5"/><circle cx="8.5" cy="7.5" r="1.5"/><circle cx="6.5" cy="12.5" r="1.5"/><path d="M12 2a10 10 0 1 0 0 20c1 0 1.7-.8 1.7-1.7 0-.5-.2-.9-.5-1.2-.3-.3-.5-.7-.5-1.2 0-.9.8-1.7 1.7-1.7H16a6 6 0 0 0 6-6c0-4.4-4.5-8.2-10-8.2z"/>',
+  pp:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M17 4.5a3.5 3.5 0 0 1 0 7M21.5 20a6.5 6.5 0 0 0-4-6"/>',
+  plan:'<path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3z"/><path d="M9 3v15M15 6v15"/>',
+  info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/>',
+  cartes:'<rect x="3" y="6" width="14" height="14" rx="2"/><path d="M7 6V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-2"/>',
+  plume:'<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/><path d="M14 20h6"/>',
+  colonne:'<path d="M3 21h18M4 7h16M12 3 4 7M12 3l8 4"/><path d="M6 7v14M10 7v14M14 7v14M18 7v14"/>',
+  journal:'<path d="M4 4h13v15a2 2 0 0 0 2 2H6a2 2 0 0 1-2-2z"/><path d="M17 8h3v11a2 2 0 0 1-2 2"/><path d="M8 8h5M8 12h5M8 16h3"/>',
+  de:'<rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1"/><circle cx="16" cy="8" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="8" cy="16" r="1"/><circle cx="16" cy="16" r="1"/>',
+  chev:'<path d="M9 6l6 6-6 6"/>',
+  ext:'<path d="M14 4h6v6M20 4l-9 9"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>',
+  menu:'<path d="M4 6h16M4 12h16M4 18h16"/>',
+  soleil:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+  lune:'<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>'
+};
+const ic = (n, cls) => '<svg class="i'+(cls?' '+cls:'')+'" viewBox="0 0 24 24" aria-hidden="true">'+ICO[n]+'</svg>';
+
+/* Le plan du site : une seule source pour la barre latérale et la page Plan.
+   url = page en ligne ; sans url = « bientôt ». src = d’où viendra le contenu. */
+const PLAN = [
+  {id:"classe", t:"Ma classe", ico:"classe", src:"kDrive : 1_Administration › Gestion et vie de classe, Rentrée, Communication aux familles · Canva : Entrée en classe, Vie de classe", items:[
+    {t:"Programme du jour", d:"Le déroulé de la séance, classe par classe"},
+    {t:"Emploi du temps", d:"Les heures de français et les salles"},
+    {t:"Règles de vie de classe", d:"Ce qu’on fait, ce qu’on évite, les sanctions"},
+    {t:"Organisation du cahier", d:"Pages de garde, mots nouveaux, phrase du jour"},
+    {t:"Les mots nouveaux", url:"/mots/", d:"Le vocabulaire de la classe, avec des cartes"},
+    {t:"Rentrée", d:"Accueil et séquences de rentrée"},
+    {t:"Vie de classe", d:"Délégués, professeur principal"},
+    {t:"Familles", d:"Pronote, réunions des parents, sorties"}
+  ]},
+  {id:"cours", t:"Cours et séquences", ico:"cours", src:"kDrive : 0_Textes officiels, 2_Progressions annuelles, 3_Séquences · Canva : Cours", items:[
+    {t:"6ᵉ", d:"L’Odyssée, contes et monstres, pirates, géants…"},
+    {t:"5ᵉ", d:"Contes merveilleux, héroïsme, Molière, poésie…"},
+    {t:"4ᵉ", d:"Le Cid, Les Misérables…"},
+    {t:"3ᵉ", d:"Séquences et préparation au brevet"},
+    {t:"Par questionnements", d:"Regarder le monde, Agir sur le monde, Se chercher, Vivre en société"},
+    {t:"Programmes et progressions", d:"Cycle 3, cycle 4, progressions annuelles"}
+  ]},
+  {id:"langue", t:"Étude de la langue", ico:"langue", src:"kDrive : 4_Étude de la langue · sites existants · Canva : Ressources › Fiches, Leçons à manipuler", items:[
+    {t:"Laboratoire de la langue", url:"/labo/", d:"Parcours, entraînements et ceintures"},
+    {t:"Flashcards", url:"/flashcards/", d:"Grammaire, conjugaison, homophones, vocabulaire"},
+    {t:"Grammaire", d:"Leçons, homophones, tri de mots"},
+    {t:"Conjugaison", d:"Leçons et tableaux"},
+    {t:"Orthographe", d:"Accords et règles"},
+    {t:"Lexique et vocabulaire", d:"Formation des mots, sens, registres"},
+    {t:"Dictées", d:"Dictées préparées et d’entraînement"},
+    {t:"Grammaire du texte", d:"Reprises, connecteurs, discours rapporté"},
+    {t:"Fiches, affiches et cartes mentales", d:"Les mémos à imprimer"},
+    {t:"Révisions et positionnement", d:"Tests de début d’année"}
+  ]},
+  {id:"lecture", t:"Lecture", ico:"lire", src:"kDrive : 5_Lecture · site existant · Canva : Lectures", items:[
+    {t:"Lire au collège", url:"/lire/", d:"Un guide pour trouver le livre qui te plaira"},
+    {t:"Conseils de lecture", d:"Des listes par niveau et par envie"},
+    {t:"La roulothèque", d:"La bibliothèque de classe"},
+    {t:"Carnet de lecture", d:"Le carnet et les fiches de lecture"},
+    {t:"Comptes-rendus et exposés", d:"Dépliants, exemples, exposés"},
+    {t:"Quart d’heure lecture", d:"Les textes du quart d’heure"},
+    {t:"Rallye lecture", d:"Avec l’École des loisirs"}
+  ]},
+  {id:"ecriture", t:"Écriture", ico:"plume", src:"kDrive : 6_Écriture, 4_Étude de la langue › Outils pour la rédaction", items:[
+    {t:"Ateliers d’écriture", d:"Sujets et consignes"},
+    {t:"Joggings d’écriture", d:"Écrire un peu chaque jour"},
+    {t:"Images d’inspiration", d:"Des images pour lancer l’écriture"},
+    {t:"Outils pour la rédaction", d:"Grilles, listes de mots, aides"}
+  ]},
+  {id:"arts", t:"Histoire des arts", ico:"culture", src:"kDrive : 7_Histoire des arts · Canva : Ressources › Histoire des arts", items:[
+    {t:"Œuvres", d:"Peinture, sculpture, architecture"},
+    {t:"Bandes dessinées", d:""},
+    {t:"Films", d:""},
+    {t:"Théâtre", d:""},
+    {t:"Musées", d:"Visites et sorties"},
+    {t:"Méthode de l’oral", d:"Présenter une œuvre"}
+  ]},
+  {id:"latin", t:"Latin et Antiquité", ico:"colonne", src:"kDrive : 8_Langues et cultures de l’Antiquité, 3_Séquences › LCA · Nuage › Manuels › LCA · Canva : Langues et cultures", items:[
+    {t:"LCA 5ᵉ", d:"Séquences de latin"},
+    {t:"Vocabulaire latin", url:"/flashcards/", d:"Les lots de la 5ᵉ à la 3ᵉ dans les flashcards"},
+    {t:"Langues et cultures", d:"Les mots venus d’ailleurs"}
+  ]},
+  {id:"medias", t:"Médias", ico:"journal", src:"kDrive : 9_Éducation aux médias et à l’information · Canva : Revues de presse", items:[
+    {t:"Revues de presse", d:"L’actualité racontée par la classe"},
+    {t:"S’informer", d:"Vérifier une information, lire la presse"}
+  ]},
+  {id:"projets", t:"Projets et jeux", ico:"de", src:"kDrive : 10_Projets · Canva : Ressources › Rituels, Leçons à manipuler", items:[
+    {t:"Jeux et leçons à manipuler", d:"Les Conjugouillons, Orthodingo, Le village des natures"},
+    {t:"Rituels", d:"Phrase du jour, recherches"},
+    {t:"Le Petit Prince (CM2)", d:"Projet de liaison école-collège"},
+    {t:"Égalité filles-garçons", d:""},
+    {t:"Activités créatives", d:"Marque-pages…"}
+  ]},
+  {id:"methode", t:"Méthode et brevet", ico:"methode", src:"kDrive : 11_Divers › Méthodologie, Brevet · Canva : Méthode · dossier Annales", items:[
+    {t:"Méthodes", d:"Consignes, brouillon, réécriture, portrait, champ lexical, soin de la copie"},
+    {t:"Connaissances", d:"La poésie, les figures de style"},
+    {t:"Le brevet", d:"Présentation de l’épreuve et entraînements"},
+    {t:"Sujets et annales", d:"Sujets, dictées et corrigés"}
+  ]}
+];
+const BAS = [
+  {id:"plan", t:"Plan du site", ico:"plan"},
+  {id:"apropos", t:"À propos", ico:"info"}
+];
+
+const href = it => it.url ? (location.hostname.endsWith("proflesage.fr") ? it.url : SITE + it.url) : null;
+const ext  = it => it.url && !location.hostname.endsWith("proflesage.fr");
+
+function lienItem(it){
+  const h = href(it);
+  if(h) return '<li><a class="lien" href="'+h+'"'+(ext(it)?' target="_blank" rel="noopener"':'')+'>'+it.t+(ext(it)?ic("ext","ext"):'')+'</a></li>';
+  return '<li><span class="lien bientot" title="Bientôt">'+it.t+'<i class="pt off" style="margin-left:auto;width:7px;height:7px;opacity:.6"></i></span></li>';
+}
+
+function lireOuverts(){ try{ return JSON.parse(localStorage.getItem("classe.ouverts")||"null"); }catch(e){ return null; } }
+function garderOuverts(){ try{ localStorage.setItem("classe.ouverts", JSON.stringify([...document.querySelectorAll("details.grp[open]")].map(d=>d.dataset.id))); }catch(e){} }
+
+function construireNav(){
+  const ouverts = lireOuverts() || ["classe","langue"];
+  let h = '<ul><li><a class="lien" data-vue="accueil" href="#accueil">'+ic("maison")+'Accueil</a></li></ul>';
+  for(const r of PLAN){
+    h += '<details class="grp" data-id="'+r.id+'"'+(ouverts.includes(r.id)?' open':'')+'><summary>'+ic(r.ico)+r.t+ic("chev","chev")+'</summary><ul>'+r.items.map(lienItem).join("")+'</ul></details>';
+  }
+  document.getElementById("nav").innerHTML = h;
+  document.getElementById("nav-bas").innerHTML = BAS.map(b=>'<li><a class="lien" data-vue="'+b.id+'" href="#'+b.id+'">'+ic(b.ico)+b.t+'</a></li>').join("");
+  document.querySelectorAll("details.grp").forEach(d=>d.addEventListener("toggle", garderOuverts));
+}
+
+function dateDuJour(){
+  const s = new Date().toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+  return s.charAt(0).toUpperCase()+s.slice(1);
+}
+
+const TUILES = [
+  {t:"Flashcards", url:"/flashcards/", ico:"cartes", d:"S’entraîner carte par carte, de la 6ᵉ à la 3ᵉ"},
+  {t:"Laboratoire de la langue", url:"/labo/", ico:"langue", d:"Parcours, entraînements et ceintures"},
+  {t:"Lire au collège", url:"/lire/", ico:"lire", d:"Trouver le livre qui te plaira"},
+  {t:"Les mots nouveaux", url:"/mots/", ico:"plume", d:"Le vocabulaire de la classe"}
+];
+
+function vueAccueil(){
+  return '<section class="tableau"><div class="date">'+dateDuJour()+'</div>'+
+    '<h1>La classe de M.'+'&nbsp;'+'Lesage</h1>'+
+    '<p>Le site de français de la classe. Les cours, les outils pour s’entraîner, les lectures et tout ce qu’il faut pour le brevet.</p>'+
+    '<div class="craies" aria-hidden="true"><i></i><i></i><i></i></div></section>'+
+    '<h2 class="titre">S’entraîner</h2><div class="tuiles">'+
+      TUILES.map(t=>{const h=href(t);return '<a class="tuile" href="'+h+'"'+(ext(t)?' target="_blank" rel="noopener"':'')+'><span class="ic">'+ic(t.ico)+'</span><b>'+t.t+'</b><span>'+t.d+'</span></a>';}).join("")+
+    '</div>'+
+    '<h2 class="titre">Mon niveau</h2><p class="sous">Les cours et les outils de ta classe.</p><div class="niveaux">'+
+      [["6ᵉ","Cycle 3"],["5ᵉ","Cycle 4"],["4ᵉ","Cycle 4"],["3ᵉ","Brevet"]].map(n=>'<a class="niv" href="#plan"><b>'+n[0]+'</b><span>'+n[1]+'</span></a>').join("")+
+    '</div>'+
+    '<h2 class="titre">Dans le site</h2><div class="rubriques">'+
+      PLAN.map(r=>'<div class="rub"><h3>'+ic(r.ico)+r.t+'</h3><p>'+r.items.map(i=>i.t).join(" · ")+'</p></div>').join("")+
+    '</div>'+pied();
+}
+
+function vuePlan(){
+  const nOn = PLAN.reduce((n,r)=>n+r.items.filter(i=>i.url).length,0);
+  const nTot = PLAN.reduce((n,r)=>n+r.items.length,0);
+  return '<h2 class="titre" style="margin-top:4px;font-size:1.7rem">Plan du site</h2>'+
+    '<p class="plan-intro">Toutes les pages du site, rubrique par rubrique. '+nOn+' pages sont déjà en ligne sur '+nTot+'. Les autres arriveront au fil de l’année.</p>'+
+    '<div class="legende"><span><i class="pt on"></i>En ligne</span><span><i class="pt off"></i>Bientôt</span></div>'+
+    '<div class="plan">'+
+    PLAN.map(r=>'<section class="bloc"><h3>'+ic(r.ico)+r.t+'</h3><p class="rubsrc">'+r.src+'</p><ul>'+
+      r.items.map(i=>{const h=href(i);return '<li><i class="pt '+(h?'on':'off')+'"></i><div>'+(h?'<a href="'+h+'"'+(ext(i)?' target="_blank" rel="noopener"':'')+'>'+i.t+'</a>':'<span>'+i.t+'</span>')+'<small>'+i.d+'</small></div></li>';}).join("")+
+      '</ul></section>').join("")+
+    '<section class="bloc"><h3>'+ic("plan")+'En bas de page</h3><p class="rubsrc">Toujours visibles</p><ul>'+
+      '<li><i class="pt on"></i><div><a href="#plan">Plan du site</a><small>Cette page</small></div></li>'+
+      '<li><i class="pt on"></i><div><a href="#apropos">À propos</a><small>Licence et crédits</small></div></li></ul></section>'+
+    '</div>'+pied();
+}
+
+function vueAPropos(){
+  return '<h2 class="titre" style="margin-top:4px;font-size:1.7rem">À propos</h2>'+
+    '<div class="rub" style="max-width:66ch"><p style="color:var(--ink);font-size:1rem">Ce site rassemble les ressources de français de M.'+'&nbsp;'+'Lesage pour ses classes de collège. Les contenus sont proposés sous licence Creative Commons BY-NC-SA'+'&nbsp;'+'4.0'+NB+': tu peux les partager et les adapter, sans usage commercial, en citant l’auteur.</p></div>'+pied();
+}
+
+function pied(){
+  return '<footer class="pied"><span>La classe de M.'+'&nbsp;'+'Lesage · Contenus sous licence CC BY-NC-SA 4.0</span><a href="#plan">Plan du site</a></footer>';
+}
+
+function afficher(){
+  let v = (location.hash||"#accueil").slice(1);
+  if(!["accueil","plan","apropos"].includes(v)) v = "accueil";
+  const el = document.getElementById("vue");
+  el.innerHTML = v==="plan" ? vuePlan() : v==="apropos" ? vueAPropos() : vueAccueil();
+  document.querySelectorAll("[data-vue]").forEach(a=>{ if(a.dataset.vue===v) a.setAttribute("aria-current","page"); else a.removeAttribute("aria-current"); });
+  document.title = v==="plan" ? "Plan du site · La classe de M. Lesage" : v==="apropos" ? "À propos · La classe de M. Lesage" : "La classe de M. Lesage";
+  fermerMenu();
+  window.scrollTo(0,0);
+}
+
+/* Menu sur téléphone */
+const ouvrir = document.getElementById("ouvrir"), voile = document.getElementById("voile");
+ouvrir.innerHTML = ic("menu");
+function fermerMenu(){ document.body.classList.remove("menu"); voile.hidden = true; ouvrir.setAttribute("aria-expanded","false"); }
+ouvrir.addEventListener("click",()=>{ document.body.classList.add("menu"); voile.hidden = false; ouvrir.setAttribute("aria-expanded","true"); });
+voile.addEventListener("click", fermerMenu);
+document.addEventListener("keydown", e=>{ if(e.key==="Escape") fermerMenu(); });
+
+/* Jour / nuit (même logique que le Cahier et les flashcards) */
+const bt = document.getElementById("theme");
+function themeActuel(){ const a=document.documentElement.dataset.theme; return a || (matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"); }
+function majBouton(){ bt.innerHTML = ic(themeActuel()==="dark"?"soleil":"lune"); }
+try{ const t = localStorage.getItem("classe.theme"); if(t) document.documentElement.dataset.theme = t; }catch(e){}
+bt.addEventListener("click",()=>{ const t = themeActuel()==="dark"?"light":"dark"; document.documentElement.dataset.theme = t; try{ localStorage.setItem("classe.theme",t); }catch(e){} majBouton(); });
+majBouton();
+
+construireNav();
+afficher();
+addEventListener("hashchange", afficher);
+})();
+</script>
 </body>
 </html>
