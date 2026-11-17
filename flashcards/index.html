@@ -6139,7 +6139,8 @@ var FN = (function () {
   function uWords(q) { var out = [], re = /<u>([\s\S]*?)<\/u>/gi, m; while ((m = re.exec(String(q || '')))) out.push(stripTags(m[1]).replace(/\s+/g, ' ').trim()); return out; }
   function erPhrase(q) {
     var i = 0;
-    return String(q || '').replace(/<u>([\s\S]*?)<\/u>/gi, function (m, w) { var L = LETTERS[i++]; return L ? '<span class="er-w"><u>' + w + '</u><span class="fn-l fn-l' + L + ' er-b">' + L + '</span></span>' : '<u>' + w + '</u>'; });
+    /* la ponctuation collée au mot souligné (« blanche, », « livre. ») reste dans le bloc insécable, après la pastille */
+    return String(q || '').replace(/<u>([\s\S]*?)<\/u>([^ \t\n<]*)/gi, function (m, w, after) { var L = LETTERS[i++]; return L ? '<span class="er-w"><u>' + w + '</u><span class="fn-l fn-l' + L + ' er-b">' + L + '</span>' + after + '</span>' : '<u>' + w + '</u>' + after; });
   }
   function erFix(c) { var m = /\{([^{}]*)\}/.exec(String(c && c.precision || '')); return m ? m[1] : ''; }
   function erCorr(s) { return String(s || '').replace(/\{([^{}]*)\}/g, '<span class="er-ok">$1</span>'); }
