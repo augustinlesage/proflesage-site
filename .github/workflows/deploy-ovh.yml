@@ -45,3 +45,12 @@ jobs:
             **/.git*/**
             .github/**
             README.md
+
+      - name: Vérifier la compression et le cache (flashcards)
+        continue-on-error: true
+        run: |
+          sleep 20
+          curl -s -o /dev/null -H 'Accept-Encoding: gzip' -D - https://proflesage.fr/flashcards/ | grep -iE '^(HTTP|content-encoding|content-length|cache-control)' || true
+          curl -s -o /dev/null -H 'Accept-Encoding: gzip' -w 'page flashcards transférée : %{size_download} octets en %{time_total} s\n' https://proflesage.fr/flashcards/
+          f=$(ls flashcards/a | grep -m1 webp)
+          curl -s -o /dev/null -D - "https://proflesage.fr/flashcards/a/$f" | grep -iE '^(HTTP|content-type|cache-control)' || true
