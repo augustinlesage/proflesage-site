@@ -9,9 +9,9 @@ RewriteRule ^(.*)$ https://proflesage.fr/$1 [R=301,L]
 # Laboratoire : reste sur Netlify en attendant la version OVH
 RewriteRule ^labo/?(.*)$ https://lesage-laboratoire.netlify.app/$1 [R=302,L]
 
-# Compression (l'appli flashcards fait ~11 Mo)
+# Compression (page de l'appli flashcards ~2,6 Mo → ~0,6 Mo compressée)
 <IfModule mod_deflate.c>
-  AddOutputFilterByType DEFLATE text/html text/css application/javascript image/svg+xml
+  AddOutputFilterByType DEFLATE text/html text/css text/javascript application/javascript image/svg+xml
 </IfModule>
 
 # Les pages se revérifient à chaque visite (mises à jour visibles tout de suite)

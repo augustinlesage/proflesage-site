@@ -1,1 +1,1 @@
-2026-11-18T01:52Z flashcards : vrais exposants dans toutes les cartes
+2026-11-18T15:00Z flashcards : chargement allégé (images à part, cache, hors connexion)
