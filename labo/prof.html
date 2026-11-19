@@ -461,6 +461,11 @@ code{font-family:ui-monospace,Menlo,monospace;font-size:.9em}
 .bg-it b{font-size:.8rem;line-height:1.15}
 .bg-it small{font-size:.7rem;color:var(--muted);line-height:1.2}
 .bg-it.off b{color:var(--muted);font-weight:600}
+/* adresse du connecteur MCP pour le Cahier de suivi */
+.p-mcp{margin-top:12px;padding:12px 14px;border:1px solid var(--line,#d8dce3);border-radius:10px;background:var(--panel,transparent)}
+.p-mcp p{margin:.3em 0}
+.p-mcp code{display:block;word-break:break-all;user-select:all;padding:6px 8px;border-radius:6px;background:rgba(127,127,127,.12);font-size:.9rem}
+.p-mcp .hint{font-size:.85rem;color:var(--muted)}
 
 </style>
 </head>
@@ -1779,7 +1784,7 @@ const LABO_TDB = (function () {
     for (const x of L) if (x.a && x.a.testDoms) for (const [d, st] of Object.entries(x.a.testDoms)) { const o = domTest[d] = domTest[d] || { solide: 0, consolider: 0, travailler: 0 }; if (o[st] != null) o[st]++; }
     ctx.cadre(`<div class="page-h"><h2>Tableau de bord</h2><p>Toute la progression enregistrée${NB}: séries de flashcards, test de positionnement, ceintures, parcours et bilans reçus. Clique sur un élève pour voir sa fiche.</p></div>
 <div class="card p-reg"><div class="p-row">${ctx.selClasse()}<span class="small muted">Mis à jour à ${new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</span></div>
-<div class="row"><button class="btn ghost" type="button" data-x="tdb-maj">Actualiser</button><button class="btn ghost" type="button" data-x="tdb-csv">Télécharger le tableau (CSV)</button><button class="btn ghost" type="button" data-x="sauvegarde">Sauvegarde complète (JSON)</button><button class="btn ghost" type="button" data-x="importer">Importer une sauvegarde</button><button class="btn ghost" type="button" data-x="export-cahier" title="Badges et ceintures de toutes les classes, à importer dans le Cahier de suivi">Badges pour le Cahier (JSON)</button></div></div>
+<div class="row"><button class="btn ghost" type="button" data-x="tdb-maj">Actualiser</button><button class="btn ghost" type="button" data-x="tdb-csv">Télécharger le tableau (CSV)</button><button class="btn ghost" type="button" data-x="sauvegarde">Sauvegarde complète (JSON)</button><button class="btn ghost" type="button" data-x="importer">Importer une sauvegarde</button><button class="btn ghost" type="button" data-x="export-cahier" title="Badges et ceintures de toutes les classes, à importer dans le Cahier de suivi">Badges pour le Cahier (JSON)</button><button class="btn ghost" type="button" data-x="mcp-adresse" title="Adresse à ajouter une fois dans claude.ai : le Cahier de suivi lit alors les badges tout seul">Connecteur du Cahier</button></div><div id="p-mcp"></div></div>
 <div class="tb-tuiles">
 ${tuile('Élèves actifs', `${actifs7}${NNB}/${NNB}${c.eleves.length}`, '7 derniers jours')}
 ${tuile('Temps de travail', duree(t7), '7 derniers jours, toute la classe')}
@@ -2163,6 +2168,9 @@ ${((x.bilan || {}).lots || []).length ? `<table><thead><tr><th>Lot</th><th>Score
         const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(d)], { type: 'application/json' })); a.download = `Laboratoire - sauvegarde ${aujourdhui().replace(/\//g, '-')}.json`;
         document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500); return flash('Sauvegarde téléchargée : garde ce fichier en lieu sûr.'); }
       if (x === 'importer') return $('#p-import').click();
+      if (x === 'mcp-adresse') { const { url } = await appel('mcp-adresse'); const z = $('#p-mcp'); if (!z) return;
+        z.innerHTML = `<div class="p-mcp"><p><b>Synchronisation automatique avec le Cahier de suivi</b> : dans claude.ai, Réglages › Connecteurs › Ajouter un connecteur personnalisé, nom <b>Laboratoire</b>, adresse :</p><p><code tabindex="0">${url}</code></p><p class="hint">Garde cette adresse pour toi : elle donne accès aux badges et aux ceintures (prénoms et classes) de tous les élèves. Le Cahier les relit à chaque ouverture.</p></div>`;
+        try { await navigator.clipboard.writeText(url); flash('Adresse copiée.'); } catch (e) { } return; }
       if (x === 'export-cahier') { flash('Préparation…'); const d = await LABO_TDB.pourCahier(ctx, CL.list);
         const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(d)], { type: 'application/json' })); a.download = `Laboratoire - badges pour le Cahier ${aujourdhui().replace(/\//g, '-')}.json`;
         document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500); return flash(`Fichier prêt (${d.eleves.length} élèves) : importe-le dans le Cahier de suivi, Comportements › Badges.`); }
