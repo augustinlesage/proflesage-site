@@ -226,12 +226,13 @@ function eleve(string $action, array $body): void {
       repondre(['jeton' => jeton($cl, $el, (int) ($rec['pv'] ?? 0)), 'etat' => etatPropre($rec['etat'] ?? []), 'prenom' => $e['prenom'], 'classe' => $c['nom']]);
     });
   }
-  if ($action === 'charger' || $action === 'sauver' || $action === 'journal') {
+  if ($action === 'charger' || $action === 'sauver' || $action === 'journal' || $action === 'badges') {
     $j = lireJeton($body['jeton'] ?? ''); if (!$j) erreur('Session expirée : reconnecte-toi.', 401);
     avecVerrou("{$j['cl']}-{$j['el']}", function () use ($j, $action, $body) {
       $rec = lireJ(recRel($j['cl'], $j['el']));
       if (!$rec || (int) ($rec['pv'] ?? 0) !== $j['pv']) erreur('Session expirée : reconnecte-toi.', 401);
       if ($action === 'charger') repondre(['etat' => etatPropre($rec['etat'] ?? [])]);
+      if ($action === 'badges') repondre(badgesEleve($j['cl'], $j['el']));
       if ($action === 'journal') repondre(['journal' => array_slice(lireJournal($j['cl'], $j['el']), -500), 'bilans' => listeBilans($j['cl'], $j['el'])]);
       $txt = json_encode($body['etat'] ?? new stdClass()); if (strlen((string) $txt) > MAX_ETAT) erreur('Progression trop volumineuse.', 413);
       $avant = etatPropreA($rec['etat'] ?? []);
@@ -333,6 +334,7 @@ function prof(string $action, array $body): void {
     repondre(['format' => 'labo-sauvegarde-1', 'date' => maintenant(), 'classes' => classes(), 'eleves' => $el, 'bilans' => $bi]);
   }
   if ($action === 'importer') { importer($body); }
+  if ($action === 'mcp-adresse') repondre(['url' => adresseMcp()]);
   erreur('Action inconnue.', 404);
 }
 
@@ -401,6 +403,202 @@ function importer(array $D): void {
   repondre(['ok' => true, 'importe' => $n]);
 }
 
+/* ---------------------------- badges pour le Cahier de suivi ----------------------------
+   Même calcul que tdb.js (analyse) + badges.js (dates), pour toutes les classes : format « labo-cahier-1 »,
+   identique au fichier « Badges pour le Cahier (JSON) » de l'espace professeur. */
+function jourCle(DateTimeInterface $d): string { return $d->format('Y-m-d'); }
+function dateTs($ts): ?DateTimeImmutable { if (!is_string($ts) || $ts === '') return null; try { return (new DateTimeImmutable($ts))->setTimezone(new DateTimeZone('Europe/Paris')); } catch (Throwable $e) { return null; } }
+function dateFrMidi($s): ?DateTimeImmutable { return preg_match('/^(\d\d)\/(\d\d)\/(\d{4})/', (string) $s, $m) ? new DateTimeImmutable("{$m[3]}-{$m[2]}-{$m[1]} 12:00:00", new DateTimeZone('Europe/Paris')) : null; }
+function ceintureInfo(string $id): array {
+  if (preg_match('/^(\w+)-([3456])-(\w+)$/', $id, $m)) return ['ech' => $m[1], 'niv' => $m[2], 'coul' => $m[3]];
+  if (preg_match('/^(\w+)-expert$/', $id, $m)) return ['ech' => $m[1], 'niv' => '', 'coul' => 'expert'];
+  return ['ech' => '?', 'niv' => '', 'coul' => ''];
+}
+function datesBadges(array $chrono, array $ceintures, string $niv, ?DateTimeImmutable $test): array {
+  $R = []; $pose = function (string $id, $d) use (&$R) { if (!isset($R[$id]) && $d) $R[$id] = $d; };
+  $lots = []; $jours = []; $sem = []; $bas = []; $temps = 0; $ecrites = 0;
+  foreach ($chrono as $e) {
+    $temps += $e['t'];
+    if ($temps >= 3600) $pose('lab-1h', $e['d']);
+    if ($temps >= 5 * 3600) $pose('lab-5h', $e['d']);
+    $s = $e['serie']; if (!$s) continue;
+    $pose('lab-premier', $e['d']);
+    $lots[$s['id']] = 1; if (count($lots) >= 10) $pose('lab-10lots', $e['d']);
+    $jours[jourCle($e['d'])] = 1; if (count($jours) >= 5) $pose('lab-assidu', $e['d']);
+    $l = $e['d']->setTime(12, 0)->modify('-' . ((int) $e['d']->format('N') - 1) . ' days'); $sem[jourCle($l)] = 1;
+    if (isset($sem[jourCle($l->modify('-7 days'))], $sem[jourCle($l->modify('-14 days'))])) $pose('lab-regulier', $e['d']);
+    if ($s['pct'] === 100 && $s['n'] >= 20 && $s['mode'] && $s['mode'] !== 'honneur') $pose('lab-parfaite', $e['d']);
+    if ($s['mode'] === 'ecrit' && ++$ecrites >= 10) $pose('lab-plume', $e['d']);
+    if ($s['pct'] < 60) $bas[$s['id']] = true; elseif ($s['pct'] >= 80 && !empty($bas[$s['id']])) $pose('lab-progres', $e['d']);
+  }
+  $pose('lab-test', $test);
+  $C = array_map(fn($c) => $c + ['d' => dateFrMidi($c['s']['date'] ?? '') ?: new DateTimeImmutable('now', new DateTimeZone('Europe/Paris'))], $ceintures);
+  usort($C, fn($a, $b) => $a['d'] <=> $b['d']);
+  $par = []; $nc = (int) $niv;
+  foreach ($C as $c) {
+    $par[$c['id']] = $c; $v = array_values($par);
+    $pose('lb-1', $c['d']);
+    if (count($v) >= 5) $pose('lb-5', $c['d']);
+    if (count($v) >= 15) $pose('lb-15', $c['d']);
+    if (count(array_unique(array_column($v, 'ech'))) >= 5) $pose('lb-ech', $c['d']);
+    if (isset($c['s']['score'], $c['s']['total']) && (float) $c['s']['score'] === (float) $c['s']['total']) $pose('lb-parfait', $c['d']);
+    if ($nc && $c['niv'] !== '' && (int) $c['niv'] < $nc) $pose('lb-avance', $c['d']);
+    if ($c['coul'] === 'noire') $pose('lb-noire', $c['d']);
+    if ($c['coul'] === 'expert') $pose('lb-expert', $c['d']);
+    if (count(array_filter($v, fn($x) => $x['coul'] === 'expert')) >= 5) $pose('lb-expert5', $c['d']);
+    if ($c['niv'] !== '') { $tout = true; foreach (['blanche', 'jaune', 'orange', 'verte', 'bleue', 'marron', 'noire'] as $k) if (!isset($par["{$c['ech']}-{$c['niv']}-$k"])) { $tout = false; break; } if ($tout) $pose('lb-complet', $c['d']); }
+  }
+  return $R;
+}
+function eleveCahier(array $c, array $e, string $niv): array {
+  $r = lireJ(recRel($c['id'], $e['id'])) ?: [];
+  $etat = etatPropreA($r['etat'] ?? []);
+  $J = lireJournal($c['id'], $e['id']);
+  usort($J, fn($a, $b) => strcmp((string) ($a['ts'] ?? ''), (string) ($b['ts'] ?? '')));
+  $vMin = 2; $parLot = []; $chrono = []; $tempsTotal = 0; $nOk = 0; $sP = 0; $nC = 0; $dates = [];
+  foreach ($J as $e2) {
+    $d = dateTs($e2['ts'] ?? null); if (!$d) continue;
+    if (empty($e2['import'])) $dates[] = $d;
+    if (($e2['t'] ?? '') !== 'serie' || empty($e2['n'])) continue;
+    $id = (string) ($e2['id'] ?? ''); $prev = $parLot[$id] ?? null;
+    $nouvelle = !$prev || ((isset($e2['nb']) && isset($prev['nb'])) ? +$e2['nb'] > +$prev['nb']
+      : (($e2['date'] ?? null) !== ($prev['date'] ?? null) || ($e2['ok'] ?? null) !== ($prev['ok'] ?? null) || ($e2['sec'] ?? null) !== ($prev['sec'] ?? null)));
+    $t = ($prev && isset($e2['tot']) && isset($prev['tot'])) ? max(0, +$e2['tot'] - +$prev['tot']) : (+($e2['sec'] ?? 0) ?: 0);
+    if (!$prev && isset($e2['tot']) && +($e2['nb'] ?? 0) > 1 && !empty($e2['import'])) $t = +$e2['tot'];
+    $parLot[$id] = $e2;
+    $ok = +($e2['ok'] ?? 0); $n = +$e2['n']; $pct = (int) round($ok / $n * 100);
+    $ec = ($e2['mode'] ?? '') === 'ecrit' ? 2 : 1;
+    $suspect = $ok > $n || (isset($e2['sec']) && +$e2['sec'] / $n < $vMin * $ec);
+    if (!$suspect) $tempsTotal += $t;
+    $serie = $nouvelle && !$suspect ? ['id' => $id, 'pct' => $pct, 'n' => $n, 'mode' => ($e2['mode'] ?? null) ?: null] : null;
+    $chrono[] = ['d' => $d, 't' => $suspect ? 0 : $t, 'serie' => $serie];
+    if ($nouvelle) $dates[] = $d;
+    if ($serie) { $nOk++; $sP += $pct * $n; $nC += $n; }
+  }
+  if (!empty($r['vu']) && ($d = dateTs($r['vu']))) $dates[] = $d;
+  $C = (array) ($etat['labo']['ceintures'] ?? []); $cein = []; $ceintures = [];
+  foreach ($C as $id => $s) {
+    if (!is_array($s) || !in_array($s['etat'] ?? '', ['reussie', 'validee'], true)) continue;
+    $cein[] = ['id' => (string) $id, 's' => $s] + ceintureInfo((string) $id);
+    $ceintures[(string) $id] = ['etat' => $s['etat'], 'score' => $s['score'] ?? null, 'total' => $s['total'] ?? null, 'date' => $s['date'] ?? null, 'code' => $s['code'] ?? '', 'valide' => $s['valide'] ?? ''];
+  }
+  $t1 = null; foreach ($J as $x) if (($x['t'] ?? '') === 'test') { $t1 = dateTs($x['ts'] ?? null); break; }
+  if (!$t1 && !empty($etat['fc']['test']['date'])) $t1 = dateFrMidi($etat['fc']['test']['date']);
+  $B = datesBadges($chrono, $cein, $niv, $t1);
+  rsort($dates);
+  return ['cl' => $c['id'], 'classe' => $c['nom'], 'el' => $e['id'], 'prenom' => $e['prenom'],
+    'badges' => (object) array_map('jourCle', $B), 'ceintures' => (object) $ceintures,
+    'stats' => ['temps' => (int) round($tempsTotal / 60), 'series' => $nOk, 'reussite' => $nC ? (int) round($sP / $nC) : null, 'derniere' => $dates ? jourCle($dates[0]) : '']];
+}
+function pourCahier(): array {
+  $out = ['format' => 'labo-cahier-1', 'date' => maintenant(), 'eleves' => []];
+  foreach (classes()['list'] as $c) {
+    $niv = preg_match('/([3456])/', (string) $c['nom'], $m) ? $m[1] : '';
+    foreach (($c['eleves'] ?? []) as $e) $out['eleves'][] = eleveCahier($c, $e, $niv);
+  }
+  return $out;
+}
+
+
+/* ---------------------------- badges du Cahier de suivi, pour l'espace élève ----------------------------
+   (Augustin, 19/11/2026 : « dans l'espace du labo, afficher aussi les badges obtenus dans le cahier »)
+   Le Cahier envoie par le connecteur (outil envoyer_badges_cahier) les badges OBTENUS de chaque élève reconnu :
+   cahier-badges.json = { date, eleves: { <id Labo>: { n, dif, pass, actif, badges: [...], trophees: [...] } } }, remplacé à chaque envoi.
+   Le dessin de l'icône (tracés Lucide) est filtré : seules des formes SVG simples aux attributs numériques passent. */
+const BG_FORMES_OK = ['cercle', 'hexagone', 'octogone', 'bouclier', 'carre', 'losange', 'etoile'];
+const BG_COUL_OK = ['or', 'argent', 'bronze', 'rouge', 'orange', 'jaune', 'vert', 'menthe', 'bleu', 'ciel', 'violet', 'rose', 'nuit'];
+function icoPropre($h): string {
+  $out = '';
+  if (!is_string($h) || strlen($h) > 6000) return '';
+  preg_match_all('#<(path|circle|rect|line|polyline|polygon|ellipse)((?:\s+[a-z0-9-]+="[^"<>]*")*)\s*/?>#i', $h, $M, PREG_SET_ORDER);
+  foreach ($M as $m) {
+    preg_match_all('#([a-z0-9-]+)="([^"<>]*)"#i', $m[2], $A, PREG_SET_ORDER); $at = '';
+    foreach ($A as $a) if (in_array(strtolower($a[1]), ['d', 'cx', 'cy', 'r', 'rx', 'ry', 'x', 'y', 'x1', 'y1', 'x2', 'y2', 'width', 'height', 'points'], true) && preg_match('/^[0-9a-zA-Z.,\s-]{0,3000}$/', $a[2])) $at .= ' ' . strtolower($a[1]) . '="' . $a[2] . '"';
+    $out .= '<' . strtolower($m[1]) . $at . '/>';
+  }
+  return $out;
+}
+function badgePropre($b, bool $tro): ?array {
+  if (!is_array($b)) return null;
+  $id = (string) ($b['id'] ?? ''); if (!preg_match('/^[A-Za-z0-9_:.-]{1,80}$/', $id)) return null;
+  $t = fn($k, $n) => mb_substr(trim((string) ($b[$k] ?? '')), 0, $n);
+  return ['id' => $id, 'lib' => $t('lib', 60), 'desc' => $t('desc', 160), 'cat' => $tro ? 'Trophée' : $t('cat', 30),
+    'forme' => in_array($b['forme'] ?? '', BG_FORMES_OK, true) ? $b['forme'] : 'cercle', 'coul' => in_array($b['coul'] ?? '', BG_COUL_OK, true) ? $b['coul'] : 'or',
+    'ico' => icoPropre($b['ico'] ?? ''), 'emoji' => $t('emoji', 8), 'n' => max(1, min(999, (int) ($b['n'] ?? 1))),
+    'date' => preg_match('/^\d{4}-\d\d-\d\d$/', (string) ($b['date'] ?? '')) ? $b['date'] : ''];
+}
+function recevoirBadgesCahier($args): array {
+  $L = is_array($args['eleves'] ?? null) ? $args['eleves'] : null; if ($L === null) return ['ok' => false, 'erreur' => 'Liste « eleves » manquante.'];
+  $connus = []; foreach (classes()['list'] as $c) foreach (($c['eleves'] ?? []) as $e) $connus[$e['id']] = 1;
+  $out = []; $ign = 0;
+  foreach (array_slice($L, 0, 2000) as $x) {
+    $el = (string) ($x['el'] ?? ''); if (!isset($connus[$el])) { $ign++; continue; }
+    $out[$el] = ['n' => max(0, (int) ($x['n'] ?? 0)), 'dif' => max(0, (int) ($x['dif'] ?? 0)), 'pass' => max(0, (int) ($x['pass'] ?? 0)), 'actif' => !empty($x['actif']),
+      'badges' => array_values(array_filter(array_map(fn($b) => badgePropre($b, false), array_slice((array) ($x['badges'] ?? []), 0, 300)))),
+      'trophees' => array_values(array_filter(array_map(fn($b) => badgePropre($b, true), array_slice((array) ($x['trophees'] ?? []), 0, 50))))];
+  }
+  ecrireJ('cahier-badges.json', ['date' => maintenant(), 'eleves' => $out ?: new stdClass()]);
+  return ['ok' => true, 'eleves' => count($out), 'ignores' => $ign];
+}
+/* Espace élève : badges du Laboratoire et des ceintures (calculés ici) + badges du Cahier */
+function badgesEleve(string $cl, string $el): array {
+  $c = classeParId($cl); $e = eleveDe($c, $el); if (!$c || !$e) return ['labo' => new stdClass(), 'cahier' => null];
+  $niv = preg_match('/([3456])/', (string) $c['nom'], $m) ? $m[1] : '';
+  $x = eleveCahier($c, $e, $niv); $C = lireJ('cahier-badges.json', []);
+  return ['labo' => $x['badges'], 'stats' => $x['stats'], 'cahier' => $C['eleves'][$el] ?? null, 'cahierDate' => $C['date'] ?? null];
+}
+
+/* ---------------------------- connecteur MCP pour le Cahier de suivi ----------------------------
+   Adresse secrète : /labo/api/mcp/<jeton> (jeton dérivé de secret.key, affiché dans l'espace professeur).
+   À ajouter une fois dans claude.ai (Réglages › Connecteurs › connecteur personnalisé, nom « Laboratoire ») :
+   le Cahier appelle alors l'outil badges_cahier à chaque ouverture. Lecture seule. */
+function jetonMcp(): string { return substr(b64u(hash_hmac('sha256', 'mcp-cahier', secret(), true)), 0, 32); }
+function adresseMcp(): string { return 'https://' . ($_SERVER['HTTP_HOST'] ?? 'proflesage.fr') . '/labo/api/mcp/' . jetonMcp(); }
+function mcp(string $jeton): void {
+  if (!hash_equals(jetonMcp(), $jeton)) { usleep(400000); erreur('Adresse inconnue.', 404); }
+  $m = $_SERVER['REQUEST_METHOD'] ?? '';
+  if ($m === 'GET' || $m === 'DELETE') { header('Allow: POST'); http_response_code(405); exit; }
+  if ($m !== 'POST') erreur('Méthode non permise.', 405);
+  $req = json_decode((string) file_get_contents('php://input'), true);
+  if (!is_array($req)) repondre(['jsonrpc' => '2.0', 'id' => null, 'error' => ['code' => -32700, 'message' => 'Parse error']], 400);
+  $lot = isset($req[0]); $rep = [];
+  foreach ($lot ? $req : [$req] as $q) { $r = mcpUn(is_array($q) ? $q : []); if ($r !== null) $rep[] = $r; }
+  if (!$rep) { http_response_code(202); exit; }
+  repondre($lot ? $rep : $rep[0]);
+}
+function mcpUn(array $q): ?array {
+  $id = $q['id'] ?? null; $meth = (string) ($q['method'] ?? ''); $p = is_array($q['params'] ?? null) ? $q['params'] : [];
+  if (!array_key_exists('id', $q)) return null; /* notification */
+  $ok = fn($res) => ['jsonrpc' => '2.0', 'id' => $id, 'result' => $res];
+  $ko = fn(int $c, string $msg) => ['jsonrpc' => '2.0', 'id' => $id, 'error' => ['code' => $c, 'message' => $msg]];
+  $outil = ['name' => 'badges_cahier', 'title' => 'Badges et ceintures du Laboratoire',
+    'description' => "Badges du Laboratoire (avec leur date d'obtention), ceintures réussies ou validées et quelques chiffres (temps de travail, séries, réussite) de tous les élèves de toutes les classes. Format labo-cahier-1, lu par le Cahier de suivi.",
+    'inputSchema' => ['type' => 'object', 'properties' => new stdClass(), 'additionalProperties' => false],
+    'annotations' => ['title' => 'Badges et ceintures du Laboratoire', 'readOnlyHint' => true, 'destructiveHint' => false, 'idempotentHint' => true, 'openWorldHint' => false]];
+  $b = ['type' => 'object', 'properties' => ['id' => ['type' => 'string'], 'lib' => ['type' => 'string'], 'desc' => ['type' => 'string'], 'cat' => ['type' => 'string'], 'forme' => ['type' => 'string'], 'coul' => ['type' => 'string'],
+    'ico' => ['type' => 'string', 'description' => 'Tracés SVG de l’icône (viewBox 24)'], 'emoji' => ['type' => 'string'], 'n' => ['type' => 'integer'], 'date' => ['type' => 'string', 'description' => 'YYYY-MM-DD']], 'required' => ['id', 'lib']];
+  $envoi = ['name' => 'envoyer_badges_cahier', 'title' => 'Envoyer les badges du Cahier au Laboratoire',
+    'description' => "Remplace la copie des badges du Cahier de suivi gardée par le Laboratoire (badges obtenus et trophées de chaque élève, identifié par son id Laboratoire), pour que chaque élève les voie dans son espace.",
+    'inputSchema' => ['type' => 'object', 'properties' => ['eleves' => ['type' => 'array', 'items' => ['type' => 'object', 'properties' => ['el' => ['type' => 'string'], 'n' => ['type' => 'integer'], 'dif' => ['type' => 'integer'], 'pass' => ['type' => 'integer'], 'actif' => ['type' => 'boolean'],
+      'badges' => ['type' => 'array', 'items' => $b], 'trophees' => ['type' => 'array', 'items' => $b]], 'required' => ['el']]]], 'required' => ['eleves']],
+    'annotations' => ['title' => 'Envoyer les badges du Cahier au Laboratoire', 'readOnlyHint' => false, 'destructiveHint' => false, 'idempotentHint' => true, 'openWorldHint' => false]];
+  switch ($meth) {
+    case 'initialize':
+      return $ok(['protocolVersion' => is_string($p['protocolVersion'] ?? null) ? $p['protocolVersion'] : '2025-06-18', 'capabilities' => ['tools' => ['listChanged' => false]],
+        'serverInfo' => ['name' => 'laboratoire', 'title' => 'Laboratoire de la langue', 'version' => '1.0.0'],
+        'instructions' => 'Lecture seule : badges et ceintures des élèves du Laboratoire de la langue (proflesage.fr/labo), pour le Cahier de suivi.']);
+    case 'ping': return $ok(new stdClass());
+    case 'tools/list': return $ok(['tools' => [$outil, $envoi]]);
+    case 'tools/call':
+      if (($p['name'] ?? '') === 'envoyer_badges_cahier') { $r = avecVerrou('cahier-badges', fn() => recevoirBadgesCahier(is_array($p['arguments'] ?? null) ? $p['arguments'] : []));
+        return $ok(['content' => [['type' => 'text', 'text' => json_encode($r, JSON_UNESCAPED_UNICODE)]], 'structuredContent' => $r, 'isError' => empty($r['ok'])]); }
+      if (($p['name'] ?? '') !== 'badges_cahier') return $ko(-32602, 'Outil inconnu.');
+      $d = pourCahier();
+      return $ok(['content' => [['type' => 'text', 'text' => json_encode($d, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)]], 'structuredContent' => $d, 'isError' => false]);
+    default: return $ko(-32601, 'Méthode inconnue.');
+  }
+}
+
 /* ---------------------------- aiguillage ---------------------------- */
 function traiter(): void {
   $o = $_SERVER['HTTP_ORIGIN'] ?? '';
@@ -409,6 +607,7 @@ function traiter(): void {
   $action = trim((string) $action, '/');
   if ($o && in_array($o, ORIGINES, true)) { header("Access-Control-Allow-Origin: $o"); header('Vary: Origin'); header('Access-Control-Allow-Methods: POST, OPTIONS'); header('Access-Control-Allow-Headers: content-type, x-prof'); header('Access-Control-Max-Age: 86400'); }
   if (($_SERVER['REQUEST_METHOD'] ?? '') === 'OPTIONS') { http_response_code(204); exit; }
+  if (preg_match('#^mcp/([A-Za-z0-9_-]{1,64})$#', $action, $mm)) { try { mcp($mm[1]); } catch (Throwable $e) { error_log('labo mcp: ' . $e->getMessage()); erreur('Erreur du serveur.', 500); } }
   if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') erreur('Méthode non permise.', 405);
   $brut = (string) file_get_contents('php://input');
   if (strlen($brut) > 30 * 1024 * 1024) erreur('Envoi trop volumineux.', 413);
