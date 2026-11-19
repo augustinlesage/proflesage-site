@@ -1,0 +1,11 @@
+# Serveur du Laboratoire : toutes les adresses /labo/api/... vont à index.php
+Options -Indexes
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^ index.php [L,QSA]
+<FilesMatch "^(config\.php|.*\.json|.*\.jsonl|secret\.key)$">
+  Require all denied
+</FilesMatch>
+<IfModule mod_headers.c>
+  Header always set Cache-Control "no-store"
+</IfModule>
