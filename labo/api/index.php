@@ -226,12 +226,13 @@ function eleve(string $action, array $body): void {
       repondre(['jeton' => jeton($cl, $el, (int) ($rec['pv'] ?? 0)), 'etat' => etatPropre($rec['etat'] ?? []), 'prenom' => $e['prenom'], 'classe' => $c['nom']]);
     });
   }
-  if ($action === 'charger' || $action === 'sauver' || $action === 'journal') {
+  if ($action === 'charger' || $action === 'sauver' || $action === 'journal' || $action === 'badges') {
     $j = lireJeton($body['jeton'] ?? ''); if (!$j) erreur('Session expirée : reconnecte-toi.', 401);
     avecVerrou("{$j['cl']}-{$j['el']}", function () use ($j, $action, $body) {
       $rec = lireJ(recRel($j['cl'], $j['el']));
       if (!$rec || (int) ($rec['pv'] ?? 0) !== $j['pv']) erreur('Session expirée : reconnecte-toi.', 401);
       if ($action === 'charger') repondre(['etat' => etatPropre($rec['etat'] ?? [])]);
+      if ($action === 'badges') repondre(badgesEleve($j['cl'], $j['el']));
       if ($action === 'journal') repondre(['journal' => array_slice(lireJournal($j['cl'], $j['el']), -500), 'bilans' => listeBilans($j['cl'], $j['el'])]);
       $txt = json_encode($body['etat'] ?? new stdClass()); if (strlen((string) $txt) > MAX_ETAT) erreur('Progression trop volumineuse.', 413);
       $avant = etatPropreA($rec['etat'] ?? []);
@@ -498,6 +499,55 @@ function pourCahier(): array {
   return $out;
 }
 
+
+/* ---------------------------- badges du Cahier de suivi, pour l'espace élève ----------------------------
+   (Augustin, 19/11/2026 : « dans l'espace du labo, afficher aussi les badges obtenus dans le cahier »)
+   Le Cahier envoie par le connecteur (outil envoyer_badges_cahier) les badges OBTENUS de chaque élève reconnu :
+   cahier-badges.json = { date, eleves: { <id Labo>: { n, dif, pass, actif, badges: [...], trophees: [...] } } }, remplacé à chaque envoi.
+   Le dessin de l'icône (tracés Lucide) est filtré : seules des formes SVG simples aux attributs numériques passent. */
+const BG_FORMES_OK = ['cercle', 'hexagone', 'octogone', 'bouclier', 'carre', 'losange', 'etoile'];
+const BG_COUL_OK = ['or', 'argent', 'bronze', 'rouge', 'orange', 'jaune', 'vert', 'menthe', 'bleu', 'ciel', 'violet', 'rose', 'nuit'];
+function icoPropre($h): string {
+  $out = '';
+  if (!is_string($h) || strlen($h) > 6000) return '';
+  preg_match_all('#<(path|circle|rect|line|polyline|polygon|ellipse)((?:\s+[a-z0-9-]+="[^"<>]*")*)\s*/?>#i', $h, $M, PREG_SET_ORDER);
+  foreach ($M as $m) {
+    preg_match_all('#([a-z0-9-]+)="([^"<>]*)"#i', $m[2], $A, PREG_SET_ORDER); $at = '';
+    foreach ($A as $a) if (in_array(strtolower($a[1]), ['d', 'cx', 'cy', 'r', 'rx', 'ry', 'x', 'y', 'x1', 'y1', 'x2', 'y2', 'width', 'height', 'points'], true) && preg_match('/^[0-9a-zA-Z.,\s-]{0,3000}$/', $a[2])) $at .= ' ' . strtolower($a[1]) . '="' . $a[2] . '"';
+    $out .= '<' . strtolower($m[1]) . $at . '/>';
+  }
+  return $out;
+}
+function badgePropre($b, bool $tro): ?array {
+  if (!is_array($b)) return null;
+  $id = (string) ($b['id'] ?? ''); if (!preg_match('/^[A-Za-z0-9_:.-]{1,80}$/', $id)) return null;
+  $t = fn($k, $n) => mb_substr(trim((string) ($b[$k] ?? '')), 0, $n);
+  return ['id' => $id, 'lib' => $t('lib', 60), 'desc' => $t('desc', 160), 'cat' => $tro ? 'Trophée' : $t('cat', 30),
+    'forme' => in_array($b['forme'] ?? '', BG_FORMES_OK, true) ? $b['forme'] : 'cercle', 'coul' => in_array($b['coul'] ?? '', BG_COUL_OK, true) ? $b['coul'] : 'or',
+    'ico' => icoPropre($b['ico'] ?? ''), 'emoji' => $t('emoji', 8), 'n' => max(1, min(999, (int) ($b['n'] ?? 1))),
+    'date' => preg_match('/^\d{4}-\d\d-\d\d$/', (string) ($b['date'] ?? '')) ? $b['date'] : ''];
+}
+function recevoirBadgesCahier($args): array {
+  $L = is_array($args['eleves'] ?? null) ? $args['eleves'] : null; if ($L === null) return ['ok' => false, 'erreur' => 'Liste « eleves » manquante.'];
+  $connus = []; foreach (classes()['list'] as $c) foreach (($c['eleves'] ?? []) as $e) $connus[$e['id']] = 1;
+  $out = []; $ign = 0;
+  foreach (array_slice($L, 0, 2000) as $x) {
+    $el = (string) ($x['el'] ?? ''); if (!isset($connus[$el])) { $ign++; continue; }
+    $out[$el] = ['n' => max(0, (int) ($x['n'] ?? 0)), 'dif' => max(0, (int) ($x['dif'] ?? 0)), 'pass' => max(0, (int) ($x['pass'] ?? 0)), 'actif' => !empty($x['actif']),
+      'badges' => array_values(array_filter(array_map(fn($b) => badgePropre($b, false), array_slice((array) ($x['badges'] ?? []), 0, 300)))),
+      'trophees' => array_values(array_filter(array_map(fn($b) => badgePropre($b, true), array_slice((array) ($x['trophees'] ?? []), 0, 50))))];
+  }
+  ecrireJ('cahier-badges.json', ['date' => maintenant(), 'eleves' => $out ?: new stdClass()]);
+  return ['ok' => true, 'eleves' => count($out), 'ignores' => $ign];
+}
+/* Espace élève : badges du Laboratoire et des ceintures (calculés ici) + badges du Cahier */
+function badgesEleve(string $cl, string $el): array {
+  $c = classeParId($cl); $e = eleveDe($c, $el); if (!$c || !$e) return ['labo' => new stdClass(), 'cahier' => null];
+  $niv = preg_match('/([3456])/', (string) $c['nom'], $m) ? $m[1] : '';
+  $x = eleveCahier($c, $e, $niv); $C = lireJ('cahier-badges.json', []);
+  return ['labo' => $x['badges'], 'stats' => $x['stats'], 'cahier' => $C['eleves'][$el] ?? null, 'cahierDate' => $C['date'] ?? null];
+}
+
 /* ---------------------------- connecteur MCP pour le Cahier de suivi ----------------------------
    Adresse secrète : /labo/api/mcp/<jeton> (jeton dérivé de secret.key, affiché dans l'espace professeur).
    À ajouter une fois dans claude.ai (Réglages › Connecteurs › connecteur personnalisé, nom « Laboratoire ») :
@@ -525,14 +575,23 @@ function mcpUn(array $q): ?array {
     'description' => "Badges du Laboratoire (avec leur date d'obtention), ceintures réussies ou validées et quelques chiffres (temps de travail, séries, réussite) de tous les élèves de toutes les classes. Format labo-cahier-1, lu par le Cahier de suivi.",
     'inputSchema' => ['type' => 'object', 'properties' => new stdClass(), 'additionalProperties' => false],
     'annotations' => ['title' => 'Badges et ceintures du Laboratoire', 'readOnlyHint' => true, 'destructiveHint' => false, 'idempotentHint' => true, 'openWorldHint' => false]];
+  $b = ['type' => 'object', 'properties' => ['id' => ['type' => 'string'], 'lib' => ['type' => 'string'], 'desc' => ['type' => 'string'], 'cat' => ['type' => 'string'], 'forme' => ['type' => 'string'], 'coul' => ['type' => 'string'],
+    'ico' => ['type' => 'string', 'description' => 'Tracés SVG de l’icône (viewBox 24)'], 'emoji' => ['type' => 'string'], 'n' => ['type' => 'integer'], 'date' => ['type' => 'string', 'description' => 'YYYY-MM-DD']], 'required' => ['id', 'lib']];
+  $envoi = ['name' => 'envoyer_badges_cahier', 'title' => 'Envoyer les badges du Cahier au Laboratoire',
+    'description' => "Remplace la copie des badges du Cahier de suivi gardée par le Laboratoire (badges obtenus et trophées de chaque élève, identifié par son id Laboratoire), pour que chaque élève les voie dans son espace.",
+    'inputSchema' => ['type' => 'object', 'properties' => ['eleves' => ['type' => 'array', 'items' => ['type' => 'object', 'properties' => ['el' => ['type' => 'string'], 'n' => ['type' => 'integer'], 'dif' => ['type' => 'integer'], 'pass' => ['type' => 'integer'], 'actif' => ['type' => 'boolean'],
+      'badges' => ['type' => 'array', 'items' => $b], 'trophees' => ['type' => 'array', 'items' => $b]], 'required' => ['el']]]], 'required' => ['eleves']],
+    'annotations' => ['title' => 'Envoyer les badges du Cahier au Laboratoire', 'readOnlyHint' => false, 'destructiveHint' => false, 'idempotentHint' => true, 'openWorldHint' => false]];
   switch ($meth) {
     case 'initialize':
       return $ok(['protocolVersion' => is_string($p['protocolVersion'] ?? null) ? $p['protocolVersion'] : '2025-06-18', 'capabilities' => ['tools' => ['listChanged' => false]],
         'serverInfo' => ['name' => 'laboratoire', 'title' => 'Laboratoire de la langue', 'version' => '1.0.0'],
         'instructions' => 'Lecture seule : badges et ceintures des élèves du Laboratoire de la langue (proflesage.fr/labo), pour le Cahier de suivi.']);
     case 'ping': return $ok(new stdClass());
-    case 'tools/list': return $ok(['tools' => [$outil]]);
+    case 'tools/list': return $ok(['tools' => [$outil, $envoi]]);
     case 'tools/call':
+      if (($p['name'] ?? '') === 'envoyer_badges_cahier') { $r = avecVerrou('cahier-badges', fn() => recevoirBadgesCahier(is_array($p['arguments'] ?? null) ? $p['arguments'] : []));
+        return $ok(['content' => [['type' => 'text', 'text' => json_encode($r, JSON_UNESCAPED_UNICODE)]], 'structuredContent' => $r, 'isError' => empty($r['ok'])]); }
       if (($p['name'] ?? '') !== 'badges_cahier') return $ko(-32602, 'Outil inconnu.');
       $d = pourCahier();
       return $ok(['content' => [['type' => 'text', 'text' => json_encode($d, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)]], 'structuredContent' => $d, 'isError' => false]);
