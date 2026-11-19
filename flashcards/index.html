@@ -1,7 +1,8 @@
 <!doctype html>
 <html lang="fr">
 <head>
-<meta charset="utf-8"><script>window.FC_BILAN_API="https://lesage-laboratoire.netlify.app/api";</script>
+<meta charset="utf-8">
+<script>window.FC_BILAN_API="/labo/api";window.LABO_API="/labo/api";</script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Révisions flashcards</title>
 <style>@font-face{font-family:"Sniglet";font-style:normal;font-weight:400;font-display:swap;src:url(a/7c681c34d511.woff) format("woff");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
@@ -1651,6 +1652,10 @@ body.dys .fc-pick.fc-pick-good{outline-color:var(--ink)}
 /* ---------- Bilan envoyé au professeur (version en ligne seulement) ---------- */
 .bi-banner{border-width:1px;border-color:var(--line)}
 .bi-banner:hover{border-color:var(--clay)}
+.bi-compte{cursor:default}
+.bi-compte:hover{border-color:var(--line)}
+.bi-compte a{color:inherit}
+a.bi-banner{text-decoration:none;color:inherit}
 .bi-card{display:flex;flex-direction:column;gap:12px;margin:18px 0;padding:16px;border:1px solid var(--line);border-radius:14px;background:var(--panel)}
 .bi-card p{margin:0}
 .bi-card .el-done-acts{justify-content:flex-start;margin:0}
@@ -7570,6 +7575,7 @@ const FC_OUTILS = (() => {
     target: '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',
     award: '<path d="m15.477 12.89 1.515 8.526a.5.5 0 0 1-.81.47l-3.58-2.687a1 1 0 0 0-1.197 0l-3.586 2.686a.5.5 0 0 1-.81-.469l1.514-8.526"/><circle cx="12" cy="8" r="6"/>',
     check: '<circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>',
+    user: '<path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
     send: '<path d="M14.5 21.7a.5.5 0 0 0 .9 0l6.5-19a.5.5 0 0 0-.6-.6l-19 6.5a.5.5 0 0 0 0 .9l7.9 3.2a2 2 0 0 1 1.1 1.1z"/><path d="m21.9 2.1-10.9 10.9"/>'
   };
   window.FC_ICO = (n, s = 16) => `<svg class="ico" viewBox="0 0 24 24" width="${s}" height="${s}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICO[n] || ''}</svg>`;
@@ -11356,7 +11362,8 @@ window.addEventListener('resize', () => { });
     const mode = !nr ? 'honneur' : cn.ecrit >= cn.clic && cn.ecrit >= cn.honneur ? 'ecrit' : cn.clic >= cn.honneur ? 'clic' : 'honneur';
     const pct = s.total ? Math.round(ok / s.total * 100) : 0;
     if (!s.retry) prefs.res[s.d.id] = { ok, n: s.total, date: fmtDate(), sec, tot: (+old.tot || 0) + sec,
-      mode, val: nr ? Math.round((cn.clic + cn.ecrit) / nr * 100) / 100 : 0, nb: (+old.nb || 0) + 1, best: Math.max(+old.best || 0, pct) };
+      mode, val: nr ? Math.round((cn.clic + cn.ecrit) / nr * 100) / 100 : 0, nb: (+old.nb || 0) + 1, best: Math.max(+old.best || 0, pct),
+      nom: txtOf(nameOf(s.d)), niv: deckLevels(s.d) }; /* nom et niveaux : lus par le tableau de bord du professeur */
     else if (prefs.res[s.d.id]) prefs.res[s.d.id].tot = (+old.tot || 0) + sec;
     savePrefs();
     view = 'done'; showTop(true);
@@ -11628,10 +11635,14 @@ window.addEventListener('resize', () => { });
   const BI_API = () => window.FC_BILAN_API || '';
   const txtOf = h => { const t = document.createElement('div'); t.innerHTML = h; return t.textContent.trim(); };
   let bi = null; /* { classe: {id, nom, eleves}, code } pendant le choix du prénom */
+  /* Compte de l'élève (connexion faite dans le Laboratoire, même site proflesage.fr) : la progression est sauvegardée toute seule */
+  const compteLabo = () => { try { return window.LABO_API ? JSON.parse(localStorage.getItem('labo.compte')) : null; } catch (e) { return null; } };
   function biBanner() {
     if (!BI_API()) return '';
-    const m = prefs.bilan;
-    return `<button class="ps-banner bi-banner" data-el="bi-intro"><span class="ps-bicon">${FC_ICO('send', 24)}</span><span><b>Envoyer mon bilan à mon professeur</b><br><span class="ps-bsub">${m && m.date ? 'Dernier envoi le ' + esc(m.date) + '.' : 'Tes scores, ton test et tes points solides ou fragiles.'}</span></span></button>`;
+    const m = prefs.bilan, c = compteLabo();
+    if (c) return `<div class="ps-banner bi-banner bi-compte"><span class="ps-bicon">${FC_ICO('check', 24)}</span><span><b>${esc(c.prenom)} · ${esc(c.classe)}</b><br><span class="ps-bsub">Ta progression est sauvegardée automatiquement. <a href="/labo/">Ce n’est pas toi${NB}?</a></span></span></div>`;
+    const lien = window.LABO_API ? `<a class="ps-banner bi-banner" href="/labo/?retour=${encodeURIComponent(location.pathname)}"><span class="ps-bicon">${FC_ICO('user', 24)}</span><span><b>Me connecter</b><br><span class="ps-bsub">Choisis ta classe et ton prénom${NB}: ta progression sera sauvegardée et ton professeur la verra.</span></span></a>` : '';
+    return lien + `<button class="ps-banner bi-banner" data-el="bi-intro"><span class="ps-bicon">${FC_ICO('send', 24)}</span><span><b>Envoyer mon bilan à mon professeur</b><br><span class="ps-bsub">${m && m.date ? 'Dernier envoi le ' + esc(m.date) + '.' : 'Tes scores, ton test et tes points solides ou fragiles.'}</span></span></button>`;
   }
   function biCalc() {
     const lots = Object.entries(prefs.res || {}).map(([id, r]) => { const d = deckById(id); if (!d || !r || !r.n) return null;
@@ -11771,6 +11782,278 @@ window.addEventListener('resize', () => { });
   const lien = /^#lot-(.+)$/.exec(location.hash), lienLot = lien && deckById(decodeURIComponent(lien[1]));
   if (lienLot) deckPage(lienLot); else home();
 })();
+</script>
+<script>
+window.LABO_API='/labo/api';
+/* Fusion de deux états d'élève (ancien a, nouveau b) : rien de ce qui a été gagné ne se perd.
+   Utilisé par le serveur (api.mjs) et par la page (sync.js). État = { labo: {...}, fc: {...} } */
+(function (g) {
+  const RANG = s => !s ? 0 : s.etat === 'validee' ? 3 : s.etat === 'reussie' ? 2 : 1;
+  const jour = d => { const m = /^(\d\d)\/(\d\d)\/(\d{4})$/.exec(d || ''); return m ? +(m[3] + m[2] + m[1]) : 0; };
+  const obj = o => (o && typeof o === 'object' && !Array.isArray(o)) ? o : {};
+  function ceintures(a, b) {
+    const r = Object.assign({}, obj(a));
+    for (const [id, s] of Object.entries(obj(b))) {
+      const v = r[id];
+      if (!v || RANG(s) > RANG(v) || (RANG(s) === RANG(v) && (+s.score || 0) >= (+v.score || 0))) r[id] = s;
+    }
+    return r;
+  }
+  function prog(a, b) {
+    const r = Object.assign({}, obj(a));
+    for (const [k, s] of Object.entries(obj(b))) {
+      const v = r[k];
+      if (!v || (s && s.done && !v.done) || (s && s.done === v.done && (+s.score || 0) >= (+v.score || 0))) r[k] = s;
+    }
+    return r;
+  }
+  /* même jour : la série la plus avancée (plus de séries, puis plus de temps total) l'emporte ; à égalité, le nouveau */
+  const plusRecent = (s, v) => { s = obj(s); const d = jour(s.date) - jour(v.date); if (d) return d > 0;
+    const n = (+s.nb || 0) - (+v.nb || 0); if (n) return n > 0; return (+s.tot || 0) >= (+v.tot || 0); };
+  function res(a, b) {
+    const r = Object.assign({}, obj(a));
+    for (const [k, s] of Object.entries(obj(b))) { const v = r[k]; if (!v || plusRecent(s, v)) r[k] = s; }
+    return r;
+  }
+  function fusion(A, B) {
+    A = obj(A); B = obj(B);
+    const la = obj(A.labo), lb = obj(B.labo), fa = obj(A.fc), fb = obj(B.fc);
+    const pa = obj(la.parcours), pb = obj(lb.parcours);
+    const labo = Object.assign({}, la, lb, {
+      ceintures: ceintures(la.ceintures, lb.ceintures),
+      parcours: Object.assign({}, pa, pb, { prog: prog(pa.prog, pb.prog), diag: Object.assign({}, obj(pa.diag), obj(pb.diag)), last: pb.last || pa.last || null })
+    });
+    const fc = Object.assign({}, fa, fb, { res: res(fa.res, fb.res) });
+    if (fa.test && (!fb.test || jour(fa.test.date) > jour(fb.test.date))) fc.test = fa.test; /* le test le plus récent */
+    return { labo, fc };
+  }
+  g.LABO_MERGE = { fusion, RANG, jour };
+})(typeof globalThis !== 'undefined' ? globalThis : window);
+
+;
+/* ====================================================================
+   Sauvegarde en ligne (version Netlify seulement : window.LABO_API).
+   Page du Laboratoire : écran d'arrivée (code de classe → prénom → code secret),
+   puis envoi de la progression à chaque enregistrement. Page des flashcards :
+   envoi discret des scores (mode « satellite », sans écran).
+   Dans l'artefact Claude, LABO_API n'existe pas : rien ne change.
+   ==================================================================== */
+const LABO_SYNC = (function () {
+  const API = window.LABO_API || null;
+  const KC = 'labo.compte', KL = 'labo', KF = 'flashcards.eleve';
+  const { fusion } = window.LABO_MERGE;
+  const lire = k => { try { return JSON.parse(localStorage.getItem(k)) || null; } catch (e) { return null; } };
+  const ecrire = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { } };
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const NB = ' ';
+  let compte = lire(KC);
+  const etatLocal = () => ({ labo: lire(KL) || {}, fc: lire(KF) || {} });
+
+  async function appel(action, body, keepalive) {
+    const r = await fetch(API + '/' + action, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body || {}), keepalive: !!keepalive });
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok) { const e = new Error(d.erreur || 'Erreur réseau'); e.status = r.status; throw e; }
+    return d;
+  }
+
+  /* ---------- état affiché (pastille dans l'en-tête) ---------- */
+  let statut = '';
+  function pastille(s) {
+    statut = s || statut;
+    const el = document.getElementById('compte-etat'); if (!el) return;
+    el.textContent = { ok: 'Sauvegardé', envoi: 'Sauvegarde…', horsligne: 'Hors ligne : sera sauvegardé plus tard', expire: 'Reconnecte-toi' }[statut] || '';
+    el.dataset.s = statut;
+  }
+
+  /* ---------- envoi ---------- */
+  let dernier = '', minuterie = null, enCours = false;
+  async function envoyer(keepalive) {
+    if (!compte || enCours) return;
+    const e = etatLocal(), txt = JSON.stringify(e);
+    if (txt === dernier) return;
+    enCours = true; pastille('envoi');
+    try {
+      const d = await appel('sauver', { jeton: compte.jeton, etat: e }, keepalive);
+      dernier = txt; appliquer(d.etat); pastille('ok');
+      setTimeout(() => { if (JSON.stringify(etatLocal()) !== dernier) bientot(); }, 0); /* modifié pendant l'envoi */
+    } catch (err) {
+      if (err.status === 401) { pastille('expire'); deconnexion(true); }
+      else pastille('horsligne');
+    } finally { enCours = false; }
+  }
+  const bientot = () => { clearTimeout(minuterie); minuterie = setTimeout(envoyer, 1200); };
+
+  /* Ce que le serveur sait en plus (ceinture validée par le professeur, autre navigateur) :
+     on l'ajoute à l'état en mémoire SANS remplacer les objets (ceintures.js et parcours.js en gardent la référence). */
+  function appliquer(serveur) {
+    if (!serveur) return;
+    const m = fusion(etatLocal(), serveur);
+    const avant = JSON.stringify(etatLocal());
+    if (typeof LABO !== 'undefined' && LABO.S) {
+      const S = LABO.S;
+      Object.assign(S.ceintures, m.labo.ceintures || {});
+      if (m.labo.parcours) { Object.assign(S.parcours.prog, m.labo.parcours.prog || {}); Object.assign(S.parcours.diag, m.labo.parcours.diag || {}); }
+      ecrire(KL, S);
+    } else ecrire(KL, m.labo);
+    ecrire(KF, Object.assign(lire(KF) || {}, { res: m.fc.res, test: m.fc.test }));
+    const apres = JSON.stringify(etatLocal()); /* « dernier » n'est mis à jour qu'après un envoi réussi */
+    if (apres !== avant && typeof LABO !== 'undefined' && document.getElementById('vue')) LABO.route();
+  }
+
+  /* ---------- déconnexion : on vide la progression de ce navigateur ---------- */
+  function deconnexion(expire) {
+    const L = lire(KL) || {}, F = lire(KF) || {};
+    localStorage.removeItem(KC);
+    ecrire(KL, { theme: L.theme, dys: L.dys, niveau: L.niveau });
+    ecrire(KF, { lv: F.lv, dys: F.dys });
+    try { sessionStorage.removeItem('labo.invite'); if (expire) sessionStorage.setItem('labo.expire', '1'); } catch (e) { }
+    history.replaceState(null, '', location.pathname); location.reload();
+  }
+
+  /* ---------- écran d'arrivée ---------- */
+  let ecran = null, classe = null, eleve = null, codeClasse = '';
+  function cadre(html) {
+    if (!ecran) {
+      document.body.insertAdjacentHTML('afterbegin', '<div class="wrap" id="arrivee"><header class="top"><div class="brand"><div class="mark" aria-hidden="true">L<span>l</span></div><div><h1>Laboratoire de la langue</h1><small>Français au collège · M. Lesage</small></div></div></header><main id="arr-vue"></main></div>');
+      ecran = document.getElementById('arr-vue');
+      ecran.addEventListener('click', clic);
+      ecran.addEventListener('submit', e => { e.preventDefault(); clic({ target: e.target.querySelector('[data-a]') }); });
+    }
+    ecran.innerHTML = html;
+    const f = ecran.querySelector('input'); if (f) f.focus();
+  }
+  const msg = t => { const m = document.getElementById('arr-msg'); if (m) m.textContent = t || ''; };
+
+  function etapeClasse() {
+    let exp = false; try { exp = sessionStorage.getItem('labo.expire'); sessionStorage.removeItem('labo.expire'); } catch (e) { }
+    cadre(`<div class="page-h"><h2>Bienvenue${NB}!</h2><p>Connecte-toi pour retrouver ta progression, tes scores et tes ceintures sur n’importe quel ordinateur.</p></div>
+<form class="card arr-card"><label class="field">Code de ta classe<input id="arr-code" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Il est donné par ton professeur"></label>
+<div class="row"><button class="btn" type="submit" data-a="classe">Continuer</button></div>
+<p class="small arr-msg" id="arr-msg" role="alert">${exp ? 'Ta session a expiré' + NB + ': reconnecte-toi.' : ''}</p></form>
+<p class="small arr-invite"><a href="#" data-a="invite">Continuer sans me connecter</a> (ta progression restera seulement sur cet ordinateur).</p>`);
+  }
+  function etapePrenom() {
+    cadre(`<div class="page-h"><h2>${esc(classe.nom)}</h2><p>Qui es-tu${NB}?</p></div>
+<div class="arr-noms">${classe.eleves.map(e => `<button type="button" class="arr-nom" data-a="eleve" data-id="${esc(e.id)}">${esc(e.prenom)}</button>`).join('')}</div>
+<p class="small arr-msg" id="arr-msg" role="alert"></p>
+<p class="small"><a href="#" data-a="retour">← Changer de classe</a> · Ton prénom n’est pas dans la liste${NB}? Préviens ton professeur.</p>`);
+  }
+  function etapeCode(nouveau) {
+    cadre(`<div class="page-h"><h2>Bonjour ${esc(eleve.prenom)}${NB}!</h2><p>${nouveau
+      ? 'C’est ta première connexion. Choisis un <b>code secret de 4 chiffres</b> et retiens-le bien' + NB + ': il te servira à chaque connexion. Ne le dis à personne.'
+      : 'Tape ton code secret de 4 chiffres.'}</p></div>
+<form class="card arr-card"><label class="field">Code secret<input id="arr-pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off"></label>
+${nouveau ? '<label class="field">Tape-le une deuxième fois<input id="arr-pin2" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off"></label>' : ''}
+<div class="row"><button class="btn" type="submit" data-a="${nouveau ? 'creer' : 'pin'}">${nouveau ? 'Créer mon code' : 'Entrer'}</button></div>
+<p class="small arr-msg" id="arr-msg" role="alert"></p></form>
+<p class="small"><a href="#" data-a="prenoms">← Ce n’est pas moi</a>${nouveau ? '' : ' · Code oublié' + NB + '? Ton professeur peut le remettre à zéro.'}</p>`);
+  }
+
+  async function connexion(pin, nouveau) {
+    const d = await appel('connexion', { cl: classe.id, el: eleve.id, code: codeClasse, pin, nouveau });
+    if (d.nouveau) return etapeCode(true);
+    const id = classe.id + '/' + eleve.id, L = lire(KL) || {};
+    const local = { labo: L, fc: lire(KF) || {} };
+    const vide = e => !Object.keys((e.labo || {}).ceintures || {}).length && !Object.keys(((e.labo || {}).parcours || {}).prog || {}).length && !Object.keys((e.fc || {}).res || {}).length;
+    let etat;
+    if (L._compte === id) etat = fusion(d.etat, local);              /* même élève : on garde le meilleur des deux */
+    else if (!L._compte && vide(d.etat)) etat = fusion(d.etat, local); /* première connexion : on reprend ce qui a été fait sans compte */
+    else etat = d.etat;                                               /* sinon (autre élève sur cet ordinateur) : seulement le serveur */
+    etat.labo = Object.assign({}, etat.labo, { _compte: id, prenom: eleve.prenom, theme: L.theme, dys: L.dys });
+    if (!etat.labo.niveau) { const m = /([3456])/.exec(classe.nom); if (m) etat.labo.niveau = m[1]; }
+    etat.fc = Object.assign({}, etat.fc, { lv: etat.labo.niveau || (etat.fc || {}).lv, dys: L.dys });
+    ecrire(KL, etat.labo); ecrire(KF, etat.fc);
+    ecrire(KC, { cl: classe.id, el: eleve.id, prenom: d.prenom, classe: d.classe, jeton: d.jeton });
+    try { sessionStorage.removeItem('labo.invite'); } catch (e) { }
+    await appel('sauver', { jeton: d.jeton, etat }).catch(() => { });
+    const retour = new URLSearchParams(location.search).get('retour'); /* venu des flashcards : on y retourne */
+    if (retour && /^\/[a-z0-9/_-]*$/i.test(retour)) { location.href = retour; return; }
+    history.replaceState(null, '', location.pathname + '#accueil'); location.reload();
+  }
+
+  async function clic(e) {
+    const b = e.target && e.target.closest ? e.target.closest('[data-a]') : null; if (!b) return;
+    if (e.preventDefault) e.preventDefault();
+    const a = b.dataset.a;
+    try {
+      if (a === 'invite') { try { sessionStorage.setItem('labo.invite', '1'); } catch (x) { } document.getElementById('arrivee').remove(); ecran = null; return demarrer(); }
+      if (a === 'retour') return etapeClasse();
+      if (a === 'prenoms') return etapePrenom();
+      if (a === 'classe') {
+        codeClasse = document.getElementById('arr-code').value.trim(); if (!codeClasse) return;
+        msg('Recherche…'); classe = await appel('classe', { code: codeClasse }); return etapePrenom();
+      }
+      if (a === 'eleve') {
+        eleve = classe.eleves.find(x => x.id === b.dataset.id);
+        if (!classe.code) { msg('Connexion…'); return await connexion('', false); } /* sans code secret */
+        return etapeCode(!eleve.actif);
+      }
+      if (a === 'pin' || a === 'creer') {
+        const p = document.getElementById('arr-pin').value.trim();
+        if (!/^\d{4}$/.test(p)) return msg('Le code secret, c’est 4 chiffres.');
+        if (a === 'creer' && p !== document.getElementById('arr-pin2').value.trim()) return msg('Les deux codes ne sont pas pareils. Recommence.');
+        msg('Connexion…'); return await connexion(p, a === 'creer');
+      }
+    } catch (err) { msg(err.status ? err.message : 'Pas de connexion à Internet. Réessaie.'); }
+  }
+
+  /* ---------- pastille de l'élève dans l'en-tête ---------- */
+  function entete() {
+    const r = document.querySelector('#labo .top-right'); if (!r || document.getElementById('compte')) return;
+    const html = compte
+      ? `<div class="compte" id="compte"><button type="button" class="compte-b" id="compte-b" aria-expanded="false"><span class="compte-n">${esc(compte.prenom)}</span><span class="compte-c">${esc(compte.classe)}</span></button>
+<div class="compte-menu" id="compte-menu" hidden><p class="small"><span id="compte-etat"></span></p><button type="button" class="btn" id="compte-out">Ce n’est pas moi / Se déconnecter</button></div></div>`
+      : `<div class="compte" id="compte"><button type="button" class="compte-b" id="compte-in"><span class="compte-n">Se connecter</span></button></div>`;
+    r.insertAdjacentHTML('afterbegin', html);
+    const m = document.getElementById('compte-menu');
+    if (compte) {
+      document.getElementById('compte-b').addEventListener('click', ev => { m.hidden = !m.hidden; ev.currentTarget.setAttribute('aria-expanded', String(!m.hidden)); });
+      document.getElementById('compte-out').addEventListener('click', () => { envoyer(); setTimeout(() => deconnexion(false), 400); });
+      document.addEventListener('click', ev => { if (!m.hidden && !ev.target.closest('#compte')) m.hidden = true; });
+      pastille();
+    } else document.getElementById('compte-in').addEventListener('click', () => { try { sessionStorage.removeItem('labo.invite'); } catch (x) { } location.reload(); });
+  }
+
+  /* ---------- démarrage ---------- */
+  function demarrer() {
+    LABO.start(); entete();
+    if (!compte) return;
+    window.addEventListener('labo-save', bientot);
+    window.addEventListener('focus', bientot);
+    window.addEventListener('pageshow', bientot);
+    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') envoyer(true); });
+    setInterval(envoyer, 15000);
+    appel('charger', { jeton: compte.jeton }).then(d => { appliquer(d.etat); pastille('ok'); envoyer(); })
+      .catch(err => { if (err.status === 401) deconnexion(true); else pastille('horsligne'); });
+  }
+  function start() {
+    if (!API) return LABO.start();
+    let invite = false; try { invite = sessionStorage.getItem('labo.invite') === '1'; } catch (e) { }
+    if (compte || invite) return demarrer();
+    const L = lire(KL) || {};
+    if (L.dys) document.documentElement.classList.add('dys');
+    if (L.theme) document.documentElement.setAttribute('data-theme', L.theme);
+    etapeClasse();
+  }
+  /* Page des flashcards : envoi discret des scores */
+  function satellite() {
+    if (!API || !compte) return;
+    dernier = ''; /* premier envoi à chaque ouverture : les séries faites avant la connexion partent aussi */
+    /* progression faite sur un autre appareil : on la récupère, puis on recharge une fois pour que l'appli la montre */
+    appel('charger', { jeton: compte.jeton }).then(d => {
+      const avant = JSON.stringify(lire(KF) || {}); appliquer(d.etat);
+      let fait = false; try { fait = sessionStorage.getItem('labo.recharge') === '1'; } catch (e) { }
+      if (JSON.stringify(lire(KF) || {}) !== avant && !fait) { try { sessionStorage.setItem('labo.recharge', '1'); } catch (e) { } location.reload(); }
+      else envoyer();
+    }).catch(err => { if (err.status === 401) { localStorage.removeItem(KC); } });
+    setInterval(envoyer, 5000);
+    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') envoyer(true); });
+    window.addEventListener('pagehide', () => envoyer(true));
+  }
+  return { start, satellite, deconnexion };
+})();
+
+LABO_SYNC.satellite();
 </script>
 <script>
 if ('serviceWorker' in navigator && location.protocol === 'https:') {

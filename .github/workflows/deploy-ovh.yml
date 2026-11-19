@@ -30,6 +30,14 @@ jobs:
             if [ -n "${!n}" ]; then echo "$n : présent"; else echo "$n : absent"; fi
           done
 
+      - name: Mot de passe enseignant du Laboratoire (config.php créé ici, jamais dans le dépôt)
+        env:
+          PROF_MDP: ${{ secrets.PROF_MDP }}
+        run: |
+          if [ -z "$PROF_MDP" ]; then echo "Secret PROF_MDP absent : l'espace professeur du Laboratoire restera fermé."; exit 1; fi
+          php -r 'file_put_contents("labo/api/config.php", "<?php\nreturn " . var_export(["prof_mdp" => getenv("PROF_MDP"), "code_eleve" => false], true) . ";\n");'
+          php -l labo/api/config.php
+
       - name: Envoi FTP vers www/
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
