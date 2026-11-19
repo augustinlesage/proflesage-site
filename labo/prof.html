@@ -1637,6 +1637,8 @@ const LABO_TDB = (function () {
     return CACHE;
   }
   async function classe(ctx, force) {
+    if (!ctx.clSel || !ctx.classe()) return ctx.cadre(`<div class="page-h"><h2>Tableau de bord</h2><p>Aucune classe pour l’instant. Importe une sauvegarde (par exemple les données de l’ancien serveur) ou crée une classe dans « Classes et élèves ».</p></div>
+<div class="card p-reg"><div class="row"><button class="btn" type="button" data-x="importer">Importer une sauvegarde</button><button class="btn ghost" type="button" data-o="classes">Créer une classe</button></div></div>`);
     ctx.cadre('<p class="muted">Chargement du tableau de bord…</p>');
     const { A, c } = await charger(ctx, force);
     const L = c.eleves.map(e => ({ e, a: A[e.id] }));
