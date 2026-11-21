@@ -9116,9 +9116,21 @@ const DECK_CATS = [
 /* Liens vers d'autres artefacts, affichés comme des lots dans une rubrique (12/11/2026, Augustin : « Lire au collège » dans Divers).
    Prof : ligne de la barre latérale qui ouvre l'artefact dans un nouvel onglet ; élève : vignette dans la rubrique. Visibles quel que soit le niveau. */
 const CAT_LINKS = {
-  divers: [{ id: 'lire-au-college', title: 'Lire au collège', sub: 'Un guide pour choisir un livre', url: 'https://proflesage.fr/lire/' }]
+  divers: [{ id: 'lire-au-college', title: 'Lire au collège', sub: 'Un guide pour choisir un livre', url: 'https://proflesage.fr/lire/' }],
+  /* jeux de mots en ligne (21/11/2026) : simples liens, nouvel onglet */
+  jeux: [
+    { id: 'cemantix', title: 'Cémantix', sub: 'Trouver le mot secret par le sens', url: 'https://cemantix.certitudes.org', logo: 'cemantix' },
+    { id: 'wordle', title: 'Wordle', sub: 'Trouver un mot de cinq lettres', url: 'https://wordle.louan.me', logo: 'grille' },
+    { id: 'sutom', title: 'Sutom', sub: 'Le mot du jour, lettre par lettre', url: 'https://sutom.nocle.fr', logo: 'sutom' }
+  ]
 };
 const LIRE_LOGO = '<svg viewBox="0 0 34 34" aria-hidden="true"><rect x="2" y="24" width="30" height="8" rx="2" fill="#f7cc73"/><path d="M5 24 L17 8 L29 24 Z" fill="#b27560"/><path d="M17 8 L21 24 L13 24 Z" fill="#fbf5ee"/><path d="M9 14 q8 -6 14 0" stroke="#373e56" stroke-width="2" fill="none" stroke-linecap="round"/></svg>';
+/* pictos des liens (clé « logo » de CAT_LINKS ; par défaut LIRE_LOGO) */
+const LINK_LOGOS = {
+  cemantix: '<svg viewBox="0 0 34 34" aria-hidden="true"><rect x="13" y="3" width="8" height="21" rx="4" fill="#fbf5ee" stroke="#373e56" stroke-width="2"/><circle cx="17" cy="26" r="6" fill="#c15e6a" stroke="#373e56" stroke-width="2"/><rect x="15.5" y="11" width="3" height="13" fill="#c15e6a"/><path d="M23 8h4M23 13h3M23 18h4" stroke="#373e56" stroke-width="2" stroke-linecap="round"/></svg>',
+  grille: '<svg viewBox="0 0 34 34" aria-hidden="true"><g stroke="#373e56" stroke-width="1.5"><rect x="2" y="7" width="5.4" height="5.4" rx="1" fill="#6aaa64"/><rect x="8.4" y="7" width="5.4" height="5.4" rx="1" fill="#c9b458"/><rect x="14.3" y="7" width="5.4" height="5.4" rx="1" fill="#d3d6da"/><rect x="20.2" y="7" width="5.4" height="5.4" rx="1" fill="#6aaa64"/><rect x="26.6" y="7" width="5.4" height="5.4" rx="1" fill="#d3d6da"/><rect x="2" y="14.3" width="5.4" height="5.4" rx="1" fill="#6aaa64"/><rect x="8.4" y="14.3" width="5.4" height="5.4" rx="1" fill="#6aaa64"/><rect x="14.3" y="14.3" width="5.4" height="5.4" rx="1" fill="#c9b458"/><rect x="20.2" y="14.3" width="5.4" height="5.4" rx="1" fill="#6aaa64"/><rect x="26.6" y="14.3" width="5.4" height="5.4" rx="1" fill="#d3d6da"/><rect x="2" y="21.6" width="5.4" height="5.4" rx="1" fill="#6aaa64"/><rect x="8.4" y="21.6" width="5.4" height="5.4" rx="1" fill="#6aaa64"/><rect x="14.3" y="21.6" width="5.4" height="5.4" rx="1" fill="#6aaa64"/><rect x="20.2" y="21.6" width="5.4" height="5.4" rx="1" fill="#6aaa64"/><rect x="26.6" y="21.6" width="5.4" height="5.4" rx="1" fill="#6aaa64"/></g></svg>',
+  sutom: '<svg viewBox="0 0 34 34" aria-hidden="true"><g stroke="#fbf5ee" stroke-width="1"><rect x="2" y="9" width="6" height="7" fill="#e7002a"/><rect x="8" y="9" width="6" height="7" fill="#0077c7"/><rect x="14" y="9" width="6" height="7" fill="#0077c7"/><rect x="20" y="9" width="6" height="7" fill="#0077c7"/><rect x="26" y="9" width="6" height="7" fill="#0077c7"/><rect x="2" y="16" width="6" height="7" fill="#e7002a"/><rect x="8" y="16" width="6" height="7" fill="#e7002a"/><rect x="14" y="16" width="6" height="7" fill="#0077c7"/><rect x="20" y="16" width="6" height="7" fill="#0077c7"/><rect x="26" y="16" width="6" height="7" fill="#e7002a"/></g><circle cx="17" cy="19.5" r="2.6" fill="#ffbd00"/><circle cx="23" cy="12.5" r="2.6" fill="#ffbd00"/></svg>'
+};
 /* Rubrique par défaut de chaque lot ; un lot inconnu (ou ancien réglage « Flashcards ») va dans cette table, sinon dans « Autres » */
 const DEFAULT_CAT = {
   homophones: ['homophones', 'homophones-2', 'homophones-3', 'homophones-4', 'homophones-5', 'homophones-6', 'homophones-7'],
@@ -11198,7 +11210,7 @@ window.addEventListener('resize', () => { });
     };
     /* lien vers un autre artefact (CAT_LINKS, ex. « Lire au collège » dans Divers) : s'ouvre dans un nouvel onglet */
     const linkTile = l => `<a class="el-tile el-link-tile" href="${l.url}" target="_blank" rel="noopener">
-        <span class="el-thumb"><span class="el-link-thumb" style="width:${Math.round(tw)}px;height:${Math.round(tw * 0.62)}px">${LIRE_LOGO}<b>${esc(l.title)}</b></span></span>
+        <span class="el-thumb"><span class="el-link-thumb" style="width:${Math.round(tw)}px;height:${Math.round(tw * 0.62)}px">${(l.logo && LINK_LOGOS[l.logo]) || LIRE_LOGO}<b>${esc(l.title)}</b></span></span>
         <span class="el-tname">${esc(l.title)} ↗</span>
         <span class="el-tmeta">${esc(l.sub)}</span>
       </a>`;
@@ -12014,10 +12026,42 @@ ${nouveau ? '<label class="field">Tape-le une deuxième fois<input id="arr-pin2"
     } else document.getElementById('compte-in').addEventListener('click', () => { try { sessionStorage.removeItem('labo.invite'); } catch (x) { } location.reload(); });
   }
 
+  /* ---------- « Mes badges » : Laboratoire, ceintures et badges du Cahier de suivi (Augustin, 19/11/2026) ----------
+     Le serveur calcule les badges du Laboratoire et garde la copie des badges du Cahier envoyée par le professeur. */
+  const frJ = d => { const m = /^(\d{4})-(\d\d)-(\d\d)/.exec(d || ''); return m ? `${m[3]}/${m[2]}/${m[1]}` : ''; };
+  const plur = (n, m) => `${n}${NB}${m}${n > 1 ? 's' : ''}`;
+  function vueBadges() {
+    return `<section class="mb-vue"><h2>Mes badges</h2><p class="small" id="mb-etat">Chargement de tes badges…</p><div id="mb-corps"></div></section>`;
+  }
+  async function remplirBadges() {
+    const LB = typeof LABO_BADGES !== 'undefined' ? LABO_BADGES : null, z = document.getElementById('mb-corps'), etat = document.getElementById('mb-etat');
+    if (!z || !LB) return;
+    let d; try { d = await appel('badges', { jeton: compte.jeton }); }
+    catch (err) { if (err.status === 401) return deconnexion(true); etat.textContent = 'Impossible de charger tes badges pour le moment. Réessaie plus tard.'; return; }
+    const it = (b, ok, date, nb) => `<div class="bg-it${ok ? '' : ' off'}" title="${esc(b.lib + (b.desc ? ' : ' + b.desc : ''))}">${LB.svg(b, { taille: 76, verrou: !ok, nb: nb || 0 })}<b>${esc(b.lib)}</b><small>${ok && frJ(date) ? (nb > 1 ? `${nb} fois · ` : '') + 'le ' + esc(frJ(date)) : esc(b.desc || '')}</small></div>`;
+    const grille = l => `<div class="bg-grille">${l.join('')}</div>`;
+    const lab = d.labo || {}, C = d.cahier;
+    let h = '';
+    if (C && (C.badges || []).length + (C.trophees || []).length) {
+      const cats = [...new Set((C.badges || []).map(b => b.cat || 'Badges'))];
+      h += `<h3 class="bg-h">Cahier de suivi <span>${plur(C.n, 'badge')} · ${C.dif}${NB}différent${C.dif > 1 ? 's' : ''}${C.actif ? ` · ${plur(C.pass, 'passeport')} complet${C.pass > 1 ? 's' : ''}` : ''}</span></h3>`;
+      h += grille(cats.flatMap(c => C.badges.filter(b => (b.cat || 'Badges') === c).map(b => it(b, true, b.date, b.n))).concat((C.trophees || []).map(b => it(b, true, '', 0))));
+    } else h += `<h3 class="bg-h">Cahier de suivi</h3><p class="small">Pas encore de badge du Cahier de suivi${C ? '' : ' ici'}. Ils apparaîtront quand ton professeur t’en donnera.</p>`;
+    const k1 = LB.LAB.filter(b => lab[b.id]).length, k2 = LB.LB.filter(b => lab[b.id]).length;
+    h += `<h3 class="bg-h">Laboratoire <span>${k1}/${LB.LAB.length}</span></h3>` + grille(LB.LAB.map(b => it(b, !!lab[b.id], lab[b.id])));
+    h += `<h3 class="bg-h">Trophées des ceintures <span>${k2}/${LB.LB.length}</span></h3>` + grille(LB.LB.map(b => it(b, !!lab[b.id], lab[b.id])));
+    etat.textContent = 'Les badges en couleur sont obtenus ; les gris sont encore à gagner.';
+    z.innerHTML = h;
+  }
   /* ---------- démarrage ---------- */
   function demarrer() {
+    if (compte && LABO.vues) LABO.vues.badges = h => h === 'badges' ? vueBadges() : null;
     LABO.start(); entete();
     if (!compte) return;
+    const nav = document.getElementById('nav');
+    if (nav && !nav.querySelector('[data-r="badges"]')) { nav.insertAdjacentHTML('beforeend', '<a href="#badges" data-r="badges">Mes badges</a>'); if (location.hash === '#badges') nav.lastElementChild.setAttribute('aria-current', 'page'); }
+    document.addEventListener('labo:vue', ev => { if (ev.detail === 'badges') remplirBadges(); });
+    if (location.hash === '#badges') remplirBadges();
     window.addEventListener('labo-save', bientot);
     window.addEventListener('focus', bientot);
     window.addEventListener('pageshow', bientot);
