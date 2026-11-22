@@ -2905,14 +2905,14 @@ const LABO = (function () {
   const vues = {};
   const RUBRIQUES = [
     ['accueil', 'Accueil'], ['parcours', 'Parcours'], ['approfondissement', 'Approfondissement'],
-    ['entrainements', 'Entraînements'], ['ceintures', 'Ceintures'], ['passeport', 'Mon passeport'], ['memos', 'Mémos']
+    ['entrainements', 'Entraînements'], ['ceintures', 'Ceintures'], ['badges', 'Badges'], ['memos', 'Mémos']
   ];
   function rubriqueDe(h) {
     if (!h || h === 'accueil') return 'accueil';
     if (h === 'memos') return 'memos';
     if (/^(parcours|diag|etape)/.test(h)) return 'parcours';
-    if (h === 'passeport' || h === 'badges') return 'passeport'; /* « Mon passeport » : ceintures + badges (Augustin, 22/11/2026) */
-    if (/^(ceinture|test)/.test(h)) return 'ceintures';
+    if (h === 'badges') return 'badges'; /* onglet « Badges » (Augustin, 22/11/2026) */
+    if (/^(ceinture|test|passeport)/.test(h)) return 'ceintures';
     return h;
   }
 
@@ -3085,6 +3085,10 @@ const LABO = (function () {
     ['Texte à corriger', 'Retrouver les homophones fautifs d’un court texte.', 'orthographe'],
     ['Vocabulaire (d’après Voca)', 'Étymologie, familles de mots, registres, synonymes…', 'lexique']
   ];
+  /* Onglet « Badges » (Augustin, 22/11/2026) : trophées des ceintures, badges du Laboratoire et du Cahier de suivi (obtenus en couleur, à gagner en gris).
+     Rempli dans #pp-badges par serveur/sync.js quand l'élève est connecté ; les ceintures elles-mêmes restent dans l'onglet Ceintures (passeport). */
+  vues.badges = h => h === 'badges' ? `<div class="page-h"><h2>Badges</h2><p>${S.prenom ? esc(S.prenom) + ' · ' : ''}Tous les badges à gagner : en couleur ceux que tu as obtenus, en gris ceux qui restent.</p></div>
+    <div id="pp-badges"><p class="empty">Connecte-toi au Laboratoire pour voir tes badges.</p></div>` : null;
   vues.appro = h => {
     if (h !== 'approfondissement') return null;
     return `<div class="page-h"><h2>Approfondissement</h2><p>Les exercices qui répondent aux besoins repérés par le parcours, triés par niveau et par thème. Cette rubrique est en construction${NB}: voici ce qui arrive.</p></div>
@@ -3731,11 +3735,9 @@ const LABO = (function () {
 
   function vuePasseport() {
     const lignes = Object.keys(C).filter(id => obtenue(id) && ceinture(id)).map(id => [ceinture(id), C[id]]);
-    /* « Mon passeport » (Augustin, 22/11/2026) : un seul onglet pour les ceintures et les badges ; les badges sont ajoutés dans #pp-badges par sync.js (élève connecté) */
-    return `<div class="page-h"><h2>Mon passeport</h2><p>${S.prenom ? esc(S.prenom) + ' · ' : ''}Tes ceintures réussies, avec leur date et leur code de contrôle, puis tous tes badges.</p></div>
-    <h3 class="bg-h pp-h">Mes ceintures <span>${lignes.length}</span></h3>
+    return `<nav class="crumbs"><a href="#ceintures">Ceintures</a> › Passeport</nav>
+    <div class="page-h"><h2>Mon passeport des ceintures</h2><p>${S.prenom ? esc(S.prenom) + ' · ' : ''}Toutes tes ceintures réussies, avec leur date et leur code de contrôle.</p></div>
     ${lignes.length ? `<div class="card passeport tw"><table><thead><tr><th>Ceinture</th><th>Échelle</th><th>Réussie le</th><th>Score</th><th>Code</th><th>État</th></tr></thead><tbody>${lignes.map(([b, s]) => `<tr><td>${beltHTML(b.c, b.k === 7 ? 'expert' : '', '', b.nom + (b.niveau ? ' ' + niv(b.niveau) : ''))}</td><td>${esc(b.e.nom)}</td><td class="num">${esc(s.date)}</td><td class="num">${s.score}/${s.total}</td><td><span class="code" style="font-size:.9rem;padding:2px 8px">${esc(s.code)}</span></td><td>${s.etat === 'validee' ? `<span class="pill ok">Validée le ${esc(s.valide)}</span>` : '<span class="pill warn">À faire valider</span>'}</td></tr>`).join('')}</tbody></table></div>` : '<p class="empty">Pas encore de ceinture. <a href="#ceintures">Choisis ta première ceinture.</a></p>'}
-    <div id="pp-badges"></div>
     <details class="card"><summary><b>Professeur${NB}: vérifier un code</b></summary>
       <p class="small muted">Recalcule le code à partir du prénom, de la ceinture, de la date et du score.</p>
       <div class="row"><label class="field">Prénom<input id="v-prenom"></label><label class="field">Ceinture<select id="v-id" style="font:inherit;padding:8px;border-radius:8px;border:1px solid var(--line);background:var(--paper);color:var(--ink)">${Object.keys(BANQUES).map(id => `<option value="${id}">${esc(ceinture(id).nomComplet)}</option>`).join('')}</select></label><label class="field">Date (jj/mm/aaaa)<input id="v-date" placeholder="${today()}"></label><label class="field">Score<input id="v-score" inputmode="numeric" placeholder="9"></label><label class="field">Code<input id="v-code"></label><button class="btn small" type="button" data-c="verifier">Vérifier</button></div><p class="small" id="v-msg"></p></details>`;
@@ -4137,9 +4139,9 @@ ${nouveau ? '<label class="field">Tape-le une deuxième fois<input id="arr-pin2"
     } else document.getElementById('compte-in').addEventListener('click', () => { try { sessionStorage.removeItem('labo.invite'); } catch (x) { } location.reload(); });
   }
 
-  /* ---------- « Mon passeport » : ceintures (ceintures.js) + badges du Laboratoire, trophées des ceintures et badges du Cahier de suivi ----------
+  /* ---------- onglet « Badges » (labo.js vues.badges) : badges du Laboratoire, trophées des ceintures et badges du Cahier de suivi ----------
      (19/11/2026 onglet « Mes badges » ; 22/11/2026, Augustin : « faire apparaître les badges du cahier de suivi en gris, et fusionner les ceintures
-     et les badges dans un seul onglet Mon passeport »). Le serveur calcule les badges du Laboratoire et garde la copie envoyée par le Cahier :
+     et les badges dans un seul onglet Mon passeport », puis : « renomme en Badges et supprime la partie sur les ceintures »). Le serveur calcule les badges du Laboratoire et garde la copie envoyée par le Cahier :
      badges obtenus de chaque élève + catalogue complet (catégories, badges, trophées) pour montrer en gris ceux qui restent à gagner. */
   const frJ = d => { const m = /^(\d{4})-(\d\d)-(\d\d)/.exec(d || ''); return m ? `${m[3]}/${m[2]}/${m[1]}` : ''; };
   const plur = (n, m) => `${n}${NB}${m}${n > 1 ? 's' : ''}`;
@@ -4180,13 +4182,10 @@ ${nouveau ? '<label class="field">Tape-le une deuxième fois<input id="arr-pin2"
   }
   /* ---------- démarrage ---------- */
   function demarrer() {
-    /* ancien onglet « Mes badges » : renvoyé vers « Mon passeport » */
-    if (location.hash === '#badges') history.replaceState(null, '', '#passeport');
-    window.addEventListener('hashchange', () => { if (location.hash === '#badges') location.replace('#passeport'); });
     LABO.start(); entete();
     if (!compte) return;
-    document.addEventListener('labo:vue', ev => { if (ev.detail === 'passeport') remplirBadges(); });
-    if (location.hash === '#passeport') remplirBadges();
+    document.addEventListener('labo:vue', ev => { if (ev.detail === 'badges') remplirBadges(); });
+    if (location.hash === '#badges') remplirBadges();
     window.addEventListener('labo-save', bientot);
     window.addEventListener('focus', bientot);
     window.addEventListener('pageshow', bientot);
