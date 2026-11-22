@@ -447,6 +447,9 @@ html.dys{--ct:#1d1d1d}
 .nv-table .nv-dom th{background:var(--soft);color:var(--brand);font-size:12.5px;text-transform:uppercase;letter-spacing:.05em;padding-top:10px}
 .nv-new{display:inline-block;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;padding:0 6px;border-radius:99px;background:var(--acc);color:var(--acc-ink);vertical-align:1px}
 .nv-none{color:var(--muted)}
+.nv-det td{padding:4px 10px 10px;background:var(--panel)}.nv-det summary{cursor:pointer;color:var(--brand);font-size:12.5px;font-weight:600;padding:4px 0}
+.nv-mini{border-collapse:collapse;width:100%;font-size:12.5px;margin-top:4px}.nv-mini th,.nv-mini td{border-bottom:1px solid var(--line);padding:4px 8px;text-align:left;vertical-align:top}.nv-mini thead th{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);background:none;position:static}
+.nv-st{font-size:11.5px;white-space:nowrap}.nv-st-N{font-weight:700;color:var(--brand)}.nv-st-A{font-style:italic}.nv-st-R{color:var(--muted)}
 .nv-lots{display:flex;flex-wrap:wrap;gap:4px}
 .nv-lot{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:99px;padding:2px 9px;font:inherit;font-size:12px;cursor:pointer;text-align:left}
 .nv-lot:hover,.nv-lot:focus-visible{border-color:var(--brand);color:var(--brand)}
@@ -3101,7 +3104,7 @@ function aboutHTML(eleve) {
 
 
   const NOTIONS = [
-  { dom: 'La phrase et ses constituants', rows: [
+  { dom: 'La phrase, ses fonctions et le texte', ref: 'P', rows: [
     { n: 'Verbe conjugué et sujet', l: {
       6: 'Repérer à coup sûr le verbe conjugué, y compris dans les cas difficiles (verbe pronominal, négation, temps composés). Sujet composé de plusieurs GN, sujet inversé. Manipulations : <i>c’est… qui</i>, remplacement par un pronom.',
       5: '+Sujet séparé du verbe par un complément, un pronom ou un groupe nominal.',
@@ -3120,12 +3123,6 @@ function aboutHTML(eleve) {
       4: '+CC de conséquence.',
       3: '+Tous les CC (dont opposition, concession, condition, comparaison).' },
       lots: ['fonctions-6e', 'fonctions-5e', 'fonctions'] },
-    { n: 'Le groupe nominal et ses expansions', l: {
-      6: 'Distinguer sans ambiguïté l’adjectif (ou groupe adjectival) épithète et le groupe nominal prépositionnel complément du nom. Repérer le GN quelle que soit sa fonction.',
-      5: '+Proposition subordonnée relative : nature du pronom relatif, lien avec son antécédent.',
-      4: '+Apposition, à distinguer de l’épithète et du complément du nom.',
-      3: '+Fonction du pronom relatif dans la subordonnée.' },
-      lots: ['fonctions-6e', 'fonctions-5e', 'fonctions', 'natures-difficulte'] },
     { n: 'Types et formes de phrases', l: {
       6: 'Trois types (déclarative, interrogative, impérative) ; formes négative et exclamative.',
       5: '+Forme passive. Rôle syntaxique des signes de ponctuation.',
@@ -3138,20 +3135,25 @@ function aboutHTML(eleve) {
       4: '+Subordonnée relative ou conjonctive ; interrogative indirecte (<i>Je me demande s’il viendra</i>).',
       3: '+Subordonnées infinitive et participiale ; fonction des subordonnées dans la phrase.' },
       lots: ['la-phrase-6e', 'la-phrase-5e', 'la-phrase', 'propositions-analyse', 'propositions-crochets'] },
-    { n: 'Voix active et voix passive', l: {
-      6: '',
-      5: '+Identifier la forme passive.',
-      4: '+Construire la voix passive ; complément d’agent.',
-      3: 'Analyser les effets de sens de l’actif et du passif.' },
-      lots: ['voix-active-passive'] }] },
-  { dom: 'Les classes de mots', rows: [
     { n: 'Natures des mots', l: {
       6: 'Nom commun et propre, verbe, adjectif, déterminant (article défini et indéfini, possessif, démonstratif), pronom (pronom personnel et sa fonction), adverbe, préposition, conjonctions de coordination et de subordination.',
       5: '+Article partitif ; déterminants interrogatifs, exclamatifs, indéfinis, numéraux ; pronom relatif.',
       4: '+Pronoms démonstratifs et possessifs ; degrés de l’adjectif (comparatif, superlatif) ; toutes les conjonctions de coordination, prépositions les plus fréquentes.',
       3: '+Tous les autres pronoms : indéfinis, interrogatifs, adverbiaux (<i>en</i>, <i>y</i>) et relatifs.' },
-      lots: ['natures-de-mots-6e', 'natures-de-mots', 'natures-difficulte', 'analyse-grammaticale'] }] },
-  { dom: 'Le verbe', rows: [
+      lots: ['natures-de-mots-6e', 'natures-de-mots', 'natures-difficulte', 'analyse-grammaticale'] },
+    { n: 'Énonciation et paroles rapportées', l: {
+      6: 'Insérer un court dialogue dans un récit (dès le CM) ; pronoms personnels et leur antécédent.',
+      5: '+Situation d’énonciation (qui parle à qui, où, quand) ; paroles rapportées au discours direct.',
+      4: '+Paroles rapportées au discours indirect.',
+      3: '+Discours indirect libre ; marques de modalisation.' },
+      lots: ['discours-rapporte'] },
+    { n: 'Organisation du texte : reprises et connecteurs', l: {
+      6: 'Cohérence du texte ; mettre un pronom personnel en relation avec son antécédent.',
+      5: 'Marques d’organisation : mise en page, ponctuation, indicateurs de temps, de lieu, de cause.',
+      4: '+Éléments de reprise ; indicateurs de conséquence.',
+      3: '+Tous les connecteurs.' },
+      lots: ['reprises-pronominales-6e', 'reprises-pronominales', 'connecteurs-logiques-6e', 'connecteurs-logiques', 'choisir-la-suite'] }] },
+  { dom: 'Le verbe', ref: 'V', rows: [
     { n: 'Conjugaison', l: {
       6: '+Impératif présent et conditionnel présent à mémoriser (<i>être</i>, <i>avoir</i>, 1ᵉʳ et 2ᵉ groupes, <i>faire, aller, dire, venir, pouvoir, voir, vouloir, prendre</i>). Temps composés consolidés (passé composé, plus-que-parfait : auxiliaire + participe passé). Marques de temps et de personne des temps du CM (présent, imparfait, futur, passé simple) ; variations du radical (<i>-cer, -ger, -yer, -eler, -eter</i>).',
       5: '+Les quatre temps simples et les quatre temps composés de l’indicatif, dont futur antérieur et passé antérieur ; subjonctif présent. Règles de formation des temps simples (indicatif, conditionnel, impératif).',
@@ -3163,8 +3165,20 @@ function aboutHTML(eleve) {
       5: '+Premier plan et arrière-plan (passé simple / imparfait) ; emplois de l’indicatif et de l’impératif.',
       4: '+Aspect : accompli / non accompli, borné / non borné. Emplois du conditionnel ; du subjonctif pour un souhait, un désir, un ordre, un doute.',
       3: '+Subjonctif après certaines conjonctions (<i>bien que</i>, <i>pour que</i>, <i>à condition que</i>…). Approfondissement de l’aspect.' },
-      lots: ['temps-modes', 'temps-valeurs', 'futur-conditionnel', 'conjugaison-modes'] }] },
-  { dom: 'L’orthographe', rows: [
+      lots: ['temps-modes', 'temps-valeurs', 'futur-conditionnel', 'conjugaison-modes'] },
+    { n: 'Voix active et voix passive', l: {
+      6: '',
+      5: '+Identifier la forme passive.',
+      4: '+Construire la voix passive ; complément d’agent.',
+      3: 'Analyser les effets de sens de l’actif et du passif.' },
+      lots: ['voix-active-passive'] }] },
+  { dom: 'Le groupe nominal et les accords', ref: 'G', rows: [
+    { n: 'Le groupe nominal et ses expansions', l: {
+      6: 'Distinguer sans ambiguïté l’adjectif (ou groupe adjectival) épithète et le groupe nominal prépositionnel complément du nom. Repérer le GN quelle que soit sa fonction.',
+      5: '+Proposition subordonnée relative : nature du pronom relatif, lien avec son antécédent.',
+      4: '+Apposition, à distinguer de l’épithète et du complément du nom.',
+      3: '+Fonction du pronom relatif dans la subordonnée.' },
+      lots: ['fonctions-6e', 'fonctions-5e', 'fonctions', 'natures-difficulte'] },
     { n: 'Accords dans le groupe nominal et accord du verbe', l: {
       6: 'Chaîne d’accords dans le GN ; pluriels irréguliers (<i>-x</i>, <i>-al / -aux</i>) et marques du féminin ; accord sujet-verbe (sujets multiples ou inversés) et sujet-attribut.',
       5: 'Chaînes d’accord maîtrisées ; accord du verbe dans quelques cas complexes.',
@@ -3176,20 +3190,27 @@ function aboutHTML(eleve) {
       5: 'Avec <i>être</i> ; avec <i>avoir</i> quand le COD est placé après (pas d’accord) ou est un pronom personnel placé avant (<i>je les ai vus</i>).',
       4: '+Avec <i>avoir</i> quand le COD est placé avant ou est un pronom personnel.',
       3: '+Avec <i>avoir</i> quand le COD est un pronom relatif (<i>les fleurs que j’ai cueillies</i>).' },
-      lots: ['accords-participe-passe-6e', 'accords-participe-passe-5e', 'accords-participe-passe-4e', 'accords-participe-passe'] },
+      lots: ['accords-participe-passe-6e', 'accords-participe-passe-5e', 'accords-participe-passe-4e', 'accords-participe-passe'] }] },
+  { dom: 'Les homophones et l’orthographe lexicale', ref: 'H', rows: [
     { n: 'Homophones grammaticaux', l: {
-      6: 'Distinguer <i>a / à</i>, <i>et / est</i>, <i>son / sont</i>, <i>ses / ces</i>… par la nature du mot et le remplacement.',
-      5: 'Consolidation dans ses écrits (relecture, dictées).',
-      4: 'Consolidation, homophones plus rares.',
-      3: 'Consolidation, homophones plus rares.' },
+      6: 'Distinguer <i>a / à</i>, <i>et / est</i>, <i>on / ont</i>, <i>son / sont</i>, <i>ou / où</i>, <i>ces / ses / c’est / s’est</i>, <i>leur / leurs</i>… par la nature du mot et le remplacement. Homophones nom / verbe (<i>travail / travaille</i>).',
+      5: '+Homophones à décomposer : <i>sans / s’en</i>, <i>dans / d’en</i>, <i>quand / quant / qu’en</i>, <i>ni / n’y</i>, <i>si / s’y</i>.',
+      4: '+Homophones plus rares : <i>quel que / quelque</i>, <i>quoique / quoi que</i>, <i>plutôt / plus tôt</i>, <i>du / dû</i>.',
+      3: 'Consolidation, en dictée et en réécriture.' },
       lots: ['homophones', 'homophones-2', 'homophones-3', 'homophones-4', 'homophones-5', 'homophones-6', 'homophones-7', 'leur-leurs'] },
+    { n: 'Fins de verbes en [e] : <i>é, er, ez, ait</i>', l: {
+      6: 'Choisir la bonne terminaison en remplaçant par un verbe du 3ᵉ groupe (<i>vendre / vendu</i>) ou en changeant de personne.',
+      5: 'Consolidation dans ses écrits (relecture, dictées).',
+      4: 'Consolidation, avec les temps composés et le passif.',
+      3: 'Consolidation, en dictée et en réécriture.' },
+      lots: ['ecrire-verbes-6e5e', 'ecrire-verbes-4e3e'] },
     { n: 'Orthographe lexicale', l: {
       6: 'Mots fréquents ; s’appuyer sur la formation des mots et l’étymologie (lettres muettes, <i>-mane / -man</i>, <i>hippo- / hypo-</i>).',
       5: 'Justifier l’orthographe d’un mot par son étymologie ; préfixes et suffixes les plus fréquents.',
       4: 'Utiliser l’étymologie pour orthographier ; analogies, régularités, réflexes orthographiques.',
       3: 'Orthographe des racines les plus productives ; s’appuyer sur les régularités pour écrire des mots inconnus.' },
       lots: ['lettres-muettes', 'consonnes-doubles', 'mots-invariables', 'genre-des-noms', 'dictees'] }] },
-  { dom: 'Le lexique', rows: [
+  { dom: 'Le lexique', ref: 'L', rows: [
     { n: 'Formation des mots et étymologie', l: {
       6: 'Mots simples, dérivés, composés ; déduire le sens de préfixes et de suffixes ; étymologie et évolution du sens des mots.',
       5: 'Dérivation et composition consolidées ; sens de quelques préfixes, suffixes et racines latines et grecques.',
@@ -3208,19 +3229,7 @@ function aboutHTML(eleve) {
       4: '+Évolution du sens des mots selon les époques, néologie, emprunts. À l’oral, niveau courant plutôt que familier.',
       3: '+Variation selon le lieu, le contexte, le moyen de communication. À l’oral, mots de niveau soutenu.' },
       lots: ['niveaux-de-langue', 'liaisons', 'francais-ici-ailleurs', 'argot-jeunes', 'mots-ailleurs'] }] },
-  { dom: 'Le texte et le discours', rows: [
-    { n: 'Énonciation et paroles rapportées', l: {
-      6: 'Insérer un court dialogue dans un récit (dès le CM) ; pronoms personnels et leur antécédent.',
-      5: '+Situation d’énonciation (qui parle à qui, où, quand) ; paroles rapportées au discours direct.',
-      4: '+Paroles rapportées au discours indirect.',
-      3: '+Discours indirect libre ; marques de modalisation.' },
-      lots: ['discours-rapporte'] },
-    { n: 'Organisation du texte : reprises et connecteurs', l: {
-      6: 'Cohérence du texte ; mettre un pronom personnel en relation avec son antécédent.',
-      5: 'Marques d’organisation : mise en page, ponctuation, indicateurs de temps, de lieu, de cause.',
-      4: '+Éléments de reprise ; indicateurs de conséquence.',
-      3: '+Tous les connecteurs.' },
-      lots: ['reprises-pronominales-6e', 'reprises-pronominales', 'connecteurs-logiques-6e', 'connecteurs-logiques', 'choisir-la-suite'] },
+  { dom: 'Lire et analyser les textes', ref: '', rows: [
     { n: 'Langue littéraire et brevet', l: {
       6: '',
       5: 'Remarquer les effets de la langue littéraire.',
@@ -3234,6 +3243,9 @@ function aboutHTML(eleve) {
       3: '+Autobiographie ; registres lyrique et épique ; tragédie, double énonciation ; argumentation.' },
       lots: ['analyser-un-texte', 'vocabulaire-theatre'] }] }
 ];
+/* Référentiel détaillé des notions (lot 0 de la refonte des parcours du Laboratoire, validé par Augustin le 22/11/2026).
+   Source : laboratoire/referentiel/notions.txt. Par notion : [id, nom, statuts 6ᵉ 5ᵉ 4ᵉ 3ᵉ (N nouveau, A approfondi, R rappel, - absent), étape FLE]. */
+const NOTIONS_REF = {"P": [["P01", "Verbe conjugué : repérage (temps composés, pronominal, négation)", "ARRR", "A1"], ["P02", "Sujet : natures, sujet inversé, multiple, séparé, éloigné", "AAAR", "A1"], ["P03", "Types de phrases (déclarative, interrogative, impérative)", "RRRR", "A1"], ["P04", "Formes négative et exclamative", "RRRR", "A1"], ["P05", "Forme impersonnelle", "--NR", ""], ["P06", "Ponctuation : rôle syntaxique", "RNRA", "A2"], ["P07", "COD et COI", "AARR", "A2"], ["P08", "Attribut du sujet (à distinguer du COD)", "ARRR", "A2"], ["P09", "Attribut du COD", "---N", ""], ["P10", "CC de temps, de lieu, de cause", "ARRR", "A2"], ["P11", "CC de moyen, de manière, de but", "-NRR", "B1"], ["P12", "CC de conséquence", "--NR", ""], ["P13", "CC d’opposition (concession), d’hypothèse (condition), de comparaison", "---N", ""], ["P14", "Proposition ; phrase simple et phrase complexe", "ARRR", "A2"], ["P15", "Juxtaposition et coordination", "RRRR", "A2"], ["P16", "Subordination : principale, subordonnée, conjonction de subordination", "NRAA", "B1"], ["P17", "Subordonnée relative et pronom relatif (antécédent)", "-NRA", "B1"], ["P18", "Subordonnée conjonctive complétive", "--NR", ""], ["P19", "Subordonnée conjonctive circonstancielle", "NRRA", "B1"], ["P20", "Subordonnée interrogative indirecte", "--NR", ""], ["P21", "Subordonnées infinitive et participiale", "---N", ""], ["P22", "Adverbe", "RRRR", "A2"], ["P23", "Préposition", "RRAR", "A2"], ["P24", "Conjonctions de coordination et de subordination", "ARAR", "A2"], ["P25", "Situation d’énonciation (qui parle, à qui, où, quand)", "-NRR", "A2"], ["P26", "Discours direct (dialogue, ponctuation)", "RNRR", "A2"], ["P27", "Discours indirect et concordance des temps", "--NA", "B1"], ["P28", "Discours indirect libre", "---N", ""], ["P29", "Reprises nominales et pronominales (antécédent)", "ARAR", "A2"], ["P30", "Connecteurs logiques et indicateurs de temps", "RAAA", "A2"], ["P31", "Modalisation", "---N", ""]], "V": [["V01", "Radical, marque de temps, marque de personne ; groupes", "RARA", "A1"], ["V02", "Présent de l’indicatif", "RRRR", "A1"], ["V03", "Imparfait de l’indicatif", "RRRR", "A2"], ["V04", "Futur simple", "RRRR", "A2"], ["V05", "Passé simple", "AARR", "B1"], ["V06", "Passé composé, plus-que-parfait ; choix de l’auxiliaire", "RRRR", "A1"], ["V07", "Futur antérieur et passé antérieur", "-NRR", ""], ["V08", "Impératif présent", "NRRR", "A1"], ["V09", "Conditionnel présent", "NARR", "A2"], ["V10", "Conditionnel passé", "--NR", "B1"], ["V11", "Subjonctif présent", "-NRR", "B1"], ["V12", "Subjonctif passé", "--NR", ""], ["V13", "Subjonctif imparfait et plus-que-parfait (reconnaissance) ; <i>falloir</i>, <i>valoir</i>", "---N", ""], ["V14", "Modes impersonnels : infinitif, participe, gérondif", "--NR", "A2"], ["V15", "Temps du discours et temps du récit", "NRRR", "B1"], ["V16", "Valeurs du présent (énonciation, vérité générale, narration, habitude)", "-NRR", "B1"], ["V17", "Passé simple et imparfait : premier plan, arrière-plan", "-NRR", "B1"], ["V18", "Valeurs du futur et du conditionnel (futur dans le passé, hypothèse, erreur <i>si j’aurais</i>)", "NAAR", "B1"], ["V19", "Aspect : accompli / non accompli, borné / non borné", "--NA", ""], ["V20", "Emplois du subjonctif (souhait, ordre, doute ; après <i>bien que</i>, <i>pour que…</i>)", "--NA", ""], ["V21", "Voix active et voix passive ; complément d’agent", "-NAA", "B1"]], "G": [["G01", "Nom commun, nom propre ; genre et nombre", "RRRR", "A1"], ["G02", "Déterminants : articles, possessifs, démonstratifs", "RRRR", "A1"], ["G03", "Article partitif ; déterminants interrogatifs, exclamatifs, indéfinis, numéraux", "-NRR", "A1"], ["G04", "Expansions du nom : adjectif épithète, complément du nom", "ARRR", "A2"], ["G05", "Apposition (à distinguer de l’épithète et du complément du nom)", "--NA", ""], ["G06", "Degrés de l’adjectif : comparatif, superlatif", "--NR", "A2"], ["G07", "Pronoms personnels et leur fonction ; <i>en</i>, <i>y</i>", "RARA", "A2"], ["G08", "Pronoms démonstratifs et possessifs", "--NR", "A2"], ["G09", "Pronoms indéfinis et interrogatifs", "---N", "B1"], ["G10", "Chaîne d’accords dans le GN", "RRAA", "A1"], ["G11", "Pluriels et féminins particuliers (<i>-al / -aux</i>, <i>-x</i>, couleurs, nombres)", "ARAR", "A2"], ["G12", "Accord sujet-verbe (sujet multiple, inversé, éloigné)", "AAAR", "A1"], ["G13", "Accord de l’attribut du sujet", "RRRR", "A2"], ["G14", "Participe passé employé avec <i>être</i>", "RRRR", "A2"], ["G15", "Participe passé employé avec <i>avoir</i> (COD placé avant ou après, pronom personnel)", "NAAR", "B1"], ["G16", "Participe passé avec <i>avoir</i>, COD pronom relatif", "---N", ""]], "H": [["H01", "<i>a / à, et / est, on / ont, son / sont, ou / où</i>", "RRRR", "A2"], ["H02", "<i>ces / ses / c’est / s’est, ce / se, la / l’a / là, ma / m’a, ta / t’a</i>", "ARRR", "B1"], ["H03", "Fins de verbes en [e] : <i>é / er / ez / ait</i>", "ARRR", "A2"], ["H04", "<i>leur / leurs, tout / tous, mon / m’ont, peu / peut, près / prêt</i>", "ARRR", "B1"], ["H05", "<i>sans / s’en, dans / d’en, quand / quant / qu’en, ni / n’y, si / s’y, des / dès</i>", "-ARR", ""], ["H06", "<i>quel que / quelque, quoique / quoi que, plutôt / plus tôt, du / dû, davantage</i>", "--AA", ""], ["H07", "Homophones nom / verbe (<i>travail</i> / <i>travaille</i>), <i>voir</i> / <i>voire</i>, <i>censé</i> / <i>sensé</i>", "NR--", ""], ["H08", "Lettres muettes et familles de mots", "RRRR", "A2"], ["H09", "Consonnes doubles, accents ; rectifications de 1990", "RRRR", ""], ["H10", "Mots invariables fréquents ; genre des noms trompeurs", "RAR-", "A2"], ["H11", "Orthographe par l’étymologie (<i>ph</i>, <i>th</i>, <i>y</i>, <i>h</i>)", "-AAA", ""]], "L": [["L01", "Mots simples, dérivés, composés ; radical, préfixe, suffixe", "RRAR", "B1"], ["L02", "Familles de mots", "RRR-", "A2"], ["L03", "Racines latines et grecques ; étymologie", "AAAA", ""], ["L04", "Emprunts et néologismes", "--NA", ""], ["L05", "Synonymes et antonymes", "RRRR", "A2"], ["L06", "Homonymes et paronymes", "NRAR", "B1"], ["L07", "Polysémie ; sens propre et sens figuré", "NRRA", "B1"], ["L08", "Hyperonymes et hyponymes", "NR--", "A2"], ["L09", "Champ lexical et champ sémantique", "-NRR", ""], ["L10", "Degré d’intensité et de généralité", "--NR", ""], ["L11", "Expressions figées et locutions", "ARRA", "B1"], ["L12", "Niveaux de langue", "RAAA", "B1"], ["L13", "Variation de la langue (lieux, époques, situations)", "--NA", ""], ["L14", "Figures de style (comparaison, métaphore, personnification…)", "-NAA", ""], ["L15", "Oral et écrit : liaison, élision", "-NR-", "A1"], ["L16", "Vocabulaire enrichi par thème (rare, soutenu)", "AAAA", ""]]};
 const NOTIONS_SYN = {
   intro: 'L’étude de la langue s’apprend <b>en spirale</b> : chaque année reprend les notions déjà vues et en ajoute de nouvelles. On raisonne avec des <b>manipulations</b> (remplacer, déplacer, supprimer, encadrer) et avec le vocabulaire grammatical officiel. La grammaire sert à lire, à écrire et à orthographier.',
   lv: {
@@ -3245,6 +3257,18 @@ const NOTIONS_SYN = {
 const NV_SRC = 'Programme de français du cycle 3 (BO n° 16 du 17 avril 2025) pour la 6ᵉ, repères annuels de progression et attendus de fin d’année du cycle 4 (5ᵉ, 4ᵉ, 3ᵉ), guide « La grammaire du français du CP à la 6ᵉ » (Éduscol), progression spiralaire de grammaire de B. Colau (académie d’Aix-Marseille), ressource « Enseigner l’orthographe ». Terminologie : guide « La grammaire du français. Terminologie grammaticale » (Éduscol, 2020).';
 let nvLevel = null; /* niveau choisi sur la page (null = niveau du filtre de l’appli) */
 const nvNB = s => String(s).replace(/ ([:;!?])/g, ' $1'); /* espace fine insécable avant : ; ! ? */
+/* détail repliable sous chaque domaine : les notions du référentiel, avec leur statut par niveau */
+const NV_ST = { N: 'nouveau', A: 'approfondi', R: 'rappel' };
+function nvDetail(g, lv) {
+  const L = NOTIONS_REF[g.ref]; if (!L) return '';
+  const idx = n => LEVELS.indexOf(n);
+  const st = (x, n) => { const c = x[2][idx(n)]; return c === '-' ? '<span class="nv-none">—</span>' : `<span class="nv-st nv-st-${c}">${NV_ST[c]}</span>`; };
+  const list = L.filter(x => !lv || x[2][idx(lv)] !== '-');
+  if (!list.length) return '';
+  const head = `<tr><th>Notion</th>${(lv ? [lv] : LEVELS).map(n => `<th>${lvLabel(n)}</th>`).join('')}<th>FLE</th></tr>`;
+  const rows = list.map(x => `<tr><td>${nvNB(x[1])}</td>${(lv ? [lv] : LEVELS).map(n => `<td>${st(x, n)}</td>`).join('')}<td>${x[3] || '<span class="nv-none">—</span>'}</td></tr>`).join('');
+  return `<tr class="nv-det"><td colspan="${lv ? 3 : 6}"><details><summary>Le détail des notions (${list.length})</summary><table class="nv-mini"><thead>${head}</thead><tbody>${rows}</tbody></table></details></td></tr>`;
+}
 function notionsHTML(eleve, defLv) {
   const lv = nvLevel !== null ? nvLevel : (LEVELS.includes(defLv) ? defLv : '');
   const byId = id => state.decks.find(d => d.id === id && d.cards.length);
@@ -3259,7 +3283,7 @@ function notionsHTML(eleve, defLv) {
   const body = NOTIONS.map(g => {
     const rows = g.rows.filter(r => !lv || r.l[lv]);
     if (!rows.length) return '';
-    return `<tr class="nv-dom"><th colspan="${lv ? 3 : 6}">${g.dom}</th></tr>` + rows.map(r => `<tr><th class="nv-n" scope="row">${nvNB(r.n)}</th>${(lv ? [lv] : LEVELS).map(n => `<td data-lv="${lvLabel(n)}">${cell(r.l[n])}</td>`).join('')}<td class="nv-l">${lotChips(r)}</td></tr>`).join('');
+    return `<tr class="nv-dom"><th colspan="${lv ? 3 : 6}">${g.dom}</th></tr>` + rows.map(r => `<tr><th class="nv-n" scope="row">${nvNB(r.n)}</th>${(lv ? [lv] : LEVELS).map(n => `<td data-lv="${lvLabel(n)}">${cell(r.l[n])}</td>`).join('')}<td class="nv-l">${lotChips(r)}</td></tr>`).join('') + nvDetail(g, lv);
   }).join('');
   return `<div class="res-page nv-page" data-eleve="${eleve ? 1 : 0}" data-def="${esc(defLv || '')}">
     <div class="deck-head"><div class="deck-title"><div class="res-kicker">Programmes</div><h1>Notions par niveau</h1><div class="muted">${eleve ? 'Ce que tu apprends en étude de la langue, de la 6ᵉ à la 3ᵉ, et les lots pour t’entrainer.' : 'Les notions de langue à voir de la 6ᵉ à la 3ᵉ, d’après les textes officiels, et les lots de l’appli qui les travaillent.'}</div></div></div>
