@@ -466,6 +466,7 @@ html.dys .cart-regle{border-color:var(--ink)}html.dys .cart-regle .cart-l{backgr
 /* phrase étudiée surlignée dans les questions */
 .q i.phr{background:var(--sun-soft);padding:1px 5px;border-radius:4px;-webkit-box-decoration-break:clone;box-decoration-break:clone}
 html.dys .q i.phr{background:none;text-decoration:underline;text-decoration-thickness:2px}
+.essai-l{display:block;margin-top:4px}
 
 /* styles des pages de l'appli des flashcards (app.html) */
 .res-page{max-width:860px}
@@ -3090,14 +3091,15 @@ NPARC.n6 = {
             { p: '<i>Nous finissons le travail.</i>', r: 'Finissons le travail !|Finissons le travail.', x: 'À la 1<sup>re</sup> personne du pluriel : <i>finissons</i>.' },
             { p: '<i>Vous prenez vos cahiers.</i>', r: 'Prenez vos cahiers !|Prenez vos cahiers.', x: '<i>Prenez</i>, sans le sujet <i>vous</i>.' }
           ] },
-        { kind: 'essai', essai: 'demain', titre: 'Futur ou conditionnel ?', consigne: 'Essaie de remplacer par <i>demain</i> pour entendre la différence, puis choisis. Le conditionnel exprime ce qu’on imagine, souvent après <i>si</i> + imparfait.', err: 'cond-futur',
+        { kind: 'essai', titre: 'Futur ou conditionnel ?', consigne: 'Avec <i>je</i>, on n’entend presque pas la différence. Remplace <i>je</i> par <i>nous</i> : la phrase qui sonne juste te donne le temps, puis choisis la forme avec <i>je</i>.', err: 'cond-futur',
           items: [
-            { p: 'Si j’étais riche, j’___ un bateau.', o: ['achèterai', 'achèterais'], r: 'achèterais', essai: 'achèterais', x: 'Après <i>si</i> + imparfait : conditionnel, <i>j’achèterais</i>.' },
-            { p: 'Je te ___ demain, c’est promis.', o: ['téléphonerai', 'téléphonerais'], r: 'téléphonerai', essai: 'téléphonerai', x: 'Une action prévue, certaine : futur, <i>je téléphonerai</i>.' },
-            { p: 'À ta place, je ___ un pull.', o: ['mettrai', 'mettrais'], r: 'mettrais', essai: 'mettrais', x: 'Un conseil, une situation imaginée : conditionnel.' }
+            { p: 'Si j’étais riche, j’___ un bateau.', o: ['achèterai', 'achèterais'], r: 'achèterais', nous: 'Si nous étions riches, nous ___ un bateau.', on: ['achèterons', 'achèterions'], x: 'On dit <i>nous achèterions</i> : conditionnel, donc <i>j’achèterais</i>.' },
+            { p: 'Je te ___ demain, c’est promis.', o: ['téléphonerai', 'téléphonerais'], r: 'téléphonerai', nous: 'Nous te ___ demain, c’est promis.', on: ['téléphonerons', 'téléphonerions'], x: 'On dit <i>nous téléphonerons</i> : futur, donc <i>je téléphonerai</i>.' },
+            { p: 'À ta place, je ___ un pull.', o: ['mettrai', 'mettrais'], r: 'mettrais', nous: 'À ta place, nous ___ un pull.', on: ['mettrons', 'mettrions'], x: 'On dit <i>nous mettrions</i> : conditionnel, donc <i>je mettrais</i>.' },
+            { p: 'L’an prochain, je ___ en 5ᵉ.', o: ['serai', 'serais'], r: 'serai', nous: 'L’an prochain, nous ___ en 5ᵉ.', on: ['serons', 'serions'], x: 'On dit <i>nous serons</i> : futur, donc <i>je serai</i>.' }
           ] }
       ],
-      retenir: '<p>L’<b>impératif</b> donne un ordre, un conseil : il n’a <em class="fx">pas de sujet exprimé</em> et seulement trois personnes : <i>range, rangeons, rangez</i>.</p><ul><li>1<sup>er</sup> groupe : <em class="fx">pas de <i>-s</i> à la 2ᵉ personne</em> : <i>Range !</i> (mais <i>Penses-y !</i>)</li><li><i>être</i> : <i>sois, soyons, soyez</i> ; <i>avoir</i> : <i>aie, ayons, ayez</i>.</li></ul><p>Le <b>conditionnel présent</b> exprime ce que l’on imagine ou souhaite. On le forme avec <em class="fx">le radical du futur + les terminaisons de l’imparfait</em> : <i>je ranger<b>ais</b>, tu ranger<b>ais</b>, il ranger<b>ait</b>, nous ranger<b>ions</b>, vous ranger<b>iez</b>, ils ranger<b>aient</b></i>.</p><p>À la 1<sup>re</sup> personne du singulier, on entend la différence : <i>je rangerai</i> (futur, [e]) / <i>je rangerais</i> (conditionnel, [ɛ]).</p>',
+      retenir: '<p>L’<b>impératif</b> donne un ordre, un conseil : il n’a <em class="fx">pas de sujet exprimé</em> et seulement trois personnes : <i>range, rangeons, rangez</i>.</p><ul><li>1<sup>er</sup> groupe : <em class="fx">pas de <i>-s</i> à la 2ᵉ personne</em> : <i>Range !</i> (mais <i>Penses-y !</i>)</li><li><i>être</i> : <i>sois, soyons, soyez</i> ; <i>avoir</i> : <i>aie, ayons, ayez</i>.</li></ul><p>Le <b>conditionnel présent</b> exprime ce que l’on imagine ou souhaite. On le forme avec <em class="fx">le radical du futur + les terminaisons de l’imparfait</em> : <i>je ranger<b>ais</b>, tu ranger<b>ais</b>, il ranger<b>ait</b>, nous ranger<b>ions</b>, vous ranger<b>iez</b>, ils ranger<b>aient</b></i>.</p><p>Avec <i>je</i>, <i>je rangerai</i> (futur) et <i>je rangerais</i> (conditionnel) se ressemblent à l’oral. Pour choisir, <em class="fx">remplace <i>je</i> par <i>nous</i></em> : <i>nous ranger<b>ons</b></i> → futur, <i>je ranger<b>ai</b></i> ; <i>nous ranger<b>ions</b></i> → conditionnel, <i>je ranger<b>ais</b></i>.</p>',
       exos: [
         { kind: 'input', titre: 'Conjuguer', consigne: 'Écris le verbe au temps demandé.', err: 'cond-forme',
           items: [
@@ -4401,7 +4403,7 @@ const LABO = (function () {
     else if (e.kind === 'cadre') items = e.items.map((x, ii) => it(ii, `</p><div class="grps">${grp(x.p.split(' / '), ii)}</div><p class="essai" aria-live="polite"></p><div class="row acts"><button type="button" class="btn small" data-x="cadre-ok" disabled>Valider ce groupe</button></div><div class="fb" hidden></div>`)).join('');
     else if (e.kind === 'etiqueter') items = e.items.map((x, ii) => it(ii, `</p><div class="etq-banc" role="group" aria-label="Étiquettes">${e.labels.map(l => `<button type="button" class="etq-lab" data-x="etq-lab" data-v="${esc(l)}">${nb(l)}</button>`).join('')}</div><div class="etiq">${x.g.map((g, gi) => `<div class="etq"><span>${nb(g)}</span><button type="button" class="etq-slot" data-x="etq-slot" data-g="${gi}" aria-label="Étiquette de « ${esc(plain(g))} »">dépose ici</button></div>`).join('')}</div><div class="row acts"><button type="button" class="btn small" data-x="etq-ok">Valider</button></div><div class="fb" hidden></div>`)).join('');
     else if (e.kind === 'fleche') items = e.items.map((x, ii) => it(ii, `</p><div class="grps fl">${x.g.map((g, gi) => gi === x.pp ? `<span class="grp pp" data-g="${gi}">…</span>` : `<button type="button" class="grp" data-x="fl-cible" data-g="${gi}">${nb(g)}</button>`).join('')}<svg class="fl-svg" aria-hidden="true"></svg></div><div class="row"><button type="button" class="btn ghost small" data-x="fl-cible" data-g="-1">Pas d’accord</button></div><div class="opts" hidden>${x.o.map(o => `<button type="button" class="opt" data-x="fl-forme" data-v="${esc(o)}">${nb(o)}</button>`).join('')}</div><div class="fb" hidden></div>`)).join('');
-    else if (e.kind === 'essai') items = e.items.map((x, ii) => { const ess = x.essai || e.essai; return it(ii, `<span class="phr">${fmt(x.p.replace('___', '<span class="trou">___</span>'))}</span></p><div class="row"><button type="button" class="btn ghost small" data-x="essai" data-w="${esc(ess)}">Essayer avec <i>${esc(ess)}</i></button></div><p class="essai" aria-live="polite"></p><div class="opts">${x.o.map(o => `<button type="button" class="opt" data-x="choix" data-v="${esc(o)}">${nb(o)}</button>`).join('')}</div><div class="fb" hidden></div>`); }).join('');
+    else if (e.kind === 'essai') items = e.items.map((x, ii) => { const ess = x.essai || e.essai; return it(ii, `<span class="phr">${fmt(x.p.replace('___', '<span class="trou">___</span>'))}</span></p><div class="row">${x.nous ? `<button type="button" class="btn ghost small" data-x="essai-nous">Essayer avec <i>nous</i></button>` : `<button type="button" class="btn ghost small" data-x="essai" data-w="${esc(ess)}">Essayer avec <i>${esc(ess)}</i></button>`}</div><p class="essai" aria-live="polite"></p><div class="opts">${x.o.map(o => `<button type="button" class="opt" data-x="choix" data-v="${esc(o)}">${nb(o)}</button>`).join('')}</div><div class="fb" hidden></div>`); }).join('');
     return `<section class="exo" data-kind="${e.kind}">${head}${items}</section>`;
   }
   function trouve(el) {
@@ -4561,6 +4563,7 @@ const LABO = (function () {
       fb(item, ok, `<strong>${ok ? 'Juste.' : 'Non.'}</strong> ${ok ? '' : `Réponse attendue${NB}: <b>${r}</b>. `}${expl || ''}`);
       noter(t, k, ok, err, Array.isArray(x) ? x[0] : x.p);
     }
+    if (a === 'essai-nous') { item.querySelector('.essai').innerHTML = 'Essai avec <i>nous</i>' + NB + ':' + x.on.map(w => `<span class="essai-l">${fmt('<i>' + x.nous.replace('___', '<b>' + esc(w) + '</b>') + '</i>')}</span>`).join('') + '<span class="essai-l small muted">Quelle phrase sonne juste' + NB + '?</span>'; }
     if (a === 'essai') { item.querySelector('.essai').innerHTML = 'Essai' + NB + ': ' + fmt(x.p.replace('___', `<b>${esc(b.dataset.w)}</b>`)); }
     if (a === 'verif') {
       const inp = item.querySelector('.blank'), rep = (Array.isArray(x) ? x[1] : x.r).split('|'), expl = Array.isArray(x) ? x[2] : x.x;
