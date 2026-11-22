@@ -2975,7 +2975,7 @@ const LABO = (function () {
   </header>
   <main id="vue" tabindex="-1"></main>
   <footer id="pied">
-    <span>Laboratoire de la langue · Augustin Lesage, professeur de français · brouillon de travail</span>
+    <span>Laboratoire de la langue · M. Lesage, enseignant de français · brouillon de travail</span>
     <span><a href="#ressources">Ressources officielles</a> · <a href="#apropos">À propos et crédits</a></span>
   </footer>
 </div>`);
@@ -3153,7 +3153,7 @@ const LABO = (function () {
     const carte = d => { const r = res[d.id]; return `<a class="lot-tile" href="${lienLot(d.id)}">${d.couv ? `<span class="lot-couv"><img src="${couvLot(d.couv)}" alt="" loading="lazy" decoding="async"></span>` : ''}<b class="lot-nom">${esc(d.nom)}</b><span class="lot-meta">${[d.n ? d.n + ' cartes' : '', nivTxt(d.niv)].filter(Boolean).join(' · ')}</span>${cons.includes(d.id) ? '<span class="tag conseil">Conseillé par ton parcours</span>' : ''}${r && r.n ? `<span class="lot-last">Dernière fois${NB}: ${+r.ok || 0}/${+r.n} du premier coup</span>` : ''}</a>`; };
     const rubs = RUBRIQUES_FC.slice();
     lots.forEach(d => { if (!rubs.some(r => r.id === d.rub)) rubs.push({ id: d.rub, nom: d.rub || 'Autres' }); });
-    return `<div class="page-h"><h2>Entraînements</h2><p>Les flashcards, pour acquérir les réflexes. Choisis un lot${NB}: il s’ouvre dans l’application des flashcards, au niveau et dans l’affichage que tu as choisis ici.</p></div>
+    return `<div class="page-h"><h2>Entraînements</h2><p>Les flashcards, pour acquérir les réflexes.</p></div>
     <div class="levels-row">${filtre}<span class="hint">${lots.length} lots${tous ? ', tous niveaux' : ' pour la ' + niv(S.niveau)}</span></div>
     <div>${rubs.map(r => {
       const l = lots.filter(d => d.rub === r.id); if (!l.length) return '';
@@ -3183,7 +3183,7 @@ const LABO = (function () {
   };
   vues.about = h => {
     if (h !== 'apropos') return null;
-    return `<div class="page-h"><h2>À propos</h2><p>Le Laboratoire de la langue est un site de français pour le collège, conçu par Augustin Lesage, professeur de français, avec l’aide de l’IA Claude (Anthropic). C’est un brouillon de travail, pas encore publié.</p></div>
+    return `<div class="page-h"><h2>À propos</h2><p>Le Laboratoire de la langue est un site de français pour le collège, conçu par M. Lesage, enseignant de français, avec l’aide de l’IA Claude (Anthropic). C’est un brouillon de travail, pas encore publié.</p></div>
     <div class="grid2">
       <div class="card"><h3>Licences</h3><p class="small">Le site, les flashcards et les ceintures${NB}: CC BY-NC-SA 4.0.</p><p class="small">La rubrique Parcours reprend les contenus d’<b>Atelier de Grammaire</b> (Grammatelier) de Christèle Proisy, sous licence GNU GPL v3, avec la contribution de Gauthier Remande. Le code du site est réécrit${NB}; les cours et les exercices sont ceux de Grammatelier.</p></div>
       <div class="card"><h3>Sources et inspirations</h3><p class="small">Voca+ (Christèle Proisy, GNU GPL v3) pour les exercices de vocabulaire à venir${NB}; Grammatis et Multimots (Christophe Auclair) pour l’idée des exercices rapides, avec nos propres phrases.</p><p class="small"><a href="https://app.expliq.fr" target="_blank" rel="noopener">Expliq (app.expliq.fr) ↗</a></p></div>
@@ -3312,8 +3312,7 @@ const LABO = (function () {
         <p class="small muted">${pr.done ? `${pr.done} étape${pr.done > 1 ? 's' : ''} sur ${pr.total}` : 'Pas encore commencé'}${d ? ' · diagnostic fait le ' + esc(d.date || '') : ''}</p>
         <div class="row"><a class="btn small" href="${d || pr.done ? `#etape-${pid}-${premiereAFaire(pid)}` : `#diag-${pid}`}">${pr.done ? 'Reprendre' : d ? 'Commencer mon parcours' : 'Faire le diagnostic'}</a><a class="btn ghost small" href="#parcours-${pid}">Voir le plan</a></div></div>`;
     }).join('')}</div>
-    <p class="small"><a href="#memos">Les mémos</a>${NB}: les tableaux de synthèse des manipulations, des natures et des fonctions.</p>
-    <p class="small muted">Contenus d’après Atelier de Grammaire (Grammatelier), de Christèle Proisy, licence GNU GPL v3.</p>`;
+    <p class="small"><a href="#memos">Les mémos</a>${NB}: les tableaux de synthèse des manipulations, des natures et des fonctions.</p>`;
   }
 
   function plan(pid) {
