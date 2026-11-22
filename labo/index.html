@@ -392,6 +392,22 @@ html.dys .tw tr:nth-child(even) td{background:transparent}
 .fcp-bar a[aria-current="page"]{background:var(--ink);border-color:var(--ink);color:var(--sheet)}
 .labo-about{margin-top:26px}
 
+/* Mémos réécrits (22/11/2026) : règles des explications des flashcards */
+:root{--ct:#1d5c96;--err:#b25751}
+:root[data-theme="dark"]{--ct:#8fbbea;--err:#ec8f85}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ct:#8fbbea;--err:#ec8f85}}
+html.dys{--ct:#1d1d1d}
+.memos i.ct{color:var(--ct);font-style:italic}
+.memos em.fx{font-style:inherit;font-weight:700;color:inherit}
+.memos .err{color:var(--err);font-style:italic}
+.memos b{font-weight:700;color:var(--ink)}
+.memos .tw td{font-weight:400}
+.memos .tw td:first-child{font-weight:700}
+.memos .memo-lead{margin:4px 0 10px}
+.memos .memo-note{margin:8px 0 0;font-size:.92rem;color:var(--muted)}
+.memos .memo-note b{color:var(--ink)}
+@media (max-width:600px){.memos .tw table,.memos .tw tbody,.memos .tw tr,.memos .tw td{display:block;width:auto}.memos .tw tr:first-child{display:none}.memos .tw tr{border-top:1px solid var(--line);padding:8px 10px}.memos .tw tr:nth-child(2){border-top:0}.memos .tw td{border:0!important;padding:2px 0;background:transparent!important}.memos .tw td[data-l]:not(:first-child)::before{content:attr(data-l);display:block;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-top:4px}.memos .tw td:first-child{font-size:1rem}.memos .tw tr:nth-child(even){background:color-mix(in srgb,var(--soft) 22%,var(--sheet))}}
+
 /* styles des pages de l'appli des flashcards (app.html) */
 .res-page{max-width:860px}
 .res-kicker{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--brand);font-weight:700;margin-bottom:2px}
@@ -2706,172 +2722,162 @@ PARCOURS.fle = {
 };
 
 ;
-/* D'après « Atelier de Grammaire » (Grammatelier), Christèle Proisy, https://forge.apps.education.fr/grammatelier/grammatelier
-   Licence GNU GPL v3. Contenu repris tel quel (brouillon de travail) : à garder sous GPL avec crédit, ou à remplacer avant publication. */
+/* Mémos du Laboratoire (rubrique Aide) : réécrits le 22/11/2026 à la demande d’Augustin, pour les élèves :
+   exemple puis exemple transformé, informations allégées, mise en page des explications des flashcards
+   (texte cité en italique coloré <i class="ct">, mot manipulé en gras <em class="fx">, critère en gras noir <b>, rouge = erreur <span class="err">).
+   Plan inspiré de l’Atelier de Grammaire (Grammatelier, Christèle Proisy) ; exemples et formulations propres au Laboratoire. */
 const MEMOS = `
-<section><h2>Les manipulations pour justifier une analyse</h2>
+<section><h2>Les manipulations</h2>
+<p class="memo-lead">Pour analyser un mot ou un groupe, on le <b>transforme</b> et on observe ce qui se passe.</p>
 <div class="tw"><table>
-<tr><th>Manipulation</th><th>Ce qu’elle permet de reconnaître</th><th>Exemple</th></tr>
-<tr><td>Supprimer</td><td style="font-weight:400">expansions du nom, compléments circonstanciels ; l’attribut du sujet n’est jamais supprimable</td><td style="font-weight:400"><i>un chat blanc → un chat ; *Le chat est</i></td></tr>
-<tr><td>Déplacer</td><td style="font-weight:400">le complément circonstanciel se déplace ; le complément du nom et le COI, non</td><td style="font-weight:400"><i>Dans la forêt, nous nous sommes amusés</i></td></tr>
-<tr><td>Remplacer par un pronom</td><td style="font-weight:400">le GN entier ; COD (<i>le, la, les</i>), COI (<i>lui, leur, y, en</i>)</td><td style="font-weight:400"><i>Il la regarde. Il lui parle.</i></td></tr>
-<tr><td>Encadrer</td><td style="font-weight:400">le sujet, avec <i>c’est… qui</i></td><td style="font-weight:400"><i>C’est une vague qui déferla.</i></td></tr>
-<tr><td>Questionner</td><td style="font-weight:400">« qui est-ce qui ? » (sujet), « qu’est-ce que ? » (COD), « à qui ? de quoi ? » (COI) ; éviter « quoi ? »</td><td style="font-weight:400"><i>Qu’est-ce que Julie regarde ?</i></td></tr>
+<tr><th>Manipulation</th><th>Pour repérer</th><th>Exemple</th><th>Après la manipulation</th></tr>
+<tr><td>Supprimer</td><td>un complément <b>facultatif</b> (épithète, complément circonstanciel)</td><td><i class="ct">Le chat <em class="fx">noir</em> dort <em class="fx">au soleil</em>.</i></td><td><i class="ct">Le chat dort.</i></td></tr>
+<tr><td>Déplacer</td><td>le <b>complément circonstanciel</b></td><td><i class="ct">Nous jouons <em class="fx">dans le jardin</em>.</i></td><td><i class="ct"><em class="fx">Dans le jardin</em>, nous jouons.</i></td></tr>
+<tr><td>Remplacer par un pronom</td><td>le <b>sujet</b>, le <b>COD</b>, le <b>COI</b></td><td><i class="ct"><em class="fx">Léa</em> regarde <em class="fx">la mer</em>.</i></td><td><i class="ct"><em class="fx">Elle la</em> regarde.</i></td></tr>
+<tr><td>Encadrer</td><td>le <b>sujet</b>, avec <b>c’est… qui</b></td><td><i class="ct">La vague déferle.</i></td><td><i class="ct"><em class="fx">C’est</em> la vague <em class="fx">qui</em> déferle.</i></td></tr>
+<tr><td>Ajouter</td><td>le <b>verbe conjugué</b>, avec <b>ne… pas</b></td><td><i class="ct">Il mange.</i></td><td><i class="ct">Il <em class="fx">ne</em> mange <em class="fx">pas</em>.</i></td></tr>
 </table></div></section>
 
-<section><h2>Natures : mots variables et invariables</h2>
+<section><h2>Les natures des mots</h2>
 <div class="tw"><table>
-<tr><th>Classe</th><th>Définition</th><th>Exemples</th></tr>
-<tr><td>Nom</td><td style="font-weight:400">désigne un être, un objet, une action, une idée</td><td style="font-weight:400"><i>Victor Hugo, cafetière, mépris</i></td></tr>
-<tr><td>Déterminant</td><td style="font-weight:400">introduit le nom, en indique le genre et le nombre</td><td style="font-weight:400"><i>les, du, ses, cette, aucun, quel</i></td></tr>
-<tr><td>Adjectif</td><td style="font-weight:400">caractérise un nom ou un pronom</td><td style="font-weight:400"><i>malade, délicieux</i></td></tr>
-<tr><td>Pronom</td><td style="font-weight:400">remplace un nom ou un GN</td><td style="font-weight:400"><i>elles, les nôtres, celui-là, certains, dont</i></td></tr>
-<tr><td>Verbe</td><td style="font-weight:400">exprime une action ou un état ; varie en temps, mode, personne</td><td style="font-weight:400"><i>parler, réfléchir</i></td></tr>
-<tr><td>Adverbe</td><td style="font-weight:400">invariable ; modifie un verbe, un adjectif, une phrase</td><td style="font-weight:400"><i>brusquement, très, peut-être</i></td></tr>
-<tr><td>Préposition</td><td style="font-weight:400">invariable ; introduit un complément</td><td style="font-weight:400"><i>à, de, par, avec</i></td></tr>
-<tr><td>Conjonction</td><td style="font-weight:400">invariable ; coordination (relie des éléments de même fonction) ou subordination (introduit une proposition)</td><td style="font-weight:400"><i>et, or, mais / que, puisque, quand</i></td></tr>
-<tr><td>Interjection, onomatopée</td><td style="font-weight:400">invariables ; émotion, bruit</td><td style="font-weight:400"><i>hélas, aïe ; plouf</i></td></tr>
-</table></div></section>
-
-<section><h2>Fonctions dans le GN</h2>
-<div class="tw"><table>
-<tr><th>Fonction</th><th>Reconnaître</th><th>Exemple</th></tr>
-<tr><td>Épithète</td><td style="font-weight:400">contre le nom, sans préposition ni virgule</td><td style="font-weight:400"><i>un cou long ; le repas qu’on leur servira</i></td></tr>
-<tr><td>Complément du nom</td><td style="font-weight:400">après le nom, avec préposition ; ou complétive</td><td style="font-weight:400"><i>une tête de poète ; l’idée qu’il viendra</i></td></tr>
-<tr><td>Apposition</td><td style="font-weight:400">détachée par une virgule ; ne réduit pas l’extension du nom</td><td style="font-weight:400"><i>une tête minuscule, décharnée</i></td></tr>
-<tr><td>Complément de l’adjectif</td><td style="font-weight:400">dépend d’un adjectif ou d’un participe</td><td style="font-weight:400"><i>étincelantes de blancheur</i></td></tr>
-</table></div></section>
-
-<section><h2>Fonctions autour du verbe</h2>
-<div class="tw"><table>
-<tr><th>Fonction</th><th>Test</th><th>Exemple</th></tr>
-<tr><td>Sujet</td><td style="font-weight:400">« qui est-ce qui ? » ; <i>c’est… qui</i></td><td style="font-weight:400"><i>Le soleil brille.</i></td></tr>
-<tr><td>COD</td><td style="font-weight:400">sans préposition ; <i>le, la, les</i></td><td style="font-weight:400"><i>J’ai apprécié ce livre.</i></td></tr>
-<tr><td>COI</td><td style="font-weight:400">avec préposition ; <i>lui, leur, y, en</i></td><td style="font-weight:400"><i>Alceste parle à Oronte.</i></td></tr>
-<tr><td>Attribut du sujet</td><td style="font-weight:400">après un verbe d’état</td><td style="font-weight:400"><i>Ce sonnet est raté.</i></td></tr>
-<tr><td>Attribut du COD</td><td style="font-weight:400">après <i>trouver, juger, rendre…</i></td><td style="font-weight:400"><i>Alceste le trouve détestable.</i></td></tr>
-<tr><td>Complément circonstanciel</td><td style="font-weight:400">souvent supprimable et déplaçable</td><td style="font-weight:400"><i>Oronte est venu ce matin.</i></td></tr>
-<tr><td>Complément d’agent</td><td style="font-weight:400">verbe passif ; <i>par, de</i></td><td style="font-weight:400"><i>froissé par les remarques d’Alceste</i></td></tr>
-</table></div></section>
-
-<section><h2>Le participe passé en quatre questions</h2>
-<ol>
-<li>Employé seul ? → accord avec le nom (<i>une veuve estimée</i>).</li>
-<li>Avec <i>être</i> ? → accord avec le sujet (<i>elles furent conduites</i>).</li>
-<li>Pronominal ? → remplacer <i>être</i> par <i>avoir</i> : pronom COD → accord ; pronom COI → accord avec un COD antéposé, sinon invariable ; essentiellement pronominal → accord avec le sujet.</li>
-<li>Avec <i>avoir</i> ? → accord avec le COD seulement s’il est placé avant.</li>
-</ol>
-<p>Toujours invariables : <i>fait</i> + infinitif ; participe précédé de <i>en</i> ; verbes impersonnels ; compléments de durée, prix, poids ; <i>le</i> neutre.</p></section>
-
-<section><h2>Concordance des temps</h2>
-<div class="tw"><table>
-<tr><th>Rapport</th><th>Système du présent</th><th>Système du passé</th></tr>
-<tr><td>Simultanéité</td><td style="font-weight:400">présent</td><td style="font-weight:400">imparfait</td></tr>
-<tr><td>Antériorité</td><td style="font-weight:400">passé composé</td><td style="font-weight:400">plus-que-parfait</td></tr>
-<tr><td>Antériorité immédiate</td><td style="font-weight:400">passé composé</td><td style="font-weight:400">passé antérieur</td></tr>
-<tr><td>Postériorité</td><td style="font-weight:400">futur</td><td style="font-weight:400">conditionnel présent</td></tr>
-<tr><td>Antériorité à un futur</td><td style="font-weight:400">futur antérieur</td><td style="font-weight:400">conditionnel passé</td></tr>
-<tr><td>Habitude</td><td style="font-weight:400">présent</td><td style="font-weight:400">imparfait itératif</td></tr>
+<tr><th>Nature</th><th>Comment la reconnaître</th><th>Exemple</th></tr>
+<tr><td>Nom</td><td>peut être précédé d’<b>un déterminant</b></td><td><i class="ct">un <em class="fx">chat</em>, la <em class="fx">peur</em></i></td></tr>
+<tr><td>Déterminant</td><td>se place <b>devant le nom</b></td><td><i class="ct"><em class="fx">les</em> amis, <em class="fx">cette</em> maison</i></td></tr>
+<tr><td>Adjectif</td><td><b>précise le nom</b> et s’accorde avec lui</td><td><i class="ct">une robe <em class="fx">rouge</em></i></td></tr>
+<tr><td>Pronom</td><td><b>remplace</b> un nom ou un groupe nominal</td><td><i class="ct">Léa chante → <em class="fx">elle</em> chante</i></td></tr>
+<tr><td>Verbe</td><td>se <b>conjugue</b></td><td><i class="ct">il <em class="fx">chante</em> → il <em class="fx">chantait</em></i></td></tr>
+<tr><td>Adverbe</td><td><b>invariable</b> ; précise un verbe, un adjectif…</td><td><i class="ct">il court <em class="fx">vite</em> ; <em class="fx">très</em> grand</i></td></tr>
+<tr><td>Préposition</td><td><b>invariable</b> ; introduit un complément</td><td><i class="ct">une tasse <em class="fx">à</em> café ; <em class="fx">avec</em> toi</i></td></tr>
+<tr><td>Conjonction</td><td><b>invariable</b> ; relie des mots ou des propositions</td><td><i class="ct">Léo <em class="fx">et</em> Léa ; je sors <em class="fx">quand</em> il fait beau</i></td></tr>
 </table></div>
-<p><i>aujourd’hui → ce jour-là ; hier → la veille ; demain → le lendemain ; ici → là.</i></p></section>
+<p class="memo-note">Mots <b>variables</b> : nom, déterminant, adjectif, pronom, verbe. Mots <b>invariables</b> : adverbe, préposition, conjonction.</p></section>
 
-<section><h2>Accords du GN : les cas particuliers</h2>
-<ul>
-<li><i>cet, bel, nouvel, vieil, fol</i> devant un masculin singulier à initiale vocalique.</li>
-<li>Couleurs : adjectif simple → accord ; nom employé comme adjectif → invariable (sauf <i>rose, mauve, fauve, écarlate, pourpre, incarnat</i>) ; couleur composée → invariable.</li>
-<li><i>vingt, cent</i> multipliés et en fin de nombre → <i>s</i> ; <i>mille</i> invariable.</li>
-<li><i>demi, nu</i> avant le nom → invariables avec trait d’union ; après → <i>demi</i> s’accorde en genre seulement, <i>nu</i> en genre et en nombre.</li>
-<li>Adjectif employé comme adverbe (<i>coûter cher</i>) → invariable.</li>
-</ul></section>
-<section><h2>La phrase : structure et relations</h2>
+<section><h2>Les fonctions dans le groupe nominal</h2>
+<p class="memo-lead">Ces compléments du nom se <b>suppriment</b> : la phrase reste correcte.</p>
 <div class="tw"><table>
-<tr><th>Notion</th><th>Repère</th><th>Exemple</th></tr>
-<tr><td>Phrase non verbale</td><td style="font-weight:400">aucun verbe conjugué</td><td style="font-weight:400"><i>Silence !</i></td></tr>
-<tr><td>Phrase simple / complexe</td><td style="font-weight:400">une proposition / plusieurs : comptez les verbes conjugués</td><td style="font-weight:400"><i>Il entra, salua et s’assit.</i> (3)</td></tr>
-<tr><td>Juxtaposition</td><td style="font-weight:400">ponctuation seule</td><td style="font-weight:400"><i>Je suis venu, j’ai vu, j’ai vaincu.</i></td></tr>
-<tr><td>Coordination</td><td style="font-weight:400"><i>mais, ou, et, or, ni, car</i> (liste fermée ; <i>donc</i> est un adverbe)</td><td style="font-weight:400"><i>Il pleuvait, mais nous sommes sortis.</i></td></tr>
-<tr><td>Subordination</td><td style="font-weight:400">conjonction, pronom relatif, mot interrogatif ; participiale, infinitive</td><td style="font-weight:400"><i>Comme il pleuvait, nous sommes restés.</i></td></tr>
-<tr><td>Subordination implicite</td><td style="font-weight:400">juxtaposition à valeur d’hypothèse</td><td style="font-weight:400"><i>Tu me l’aurais dit, je serais venu.</i></td></tr>
+<tr><th>Fonction</th><th>Comment la reconnaître</th><th>Exemple</th><th>Sans le complément</th></tr>
+<tr><td>Épithète</td><td>adjectif <b>collé au nom</b></td><td><i class="ct">un chat <em class="fx">noir</em></i></td><td><i class="ct">un chat</i></td></tr>
+<tr><td>Complément du nom</td><td><b>préposition</b> + nom</td><td><i class="ct">une tasse <em class="fx">de thé</em></i></td><td><i class="ct">une tasse</i></td></tr>
+<tr><td>Apposition</td><td><b>détachée</b> par une virgule</td><td><i class="ct">Léa, <em class="fx">ma voisine</em>, chante.</i></td><td><i class="ct">Léa chante.</i></td></tr>
 </table></div></section>
-<section><h2>Les subordonnées</h2>
+
+<section><h2>Les fonctions autour du verbe</h2>
 <div class="tw"><table>
-<tr><th>Nature</th><th>Mot introducteur</th><th>Fonction usuelle</th></tr>
-<tr><td>Relative adjective</td><td style="font-weight:400">pronom relatif + antécédent</td><td style="font-weight:400">épithète ou apposée à l’antécédent</td></tr>
-<tr><td>Relative substantive</td><td style="font-weight:400">pronom relatif sans antécédent</td><td style="font-weight:400">fonctions du nom (sujet, COD…)</td></tr>
-<tr><td>Complétive conjonctive</td><td style="font-weight:400"><i>que</i> (sans fonction)</td><td style="font-weight:400">COD, sujet, attribut, complément du nom</td></tr>
-<tr><td>Interrogative indirecte</td><td style="font-weight:400"><i>si</i>, <i>ce que</i>, <i>ce qui</i>, mot interrogatif</td><td style="font-weight:400">COD de <i>se demander, savoir…</i></td></tr>
-<tr><td>Circonstancielle</td><td style="font-weight:400"><i>quand, comme, parce que, pour que, bien que, si…</i></td><td style="font-weight:400">CC de temps, cause, conséquence, but, concession, condition, comparaison</td></tr>
-<tr><td>Participiale / infinitive</td><td style="font-weight:400">participe ou infinitif avec sujet propre</td><td style="font-weight:400">CC (participiale) ; COD (infinitive)</td></tr>
+<tr><th>Fonction</th><th>Manipulation</th><th>Exemple</th><th>Après la manipulation</th></tr>
+<tr><td>Sujet</td><td>encadrer par <b>c’est… qui</b></td><td><i class="ct">Le soleil brille.</i></td><td><i class="ct"><em class="fx">C’est</em> le soleil <em class="fx">qui</em> brille.</i></td></tr>
+<tr><td>COD</td><td>remplacer par <b>le, la, les</b></td><td><i class="ct">J’aime <em class="fx">ce livre</em>.</i></td><td><i class="ct">Je <em class="fx">l’</em>aime.</i></td></tr>
+<tr><td>COI</td><td>remplacer par <b>lui, leur, en, y</b></td><td><i class="ct">Je parle <em class="fx">à Léo</em>.</i></td><td><i class="ct">Je <em class="fx">lui</em> parle.</i></td></tr>
+<tr><td>Attribut du sujet</td><td>après un <b>verbe d’état</b> ; on ne peut <b>pas le supprimer</b></td><td><i class="ct">Le ciel est <em class="fx">gris</em>.</i></td><td><span class="err">*Le ciel est.</span></td></tr>
+<tr><td>Complément circonstanciel</td><td>on peut le <b>déplacer</b> ou le <b>supprimer</b></td><td><i class="ct">Il est venu <em class="fx">ce matin</em>.</i></td><td><i class="ct"><em class="fx">Ce matin</em>, il est venu.</i></td></tr>
+<tr><td>Complément d’agent</td><td>à la voix passive, après <b>par</b> ; il devient <b>sujet</b> à la voix active</td><td><i class="ct">La souris est mangée <em class="fx">par le chat</em>.</i></td><td><i class="ct"><em class="fx">Le chat</em> mange la souris.</i></td></tr>
+</table></div>
+<p class="memo-note">L’astérisque <span class="err">*</span> signale une phrase incorrecte.</p></section>
+
+<section><h2>Le participe passé</h2>
+<div class="tw"><table>
+<tr><th>Cas</th><th>Règle</th><th>Exemple</th></tr>
+<tr><td>Avec être</td><td>s’accorde avec <b>le sujet</b></td><td><i class="ct">Elles sont part<em class="fx">ies</em>.</i></td></tr>
+<tr><td>Avec avoir</td><td><b>pas d’accord</b> avec le sujet</td><td><i class="ct">Elles ont mang<em class="fx">é</em>.</i></td></tr>
+<tr><td>Avec avoir, COD placé avant</td><td>s’accorde avec <b>le COD</b></td><td><i class="ct">Les pommes <em class="fx">que</em> j’ai mang<em class="fx">ées</em>.</i></td></tr>
+<tr><td>Employé seul</td><td>s’accorde comme <b>un adjectif</b></td><td><i class="ct">des fleurs fan<em class="fx">ées</em></i></td></tr>
 </table></div></section>
-<section><h2>Interrogation indirecte et ponctuation</h2>
-<ul>
-<li>Totale → <i>si</i> ; <i>qu’est-ce que</i> → <i>ce que</i> ; <i>qu’est-ce qui</i> → <i>ce qui</i> ; pas d’inversion, pas de point d’interrogation.</li>
-<li>Après un verbe au passé : présent → imparfait ; futur → conditionnel ; passé composé → plus-que-parfait.</li>
-<li>Jamais de virgule entre sujet et verbe, ni entre verbe et COD, sauf pour encadrer un élément détaché.</li>
-<li>Virgule : juxtaposition, devant <i>mais / car</i>, CC en tête, apposition, connecteur à l’intérieur de la proposition.</li>
-<li>Point-virgule entre deux indépendantes liées par le sens ; deux-points pour annoncer une explication ou une énumération.</li>
-</ul></section>
 
-<section><h2>Cycle 3 : les marques du verbe</h2>
+<section><h2>La concordance des temps</h2>
+<p class="memo-lead">Quand le verbe principal passe au <b>passé</b>, le verbe de la subordonnée change aussi.</p>
 <div class="tw"><table>
-<tr><th>Temps</th><th>Marque de temps</th><th>Exemple</th></tr>
-<tr><td>Présent</td><td style="font-weight:400">aucune</td><td style="font-weight:400"><i>je chante, nous chantons</i></td></tr>
-<tr><td>Imparfait</td><td style="font-weight:400">-ai- / -i-</td><td style="font-weight:400"><i>je chantais, nous chantions</i></td></tr>
-<tr><td>Futur</td><td style="font-weight:400">-r-</td><td style="font-weight:400"><i>je chanterai</i></td></tr>
-<tr><td>Conditionnel présent</td><td style="font-weight:400">-r- + -ai- / -i-</td><td style="font-weight:400"><i>je chanterais</i></td></tr>
-<tr><td>Passé composé, plus-que-parfait</td><td style="font-weight:400">auxiliaire au présent / à l’imparfait + participe passé</td><td style="font-weight:400"><i>j’ai chanté, j’avais chanté</i></td></tr>
+<tr><th>Le fait se passe…</th><th>Exemple au présent</th><th>Transformé au passé</th></tr>
+<tr><td>en même temps</td><td><i class="ct">Je sais qu’il <em class="fx">vient</em>.</i></td><td><i class="ct">Je savais qu’il <em class="fx">venait</em>.</i></td></tr>
+<tr><td>avant</td><td><i class="ct">Je sais qu’il <em class="fx">est venu</em>.</i></td><td><i class="ct">Je savais qu’il <em class="fx">était venu</em>.</i></td></tr>
+<tr><td>après</td><td><i class="ct">Je sais qu’il <em class="fx">viendra</em>.</i></td><td><i class="ct">Je savais qu’il <em class="fx">viendrait</em>.</i></td></tr>
 </table></div>
-<p>Marques de personne : <i>-e, -s, -x</i> (je) ; <i>-s, -x</i> (tu) ; <i>-e, -t, -d, -a</i> (il) ; <i>-ons</i> ; <i>-ez</i> ; <i>-nt</i>.</p></section>
+<p class="memo-note">Les indications de temps changent aussi : <i class="ct"><em class="fx">aujourd’hui</em> → <em class="fx">ce jour-là</em> ; <em class="fx">hier</em> → <em class="fx">la veille</em> ; <em class="fx">demain</em> → <em class="fx">le lendemain</em></i>.</p></section>
 
-<section><h2>FLE · FLS : l’essentiel</h2>
-<ul>
-<li>Articles : <i>le, la, l’, les</i> ; <i>un, une, des</i> ; <i>du, de la, de l’</i> ; <i>à + le = au, de + le = du</i>.</li>
-<li>Après la négation : <i>pas de</i> (<i>Je n’ai pas de chien</i>), sauf avec <i>être</i>.</li>
-<li>L’âge, la faim, le froid : <i>avoir</i> (<i>J’ai douze ans</i>).</li>
-<li>Passé composé avec <i>être</i> : <i>aller, venir, arriver, partir, entrer, sortir, monter, descendre, tomber, rester, naître, mourir, devenir</i> et les verbes pronominaux ; accord avec le sujet.</li>
-<li>Imparfait : description, habitude ; passé composé : action terminée.</li>
-<li>Pronoms avant le verbe : <i>le, la, les, lui, leur, y, en</i>.</li>
-<li>Lieux : <i>à</i> + ville ; <i>en</i> + pays féminin ; <i>au</i> + pays masculin ; <i>aux</i> + pays pluriel ; <i>chez</i> + personne.</li>
-</ul></section>
-
-<section><h2>Question de grammaire de l’EAF : la méthode</h2>
+<section><h2>Les accords difficiles</h2>
 <div class="tw"><table>
-<tr><th>Temps</th><th>Ce qu’on fait</th></tr>
-<tr><td>Observer</td><td style="font-weight:400">compter les verbes conjugués : une proposition par verbe</td></tr>
-<tr><td>Délimiter</td><td style="font-weight:400">dire où commence et où finit le segment étudié</td></tr>
-<tr><td>Nommer</td><td style="font-weight:400">nature : classe de mot, type de proposition, de négation, d’interrogation</td></tr>
-<tr><td>Analyser</td><td style="font-weight:400">fonction et construction : subordonnant, antécédent, mode, portée</td></tr>
-<tr><td>Justifier</td><td style="font-weight:400">une manipulation ; la transformation si le libellé la demande</td></tr>
+<tr><th>Cas</th><th>Règle</th><th>Exemple</th></tr>
+<tr><td>Couleur exprimée par un adjectif</td><td><b>s’accorde</b></td><td><i class="ct">des robes vert<em class="fx">es</em></i></td></tr>
+<tr><td>Couleur exprimée par un nom</td><td><b>invariable</b> (sauf <i class="ct">rose, mauve, fauve</i>)</td><td><i class="ct">des robes <em class="fx">marron</em></i></td></tr>
+<tr><td>Couleur composée</td><td><b>invariable</b></td><td><i class="ct">des yeux <em class="fx">bleu clair</em></i></td></tr>
+<tr><td>vingt, cent</td><td>prennent un <b>s</b> s’ils sont multipliés et à la fin du nombre</td><td><i class="ct">quatre-vingt<em class="fx">s</em> ; deux cent<em class="fx">s</em> ; mais deux <em class="fx">cent</em> dix</i></td></tr>
+<tr><td>mille</td><td>toujours <b>invariable</b></td><td><i class="ct">trois <em class="fx">mille</em></i></td></tr>
+<tr><td>demi</td><td><b>invariable</b> devant le nom ; accord en genre après</td><td><i class="ct">une <em class="fx">demi</em>-heure ; une heure et demi<em class="fx">e</em></i></td></tr>
+</table></div></section>
+
+<section><h2>La phrase</h2>
+<div class="tw"><table>
+<tr><th>Notion</th><th>Comment la reconnaître</th><th>Exemple</th></tr>
+<tr><td>Phrase simple</td><td><b>un seul</b> verbe conjugué</td><td><i class="ct">Le chien <em class="fx">aboie</em>.</i></td></tr>
+<tr><td>Phrase complexe</td><td><b>plusieurs</b> verbes conjugués, donc plusieurs propositions</td><td><i class="ct">Le chien <em class="fx">aboie</em> quand le facteur <em class="fx">arrive</em>.</i></td></tr>
+<tr><td>Juxtaposition</td><td>propositions séparées par <b>une virgule, un point-virgule, deux-points</b></td><td><i class="ct">Il pleut<em class="fx">,</em> je reste.</i></td></tr>
+<tr><td>Coordination</td><td><b>mais, ou, et, or, ni, car</b></td><td><i class="ct">Il pleut <em class="fx">mais</em> je sors.</i></td></tr>
+<tr><td>Subordination</td><td>un <b>mot subordonnant</b> : <i class="ct">qui, que, quand, parce que…</i></td><td><i class="ct">Je reste <em class="fx">parce qu’</em>il pleut.</i></td></tr>
+<tr><td>Phrase non verbale</td><td><b>aucun</b> verbe conjugué</td><td><i class="ct">Silence !</i></td></tr>
+</table></div></section>
+
+<section><h2>Les propositions subordonnées</h2>
+<div class="tw"><table>
+<tr><th>Subordonnée</th><th>Introduite par</th><th>Exemple</th></tr>
+<tr><td>Relative</td><td>un <b>pronom relatif</b> : <i class="ct">qui, que, dont, où</i></td><td><i class="ct">Le livre <em class="fx">que</em> je lis est drôle.</i></td></tr>
+<tr><td>Conjonctive complétive</td><td><b>que</b>, après un verbe</td><td><i class="ct">Je pense <em class="fx">qu’</em>il viendra.</i></td></tr>
+<tr><td>Conjonctive circonstancielle</td><td><b>quand, parce que, pour que, si…</b></td><td><i class="ct">Je sors <em class="fx">quand</em> il fait beau.</i></td></tr>
+<tr><td>Interrogative indirecte</td><td><b>si, qui, où, quand…</b> après <i class="ct">demander, savoir</i></td><td><i class="ct">Je me demande <em class="fx">s’</em>il viendra.</i></td></tr>
+</table></div></section>
+
+<section><h2>L’interrogation indirecte</h2>
+<p class="memo-lead">On garde la question, mais <b>sans point d’interrogation</b> et <b>sans inversion</b> du sujet.</p>
+<div class="tw"><table>
+<tr><th>Question directe</th><th>Transformée en question indirecte</th></tr>
+<tr><td><i class="ct">« Viens-tu ? »</i></td><td><i class="ct">Il demande <em class="fx">si</em> tu viens.</i></td></tr>
+<tr><td><i class="ct">« Qu’est-ce que tu fais ? »</i></td><td><i class="ct">Il demande <em class="fx">ce que</em> tu fais.</i></td></tr>
+<tr><td><i class="ct">« Qu’est-ce qui se passe ? »</i></td><td><i class="ct">Il demande <em class="fx">ce qui</em> se passe.</i></td></tr>
+<tr><td><i class="ct">« Où vas-tu ? »</i></td><td><i class="ct">Il demande <em class="fx">où</em> tu vas.</i></td></tr>
 </table></div>
-<p>Deux minutes environ. L’effet de sens peut conclure, jamais remplacer l’analyse.</p></section>
+<p class="memo-note">À retenir aussi : <b>jamais de virgule</b> entre le sujet et le verbe : <span class="err">*Le chat, dort.</span></p></section>
+
+<section><h2>Les marques du temps (cycle 3)</h2>
+<div class="tw"><table>
+<tr><th>Temps</th><th>Marque</th><th>Exemple</th></tr>
+<tr><td>Présent</td><td><b>aucune</b> marque de temps</td><td><i class="ct">je chante, nous chantons</i></td></tr>
+<tr><td>Imparfait</td><td><b>-ai-</b> ou <b>-i-</b></td><td><i class="ct">je chant<em class="fx">ai</em>s, nous chant<em class="fx">i</em>ons</i></td></tr>
+<tr><td>Futur</td><td><b>-r-</b></td><td><i class="ct">je chante<em class="fx">r</em>ai</i></td></tr>
+<tr><td>Conditionnel présent</td><td><b>-r-</b> + <b>-ai-</b> ou <b>-i-</b></td><td><i class="ct">je chante<em class="fx">rai</em>s</i></td></tr>
+<tr><td>Passé composé</td><td>auxiliaire <b>au présent</b> + participe passé</td><td><i class="ct">j’<em class="fx">ai</em> chanté</i></td></tr>
+<tr><td>Plus-que-parfait</td><td>auxiliaire <b>à l’imparfait</b> + participe passé</td><td><i class="ct">j’<em class="fx">avais</em> chanté</i></td></tr>
+</table></div></section>
+
+<section><h2>FLE · FLS : l’essentiel</h2>
+<div class="tw"><table>
+<tr><th>Point</th><th>Exemple</th></tr>
+<tr><td>Les articles</td><td><i class="ct"><em class="fx">le</em> chat, <em class="fx">une</em> pomme, <em class="fx">du</em> pain</i></td></tr>
+<tr><td>Après la négation : <b>de</b></td><td><i class="ct">J’ai <em class="fx">un</em> chien. → Je n’ai pas <em class="fx">de</em> chien.</i></td></tr>
+<tr><td>L’âge, la faim : <b>avoir</b></td><td><i class="ct">J’<em class="fx">ai</em> douze ans. J’<em class="fx">ai</em> faim.</i></td></tr>
+<tr><td>Passé composé avec <b>être</b> : <i class="ct">aller, venir, partir, arriver…</i></td><td><i class="ct">Elle <em class="fx">est</em> partie.</i></td></tr>
+<tr><td>Les lieux : <b>à</b> + ville, <b>en</b> ou <b>au</b> + pays</td><td><i class="ct">J’habite <em class="fx">à</em> Paris, <em class="fx">en</em> France, <em class="fx">au</em> Maroc.</i></td></tr>
+</table></div></section>
 
 <section><h2>La négation</h2>
 <div class="tw"><table>
-<tr><th>Construction</th><th>Exemple</th></tr>
-<tr><td>Totale : <i>ne… pas, ne… point</i></td><td style="font-weight:400"><i>Va, je ne te hais point.</i></td></tr>
-<tr><td>Partielle : <i>ne… jamais, plus, guère, rien, personne, aucun, nulle part</i></td><td style="font-weight:400"><i>Personne n’est venu.</i></td></tr>
-<tr><td>Restriction (pas de négation) : <i>ne… que</i></td><td style="font-weight:400"><i>Il ne lit que des romans.</i></td></tr>
-<tr><td><i>Ne</i> explétif (pas de négation)</td><td style="font-weight:400"><i>Je crains qu’il ne vienne.</i></td></tr>
-<tr><td>Négation lexicale</td><td style="font-weight:400"><i>illisible, mécontent, défaire</i></td></tr>
-</table></div></section>
+<tr><th>Exemple</th><th>À la forme négative</th></tr>
+<tr><td><i class="ct">Il mange.</i></td><td><i class="ct">Il <em class="fx">ne</em> mange <em class="fx">pas</em>.</i></td></tr>
+<tr><td><i class="ct">Il vient <em class="fx">toujours</em>.</i></td><td><i class="ct">Il <em class="fx">ne</em> vient <em class="fx">jamais</em>.</i></td></tr>
+<tr><td><i class="ct">Il a <em class="fx">encore</em> faim.</i></td><td><i class="ct">Il <em class="fx">n’</em>a <em class="fx">plus</em> faim.</i></td></tr>
+<tr><td><i class="ct">Il voit <em class="fx">quelqu’un</em>.</i></td><td><i class="ct">Il <em class="fx">ne</em> voit <em class="fx">personne</em>.</i></td></tr>
+<tr><td><i class="ct">Il voit <em class="fx">quelque chose</em>.</i></td><td><i class="ct">Il <em class="fx">ne</em> voit <em class="fx">rien</em>.</i></td></tr>
+</table></div>
+<p class="memo-note">Attention : <i class="ct">Il <em class="fx">ne</em> lit <em class="fx">que</em> des BD.</i> n’est <b>pas une négation</b> : il lit <b>seulement</b> des BD.</p></section>
 
 <section><h2>La formation des mots</h2>
 <div class="tw"><table>
-<tr><th>Procédé</th><th>Principe</th><th>Exemple</th></tr>
-<tr><td>Dérivation préfixale</td><td style="font-weight:400">préfixe + base ; même classe</td><td style="font-weight:400"><i>faire → défaire</i></td></tr>
-<tr><td>Dérivation suffixale</td><td style="font-weight:400">base + suffixe ; la classe change souvent</td><td style="font-weight:400"><i>lent → lentement</i></td></tr>
-<tr><td>Dérivation parasynthétique</td><td style="font-weight:400">préfixe et suffixe ajoutés ensemble</td><td style="font-weight:400"><i>embarquer, atterrir</i></td></tr>
-<tr><td>Dérivation régressive</td><td style="font-weight:400">suppression d’un élément final</td><td style="font-weight:400"><i>refuser → refus</i></td></tr>
-<tr><td>Conversion</td><td style="font-weight:400">changement de classe sans changement de forme</td><td style="font-weight:400"><i>le rire, le savoir</i></td></tr>
-<tr><td>Composition</td><td style="font-weight:400">populaire (mots autonomes) ou savante (éléments grecs, latins)</td><td style="font-weight:400"><i>chou-fleur ; philosophie</i></td></tr>
-<tr><td>Troncation</td><td style="font-weight:400">apocope (fin) ou aphérèse (début)</td><td style="font-weight:400"><i>métro ; bus</i></td></tr>
-<tr><td>Siglaison</td><td style="font-weight:400">sigle épelé, acronyme prononcé</td><td style="font-weight:400"><i>SNCF ; Unesco</i></td></tr>
-<tr><td>Mot-valise, emprunt, calque</td><td style="font-weight:400">fusion ; mot étranger ; traduction littérale</td><td style="font-weight:400"><i>courriel ; pizza ; gratte-ciel</i></td></tr>
+<tr><th>Procédé</th><th>Mot de départ</th><th>Mot formé</th></tr>
+<tr><td>Ajout d’un préfixe</td><td><i class="ct">faire</i></td><td><i class="ct"><em class="fx">dé</em>faire</i></td></tr>
+<tr><td>Ajout d’un suffixe</td><td><i class="ct">lent</i></td><td><i class="ct">lente<em class="fx">ment</em></i></td></tr>
+<tr><td>Préfixe et suffixe ensemble</td><td><i class="ct">terre</i></td><td><i class="ct"><em class="fx">at</em>terr<em class="fx">ir</em></i></td></tr>
+<tr><td>Composition</td><td><i class="ct">chou + fleur</i></td><td><i class="ct">chou-fleur</i></td></tr>
+<tr><td>Mot raccourci</td><td><i class="ct">métropolitain</i></td><td><i class="ct">métro</i></td></tr>
+<tr><td>Sigle</td><td><i class="ct">Société nationale des chemins de fer français</i></td><td><i class="ct">SNCF</i></td></tr>
+<tr><td>Mot-valise</td><td><i class="ct">courrier + électronique</i></td><td><i class="ct">courriel</i></td></tr>
 </table></div>
-<ul>
-<li><i>in-</i> → <i>im-</i> devant <i>m, b, p</i> ; <i>il-</i> devant <i>l</i> ; <i>ir-</i> devant <i>r</i>.</li>
-<li>Doublets : <i>frêle / fragile, hôtel / hôpital, poison / potion, loyal / légal</i>.</li>
-</ul></section>
+<p class="memo-note">Le préfixe <i class="ct">in-</i> devient <i class="ct"><em class="fx">im</em>-</i> devant <b>m, b, p</b> (<i class="ct"><em class="fx">im</em>possible</i>), <i class="ct"><em class="fx">il</em>-</i> devant <b>l</b>, <i class="ct"><em class="fx">ir</em>-</i> devant <b>r</b>.</p></section>
 `;
 
 ;
@@ -3249,7 +3255,7 @@ const LABO = (function () {
   const vues = {};
   const RUBRIQUES = [
     ['accueil', 'Accueil'], ['parcours', 'Parcours'], ['approfondissement', 'Approfondissement'],
-    ['entrainements', 'Entrainements'], ['ceintures', 'Ceintures'], ['memos', 'Mémos']
+    ['entrainements', 'Entrainements'], ['ceintures', 'Ceintures'], ['memos', 'Aide'] /* « Aide » : Mémos + Notions (Augustin, 22/11/2026) */
   ];
   function rubriqueDe(h) {
     if (!h || h === 'accueil') return 'accueil';
@@ -3506,7 +3512,7 @@ const LABO = (function () {
       <span id="reset-zone" hidden><span class="small">Tout effacer sur cet appareil${NB}?</span> <button class="btn small" type="button" id="reset-do">Oui, effacer</button></span></section></div>`;
   };
   /* Notions par niveau : la page de l'appli des flashcards ; les lots s'ouvrent dans les flashcards */
-  const fcpBar = h => `<nav class="fcp-bar" aria-label="Mémos et notions"><a href="#memos"${h === 'memos' ? ' aria-current="page"' : ''}>Mémos</a><a href="#notions"${h === 'notions' ? ' aria-current="page"' : ''}>Notions par niveau</a></nav>`;
+  const fcpBar = h => `<nav class="fcp-bar" aria-label="Aide"><a href="#memos"${h === 'memos' ? ' aria-current="page"' : ''}>Mémos</a><a href="#notions"${h === 'notions' ? ' aria-current="page"' : ''}>Notions</a></nav>`;
   vues.notions = h => h === 'notions' ? `${fcpBar('notions')}<div class="fcp">${FCP.notionsHTML(true, S.niveau)}</div>` : null;
   document.addEventListener('click', e => {
     const lv = e.target.closest('[data-nv-lv]');
@@ -3832,8 +3838,10 @@ const LABO = (function () {
     secs.forEach((sec, i) => { sec.id = 'memo-' + i; });
     const t = secs[0] && secs[0].querySelector('table');
     if (t) t.querySelectorAll('tr').forEach(tr => { const c = tr.querySelector('td'); if (!c) return; const m = MANIP.find(x => x[0].test(c.textContent.trim())); if (m) c.innerHTML = `<span class="manip">${m[1]}<span>${c.innerHTML}</span></span>`; });
+    /* sur téléphone, chaque ligne devient une fiche : l'intitulé de colonne est repris devant chaque case */
+    d.querySelectorAll('.tw table').forEach(tb => { const th = [...tb.querySelectorAll('tr:first-child th')].map(x => x.textContent.trim()); tb.querySelectorAll('tr').forEach(tr => [...tr.children].forEach((c, j) => { if (c.tagName === 'TD' && th[j]) c.dataset.l = th[j]; })); });
     const toc = secs.map((sec, i) => { const h = sec.querySelector('h2'); return `<button type="button" data-a="memo" data-i="${i}">${h ? h.innerHTML : 'Mémo ' + (i + 1)}</button>`; }).join('');
-    return `${LABO.fcpBar('memos')}<div class="page-h"><h2>Mémos</h2><p>Les tableaux de synthèse${NB}: manipulations, natures, fonctions. Ils servent pour tous les parcours.</p></div>
+    return `${LABO.fcpBar('memos')}<div class="page-h"><h2>Mémos</h2><p>L’essentiel à retenir, avec un exemple et ce qu’il devient quand on le transforme.</p></div>
     <div class="memos-g"><nav class="memos-toc" aria-label="Sommaire des mémos"><b>Sommaire</b>${toc}</nav><div class="cours memos">${d.innerHTML}</div></div>`;
   }
   /* surligne dans le sommaire le mémo en cours de lecture */
