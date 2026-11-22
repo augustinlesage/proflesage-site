@@ -3164,7 +3164,7 @@ NPARC.n6 = {
             { p: 'Nous allons ___ la piscine.', o: ['a', 'à'], r: 'à', essai: 'avait', x: '<i>Nous allons avait la piscine</i> est impossible : préposition <i>à</i>.', err: 'homo-a' },
             { p: 'Mes parents ___ partis tôt.', o: ['son', 'sont'], r: 'sont', essai: 'étaient', x: '<i>Mes parents étaient partis</i> : verbe <i>être</i>.', err: 'homo-son' },
             { p: 'Il a oublié ___ cartable.', o: ['son', 'sont'], r: 'son', essai: 'étaient', x: '<i>Il a oublié étaient cartable</i> est impossible : <i>son</i> = le sien.', err: 'homo-son' },
-            { p: 'La soupe ___ chaude ___ salée.', trous: [{ o: ['est', 'et'], r: 'est', essai: 'était' }, { o: ['est', 'et'], r: 'et', essai: 'et puis' }], x: '<i>La soupe était chaude</i> ; <i>et</i> relie <i>chaude</i> et <i>salée</i> (on peut dire <i>et puis</i>).', err: 'homo-et' }
+            { p: 'La soupe ___ chaude ___ salée.', trous: [{ o: ['est', 'et'], r: 'est', essais: ['était', 'et puis'] }, { o: ['est', 'et'], r: 'et', essais: ['était', 'et puis'] }], x: '<i>La soupe était chaude</i> ; <i>et</i> relie <i>chaude</i> et <i>salée</i> (on peut dire <i>et puis</i>).', err: 'homo-et' }
           ] }
       ],
       retenir: '<div class="tw"><table><tr><th>Mot</th><th>Ce que c’est</th><th>On remplace par</th></tr><tr><td><i>a</i></td><td>verbe <i>avoir</i></td><td><em class="fx"><i>avait</i></em></td></tr><tr><td><i>à</i></td><td>préposition</td><td>impossible</td></tr><tr><td><i>est</i></td><td>verbe <i>être</i></td><td><em class="fx"><i>était</i></em></td></tr><tr><td><i>et</i></td><td>conjonction (relie)</td><td><i>et puis</i></td></tr><tr><td><i>sont / ont</i></td><td>verbes <i>être / avoir</i></td><td><em class="fx"><i>étaient / avaient</i></em></td></tr><tr><td><i>son / on</i></td><td>déterminant / pronom</td><td><i>mon</i> / <i>il</i></td></tr><tr><td><i>ses / ces</i></td><td>les siens / ceux-là</td><td><i>mes</i> / <i>ces… -là</i></td></tr><tr><td><i>leur / leurs</i></td><td>devant un verbe : pronom, invariable ; devant un nom : déterminant</td><td><em class="fx"><i>lui</i></em> (pronom) ; <i>son / ses</i> (déterminant)</td></tr></table></div>',
@@ -4412,7 +4412,7 @@ const LABO = (function () {
   function essaiTrous(x) {
     let j = 0;
     const phr = fmt(x.p.replace(/___/g, () => `<span class="trou" data-j="${j++}">___</span>`));
-    return `<span class="phr">${phr}</span></p>${x.trous.map((tr, j) => `<div class="trou-l" data-j="${j}"><span class="trou-n">Trou ${j + 1}</span><button type="button" class="btn ghost small" data-x="essai-t" data-j="${j}">Essayer avec <i>${esc(tr.essai)}</i></button><div class="opts">${tr.o.map(o => `<button type="button" class="opt" data-x="choix-t" data-j="${j}" data-v="${esc(o)}">${nb(o)}</button>`).join('')}</div></div>`).join('')}<p class="essai" aria-live="polite"></p><div class="fb" hidden></div>`;
+    return `<span class="phr">${phr}</span></p>${x.trous.map((tr, j) => `<div class="trou-l" data-j="${j}"><span class="trou-n">Trou ${j + 1}</span><button type="button" class="btn ghost small" data-x="essai-t" data-j="${j}" data-i="0">Essayer avec <i>${esc([].concat(tr.essais || tr.essai)[0])}</i></button><div class="opts">${tr.o.map(o => `<button type="button" class="opt" data-x="choix-t" data-j="${j}" data-v="${esc(o)}">${nb(o)}</button>`).join('')}</div></div>`).join('')}<p class="essai" aria-live="polite"></p><div class="fb" hidden></div>`;
   }
   function trouve(el) {
     const [id, ii] = el.dataset.k.split('-'); const t = el.dataset.t;
@@ -4577,8 +4577,10 @@ const LABO = (function () {
       noter(t, k, ok, err, Array.isArray(x) ? x[0] : x.p);
     }
     if (a === 'essai-t') {
-      const j0 = +b.dataset.j; let j = 0;
-      item.querySelector('.essai').innerHTML = `Essai trou ${j0 + 1}${NB}: ` + fmt(x.p.replace(/___/g, () => { const jj = j++; return jj === j0 ? `<b>${esc(x.trous[jj].essai)}</b>` : (item.dataset['t' + jj] ? esc(x.trous[jj].r) : '___'); }));
+      /* le bouton alterne entre les remplacements (était, puis et puis…) : pas d’indice sur la bonne réponse */
+      const j0 = +b.dataset.j, ess = [].concat(x.trous[j0].essais || x.trous[j0].essai), i = +b.dataset.i || 0; let j = 0;
+      item.querySelector('.essai').innerHTML = `Essai trou ${j0 + 1}${NB}: ` + fmt(x.p.replace(/___/g, () => { const jj = j++; return jj === j0 ? `<b>${esc(ess[i])}</b>` : (item.dataset['t' + jj] ? esc(x.trous[jj].r) : '___'); }));
+      if (ess.length > 1) { const n = (i + 1) % ess.length; b.dataset.i = n; b.innerHTML = `Essayer avec <i>${esc(ess[n])}</i>`; }
     }
     if (a === 'choix-t') {
       const j = +b.dataset.j, tr = x.trous[j], l = b.closest('.trou-l'), ok = b.dataset.v === tr.r;
