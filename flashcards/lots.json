@@ -93,4 +93,7 @@
 {"id":"verbe-sujet","nom":"Verbe conjugué et sujet","rub":"grammaire","niv":["6","5"],"n":47,"couv":"couv/verbe-sujet-2ee0d3e9.jpg"},
 {"id":"brevet-langue","nom":"Brevet — étude de la langue","rub":"autres","niv":["3"],"n":64,"couv":"couv/brevet-langue-95e02a00.jpg"},
 {"id":"quelle-heure","nom":"Quelle heure est-il ?","rub":"divers","niv":["6"],"n":23,"titre":"Quelle heure est-il ?","couv":"couv/quelle-heure-b9be04e9.jpg"},
-{"id":"chiffres-romains","nom":"Lire les chiffres romains","rub":"divers","niv":["6","5"],"n":31,"couv":"couv/chiffres-romains-c1d9b9d0.jpg"}],"maj":"22/11/2026"}
+{"id":"chiffres-romains","nom":"Lire les chiffres romains","rub":"divers","niv":["6","5"],"n":31,"couv":"couv/chiffres-romains-c1d9b9d0.jpg"}],"liens":[{"id":"lire-au-college","nom":"Lire au collège","sous":"Un guide pour choisir un livre","url":"https://proflesage.fr/lire/","rub":"divers","couv":"couv/lien-lire-au-college-96c66364.jpg"},
+{"id":"cemantix","nom":"Cémantix","sous":"Trouver le mot secret par le sens","url":"https://cemantix.certitudes.org","rub":"jeux","couv":"couv/lien-cemantix-309b54c8.jpg"},
+{"id":"wordle","nom":"Wordle","sous":"Trouver un mot de cinq lettres","url":"https://wordle.louan.me","rub":"jeux","couv":"couv/lien-wordle-da96f1f0.jpg"},
+{"id":"sutom","nom":"Sutom","sous":"Le mot du jour, lettre par lettre","url":"https://sutom.nocle.fr","rub":"jeux","couv":"couv/lien-sutom-96ef908a.jpg"}],"maj":"22/11/2026"}

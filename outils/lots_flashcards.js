@@ -38,8 +38,11 @@ const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '
         if (d.levelOf) o.base = d.levelOf; /* lot scindé par niveau : id du lot d'origine */
         return o;
       });
-      const util = new Set(lots.map(l => l.rub));
-      return { rubriques: DECK_CATS.filter(c => util.has(c.id)).map(c => ({ id: c.id, nom: c.label })), lots };
+      /* liens vers d'autres sites, affichés comme des lots dans leur rubrique (CAT_LINKS : Lire au collège, Cémantix…), quel que soit le niveau */
+      const liens = [];
+      Object.entries(typeof CAT_LINKS !== 'undefined' ? CAT_LINKS : {}).forEach(([rub, L]) => L.forEach(l => liens.push({ id: l.id, nom: l.title, sous: l.sub, url: l.url, rub })));
+      const util = new Set(lots.map(l => l.rub).concat(liens.map(l => l.rub)));
+      return { rubriques: DECK_CATS.filter(c => util.has(c.id)).map(c => ({ id: c.id, nom: c.label })), lots, liens };
     });
 
     /* couvertures : vignette de chaque lot sur l'accueil élève */
@@ -61,12 +64,22 @@ const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '
       if (!fs.existsSync(path.join(COUV, nom))) fs.writeFileSync(path.join(COUV, nom), img);
       l.couv = 'couv/' + nom; gardes.add(nom); nb++;
     }
+    /* vignettes des liens (même rendu que dans l'appli) */
+    for (const l of r.liens) {
+      const el = await p.$(`.el-link-tile[href="${l.url.replace(/"/g, '\\"')}"] .el-link-thumb`);
+      if (!el) continue;
+      await el.scrollIntoViewIfNeeded(); await p.waitForTimeout(60);
+      const img = await el.screenshot({ type: 'jpeg', quality: 82 });
+      const nom = 'lien-' + l.id + '-' + crypto.createHash('sha256').update(img).digest('hex').slice(0, 8) + '.jpg';
+      if (!fs.existsSync(path.join(COUV, nom))) fs.writeFileSync(path.join(COUV, nom), img);
+      l.couv = 'couv/' + nom; gardes.add(nom); nb++;
+    }
     for (const f of fs.readdirSync(COUV)) if (!gardes.has(f) && f !== '.htaccess') fs.unlinkSync(path.join(COUV, f));
     fs.writeFileSync(path.join(COUV, '.htaccess'), '<IfModule mod_headers.c>\n  Header set Cache-Control "public, max-age=31536000, immutable"\n</IfModule>\n');
 
     const d = new Date(), z = n => String(n).padStart(2, '0');
     r.maj = z(d.getDate()) + '/' + z(d.getMonth() + 1) + '/' + d.getFullYear();
     fs.writeFileSync(out, JSON.stringify(r).replace(/\},\{"id"/g, '},\n{"id"') + '\n');
-    console.log('lots.json : ' + r.lots.length + ' lots, ' + r.rubriques.length + ' rubriques, ' + nb + ' couvertures');
+    console.log('lots.json : ' + r.lots.length + ' lots, ' + r.liens.length + ' liens, ' + r.rubriques.length + ' rubriques, ' + nb + ' couvertures');
   } finally { await b.close(); srv.close(); }
 })().catch(e => { console.error('lots.json non généré : ' + e.message); process.exit(1); });
