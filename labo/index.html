@@ -467,6 +467,8 @@ html.dys .cart-regle{border-color:var(--ink)}html.dys .cart-regle .cart-l{backgr
 .q i.phr{background:var(--sun-soft);padding:1px 5px;border-radius:4px;-webkit-box-decoration-break:clone;box-decoration-break:clone}
 html.dys .q i.phr{background:none;text-decoration:underline;text-decoration-thickness:2px}
 .essai-l{display:block;margin-top:4px}
+.trou-l{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:8px 0}.trou-l .opts{margin:0}
+.trou-n{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);min-width:4.2em}
 
 /* styles des pages de l'appli des flashcards (app.html) */
 .res-page{max-width:860px}
@@ -3162,7 +3164,7 @@ NPARC.n6 = {
             { p: 'Nous allons ___ la piscine.', o: ['a', 'à'], r: 'à', essai: 'avait', x: '<i>Nous allons avait la piscine</i> est impossible : préposition <i>à</i>.', err: 'homo-a' },
             { p: 'Mes parents ___ partis tôt.', o: ['son', 'sont'], r: 'sont', essai: 'étaient', x: '<i>Mes parents étaient partis</i> : verbe <i>être</i>.', err: 'homo-son' },
             { p: 'Il a oublié ___ cartable.', o: ['son', 'sont'], r: 'son', essai: 'étaient', x: '<i>Il a oublié étaient cartable</i> est impossible : <i>son</i> = le sien.', err: 'homo-son' },
-            { p: 'La soupe ___ chaude ___ salée.', o: ['est / et', 'et / est', 'est / est'], r: 'est / et', essai: ['était', 'et puis'], x: '<i>La soupe était chaude</i> ; <i>et</i> relie <i>chaude</i> et <i>salée</i> (on peut dire <i>et puis</i>).', err: 'homo-et' }
+            { p: 'La soupe ___ chaude ___ salée.', trous: [{ o: ['est', 'et'], r: 'est', essai: 'était' }, { o: ['est', 'et'], r: 'et', essai: 'et puis' }], x: '<i>La soupe était chaude</i> ; <i>et</i> relie <i>chaude</i> et <i>salée</i> (on peut dire <i>et puis</i>).', err: 'homo-et' }
           ] }
       ],
       retenir: '<div class="tw"><table><tr><th>Mot</th><th>Ce que c’est</th><th>On remplace par</th></tr><tr><td><i>a</i></td><td>verbe <i>avoir</i></td><td><em class="fx"><i>avait</i></em></td></tr><tr><td><i>à</i></td><td>préposition</td><td>impossible</td></tr><tr><td><i>est</i></td><td>verbe <i>être</i></td><td><em class="fx"><i>était</i></em></td></tr><tr><td><i>et</i></td><td>conjonction (relie)</td><td><i>et puis</i></td></tr><tr><td><i>sont / ont</i></td><td>verbes <i>être / avoir</i></td><td><em class="fx"><i>étaient / avaient</i></em></td></tr><tr><td><i>son / on</i></td><td>déterminant / pronom</td><td><i>mon</i> / <i>il</i></td></tr><tr><td><i>ses / ces</i></td><td>les siens / ceux-là</td><td><i>mes</i> / <i>ces… -là</i></td></tr><tr><td><i>leur / leurs</i></td><td>devant un verbe : pronom, invariable ; devant un nom : déterminant</td><td><em class="fx"><i>lui</i></em> (pronom) ; <i>son / ses</i> (déterminant)</td></tr></table></div>',
@@ -4403,8 +4405,14 @@ const LABO = (function () {
     else if (e.kind === 'cadre') items = e.items.map((x, ii) => it(ii, `</p><div class="grps">${grp(x.p.split(' / '), ii)}</div><p class="essai" aria-live="polite"></p><div class="row acts"><button type="button" class="btn small" data-x="cadre-ok" disabled>Valider ce groupe</button></div><div class="fb" hidden></div>`)).join('');
     else if (e.kind === 'etiqueter') items = e.items.map((x, ii) => it(ii, `</p><div class="etq-banc" role="group" aria-label="Étiquettes">${e.labels.map(l => `<button type="button" class="etq-lab" data-x="etq-lab" data-v="${esc(l)}">${nb(l)}</button>`).join('')}</div><div class="etiq">${x.g.map((g, gi) => `<div class="etq"><span>${nb(g)}</span><button type="button" class="etq-slot" data-x="etq-slot" data-g="${gi}" aria-label="Étiquette de « ${esc(plain(g))} »">dépose ici</button></div>`).join('')}</div><div class="row acts"><button type="button" class="btn small" data-x="etq-ok">Valider</button></div><div class="fb" hidden></div>`)).join('');
     else if (e.kind === 'fleche') items = e.items.map((x, ii) => it(ii, `</p><div class="grps fl">${x.g.map((g, gi) => gi === x.pp ? `<span class="grp pp" data-g="${gi}">…</span>` : `<button type="button" class="grp" data-x="fl-cible" data-g="${gi}">${nb(g)}</button>`).join('')}<svg class="fl-svg" aria-hidden="true"></svg></div><div class="row"><button type="button" class="btn ghost small" data-x="fl-cible" data-g="-1">Pas d’accord</button></div><div class="opts" hidden>${x.o.map(o => `<button type="button" class="opt" data-x="fl-forme" data-v="${esc(o)}">${nb(o)}</button>`).join('')}</div><div class="fb" hidden></div>`)).join('');
-    else if (e.kind === 'essai') items = e.items.map((x, ii) => { const ess = [].concat(x.essai || e.essai); return it(ii, `<span class="phr">${fmt(x.p.replace(/___/g, '<span class="trou">___</span>'))}</span></p><div class="row">${x.nous ? `<button type="button" class="btn ghost small" data-x="essai-nous">Essayer avec <i>nous</i></button>` : `<button type="button" class="btn ghost small" data-x="essai" data-w="${esc(ess.join('|'))}">Essayer avec ${ess.map(w => `<i>${esc(w)}</i>`).join(' / ')}</button>`}</div><p class="essai" aria-live="polite"></p><div class="opts">${x.o.map(o => `<button type="button" class="opt" data-x="choix" data-v="${esc(o)}">${nb(o)}</button>`).join('')}</div><div class="fb" hidden></div>`); }).join('');
+    else if (e.kind === 'essai') items = e.items.map((x, ii) => { if (x.trous) return it(ii, essaiTrous(x)); const ess = [].concat(x.essai || e.essai); return it(ii, `<span class="phr">${fmt(x.p.replace(/___/g, '<span class="trou">___</span>'))}</span></p><div class="row">${x.nous ? `<button type="button" class="btn ghost small" data-x="essai-nous">Essayer avec <i>nous</i></button>` : `<button type="button" class="btn ghost small" data-x="essai" data-w="${esc(ess.join('|'))}">Essayer avec ${ess.map(w => `<i>${esc(w)}</i>`).join(' / ')}</button>`}</div><p class="essai" aria-live="polite"></p><div class="opts">${x.o.map(o => `<button type="button" class="opt" data-x="choix" data-v="${esc(o)}">${nb(o)}</button>`).join('')}</div><div class="fb" hidden></div>`); }).join('');
     return `<section class="exo" data-kind="${e.kind}">${head}${items}</section>`;
+  }
+  /* essai à plusieurs trous : pour chaque trou, un bouton Essayer et sa paire d’homophones */
+  function essaiTrous(x) {
+    let j = 0;
+    const phr = fmt(x.p.replace(/___/g, () => `<span class="trou" data-j="${j++}">___</span>`));
+    return `<span class="phr">${phr}</span></p>${x.trous.map((tr, j) => `<div class="trou-l" data-j="${j}"><span class="trou-n">Trou ${j + 1}</span><button type="button" class="btn ghost small" data-x="essai-t" data-j="${j}">Essayer avec <i>${esc(tr.essai)}</i></button><div class="opts">${tr.o.map(o => `<button type="button" class="opt" data-x="choix-t" data-j="${j}" data-v="${esc(o)}">${nb(o)}</button>`).join('')}</div></div>`).join('')}<p class="essai" aria-live="polite"></p><div class="fb" hidden></div>`;
   }
   function trouve(el) {
     const [id, ii] = el.dataset.k.split('-'); const t = el.dataset.t;
@@ -4567,6 +4575,24 @@ const LABO = (function () {
       if (e.kind === 'essai') { const tr = item.querySelectorAll('.trou'), rr = tr.length > 1 ? r.split(' / ') : [r]; tr.forEach((s, j) => { s.textContent = rr[j] || r; }); }
       fb(item, ok, `<strong>${ok ? 'Juste.' : 'Non.'}</strong> ${ok ? '' : `Réponse attendue${NB}: <b>${r}</b>. `}${expl || ''}`);
       noter(t, k, ok, err, Array.isArray(x) ? x[0] : x.p);
+    }
+    if (a === 'essai-t') {
+      const j0 = +b.dataset.j; let j = 0;
+      item.querySelector('.essai').innerHTML = `Essai trou ${j0 + 1}${NB}: ` + fmt(x.p.replace(/___/g, () => { const jj = j++; return jj === j0 ? `<b>${esc(x.trous[jj].essai)}</b>` : (item.dataset['t' + jj] ? esc(x.trous[jj].r) : '___'); }));
+    }
+    if (a === 'choix-t') {
+      const j = +b.dataset.j, tr = x.trous[j], l = b.closest('.trou-l'), ok = b.dataset.v === tr.r;
+      if (item.dataset['t' + j]) return;
+      l.querySelectorAll('.opt').forEach(o => { o.disabled = true; if (o.dataset.v === tr.r) o.classList.add('ok'); });
+      if (!ok) b.classList.add('ko');
+      item.dataset['t' + j] = ok ? 'ok' : 'ko';
+      item.querySelector(`.trou[data-j="${j}"]`).textContent = tr.r;
+      const res = x.trous.map((_, jj) => item.dataset['t' + jj]);
+      if (res.every(Boolean)) {
+        const tout = res.every(v => v === 'ok');
+        fb(item, tout, `<strong>${tout ? 'Juste.' : 'Pas tout à fait.'}</strong> ${tout ? '' : `Réponse attendue${NB}: <b>${x.trous.map(z => z.r).join(' / ')}</b>. `}${x.x || ''}`);
+        noter(t, k, tout, err, x.p);
+      }
     }
     if (a === 'essai-nous') { item.querySelector('.essai').innerHTML = 'Essai avec <i>nous</i>' + NB + ':' + x.on.map(w => `<span class="essai-l">${fmt('<i>' + x.nous.replace('___', '<b>' + esc(w) + '</b>') + '</i>')}</span>`).join('') + '<span class="essai-l small muted">Quelle phrase sonne juste' + NB + '?</span>'; }
     if (a === 'essai') { const w = b.dataset.w.split('|'); let j = 0; item.querySelector('.essai').innerHTML = 'Essai' + NB + ': ' + fmt(x.p.replace(/___/g, () => `<b>${esc(w[Math.min(j++, w.length - 1)])}</b>`)); }
