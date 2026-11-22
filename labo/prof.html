@@ -48,6 +48,7 @@ header.top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-
 h1{font-family:var(--font-display);font-weight:700;font-size:1.6rem;line-height:1.15;margin:0;text-wrap:balance}
 .brand small{display:block;font-size:.82rem;color:var(--muted)}
 .top-right{display:flex;align-items:center;gap:8px;width:100%}
+.top-outils{display:flex;align-items:center;gap:8px;margin-left:auto} /* Dys, plein écran, thème : en haut à droite ; le menu de l'élève va au bout de la ligne des onglets (Augustin, 22/11/2026) */
 .top-right nav.tabs{flex:1;min-width:0}
 .theme{flex:none;width:38px;height:38px;border-radius:999px;border:1px solid var(--line);background:var(--sheet);color:var(--ink);cursor:pointer;display:inline-grid;place-items:center;padding:0}
 nav.tabs{display:flex;flex-wrap:wrap;gap:6px}
@@ -912,9 +913,9 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
 //# sourceMappingURL=jspdf.umd.min.js.map
 
 ;
-/* Lots de flashcards de la rubrique Entraînements (version élève, fichier flashcards.html).
+/* Lots de flashcards de la rubrique Entrainements (version élève, fichier flashcards.html).
    id = id du lot dans l'appli des flashcards ; niv = niveaux du lot ; th = thème du Laboratoire (ceintures) ;
-   rub = rubrique de l'appli des flashcards (Homophones, Orthographe…), utilisée par la page Entraînements.
+   rub = rubrique de l'appli des flashcards (Homophones, Orthographe…), utilisée par la page Entrainements.
    Sur proflesage.fr (22/11/2026, Augustin : « tous les lots présents dans /flashcards ») la liste vient de
    flashcards/lots.json, produit à chaque publication des flashcards (outils/lots_flashcards.js) :
    copie intégrée à la construction (window.LABO_LOTS) puis relue en ligne par labo.js (chargerLots).
@@ -975,7 +976,7 @@ const DECKS = [
   ['genre-des-noms','Le genre des noms','6543','lexique'],
   ['quelle-heure','Quelle heure est-il ?','6','lexique']
 ].map(([id, nom, niv, th]) => ({ id, nom, niv: niv.split(''), th, rub: th }));
-/* rubriques affichées par la page Entraînements (remplacées par celles des flashcards si lots.json est là) */
+/* rubriques affichées par la page Entrainements (remplacées par celles des flashcards si lots.json est là) */
 let RUBRIQUES_FC = THEMES.map(t => ({ id: t.id, nom: t.nom }));
 /* rubrique des flashcards → thème du Laboratoire (pour les lots conseillés par les ceintures) */
 const RUB_TH = { homophones: 'orthographe', orthographe: 'orthographe', grammaire: 'grammaire', conjugaison: 'conjugaison',
@@ -997,7 +998,7 @@ if (typeof window !== 'undefined' && window.LABO_LOTS) chargerLots(window.LABO_L
 const lotPourNiveau = (id, n) => DECKS.find(d => (d.id === id || d.base === id) && d.niv.includes(n));
 
 /* Ce que le bilan d'un module de parcours conseille (classe du module : fm, gn, gv, ph).
-   Lots d'entraînement, puis échelle de ceintures. */
+   Lots d'entrainement, puis échelle de ceintures. */
 const CONSEILS = {
   fm: { lots:['formation-des-mots','mots-grec-latin','etymologie-flashcards','mots-ailleurs'], echelle:'vocabulaire' },
   gn: { lots:['natures-de-mots','accords-difficiles','ou-est-l-erreur','natures-difficulte'], echelle:'grammaire' },
@@ -1060,7 +1061,7 @@ const CONSEILS = {
    - Critères : temps de travail (rapporté à une séance de 45 min), performance globale
      (coefficient 1,5 pour les lots à correction vérifiée, clic ou écrit), cohérence des lots choisis, test de positionnement fait.
    - Lots incohérents (faits trop vite, chiffres impossibles) : exclus du calcul, barrés avec une icône danger.
-   - La fiche élève s'adresse à l'élève (« tu ») : pas de « note proposée », conseils pour le prochain entraînement.
+   - La fiche élève s'adresse à l'élève (« tu ») : pas de « note proposée », conseils pour le prochain entrainement.
    ==================================================================== */
 const LABO_BILAN = (function () {
   const NB = ' ';
@@ -1176,7 +1177,7 @@ const LABO_BILAN = (function () {
       baisses: changes.filter(x => x.apres < x.avant), stables: changes.filter(x => x.apres === x.avant) };
   }
 
-  /* ---------- Conseils pour le prochain entraînement (adressés à l'élève) ---------- */
+  /* ---------- Conseils pour le prochain entrainement (adressés à l'élève) ---------- */
   function conseils(k) {
     const { lots, exclus, R, niv, B } = k, prog = [], att = [];
     const minLot = l => Math.max(3, Math.round((l.sec != null && +l.sec > 0 ? +l.sec : (+l.n || 20) * 8) / 60));
@@ -1391,7 +1392,7 @@ const LABO_BILAN = (function () {
     const cs = k.conseils;
     const hP = cs.programme.reduce((a, p) => a + 4.4 + Math.ceil(doc.splitTextToSize(p.detail, X2 - M - 34).length) * 3.9 + 2.2, 0) + 12;
     if (y + Math.min(hP, 90) > 282) { doc.addPage(); y = suiteT(doc); }
-    y = sectionTitre(doc, y, 'Pour ton prochain entraînement', cs.minutes ? `environ ${cs.minutes}${NB}min` : '');
+    y = sectionTitre(doc, y, 'Pour ton prochain entrainement', cs.minutes ? `environ ${cs.minutes}${NB}min` : '');
     y -= 2.5; const y0 = y; y += 8; /* titre collé au cadre, plus d'air au-dessus du titre */
     cs.programme.forEach((p, i) => {
       if (y > 278) { doc.addPage(); y = suiteT(doc) + 4; }
@@ -1441,7 +1442,7 @@ const LABO_BILAN = (function () {
       if (nbEx) { danger(doc, M, y + 0.4, 3); y = paragraphe(doc, y, `${nbEx} élève${nbEx > 1 ? 's ont' : ' a'} des lots exclus (faits trop vite ou chiffres impossibles) : ils sont barrés sur leur fiche.`, { retrait: 4.4, taille: 8.8, coul: C.ko }) + 2; }
     }
     y = paragraphe(doc, y + 1, baremeTxt(R), { taille: 8.3, coul: C.muted }) + 1.5;
-    paragraphe(doc, y, 'Ensuite, une fiche par élève, rédigée pour lui : sa note et son détail, son évolution depuis le bilan précédent, son test de positionnement, ses lots (tous ses bilans réunis : pour chaque lot, le résultat le plus récent) et un programme pour son prochain entraînement.', { taille: 8.3, coul: C.muted });
+    paragraphe(doc, y, 'Ensuite, une fiche par élève, rédigée pour lui : sa note et son détail, son évolution depuis le bilan précédent, son test de positionnement, ses lots (tous ses bilans réunis : pour chaque lot, le résultat le plus récent) et un programme pour son prochain entrainement.', { taille: 8.3, coul: C.muted });
     for (let p = 1; p <= doc.getNumberOfPages(); p++) { doc.setPage(p); pied(doc, `Laboratoire de la langue · ${classe.nom}`, p); }
     for (const x of avec) {
       doc.addPage(); const p0 = doc.getNumberOfPages(); pageEleve(doc, classe, x.e, x.k);

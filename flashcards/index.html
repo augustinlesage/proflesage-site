@@ -9060,10 +9060,10 @@ function aboutHTML(eleve) {
   const a = (u, t) => `<a href="${u}" target="_blank" rel="noopener noreferrer">${t}</a>`;
   return `<div class="res-page about-page">
     <div class="deck-head"><div class="deck-title"><div class="res-kicker">À propos</div><h1>Flashcards de révision</h1><div class="muted">Cartes de révision de français pour le collège (6ᵉ–3ᵉ)${NBs}: grammaire, conjugaison, orthographe, vocabulaire.</div></div></div>
-    <section class="res-group"><h2>Auteur</h2><p>Cartes conçues par Augustin Lesage, professeur de français, avec l’aide de l’IA Claude (Anthropic) pour la rédaction et la mise en page. Chaque lot est relu par l’enseignant${NBs}; la terminologie suit les textes officiels ci-dessous.</p></section>
+    <section class="res-group"><h2>Auteur</h2><p>Cartes conçues par M. Lesage, enseignant de français, avec l’aide de l’IA Claude (Anthropic) pour la rédaction et la mise en page. Chaque lot est relu par l’enseignant${NBs}; la terminologie suit les textes officiels ci-dessous.</p></section>
     <section class="res-group"><h2>Licence</h2>
       <div class="about-lic"><span class="about-cc" aria-hidden="true">cc</span><p>Les cartes et leurs contenus sont mis à disposition selon les termes de la licence ${a('https://creativecommons.org/licenses/by-nc-sa/4.0/deed.fr', '<b>Creative Commons Attribution – Pas d’utilisation commerciale – Partage dans les mêmes conditions 4.0 International (CC BY-NC-SA 4.0)</b>')}.</p></div>
-      <ul class="about-ul"><li><b>Vous pouvez</b> copier, imprimer, distribuer et modifier les cartes, par exemple pour votre classe.</li><li><b>À condition</b> de citer l’auteur (Augustin Lesage), de ne pas en faire un usage commercial et de partager vos versions modifiées sous la même licence.</li></ul>
+      <ul class="about-ul"><li><b>Vous pouvez</b> copier, imprimer, distribuer et modifier les cartes, par exemple pour votre classe.</li><li><b>À condition</b> de citer l’auteur (M. Lesage), de ne pas en faire un usage commercial et de partager vos versions modifiées sous la même licence.</li></ul>
       <p class="muted small">Les textes officiels, les sites cités, les polices et les bibliothèques logicielles restent sous leur propre licence (voir plus bas).</p></section>
     <section class="res-group"><h2>Sources et inspirations</h2><p class="muted">Des sites et partages d’enseignants qui ont nourri les idées de lots et de cartes. Les liens s’ouvrent dans un nouvel onglet.</p>
       <div class="res-list">${ABOUT_SOURCES.map(l => `<a class="res-card" href="${l.u}" target="_blank" rel="noopener noreferrer"><span class="res-ico" aria-hidden="true">${FC_ICO('link')}</span><span class="res-body"><span class="res-t">${l.t}<span class="res-ext" aria-hidden="true"> ↗</span></span><span class="res-meta">${l.d}</span></span><span class="sr-only"> (nouvel onglet)</span></a>`).join('')}</div></section>
@@ -9238,19 +9238,19 @@ function notionsHTML(eleve, defLv) {
   };
   const cell = s => !s ? '<span class="nv-none">—</span>' : s[0] === '+' ? `<span class="nv-new">nouveau</span> ${nvNB(s.slice(1))}` : nvNB(s);
   const syn = n => { const S = NOTIONS_SYN.lv[n]; return `<div class="nv-syn${lv === n ? ' on' : ''}"><div class="nv-syn-h"><b>${S.t}</b><span>${S.st}</span></div><p>${nvNB(S.d)}</p><ul>${S.li.map(x => `<li>${nvNB(x)}</li>`).join('')}</ul></div>`; };
-  const head = lv ? `<tr><th>Notion</th><th>En ${lvLabel(lv)}</th><th>Lots pour s’entraîner</th></tr>` : `<tr><th>Notion</th>${LEVELS.map(n => `<th>${lvLabel(n)}</th>`).join('')}<th>Lots</th></tr>`;
+  const head = lv ? `<tr><th>Notion</th><th>En ${lvLabel(lv)}</th><th>Lots pour s’entrainer</th></tr>` : `<tr><th>Notion</th>${LEVELS.map(n => `<th>${lvLabel(n)}</th>`).join('')}<th>Lots</th></tr>`;
   const body = NOTIONS.map(g => {
     const rows = g.rows.filter(r => !lv || r.l[lv]);
     if (!rows.length) return '';
     return `<tr class="nv-dom"><th colspan="${lv ? 3 : 6}">${g.dom}</th></tr>` + rows.map(r => `<tr><th class="nv-n" scope="row">${nvNB(r.n)}</th>${(lv ? [lv] : LEVELS).map(n => `<td data-lv="${lvLabel(n)}">${cell(r.l[n])}</td>`).join('')}<td class="nv-l">${lotChips(r)}</td></tr>`).join('');
   }).join('');
   return `<div class="res-page nv-page" data-eleve="${eleve ? 1 : 0}" data-def="${esc(defLv || '')}">
-    <div class="deck-head"><div class="deck-title"><div class="res-kicker">Programmes</div><h1>Notions par niveau</h1><div class="muted">${eleve ? 'Ce que tu apprends en étude de la langue, de la 6ᵉ à la 3ᵉ, et les lots pour t’entraîner.' : 'Les notions de langue à voir de la 6ᵉ à la 3ᵉ, d’après les textes officiels, et les lots de l’appli qui les travaillent.'}</div></div></div>
+    <div class="deck-head"><div class="deck-title"><div class="res-kicker">Programmes</div><h1>Notions par niveau</h1><div class="muted">${eleve ? 'Ce que tu apprends en étude de la langue, de la 6ᵉ à la 3ᵉ, et les lots pour t’entrainer.' : 'Les notions de langue à voir de la 6ᵉ à la 3ᵉ, d’après les textes officiels, et les lots de l’appli qui les travaillent.'}</div></div></div>
     <section class="res-group"><h2>Synthèse des programmes</h2><p class="nv-intro">${nvNB(NOTIONS_SYN.intro)}</p><div class="nv-syns">${LEVELS.map(syn).join('')}</div></section>
     <section class="res-group"><h2>Tableau des notions</h2>
       <div class="nv-bar" role="group" aria-label="Choisir un niveau"><span>Niveau</span><button class="lv-chip ${lv ? '' : 'on'}" data-nv-lv="">Tous</button>${LEVELS.map(n => `<button class="lv-chip ${lv === n ? 'on' : ''}" data-nv-lv="${n}">${lvLabel(n)}</button>`).join('')}<span class="nv-leg"><span class="nv-new">nouveau</span> = notion nouvelle cette année-là</span></div>
       <div class="nv-scroll"><table class="nv-table ${lv ? 'nv-one' : 'nv-all'}"><thead>${head}</thead><tbody>${body}</tbody></table></div>
-      <p class="muted small">${eleve ? 'Touche un lot pour t’entraîner.' : 'Cliquer sur un lot l’ouvre.'}${lv ? '' : eleve ? ' Choisis ta classe pour une vue plus lisible.' : ' Choisir un niveau donne une vue plus lisible et ne garde que les lots de ce niveau.'}</p></section>
+      <p class="muted small">${eleve ? 'Touche un lot pour t’entrainer.' : 'Cliquer sur un lot l’ouvre.'}${lv ? '' : eleve ? ' Choisis ta classe pour une vue plus lisible.' : ' Choisir un niveau donne une vue plus lisible et ne garde que les lots de ce niveau.'}</p></section>
     <p class="muted small res-src">Sources${' '}: ${NV_SRC}</p>
   </div>`;
 }
@@ -12179,52 +12179,65 @@ ${nouveau ? '<label class="field">Tape-le une deuxième fois<input id="arr-pin2"
     const r = document.querySelector('#labo .top-right'); if (!r || document.getElementById('compte')) return;
     const html = compte
       ? `<div class="compte" id="compte"><button type="button" class="compte-b" id="compte-b" aria-expanded="false"><span class="compte-n">${esc(compte.prenom)}</span><span class="compte-c">${esc(compte.classe)}</span></button>
-<div class="compte-menu" id="compte-menu" hidden><p class="small"><span id="compte-etat"></span></p><button type="button" class="btn" id="compte-out">Ce n’est pas moi / Se déconnecter</button></div></div>`
+<div class="compte-menu" id="compte-menu" hidden><a class="btn ghost compte-badges" href="#badges">Mes badges</a><p class="small"><span id="compte-etat"></span></p><button type="button" class="btn" id="compte-out">Ce n’est pas moi / Se déconnecter</button></div></div>`
       : `<div class="compte" id="compte"><button type="button" class="compte-b" id="compte-in"><span class="compte-n">Se connecter</span></button></div>`;
-    r.insertAdjacentHTML('afterbegin', html);
+    r.insertAdjacentHTML('beforebegin', html); /* en haut à droite de la page, sur la ligne du titre (Augustin, 22/11/2026) */
     const m = document.getElementById('compte-menu');
     if (compte) {
       document.getElementById('compte-b').addEventListener('click', ev => { m.hidden = !m.hidden; ev.currentTarget.setAttribute('aria-expanded', String(!m.hidden)); });
       document.getElementById('compte-out').addEventListener('click', () => { envoyer(); setTimeout(() => deconnexion(false), 400); });
       document.addEventListener('click', ev => { if (!m.hidden && !ev.target.closest('#compte')) m.hidden = true; });
+      /* « Badges » sous le nom de l'élève (Augustin, 22/11/2026) : le menu se referme en ouvrant la page */
+      m.querySelector('.compte-badges').addEventListener('click', () => { m.hidden = true; document.getElementById('compte-b').setAttribute('aria-expanded', 'false'); });
       pastille();
     } else document.getElementById('compte-in').addEventListener('click', () => { try { sessionStorage.removeItem('labo.invite'); } catch (x) { } location.reload(); });
   }
 
-  /* ---------- « Mes badges » : Laboratoire, ceintures et badges du Cahier de suivi (Augustin, 19/11/2026) ----------
-     Le serveur calcule les badges du Laboratoire et garde la copie des badges du Cahier envoyée par le professeur. */
+  /* ---------- onglet « Badges » (labo.js vues.badges) : badges du Laboratoire, trophées des ceintures et badges du Cahier de suivi ----------
+     (19/11/2026 onglet « Mes badges » ; 22/11/2026, Augustin : « faire apparaître les badges du cahier de suivi en gris, et fusionner les ceintures
+     et les badges dans un seul onglet Mon passeport », puis : « renomme en Badges et supprime la partie sur les ceintures »). Le serveur calcule les badges du Laboratoire et garde la copie envoyée par le Cahier :
+     badges obtenus de chaque élève + catalogue complet (catégories, badges, trophées) pour montrer en gris ceux qui restent à gagner. */
   const frJ = d => { const m = /^(\d{4})-(\d\d)-(\d\d)/.exec(d || ''); return m ? `${m[3]}/${m[2]}/${m[1]}` : ''; };
   const plur = (n, m) => `${n}${NB}${m}${n > 1 ? 's' : ''}`;
-  function vueBadges() {
-    return `<section class="mb-vue"><h2>Mes badges</h2><p class="small" id="mb-etat">Chargement de tes badges…</p><div id="mb-corps"></div></section>`;
-  }
   async function remplirBadges() {
-    const LB = typeof LABO_BADGES !== 'undefined' ? LABO_BADGES : null, z = document.getElementById('mb-corps'), etat = document.getElementById('mb-etat');
-    if (!z || !LB) return;
+    const LB = typeof LABO_BADGES !== 'undefined' ? LABO_BADGES : null, z = document.getElementById('pp-badges');
+    if (!z || !LB || z.dataset.fait) return;
+    z.dataset.fait = '1';
+    z.innerHTML = '<p class="small" id="mb-etat">Chargement de tes badges…</p>';
     let d; try { d = await appel('badges', { jeton: compte.jeton }); }
-    catch (err) { if (err.status === 401) return deconnexion(true); etat.textContent = 'Impossible de charger tes badges pour le moment. Réessaie plus tard.'; return; }
+    catch (err) { if (err.status === 401) return deconnexion(true); z.innerHTML = '<p class="small">Impossible de charger tes badges pour le moment. Réessaie plus tard.</p>'; return; }
+    if (!document.body.contains(z)) return;
     const it = (b, ok, date, nb) => `<div class="bg-it${ok ? '' : ' off'}" title="${esc(b.lib + (b.desc ? ' : ' + b.desc : ''))}">${LB.svg(b, { taille: 76, verrou: !ok, nb: nb || 0 })}<b>${esc(b.lib)}</b><small>${ok && frJ(date) ? (nb > 1 ? `${nb} fois · ` : '') + 'le ' + esc(frJ(date)) : esc(b.desc || '')}</small></div>`;
     const grille = l => `<div class="bg-grille">${l.join('')}</div>`;
-    const lab = d.labo || {}, C = d.cahier;
-    let h = '';
-    if (C && (C.badges || []).length + (C.trophees || []).length) {
-      const cats = [...new Set((C.badges || []).map(b => b.cat || 'Badges'))];
-      h += `<h3 class="bg-h">Cahier de suivi <span>${plur(C.n, 'badge')} · ${C.dif}${NB}différent${C.dif > 1 ? 's' : ''}${C.actif ? ` · ${plur(C.pass, 'passeport')} complet${C.pass > 1 ? 's' : ''}` : ''}</span></h3>`;
-      h += grille(cats.flatMap(c => C.badges.filter(b => (b.cat || 'Badges') === c).map(b => it(b, true, b.date, b.n))).concat((C.trophees || []).map(b => it(b, true, '', 0))));
-    } else h += `<h3 class="bg-h">Cahier de suivi</h3><p class="small">Pas encore de badge du Cahier de suivi${C ? '' : ' ici'}. Ils apparaîtront quand ton professeur t’en donnera.</p>`;
+    const lab = d.labo || {}, C = d.cahier || null, K = d.cahierCatalogue || null;
     const k1 = LB.LAB.filter(b => lab[b.id]).length, k2 = LB.LB.filter(b => lab[b.id]).length;
-    h += `<h3 class="bg-h">Laboratoire <span>${k1}/${LB.LAB.length}</span></h3>` + grille(LB.LAB.map(b => it(b, !!lab[b.id], lab[b.id])));
-    h += `<h3 class="bg-h">Trophées des ceintures <span>${k2}/${LB.LB.length}</span></h3>` + grille(LB.LB.map(b => it(b, !!lab[b.id], lab[b.id])));
-    etat.textContent = 'Les badges en couleur sont obtenus ; les gris sont encore à gagner.';
-    z.innerHTML = h;
+    let h = `<h3 class="bg-h pp-h">Trophées des ceintures <span>${k2}/${LB.LB.length}</span></h3>` + grille(LB.LB.map(b => it(b, !!lab[b.id], lab[b.id])));
+    h += `<h3 class="bg-h pp-h">Badges du Laboratoire <span>${k1}/${LB.LAB.length}</span></h3>` + grille(LB.LAB.map(b => it(b, !!lab[b.id], lab[b.id])));
+    const eus = {}, tro = {};
+    ((C && C.badges) || []).forEach(b => { eus[b.id] = b; });
+    ((C && C.trophees) || []).forEach(b => { tro[b.id] = b; });
+    const resume = C ? ` · ${plur(C.n, 'badge')}${C.actif ? ` · ${plur(C.pass, 'passeport')} complet${C.pass > 1 ? 's' : ''}` : ''}` : '';
+    if (K && (K.badges || []).length) {
+      /* catalogue complet : obtenus en couleur, les autres en gris ; un badge obtenu absent du catalogue (supprimé depuis) reste affiché */
+      const liste = K.badges.concat(Object.values(eus).filter(b => !K.badges.some(x => x.id === b.id)));
+      const cats = [...new Set((K.cats || []).concat(liste.map(b => b.cat || 'Badges')))].filter(c => liste.some(b => (b.cat || 'Badges') === c));
+      h += `<h3 class="bg-h pp-h">Badges du Cahier de suivi <span>${Object.keys(eus).length}/${liste.length}${resume}</span></h3>`;
+      h += cats.map(c => { const l = liste.filter(b => (b.cat || 'Badges') === c), k = l.filter(b => eus[b.id]).length;
+        return `<h4 class="bg-h bg-sous">${esc(c)} <span>${k}/${l.length}</span></h4>` + grille(l.map(b => { const g = eus[b.id]; return g ? it(g, true, g.date, g.n) : it(b, false); })); }).join('');
+      const T = (K.trophees || []).length ? K.trophees : Object.values(tro);
+      if (T.length) h += `<h4 class="bg-h bg-sous">Trophées du Cahier <span>${T.filter(b => tro[b.id]).length}/${T.length}</span></h4>` + grille(T.map(b => it(tro[b.id] || b, !!tro[b.id], '', 0)));
+    } else if (C && (C.badges || []).length + (C.trophees || []).length) {
+      /* Cahier pas encore mis à jour (pas de catalogue) : seulement les badges obtenus */
+      const cats = [...new Set(C.badges.map(b => b.cat || 'Badges'))];
+      h += `<h3 class="bg-h pp-h">Badges du Cahier de suivi <span>${C.dif}${NB}différent${C.dif > 1 ? 's' : ''}${resume}</span></h3>`;
+      h += grille(cats.flatMap(c => C.badges.filter(b => (b.cat || 'Badges') === c).map(b => it(b, true, b.date, b.n))).concat((C.trophees || []).map(b => it(b, true, '', 0))));
+    } else h += `<h3 class="bg-h pp-h">Badges du Cahier de suivi</h3><p class="small">Pas encore de badge du Cahier de suivi ici. Ils apparaîtront quand ton professeur t’en donnera.</p>`;
+    z.innerHTML = `<p class="small pp-leg">Les badges en couleur sont obtenus${NB}; les gris sont encore à gagner.</p>` + h;
   }
   /* ---------- démarrage ---------- */
   function demarrer() {
-    if (compte && LABO.vues) LABO.vues.badges = h => h === 'badges' ? vueBadges() : null;
     LABO.start(); entete();
     if (!compte) return;
-    const nav = document.getElementById('nav');
-    if (nav && !nav.querySelector('[data-r="badges"]')) { nav.insertAdjacentHTML('beforeend', '<a href="#badges" data-r="badges">Mes badges</a>'); if (location.hash === '#badges') nav.lastElementChild.setAttribute('aria-current', 'page'); }
     document.addEventListener('labo:vue', ev => { if (ev.detail === 'badges') remplirBadges(); });
     if (location.hash === '#badges') remplirBadges();
     window.addEventListener('labo-save', bientot);
