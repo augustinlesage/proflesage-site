@@ -463,6 +463,10 @@ html.dys .carte-fle{background:var(--sheet)}
 .cart-regle{background:var(--sun-soft);border-color:#e3b85a}.cart-regle .cart-l{background:#e3b85a;color:#3d2c05}
 html.dys .cart-regle{border-color:var(--ink)}html.dys .cart-regle .cart-l{background:var(--ink);color:var(--sheet)}
 
+/* phrase étudiée surlignée dans les questions */
+.q i.phr{background:var(--sun-soft);padding:1px 5px;border-radius:4px;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+html.dys .q i.phr{background:none;text-decoration:underline;text-decoration-thickness:2px}
+
 /* styles des pages de l'appli des flashcards (app.html) */
 .res-page{max-width:860px}
 .res-kicker{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--brand);font-weight:700;margin-bottom:2px}
@@ -4264,7 +4268,9 @@ const LABO = (function () {
     'homo-on': '<i>on / ont</i>', 'homo-ces': '<i>ces / ses</i>', 'homo-leur': '<i>leur / leurs</i>', 'polysemie': 'Polysémie', 'homonymes': 'Homonymes',
     'hyper': 'Hyperonymes et hyponymes'
   };
-  const nb = s => String(s == null ? '' : s).replace(/ ([:;!?])/g, ' $1');
+  const nb0 = s => String(s == null ? '' : s).replace(/ ([:;!?])/g, ' $1');
+  /* phrase citée entière (majuscule … point) : classe phr, surlignée dans les questions (p.q) */
+  const nb = s => nb0(s).replace(/<i>([A-ZÀÂÉÈÊÎÔÛÇ«](?:(?!<\/i>).)*?[.!?…])<\/i>/g, '<i class="phr">$1</i>');
   const fmt = s => nb(String(s).replace(/\*\*(.+?)\*\*/g, '<mark>$1</mark>'));
   const plain = s => String(s).replace(/<[^>]+>/g, '').replace(/\*\*/g, '').replace(/\s+/g, ' ').trim();
   const norm = s => String(s).normalize('NFC').toLowerCase().replace(/[’`´]/g, "'").replace(/[  ]/g, ' ').replace(/\s+/g, ' ').replace(/^[\s.,;:!?«»"]+|[\s.,;:!?«»"]+$/g, '').trim();
