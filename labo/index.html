@@ -432,13 +432,22 @@ html.dys{--ct:#1d1d1d}
 .essai{margin:0;min-height:1.4em;color:var(--muted)}
 .etiq{display:flex;flex-wrap:wrap;gap:8px}
 .etq{display:flex;flex-direction:column;gap:4px;border:1px solid var(--line);border-radius:10px;padding:6px 8px;background:var(--paper)}
-.etq select{font:inherit;font-size:13px;border:1px solid var(--line);border-radius:8px;padding:3px 4px;background:var(--sheet);color:var(--ink)}
+.etq-banc{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 10px}
+.etq-lab{font:inherit;font-size:13px;font-weight:600;padding:5px 12px;border-radius:8px;border:1px solid var(--clay);background:var(--acc-soft);color:var(--ink);cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none}
+.etq-lab.sel{outline:2px solid var(--icon);outline-offset:2px}.etq-lab:disabled{cursor:default;opacity:.55}
+.etq-fant{position:fixed;z-index:50;pointer-events:none;transform:translate(-50%,-60%) rotate(-2deg);box-shadow:0 6px 16px rgba(0,0,0,.18);cursor:grabbing}
+.etq-slot{font:inherit;font-size:13px;min-width:7.5em;min-height:28px;border:1.5px dashed var(--line);border-radius:8px;padding:3px 8px;background:var(--sheet);color:var(--muted);cursor:pointer}
+.etq-slot.plein{border-style:solid;border-color:var(--clay);background:var(--acc-soft);color:var(--ink);font-weight:600}
+.etq-slot.vise{border-color:var(--icon);border-style:solid;background:var(--sun-soft)}.etq-slot:disabled{cursor:default}
 .etq.ok{border-color:#2e7d4f}.etq.ko{border-color:var(--brick)}.etq-r{font-size:12px;color:#2e7d4f;font-weight:600}
 .blank.long{width:100%;max-width:560px;margin:4px 0}
 .trou{font-weight:700}
 .rf-box{border:1px solid var(--line);border-radius:var(--r);padding:14px;background:var(--paper);max-width:520px}
 .rf-top{display:flex;justify-content:space-between;color:var(--muted);font-size:13px;font-variant-numeric:tabular-nums}
 .rf-q{font-size:20px;margin:10px 0}
+.rf-k{display:inline-block;min-width:1.5em;margin-right:6px;padding:0 4px;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;font:inherit;font-size:.85em;line-height:1.4;text-align:center;color:var(--muted);background:var(--sheet)}
+.rf-aide{margin:10px 0 0}
+@media (hover:none){.rf-k,.rf-aide{display:none}}
 /* parcours FLE : fond sable (Augustin, 22/11/2026) */
 html.fle:not(.dys){--paper:#f4ecdc;--sheet:#fffaf0;--soft:#ebe0c8;--line:#ddcfb2}
 .carte-fle:not(.x){background:#f8f0de;border-color:#ddcfb2}
@@ -446,6 +455,13 @@ html.fle:not(.dys){--paper:#f4ecdc;--sheet:#fffaf0;--soft:#ebe0c8;--line:#ddcfb2
 html.fle[data-theme="dark"]:not(.dys){--paper:#211d15;--sheet:#2c271d;--soft:#3a3326;--line:#4b4232}
 :root[data-theme="dark"] .carte-fle{background:#2c271d;border-color:#4b4232}
 html.dys .carte-fle{background:var(--sheet)}
+/* cartouches « J’observe » et « Je déduis la règle » (Augustin, 22/11/2026) */
+.cart{position:relative;border-radius:var(--r);padding:26px 16px 12px;border:1px solid}
+.cart>:last-child{margin-bottom:0}
+.cart-l{position:absolute;top:-1px;left:14px;font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:3px 10px;border-radius:0 0 8px 8px}
+.cart-obs{background:var(--acc-soft);border-color:var(--clay)}.cart-obs .cart-l{background:var(--icon);color:var(--sheet)}
+.cart-regle{background:var(--sun-soft);border-color:#e3b85a}.cart-regle .cart-l{background:#e3b85a;color:#3d2c05}
+html.dys .cart-regle{border-color:var(--ink)}html.dys .cart-regle .cart-l{background:var(--ink);color:var(--sheet)}
 
 /* styles des pages de l'appli des flashcards (app.html) */
 .res-page{max-width:860px}
@@ -3014,7 +3030,7 @@ NPARC.n6 = {
         ['Le verbe conjugué s’accorde avec…', 'son sujet', 'Le verbe prend la personne et le nombre de son sujet.', ['son sujet', 'le mot placé juste avant', 'le COD'], 'sujet-repere']
       ],
       rappelVers: 'Si tu as manqué une question, relis le mémo « Le verbe et son sujet » dans les Mémos.',
-      observer: '<p>Compare ces trois phrases.</p><ul><li><i>Les enfants <b>jouent</b> dans la cour.</i></li><li><i>Les enfants ne <b>jouent</b> pas dans la cour.</i></li><li><i>Hier, les enfants <b>jouaient</b> dans la cour.</i></li></ul><p>Un seul mot se laisse encadrer par <i>ne… pas</i> et change quand on change le temps : c’est le verbe conjugué.</p>',
+      observer: { obs: '<p>Compare ces trois phrases.</p><ul><li><i>Les enfants <b>jouent</b> dans la cour.</i></li><li><i>Les enfants ne <b>jouent</b> pas dans la cour.</i></li><li><i>Hier, les enfants <b>jouaient</b> dans la cour.</i></li></ul>', regle: '<p>Un seul mot se laisse encadrer par <i>ne… pas</i> et change quand on change le temps : c’est le verbe conjugué.</p>' },
       manip: [
         { kind: 'cadre', cadre: ['ne', 'pas'], titre: 'Encadrer par ne… pas', consigne: 'Touche un groupe : la phrase s’affiche avec <i>ne… pas</i> autour. Garde le groupe qui donne une phrase correcte.', err: 'verbe-repere',
           items: [
@@ -3062,12 +3078,12 @@ NPARC.n6 = {
         ['<i>Autrefois, je ___ à pied.</i> (imparfait)', 'marchais', 'Imparfait : terminaisons <i>-ais, -ais, -ait, -ions, -iez, -aient</i>.', ['marchai', 'marchais', 'marcherai'], 'cond-forme'],
         ['<i>Tu ___ tes devoirs.</i> (présent de <i>finir</i>)', 'finis', '2ᵉ groupe au présent : <i>je finis, tu finis, il finit</i>.', ['finis', 'finit', 'finie'], 'cond-forme']
       ],
-      observer: '<p>Compare.</p><ul><li><i>Tu <b>ranges</b> ta chambre.</i> (présent)</li><li><i><b>Range</b> ta chambre !</i> (impératif)</li><li><i>Si j’avais le temps, je <b>rangerais</b> ma chambre.</i> (conditionnel)</li></ul><p>À l’impératif, le sujet disparait. Au conditionnel, on retrouve le <i>r</i> du futur et la terminaison de l’imparfait.</p>',
+      observer: { obs: '<p>Compare.</p><ul><li><i>Tu <b>ranges</b> ta chambre.</i> (présent)</li><li><i><b>Range</b> ta chambre !</i> (impératif)</li><li><i>Si j’avais le temps, je <b>rangerais</b> ma chambre.</i> (conditionnel)</li></ul>', regle: '<p>À l’impératif, le sujet disparait. Au conditionnel, on retrouve le <i>r</i> du futur et la terminaison de l’imparfait.</p>' },
       manip: [
         { kind: 'transformer', titre: 'Donner un ordre', consigne: 'Transforme la phrase à l’impératif : supprime le sujet et ajoute un point d’exclamation.', err: 'imperatif-forme',
           items: [
-            { p: '<i>Tu ranges tes affaires.</i>', r: 'Range tes affaires !|Range tes affaires.', x: '1ᵉʳ groupe : pas de <i>-s</i> à la 2ᵉ personne du singulier.', err: 'imperatif-s' },
-            { p: '<i>Nous finissons le travail.</i>', r: 'Finissons le travail !|Finissons le travail.', x: 'À la 1ʳᵉ personne du pluriel : <i>finissons</i>.' },
+            { p: '<i>Tu ranges tes affaires.</i>', r: 'Range tes affaires !|Range tes affaires.', x: '1<sup>er</sup> groupe : pas de <i>-s</i> à la 2ᵉ personne du singulier.', err: 'imperatif-s' },
+            { p: '<i>Nous finissons le travail.</i>', r: 'Finissons le travail !|Finissons le travail.', x: 'À la 1<sup>re</sup> personne du pluriel : <i>finissons</i>.' },
             { p: '<i>Vous prenez vos cahiers.</i>', r: 'Prenez vos cahiers !|Prenez vos cahiers.', x: '<i>Prenez</i>, sans le sujet <i>vous</i>.' }
           ] },
         { kind: 'essai', essai: 'demain', titre: 'Futur ou conditionnel ?', consigne: 'Essaie de remplacer par <i>demain</i> pour entendre la différence, puis choisis. Le conditionnel exprime ce qu’on imagine, souvent après <i>si</i> + imparfait.', err: 'cond-futur',
@@ -3077,12 +3093,12 @@ NPARC.n6 = {
             { p: 'À ta place, je ___ un pull.', o: ['mettrai', 'mettrais'], r: 'mettrais', essai: 'mettrais', x: 'Un conseil, une situation imaginée : conditionnel.' }
           ] }
       ],
-      retenir: '<p>L’<b>impératif</b> donne un ordre, un conseil : il n’a <em class="fx">pas de sujet exprimé</em> et seulement trois personnes : <i>range, rangeons, rangez</i>.</p><ul><li>1ᵉʳ groupe : <em class="fx">pas de <i>-s</i> à la 2ᵉ personne</em> : <i>Range !</i> (mais <i>Penses-y !</i>)</li><li><i>être</i> : <i>sois, soyons, soyez</i> ; <i>avoir</i> : <i>aie, ayons, ayez</i>.</li></ul><p>Le <b>conditionnel présent</b> exprime ce que l’on imagine ou souhaite. On le forme avec <em class="fx">le radical du futur + les terminaisons de l’imparfait</em> : <i>je ranger<b>ais</b>, tu ranger<b>ais</b>, il ranger<b>ait</b>, nous ranger<b>ions</b>, vous ranger<b>iez</b>, ils ranger<b>aient</b></i>.</p><p>À la 1ʳᵉ personne du singulier, on entend la différence : <i>je rangerai</i> (futur, [e]) / <i>je rangerais</i> (conditionnel, [ɛ]).</p>',
+      retenir: '<p>L’<b>impératif</b> donne un ordre, un conseil : il n’a <em class="fx">pas de sujet exprimé</em> et seulement trois personnes : <i>range, rangeons, rangez</i>.</p><ul><li>1<sup>er</sup> groupe : <em class="fx">pas de <i>-s</i> à la 2ᵉ personne</em> : <i>Range !</i> (mais <i>Penses-y !</i>)</li><li><i>être</i> : <i>sois, soyons, soyez</i> ; <i>avoir</i> : <i>aie, ayons, ayez</i>.</li></ul><p>Le <b>conditionnel présent</b> exprime ce que l’on imagine ou souhaite. On le forme avec <em class="fx">le radical du futur + les terminaisons de l’imparfait</em> : <i>je ranger<b>ais</b>, tu ranger<b>ais</b>, il ranger<b>ait</b>, nous ranger<b>ions</b>, vous ranger<b>iez</b>, ils ranger<b>aient</b></i>.</p><p>À la 1<sup>re</sup> personne du singulier, on entend la différence : <i>je rangerai</i> (futur, [e]) / <i>je rangerais</i> (conditionnel, [ɛ]).</p>',
       exos: [
         { kind: 'input', titre: 'Conjuguer', consigne: 'Écris le verbe au temps demandé.', err: 'cond-forme',
           items: [
             ['<i>(être, impératif, 2ᵉ pers. sing.)</i> ___ prudent !', 'Sois|sois', 'Impératif de <i>être</i> : <i>sois, soyons, soyez</i>.', 'imperatif-forme'],
-            ['<i>(chanter, impératif, 2ᵉ pers. sing.)</i> ___ plus fort !', 'Chante|chante', '1ᵉʳ groupe : pas de <i>-s</i>.', 'imperatif-s'],
+            ['<i>(chanter, impératif, 2ᵉ pers. sing.)</i> ___ plus fort !', 'Chante|chante', '1<sup>er</sup> groupe : pas de <i>-s</i>.', 'imperatif-s'],
             ['<i>(pouvoir, conditionnel)</i> Nous ___ partir plus tôt.', 'pourrions', 'Radical du futur <i>pourr-</i> + <i>-ions</i>.'],
             ['<i>(faire, conditionnel)</i> Ils ___ du vélo s’il faisait beau.', 'feraient', 'Radical du futur <i>fer-</i> + <i>-aient</i>.'],
             ['<i>(venir, conditionnel)</i> Tu ___ avec nous ?', 'viendrais', 'Radical du futur <i>viendr-</i> + <i>-ais</i>.']
@@ -3099,7 +3115,7 @@ NPARC.n6 = {
         ['Quel est le participe passé de <i>prendre</i> ?', 'pris', '<i>pris</i> : on entend le <i>s</i> au féminin, <i>prise</i>.', ['prendu', 'pris', 'prit'], 'pp-avoir-sujet'],
         ['<i>Les voitures sont ___.</i> (garer)', 'garées', 'Comme un adjectif : <i>des voitures garées</i>.', ['garé', 'garées', 'garer'], 'pp-etre']
       ],
-      observer: '<p>Compare.</p><ul><li><i>Les filles sont <b>parties</b>.</i></li><li><i>Les filles ont <b>pris</b> le bus.</i></li><li><i>Ces photos, je les ai <b>prises</b> hier.</i></li></ul><p>Avec <i>être</i>, le participe s’accorde avec le sujet. Avec <i>avoir</i>, il ne s’accorde jamais avec le sujet, mais il s’accorde avec le COD quand celui-ci est un pronom placé avant.</p>',
+      observer: { obs: '<p>Compare.</p><ul><li><i>Les filles sont <b>parties</b>.</i></li><li><i>Les filles ont <b>pris</b> le bus.</i></li><li><i>Ces photos, je les ai <b>prises</b> hier.</i></li></ul>', regle: '<p>Avec <i>être</i>, le participe s’accorde avec le sujet. Avec <i>avoir</i>, il ne s’accorde jamais avec le sujet, mais il s’accorde avec le COD quand celui-ci est un pronom placé avant.</p>' },
       manip: [
         { kind: 'fleche', titre: 'Tracer la flèche de l’accord', consigne: 'Touche le mot qui commande l’accord du participe : la flèche le relie au participe. Puis choisis la bonne forme.',
           items: [
@@ -3132,7 +3148,7 @@ NPARC.n6 = {
         ['<i>Le ciel ___ bleu.</i>', 'est', 'On peut dire <i>le ciel était bleu</i> : verbe <i>être</i>.', ['et', 'est'], 'homo-et'],
         ['<i>Ils ___ faim.</i>', 'ont', 'On peut dire <i>ils avaient faim</i>.', ['on', 'ont'], 'homo-on']
       ],
-      observer: '<p>Les homophones se prononcent de la même façon mais ne s’écrivent pas pareil, car ce ne sont pas les mêmes mots. Pour choisir, on <b>remplace</b> par un mot qui, lui, s’entend différemment.</p><ul><li><i>Il <b>a</b> faim → Il <b>avait</b> faim</i> : ça marche, c’est le verbe <i>avoir</i>.</li><li><i>Il va <b>à</b> Lyon → Il va <b>avait</b> Lyon</i> : impossible, c’est la préposition <i>à</i>.</li></ul>',
+      observer: { obs: '<p>Compare.</p><ul><li><i>Il <b>a</b> faim → Il <b>avait</b> faim</i> : la phrase reste correcte.</li><li><i>Il va <b>à</b> Lyon → Il va <b>avait</b> Lyon</i> : impossible.</li></ul>', regle: '<p>Les homophones se prononcent de la même façon, mais ce ne sont pas les mêmes mots. Pour choisir, on <b>remplace</b> par un mot qui s’entend différemment : si la phrase reste correcte avec <i>avait</i>, c’est le verbe <i>avoir</i> (<i>a</i>) ; sinon, c’est la préposition <i>à</i>.</p>' },
       manip: [
         { kind: 'essai', titre: 'Remplacer pour choisir', consigne: 'Essaie le remplacement proposé : si la phrase reste correcte, c’est le verbe. Puis choisis.',
           items: [
@@ -3166,7 +3182,7 @@ NPARC.n6 = {
         ['Le contraire de <i>allumer</i> est…', 'éteindre', 'Un antonyme a un sens contraire.', ['éclairer', 'éteindre', 'bruler'], 'polysemie'],
         ['Dans le dictionnaire, les différents sens d’un mot sont…', 'numérotés', 'Chaque sens a son numéro et son exemple.', ['numérotés', 'en couleur', 'cachés'], 'polysemie']
       ],
-      observer: '<p>Observe.</p><ul><li><i>La <b>souris</b> grignote le fromage.</i> / <i>Clique avec la <b>souris</b>.</i> → un même mot, deux sens : il est <b>polysémique</b>.</li><li><i>La <b>mer</b>, ma <b>mère</b>, le <b>maire</b></i> → trois mots différents qui se prononcent pareil : ce sont des <b>homonymes</b>.</li><li><i><b>Fruit</b> : pomme, poire, cerise</i> → <i>fruit</i> englobe les autres : c’est un <b>hyperonyme</b>.</li></ul>',
+      observer: { obs: '<p>Observe.</p><ul><li><i>La <b>souris</b> grignote le fromage.</i> / <i>Clique avec la <b>souris</b>.</i></li><li><i>La <b>mer</b>, ma <b>mère</b>, le <b>maire</b></i></li><li><i><b>Fruit</b> : pomme, poire, cerise</i></li></ul>', regle: '<ul><li>Un même mot qui a plusieurs sens est <b>polysémique</b> (<i>souris</i>).</li><li>Des mots différents qui se prononcent pareil sont des <b>homonymes</b> (<i>mer, mère, maire</i>).</li><li>Un mot général qui en englobe d’autres est un <b>hyperonyme</b> (<i>fruit</i>).</li></ul>' },
       manip: [
         { kind: 'etiqueter', titre: 'Du général au particulier', consigne: 'Pour chaque série, trouve le mot général (hyperonyme) : les autres sont ses hyponymes.', labels: ['hyperonyme', 'hyponyme'], err: 'hyper',
           items: [
@@ -4219,7 +4235,7 @@ const LABO = (function () {
    - pid : n6, n5, n4, n3, nfle
    - diagnostic : [{ n: 'P01', q, r, x, o: [options], err? }] ; « Je ne sais pas » s’ajoute
    - module = { dom: P|V|G|H|L, steps: [étape] }
-   - étape = { id, titre, sub, notions: [...], rappel: [choix], observer: html, manip: [exo],
+   - étape = { id, titre, sub, notions: [...], rappel: [choix], observer: { obs: html, regle: html }, manip: [exo],
                retenir: html, exos: [exo], reflexe: { consigne, options, items: [[énoncé, réponse]], err }, loin: { lots: [...] } }
    - exo = { kind, titre, consigne, err?, items } ; kind :
        choice   [énoncé, réponse, explication, options?, err?]
@@ -4350,7 +4366,7 @@ const LABO = (function () {
     const r = roles(pid);
     const sec = (id, titre, html) => html ? `<section class="n-sec" id="sec-${id}"><h3 class="n-sec-h"><span class="n-sec-no">${SECS.findIndex(x => x[0] === id) + 1}</span>${titre}</h3>${html}</section>` : '';
     const rappel = s.rappel && s.rappel.length ? exo({ kind: 'choice', titre: 'Ce que tu sais déjà', consigne: 'Trois questions sur ce que tu as appris avant. Si tu en manques, relis le mémo indiqué avant de continuer.', items: s.rappel }, 'rappel', 0) + (s.rappelVers ? `<p class="small muted">${nb(s.rappelVers)}</p>` : '') : '';
-    const obs = (s.observer ? `<div class="cours n-obs">${nb(s.observer)}</div>` : '') + (s.manip || []).map((e, ei) => exo(e, 'main', 'm' + ei)).join('');
+    const O = s.observer, obs = (O ? (typeof O === 'string' ? `<div class="cours n-obs">${nb(O)}</div>` : `<div class="cart cart-obs cours"><span class="cart-l">J’observe</span>${nb(O.obs)}</div><div class="cart cart-regle cours"><span class="cart-l">Je déduis la règle</span>${nb(O.regle)}</div>`) : '') + (s.manip || []).map((e, ei) => exo(e, 'main', 'm' + ei)).join('');
     const ret = s.retenir ? `<div class="cours memos n-ret">${nb(s.retenir)}</div>` : '';
     const ex = (s.exos || []).map((e, ei) => exo(e, 'main', 'e' + ei)).join('');
     const rf = s.reflexe ? reflexeHTML(s) : '';
@@ -4377,7 +4393,7 @@ const LABO = (function () {
     else if (e.kind === 'input') items = e.items.map((x, ii) => { const parts = x[0].split('___'), w = Math.max(10, x[1].split('|')[0].length + 3); return it(ii, `<span>${fmt(parts[0])}<input class="blank" style="width:${w}ch" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Réponse ${ii + 1}">${fmt(parts[1] || '')}</span></p><div class="row acts"><button type="button" class="btn small" data-x="verif">Vérifier</button></div><div class="fb" hidden></div>`); }).join('');
     else if (e.kind === 'transformer') items = e.items.map((x, ii) => it(ii, `<span>${fmt(x.p)}</span></p><input class="blank long" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Phrase transformée ${ii + 1}"><div class="row acts"><button type="button" class="btn small" data-x="verif">Vérifier</button></div><div class="fb" hidden></div>`)).join('');
     else if (e.kind === 'cadre') items = e.items.map((x, ii) => it(ii, `</p><div class="grps">${grp(x.p.split(' / '), ii)}</div><p class="essai" aria-live="polite"></p><div class="row acts"><button type="button" class="btn small" data-x="cadre-ok" disabled>Valider ce groupe</button></div><div class="fb" hidden></div>`)).join('');
-    else if (e.kind === 'etiqueter') items = e.items.map((x, ii) => it(ii, `</p><div class="etiq">${x.g.map((g, gi) => `<label class="etq"><span>${nb(g)}</span><select data-g="${gi}" aria-label="Étiquette de « ${esc(plain(g))} »"><option value="">…</option>${e.labels.map(l => `<option>${esc(l)}</option>`).join('')}</select></label>`).join('')}</div><div class="row acts"><button type="button" class="btn small" data-x="etq-ok">Valider</button></div><div class="fb" hidden></div>`)).join('');
+    else if (e.kind === 'etiqueter') items = e.items.map((x, ii) => it(ii, `</p><div class="etq-banc" role="group" aria-label="Étiquettes">${e.labels.map(l => `<button type="button" class="etq-lab" data-x="etq-lab" data-v="${esc(l)}">${nb(l)}</button>`).join('')}</div><div class="etiq">${x.g.map((g, gi) => `<div class="etq"><span>${nb(g)}</span><button type="button" class="etq-slot" data-x="etq-slot" data-g="${gi}" aria-label="Étiquette de « ${esc(plain(g))} »">dépose ici</button></div>`).join('')}</div><div class="row acts"><button type="button" class="btn small" data-x="etq-ok">Valider</button></div><div class="fb" hidden></div>`)).join('');
     else if (e.kind === 'fleche') items = e.items.map((x, ii) => it(ii, `</p><div class="grps fl">${x.g.map((g, gi) => gi === x.pp ? `<span class="grp pp" data-g="${gi}">…</span>` : `<button type="button" class="grp" data-x="fl-cible" data-g="${gi}">${nb(g)}</button>`).join('')}<svg class="fl-svg" aria-hidden="true"></svg></div><div class="row"><button type="button" class="btn ghost small" data-x="fl-cible" data-g="-1">Pas d’accord</button></div><div class="opts" hidden>${x.o.map(o => `<button type="button" class="opt" data-x="fl-forme" data-v="${esc(o)}">${nb(o)}</button>`).join('')}</div><div class="fb" hidden></div>`)).join('');
     else if (e.kind === 'essai') items = e.items.map((x, ii) => { const ess = x.essai || e.essai; return it(ii, `<span class="phr">${fmt(x.p.replace('___', '<span class="trou">___</span>'))}</span></p><div class="row"><button type="button" class="btn ghost small" data-x="essai" data-w="${esc(ess)}">Essayer avec <i>${esc(ess)}</i></button></div><p class="essai" aria-live="polite"></p><div class="opts">${x.o.map(o => `<button type="button" class="opt" data-x="choix" data-v="${esc(o)}">${nb(o)}</button>`).join('')}</div><div class="fb" hidden></div>`); }).join('');
     return `<section class="exo" data-kind="${e.kind}">${head}${items}</section>`;
@@ -4411,6 +4427,8 @@ const LABO = (function () {
 
   /* ---------- Série Réflexe : dix questions, chronométrées ---------- */
   let R = null;
+  /* flèches du clavier : ← 1re réponse, → 2e, ↓ 3e, ↑ 4e ; Entrée lance ou relance la série */
+  const RF_K = [['ArrowLeft', '←'], ['ArrowRight', '→'], ['ArrowDown', '↓'], ['ArrowUp', '↑']];
   function reflexeHTML(s) {
     const pr = P.prog[key(T.pid, s)] || {}, b = pr.reflexe;
     return `<p class="consigne">${nb(s.reflexe.consigne)} Dix questions, le plus vite possible${NB}: vise 10/10 en moins de ${s.reflexe.cible || 40} secondes.</p>
@@ -4418,7 +4436,7 @@ const LABO = (function () {
   }
   function rfQuestion() {
     const q = R.items[R.i];
-    document.getElementById('rf').innerHTML = `<div class="rf-box"><div class="rf-top"><span>${R.i + 1}/10</span><span id="rf-t">${Math.round((Date.now() - R.t0) / 1000)} s</span></div><p class="rf-q">${fmt(q[0])}</p><div class="opts">${(q[2] || T.s.reflexe.options).map(o => `<button type="button" class="opt" data-x="rf-rep" data-v="${esc(o)}">${nb(o)}</button>`).join('')}</div></div>`;
+    document.getElementById('rf').innerHTML = `<div class="rf-box"><div class="rf-top"><span>${R.i + 1}/10</span><span id="rf-t">${Math.round((Date.now() - R.t0) / 1000)} s</span></div><p class="rf-q">${fmt(q[0])}</p><div class="opts">${(q[2] || T.s.reflexe.options).map((o, j) => `<button type="button" class="opt" data-x="rf-rep" data-v="${esc(o)}">${RF_K[j] ? `<kbd class="rf-k" aria-hidden="true">${RF_K[j][1]}</kbd>` : ''}${nb(o)}</button>`).join('')}</div><p class="small muted rf-aide">Au clavier${NB}: les flèches choisissent la réponse.</p></div>`;
   }
   function rfFin() {
     clearInterval(R.tick);
@@ -4430,14 +4448,20 @@ const LABO = (function () {
   }
 
   /* ---------- Interactions ---------- */
+  /* aperçu d’un encadrement : la ponctuation finale reste en fin de phrase ; un nom propre garde sa majuscule
+     (seuls les mots courants en début de phrase passent en minuscule) */
+  const COURANTS = /^(le|la|les|l’|l'|un|une|des|du|de|d’|mon|ma|mes|ton|ta|tes|son|sa|ses|ce|cet|cette|ces|notre|nos|votre|vos|leur|leurs|il|elle|ils|elles|on|je|j’|tu|nous|vous|dans|sur|sous|au|aux|en|à|chaque|hier|demain|aujourd’hui|ce|tout|tous|toute|toutes|plusieurs|quelques|certains|certaines|après|avant|pendant|depuis|quand|lorsque|si|soudain|enfin|puis|alors|devant|derrière|chez|par|pour|avec|sans)$/i;
+  const min = t => { const m = t.match(/^([^\s’']+[’']?)/); return m && COURANTS.test(m[1]) ? t.replace(/^./, ch => ch.toLowerCase()) : t; };
+  const maj = t => t.replace(/^./, ch => ch.toUpperCase());
   function apercuCadre(e, x, gi) {
-    const g = x.p.split(' / '), bon = [].concat(x.r).includes(gi);
+    const bon = [].concat(x.r).includes(gi);
     if (bon && x.t) return x.t;
+    const g = x.p.split(' / '), m = g[g.length - 1].match(/\s*([.!?…]+)$/), fin = m ? m[1] : '';
+    if (m) g[g.length - 1] = g[g.length - 1].slice(0, -m[0].length);
     const c = e.cadre || ['C’est', 'qui'];
-    const maj = t => t.replace(/^./, ch => ch.toUpperCase()), min = t => t.replace(/^./, ch => ch.toLowerCase());
-    if (c[1] === 'pas') { const w = g[gi]; const ne = /^[aeiouyéèêàâîôûh]/i.test(w) ? 'n’' : 'ne '; return maj(g.map((y, j) => j === gi ? ne + (j ? y : min(y)) + ' ' + c[1] : y).join(' ')); }
-    const reste = g.filter((y, j) => j !== gi).join(' ');
-    return `${c[0]} ${g[gi].replace(/^./, ch => ch.toLowerCase())} ${c[1]} ${reste.replace(/^./, ch => ch.toLowerCase())}`;
+    if (c[1] === 'pas') { const w = g[gi]; const ne = /^[aeiouyéèêàâîôûh]/i.test(w) ? 'n’' : 'ne '; return maj(g.map((y, j) => j === gi ? ne + (j ? y : min(y)) + ' ' + c[1] : y).join(' ')) + fin; }
+    const reste = g.filter((y, j) => j !== gi).map((y, j) => j === 0 && gi !== 0 ? min(y) : y).join(' ');
+    return `${c[0]} ${gi === 0 ? min(g[gi]) : g[gi]} ${c[1]} ${reste}${fin}`;
   }
   function fleche(item, from, to) {
     const box = item.querySelector('.grps.fl'), svg = box.querySelector('.fl-svg');
@@ -4447,6 +4471,41 @@ const LABO = (function () {
     svg.setAttribute('viewBox', `0 0 ${r0.width} ${r0.height}`);
     svg.innerHTML = `<defs><marker id="fl-m" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="currentColor"/></marker></defs><path d="M${x1} ${y + 2} C ${x1} ${y - 22}, ${x2} ${y - 22}, ${x2} ${y + 2}" fill="none" stroke="currentColor" stroke-width="2" marker-end="url(#fl-m)"/>`;
   }
+  /* étiquettes à glisser-déposer (souris ou doigt) ; un toucher sur l’étiquette puis sur le groupe marche aussi */
+  function poserEtq(slot, v) {
+    slot.dataset.v = v; slot.textContent = v || 'dépose ici'; slot.classList.toggle('plein', !!v);
+    const it = slot.closest('.item'), f = it && it.querySelector('.fb'); if (f && !f.classList.contains('ok')) f.hidden = true;
+  }
+  let etqD = null, etqGlisse = false;
+  document.addEventListener('pointerdown', ev => {
+    const l = ev.target.closest('.etq-lab'); if (!l || l.disabled || ev.button > 0) return;
+    etqD = { l, x: ev.clientX, y: ev.clientY, fant: null }; etqGlisse = false;
+  });
+  document.addEventListener('pointermove', ev => {
+    if (!etqD) return;
+    if (!etqD.fant) {
+      if (Math.hypot(ev.clientX - etqD.x, ev.clientY - etqD.y) < 6) return;
+      const f = etqD.l.cloneNode(true); f.classList.add('etq-fant'); f.removeAttribute('data-x'); document.body.appendChild(f); etqD.fant = f; etqGlisse = true;
+    }
+    ev.preventDefault();
+    etqD.fant.style.left = ev.clientX + 'px'; etqD.fant.style.top = ev.clientY + 'px';
+    const cible = document.elementFromPoint(ev.clientX, ev.clientY), slot = cible && cible.closest('.etq-slot');
+    document.querySelectorAll('.etq-slot.vise').forEach(s => s.classList.toggle('vise', s === slot));
+    if (slot && slot.closest('.item') === etqD.l.closest('.item') && !slot.disabled) slot.classList.add('vise');
+  }, { passive: false });
+  const finEtq = ev => {
+    if (!etqD) return;
+    if (etqD.fant) {
+      etqD.fant.remove();
+      const cible = ev.type === 'pointerup' && document.elementFromPoint(ev.clientX, ev.clientY), slot = cible && cible.closest('.etq-slot');
+      document.querySelectorAll('.etq-slot.vise').forEach(s => s.classList.remove('vise'));
+      if (slot && !slot.disabled && slot.closest('.item') === etqD.l.closest('.item')) poserEtq(slot, etqD.l.dataset.v);
+      setTimeout(() => { etqGlisse = false; }, 0);
+    }
+    etqD = null;
+  };
+  document.addEventListener('pointerup', finEtq); document.addEventListener('pointercancel', finEtq);
+
   document.addEventListener('click', ev => {
     const b = ev.target.closest('[data-x]'); if (!b || !b.closest('#vue')) return;
     const a = b.dataset.x;
@@ -4521,11 +4580,14 @@ const LABO = (function () {
       fb(item, ok, `<strong>${ok ? 'Juste.' : 'Non.'}</strong> ${ok ? '' : `La bonne transformation${NB}: <i>${nb(x.t || '')}</i>. `}${x.x || ''}`);
       noter(t, k, ok, err, x.p.replace(/ \/ /g, ' '));
     }
+    if (a === 'etq-lab') { if (etqGlisse) return; const sel = !b.classList.contains('sel'); item.querySelectorAll('.etq-lab').forEach(l => l.classList.toggle('sel', sel && l === b)); }
+    if (a === 'etq-slot') { const l = item.querySelector('.etq-lab.sel'); if (l) { poserEtq(b, l.dataset.v); l.classList.remove('sel'); } else if (b.dataset.v) poserEtq(b, ''); }
     if (a === 'etq-ok') {
-      const sels = [...item.querySelectorAll('select')];
-      if (sels.some(s => !s.value)) { fb(item, false, 'Choisis d’abord une étiquette pour chaque groupe.'); return; }
+      const sels = [...item.querySelectorAll('.etq-slot')];
+      if (sels.some(s => !s.dataset.v)) { fb(item, false, 'Place d’abord une étiquette sur chaque groupe.'); return; }
       let ok = true;
-      sels.forEach(s => { const bon = s.value === x.l[+s.dataset.g]; if (!bon) ok = false; s.disabled = true; s.parentNode.classList.add(bon ? 'ok' : 'ko'); if (!bon) s.insertAdjacentHTML('afterend', `<span class="etq-r">${esc(x.l[+s.dataset.g])}</span>`); });
+      sels.forEach(s => { const bon = s.dataset.v === x.l[+s.dataset.g]; if (!bon) ok = false; s.disabled = true; s.parentNode.classList.add(bon ? 'ok' : 'ko'); if (!bon) s.insertAdjacentHTML('afterend', `<span class="etq-r">${esc(x.l[+s.dataset.g])}</span>`); });
+      item.querySelectorAll('.etq-lab').forEach(l => { l.disabled = true; l.classList.remove('sel'); });
       b.remove();
       fb(item, ok, `<strong>${ok ? 'Juste.' : 'Pas tout à fait.'}</strong> ${x.x || ''}`);
       noter(t, k, ok, err, x.g.join(' '));
@@ -4550,6 +4612,13 @@ const LABO = (function () {
     }
   });
   document.addEventListener('keydown', ev => {
+    const rf = document.getElementById('rf');
+    if (rf && !ev.altKey && !ev.ctrlKey && !ev.metaKey && !/^(INPUT|TEXTAREA|SELECT)$/.test(ev.target.tagName || '')) {
+      const j = RF_K.findIndex(k => k[0] === ev.key), opts = rf.querySelectorAll('[data-x="rf-rep"]');
+      if (j >= 0 && opts[j]) { ev.preventDefault(); opts[j].click(); return; }
+      const go = rf.querySelector('[data-x="rf-go"]');
+      if (ev.key === 'Enter' && go && ev.target === document.body) { ev.preventDefault(); go.click(); return; }
+    }
     if (ev.key === 'Enter' && ev.target.classList && ev.target.classList.contains('blank')) { const it = ev.target.closest('.item'); const btn = it && it.querySelector('[data-x="verif"]'); if (btn) { ev.preventDefault(); btn.click(); } }
   });
 
