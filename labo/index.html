@@ -4367,7 +4367,7 @@ const LABO = (function () {
 
   /* ---------- Étape ---------- */
   let T = null; /* état de l’étape : { pid, i, s, main: { total, seen, ok }, rappel: {…} } */
-  const SECS = [['rappel', 'Rappel express'], ['observer', 'Observer et manipuler'], ['retenir', 'Retenir'], ['exos', 'S’exercer'], ['reflexe', 'Réflexe'], ['loin', 'Pour aller plus loin']];
+  const SECS = [['rappel', 'Rappel'], ['observer', 'Observer et manipuler'], ['retenir', 'Retenir'], ['exos', 'S’exercer'], ['reflexe', 'Réflexe'], ['loin', 'Pour aller plus loin']];
   function etape(pid, i) {
     const f = flat(pid); if (!f[i]) return plan(pid);
     const { m, s } = f[i];
@@ -4388,7 +4388,7 @@ const LABO = (function () {
     <div class="layout-step"><div class="n-step m-${DOM[m.dom][1]}">
       <div class="page-h"><div class="row"><span class="pill">${DOM[m.dom][0]}</span>${roleHTML(r, s)}</div><h2>${nb(s.titre)}</h2>${s.sub ? `<p>${nb(s.sub)}</p>` : ''}
         <p class="small muted">${s.notions.map(n => esc(n) + ' ' + nb(nomNotion(n))).join(' · ')}</p></div>
-      ${sec('rappel', 'Rappel express', rappel)}${sec('observer', 'Observer et manipuler', obs)}${sec('retenir', 'Retenir', ret)}${sec('exos', 'S’exercer', ex)}<div id="resultat" hidden></div>${sec('reflexe', 'Réflexe', rf)}${sec('loin', 'Pour aller plus loin', loin)}
+      ${sec('rappel', 'Rappel', rappel)}${sec('observer', 'Observer et manipuler', obs)}${sec('retenir', 'Retenir', ret)}${sec('exos', 'S’exercer', ex)}<div id="resultat" hidden></div>${sec('reflexe', 'Réflexe', rf)}${sec('loin', 'Pour aller plus loin', loin)}
     </div><aside>${side}</aside></div>`;
   }
 
