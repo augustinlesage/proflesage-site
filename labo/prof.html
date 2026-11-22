@@ -407,6 +407,42 @@ html.dys{--ct:#1d1d1d}
 .memos .tw-petit table{width:auto;max-width:560px;font-size:.84rem}.memos .tw-petit th,.memos .tw-petit td{padding:4px 9px}.memos .tw-petit th{font-size:.66rem}
 @media (max-width:600px){.memos .tw-petit table{width:auto}.memos .tw-petit tr{padding:5px 10px}}
 
+/* ---------- Parcours par niveau (refonte 2026-11, lot 1) ---------- */
+.m-ho{--m:#8a5a14}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .m-ho{--m:#e0b56a}}
+:root[data-theme="dark"] .m-ho{--m:#e0b56a}
+.anciens-h{margin:18px 0 0;font-size:16px}
+.n-step{display:flex;flex-direction:column;gap:16px;min-width:0}
+.n-sec{background:var(--sheet);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;display:flex;flex-direction:column;gap:12px}
+.n-sec-h{display:flex;align-items:center;gap:10px;margin:0;font-size:17px}
+.n-sec-no{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--m,var(--icon));color:var(--sheet);font-size:13px;font-weight:700;flex:none}
+.n-sec .exo{border:0;padding:0;background:none}
+.n-ret{border-left:4px solid var(--m,var(--icon));padding-left:14px}
+.grps{display:flex;flex-wrap:wrap;gap:6px;position:relative}
+.grp{border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:10px;padding:6px 10px;font:inherit;cursor:pointer}
+.grp:hover:not(:disabled),.grp:focus-visible{border-color:var(--icon)}
+.grp.sel{border-color:var(--icon);box-shadow:0 0 0 2px var(--acc-soft);font-weight:600}
+.grp.ok{border-color:#2e7d4f;background:rgba(46,125,79,.12)}.grp.ko{border-color:var(--brick);background:var(--brick-soft)}
+.grp.pp{border-style:dashed;cursor:default;font-weight:700}
+.grps.fl{padding-top:30px}.fl-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;color:var(--icon);overflow:visible}
+.essai{margin:0;min-height:1.4em;color:var(--muted)}
+.etiq{display:flex;flex-wrap:wrap;gap:8px}
+.etq{display:flex;flex-direction:column;gap:4px;border:1px solid var(--line);border-radius:10px;padding:6px 8px;background:var(--paper)}
+.etq select{font:inherit;font-size:13px;border:1px solid var(--line);border-radius:8px;padding:3px 4px;background:var(--sheet);color:var(--ink)}
+.etq.ok{border-color:#2e7d4f}.etq.ko{border-color:var(--brick)}.etq-r{font-size:12px;color:#2e7d4f;font-weight:600}
+.blank.long{width:100%;max-width:560px;margin:4px 0}
+.trou{font-weight:700}
+.rf-box{border:1px solid var(--line);border-radius:var(--r);padding:14px;background:var(--paper);max-width:520px}
+.rf-top{display:flex;justify-content:space-between;color:var(--muted);font-size:13px;font-variant-numeric:tabular-nums}
+.rf-q{font-size:20px;margin:10px 0}
+/* parcours FLE : fond sable (Augustin, 22/11/2026) */
+html.fle:not(.dys){--paper:#f4ecdc;--sheet:#fffaf0;--soft:#ebe0c8;--line:#ddcfb2}
+.carte-fle:not(.x){background:#f8f0de;border-color:#ddcfb2}
+@media (prefers-color-scheme:dark){html.fle:not(.dys):not([data-theme="light"]){--paper:#211d15;--sheet:#2c271d;--soft:#3a3326;--line:#4b4232}:root:not([data-theme="light"]) .carte-fle{background:#2c271d;border-color:#4b4232}}
+html.fle[data-theme="dark"]:not(.dys){--paper:#211d15;--sheet:#2c271d;--soft:#3a3326;--line:#4b4232}
+:root[data-theme="dark"] .carte-fle{background:#2c271d;border-color:#4b4232}
+html.dys .carte-fle{background:var(--sheet)}
+
 /* Espace professeur */
 .p-tabs{display:flex;gap:6px;flex-wrap:wrap}
 .p-tabs button{font:inherit;font-weight:600;font-size:.9rem;padding:6px 14px;border-radius:999px;border:1px solid var(--line);background:var(--sheet);color:var(--ink);cursor:pointer}
