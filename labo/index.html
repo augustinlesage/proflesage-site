@@ -454,7 +454,8 @@ html.dys .tw tr:nth-child(even) td{background:transparent}
 .arr-nom{font:inherit;font-weight:700;font-size:1rem;padding:14px 10px;border-radius:var(--r);border:1px solid var(--line);background:var(--sheet);color:var(--ink);cursor:pointer;text-align:center}
 .arr-nom:hover,.arr-nom:focus-visible{border-color:var(--brick);outline:none;box-shadow:0 0 0 3px var(--brick-soft)}
 .compte{position:relative;flex:none;margin-left:auto}
-.compte-b{font:inherit;display:inline-flex;flex-direction:column;align-items:flex-start;line-height:1.1;padding:5px 12px;border-radius:999px;border:1px solid var(--line);background:var(--sheet);color:var(--ink);cursor:pointer;max-width:150px}
+.compte-b{font:inherit;display:inline-flex;flex-direction:column;align-items:flex-start;line-height:1.1;padding:5px 12px;border-radius:999px;border:1px solid var(--clay);background:var(--acc-soft);color:var(--ink);cursor:pointer;max-width:150px}
+.compte-b:hover,.compte-b[aria-expanded="true"]{border-color:var(--icon)} /* teinte bleutée : se distingue des onglets (Augustin, 22/11/2026) */
 .compte-n{font-weight:700;font-size:.85rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 .compte-c{font-size:.7rem;color:var(--muted)}
 .compte-menu{position:absolute;right:0;top:calc(100% + 6px);z-index:30;background:var(--sheet);border:1px solid var(--line);border-radius:var(--r);padding:12px;display:flex;flex-direction:column;gap:8px;width:230px;box-shadow:0 8px 24px rgba(0,0,0,.12)}
