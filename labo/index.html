@@ -4430,14 +4430,20 @@ const LABO = (function () {
   }
 
   /* ---------- Interactions ---------- */
+  /* aperçu d’un encadrement : la ponctuation finale reste en fin de phrase ; un nom propre garde sa majuscule
+     (seuls les mots courants en début de phrase passent en minuscule) */
+  const COURANTS = /^(le|la|les|l’|l'|un|une|des|du|de|d’|mon|ma|mes|ton|ta|tes|son|sa|ses|ce|cet|cette|ces|notre|nos|votre|vos|leur|leurs|il|elle|ils|elles|on|je|j’|tu|nous|vous|dans|sur|sous|au|aux|en|à|chaque|hier|demain|aujourd’hui|ce|tout|tous|toute|toutes|plusieurs|quelques|certains|certaines|après|avant|pendant|depuis|quand|lorsque|si|soudain|enfin|puis|alors|devant|derrière|chez|par|pour|avec|sans)$/i;
+  const min = t => { const m = t.match(/^([^\s’']+[’']?)/); return m && COURANTS.test(m[1]) ? t.replace(/^./, ch => ch.toLowerCase()) : t; };
+  const maj = t => t.replace(/^./, ch => ch.toUpperCase());
   function apercuCadre(e, x, gi) {
-    const g = x.p.split(' / '), bon = [].concat(x.r).includes(gi);
+    const bon = [].concat(x.r).includes(gi);
     if (bon && x.t) return x.t;
+    const g = x.p.split(' / '), m = g[g.length - 1].match(/\s*([.!?…]+)$/), fin = m ? m[1] : '';
+    if (m) g[g.length - 1] = g[g.length - 1].slice(0, -m[0].length);
     const c = e.cadre || ['C’est', 'qui'];
-    const maj = t => t.replace(/^./, ch => ch.toUpperCase()), min = t => t.replace(/^./, ch => ch.toLowerCase());
-    if (c[1] === 'pas') { const w = g[gi]; const ne = /^[aeiouyéèêàâîôûh]/i.test(w) ? 'n’' : 'ne '; return maj(g.map((y, j) => j === gi ? ne + (j ? y : min(y)) + ' ' + c[1] : y).join(' ')); }
-    const reste = g.filter((y, j) => j !== gi).join(' ');
-    return `${c[0]} ${g[gi].replace(/^./, ch => ch.toLowerCase())} ${c[1]} ${reste.replace(/^./, ch => ch.toLowerCase())}`;
+    if (c[1] === 'pas') { const w = g[gi]; const ne = /^[aeiouyéèêàâîôûh]/i.test(w) ? 'n’' : 'ne '; return maj(g.map((y, j) => j === gi ? ne + (j ? y : min(y)) + ' ' + c[1] : y).join(' ')) + fin; }
+    const reste = g.filter((y, j) => j !== gi).map((y, j) => j === 0 && gi !== 0 ? min(y) : y).join(' ');
+    return `${c[0]} ${gi === 0 ? min(g[gi]) : g[gi]} ${c[1]} ${reste}${fin}`;
   }
   function fleche(item, from, to) {
     const box = item.querySelector('.grps.fl'), svg = box.querySelector('.fl-svg');
