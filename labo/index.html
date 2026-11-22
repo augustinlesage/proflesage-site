@@ -326,8 +326,9 @@ mark{background:var(--sun-soft);color:inherit;border-radius:3px;padding:0;box-sh
 .result{background:var(--sheet);border:2px solid var(--clay);border-radius:var(--r);padding:16px 18px;display:flex;flex-direction:column;gap:10px}
 .result .big{font-size:1.6rem;font-weight:800}
 .conseils{display:flex;flex-direction:column;gap:6px}
-.conseils a{text-decoration:none;display:flex;justify-content:space-between;gap:10px;background:var(--paper);border-radius:10px;padding:7px 12px;font-size:.9rem}
+.conseils a{text-decoration:none;display:flex;justify-content:space-between;align-items:center;gap:10px;background:var(--paper);border-radius:10px;padding:7px 12px;font-size:.9rem}
 .conseils a:hover{outline:1px solid var(--clay)}
+.conseils .tag{align-self:center;line-height:1.5}
 .diag-q{display:flex;flex-direction:column;gap:8px}
 
 /* Ceintures : échelles et tests */
@@ -469,6 +470,11 @@ html.dys .q i.phr{background:none;text-decoration:underline;text-decoration-thic
 .essai-l{display:block;margin-top:4px}
 .trou-l{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:8px 0}.trou-l .opts{margin:0}
 .trou-n{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);min-width:4.2em}
+.n-couche{margin:14px 0;padding:0}.n-couche>summary{cursor:pointer;list-style:none;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;padding:12px 16px}
+.n-couche>summary::-webkit-details-marker{display:none}.n-couche>summary::before{content:'▸';color:var(--muted)}.n-couche[open]>summary::before{content:'▾'}
+.n-couche>:not(summary){margin-left:16px;margin-right:16px}.n-couche[open]{padding-bottom:12px}
+.n-bases{border-left:4px solid var(--icon)}.n-defi{border-left:4px solid #e3b85a}
+.ex-resolu{background:var(--paper);border-radius:10px;padding:8px 12px;margin:8px 0}.ex-resolu ol{margin:4px 0;padding-left:20px}
 
 /* styles des pages de l'appli des flashcards (app.html) */
 .res-page{max-width:860px}
@@ -3037,6 +3043,29 @@ NPARC.n6 = {
         ['Le verbe conjugué s’accorde avec…', 'son sujet', 'Le verbe prend la personne et le nombre de son sujet.', ['son sujet', 'le mot placé juste avant', 'le COD'], 'sujet-repere']
       ],
       rappelVers: 'Si tu as manqué une question, relis le mémo « Le verbe et son sujet » dans les Mémos.',
+      bases: {
+        cours: '<p>Une <b>phrase</b> commence par une majuscule et finit par un point. Elle a un sens.</p><p>Le <b>verbe</b> dit ce qui se passe : une action (<i>courir, manger</i>) ou un état (<i>être, sembler</i>).</p><div class="ex-resolu"><p><b>Exemple résolu.</b> <i>Le chat dort.</i></p><ol><li>Je change le moment : <i>Hier, le chat <b>dormait</b>.</i> Le mot qui change, c’est <i>dort</i>.</li><li>J’entoure avec <i>ne… pas</i> : <i>Le chat <b>ne</b> dort <b>pas</b>.</i> Ça marche.</li><li>Donc <i>dort</i> est le <em class="fx">verbe conjugué</em>.</li></ol></div><p>Le <b>sujet</b> dit <b>qui</b> fait l’action. Je demande : <i>Qui est-ce qui dort ?</i> Réponse : <i>le chat</i>. C’est le <em class="fx">sujet</em>.</p>',
+        items: [
+          ['Dans <i>Le bébé pleure.</i>, quel mot dit ce qui se passe ?', 'pleure', 'Hier, le bébé <i>pleurait</i> : c’est ce mot qui change.', ['bébé', 'pleure'], 'verbe-repere'],
+          ['Dans <i>Nous mangeons.</i>, quel mot change si on parle d’hier ?', 'mangeons', 'Hier, nous <i>mangions</i>.', ['Nous', 'mangeons'], 'verbe-repere'],
+          ['<i>Le chien aboie.</i> Qui est-ce qui aboie ?', 'le chien', '<i>C’est le chien qui aboie</i> : <i>le chien</i> est le sujet.', ['le chien', 'aboie'], 'sujet-repere'],
+          ['Quelle phrase est correcte ?', 'Le chat ne dort pas.', '<i>ne… pas</i> entoure le verbe <i>dort</i>.', ['Le chat ne dort pas.', 'Ne le chat pas dort.'], 'verbe-repere']
+        ]
+      },
+      defi: [
+        { kind: 'choice', titre: 'Les pièges', consigne: 'Des phrases plus longues : cherche bien.',
+          items: [
+            ['Dans <i>Le livre que tu m’as prêté me plait beaucoup.</i>, quel est le sujet de <i>plait</i> ?', 'Le livre que tu m’as prêté', '<i>C’est le livre que tu m’as prêté qui me plait</i> : le sujet contient une autre proposition.', ['tu', 'Le livre que tu m’as prêté', 'me'], 'sujet-repere'],
+            ['Dans <i>Sur la colline se dressait un vieux château.</i>, quel est le sujet ?', 'un vieux château', 'Sujet inversé : <i>c’est un vieux château qui se dressait</i>.', ['la colline', 'un vieux château'], 'sujet-inverse'],
+            ['Combien de verbes conjugués dans <i>En entendant le tonnerre, le chien, effrayé, se cacha sous le lit.</i> ?', '1', '<i>entendant</i> (participe présent) et <i>effrayé</i> (participe passé) ne sont pas conjugués : seul <i>se cacha</i> l’est.', ['1', '2', '3'], 'verbe-repere'],
+            ['Dans <i>Toi et moi irons au cinéma.</i>, pourquoi <i>irons</i> ?', 'le sujet vaut nous', '<i>toi et moi</i> = <i>nous</i> : 1<sup>re</sup> personne du pluriel.', ['le sujet vaut nous', 'le verbe est irrégulier'], 'sujet-repere']
+          ] },
+        { kind: 'input', titre: 'À toi d’écrire', consigne: 'Complète avec le verbe au présent, bien accordé.', err: 'sujet-inverse',
+          items: [
+            ['<i>(arriver)</i> Au loin ___ les coureurs.', 'arrivent', 'Sujet inversé <i>les coureurs</i> : pluriel.'],
+            ['<i>(briller)</i> Dans le ciel ___ mille étoiles.', 'brillent', 'Sujet inversé <i>mille étoiles</i> : pluriel.']
+          ] }
+      ],
       observer: { obs: '<p>Compare ces trois phrases.</p><ul><li><i>Les enfants <b>jouent</b> dans la cour.</i></li><li><i>Les enfants ne <b>jouent</b> pas dans la cour.</i></li><li><i>Hier, les enfants <b>jouaient</b> dans la cour.</i></li></ul>', regle: '<p>Un seul mot se laisse encadrer par <i>ne… pas</i> et change quand on change le temps : c’est le verbe conjugué.</p>' },
       manip: [
         { kind: 'cadre', cadre: ['ne', 'pas'], titre: 'Encadrer par ne… pas', consigne: 'Touche un groupe : la phrase s’affiche avec <i>ne… pas</i> autour. Garde le groupe qui donne une phrase correcte.', err: 'verbe-repere',
@@ -4707,6 +4736,8 @@ const LABO = (function () {
    - sortie : même format, diagnostic de fin de parcours (#sortie-pid), comparé au diagnostic d’entrée
    - module = { dom: P|V|G|H|L, steps: [étape] }
    - étape = { id, titre, sub, notions: [...], rappel: [choix], observer: { obs: html, regle: html }, manip: [exo],
+               bases?: { cours: html, items: [choix] }  (« Je reprends les bases », ouvert si la notion est à travailler),
+               defi?: [exo]  (« Défi », ouvert si la notion est acquise),
                retenir: html, exos: [exo], reflexe: { consigne, options, items: [[énoncé, réponse]], err }, loin: { lots: [...] } }
    - exo = { kind, titre, consigne, err?, items } ; kind :
        choice   [énoncé, réponse, explication, options?, err?]
@@ -4846,7 +4877,7 @@ const LABO = (function () {
     const f = flat(pid); if (!f[i]) return plan(pid);
     const { m, s } = f[i];
     P.last = { pid, i }; save();
-    T = { pid, i, s, main: { total: 0, n: 0, ok: 0, seen: {} }, rappel: { total: 0, n: 0, ok: 0, seen: {} } };
+    T = { pid, i, s, main: { total: 0, n: 0, ok: 0, seen: {} }, rappel: { total: 0, n: 0, ok: 0, seen: {} }, bases: { total: 0, n: 0, ok: 0, seen: {} }, defi: { total: 0, n: 0, ok: 0, seen: {} } };
     const r = roles(pid);
     const sec = (id, titre, html) => html ? `<section class="n-sec" id="sec-${id}"><h3 class="n-sec-h"><span class="n-sec-no">${SECS.findIndex(x => x[0] === id) + 1}</span>${titre}</h3>${html}</section>` : '';
     const rappel = s.rappel && s.rappel.length ? exo({ kind: 'choice', titre: 'Ce que tu sais déjà', consigne: 'Trois questions sur ce que tu as appris avant. Si tu en manques, relis le mémo indiqué avant de continuer.', items: s.rappel }, 'rappel', 0) + (s.rappelVers ? `<p class="small muted">${nb(s.rappelVers)}</p>` : '') : '';
@@ -4854,6 +4885,10 @@ const LABO = (function () {
     const ret = s.retenir ? `<div class="cours memos n-ret">${nb(s.retenir)}</div>` : '';
     const ex = (s.exos || []).map((e, ei) => exo(e, 'main', 'e' + ei)).join('');
     const rf = s.reflexe ? reflexeHTML(s) : '';
+    /* deux couches pour les classes hétérogènes : reprendre les bases du cycle 3 / aller plus loin */
+    const role = r && r[s.id];
+    const bases = s.bases ? `<details class="card n-couche n-bases"${role === 'travail' ? ' open' : ''}><summary><b>Je reprends les bases</b><span class="small muted">${role === 'travail' ? 'conseillé pour toi avant le rappel' : 'si tu veux tout reprendre depuis le début'}</span></summary><div class="cours">${nb(s.bases.cours)}</div>${exo({ kind: 'choice', titre: 'Pour vérifier', consigne: 'Des questions très simples, une chose à la fois.', items: s.bases.items }, 'bases', 'b0')}</details>` : '';
+    const defi = s.defi ? `<details class="card n-couche n-defi"${role === 'acquis' ? ' open' : ''}><summary><b>Défi</b><span class="small muted">${role === 'acquis' ? 'pour toi : tu maitrises déjà cette notion' : 'pour aller plus loin, quand tu as fini'}</span></summary>${s.defi.map((x, xi) => exo(x, 'defi', 'd' + xi)).join('')}</details>` : '';
     const lots = ((s.loin || {}).lots || []).map(id => lotPourNiveau(id, NIVP[pid] || S.niveau) || DECKS.find(d => d.id === id || d.base === id)).filter(Boolean);
     const loin = `<div class="conseils">${lots.map(d => `<a href="${LABO.lienLot(d.id)}"><span>${esc(d.nom)}</span><span class="tag conseil">Flashcards</span></a>`).join('')}<a href="#ceintures"><span>Passer la ceinture de ce domaine</span><span class="tag">Ceinture</span></a><a href="#memos"><span>Relire les mémos</span><span class="tag">Mémos</span></a></div>`;
     let k = -1;
@@ -4862,7 +4897,7 @@ const LABO = (function () {
     <div class="layout-step"><div class="n-step m-${DOM[m.dom][1]}">
       <div class="page-h"><div class="row"><span class="pill">${DOM[m.dom][0]}</span>${roleHTML(r, s)}</div><h2>${nb(s.titre)}</h2>${s.sub ? `<p>${nb(s.sub)}</p>` : ''}
         <p class="small muted">${s.notions.map(n => esc(n) + ' ' + nb(nomNotion(n))).join(' · ')}</p></div>
-      ${sec('rappel', 'Rappel', rappel)}${sec('observer', 'Observer et manipuler', obs)}${sec('retenir', 'Retenir', ret)}${sec('exos', 'S’exercer', ex)}<div id="resultat" hidden></div>${sec('reflexe', 'Réflexe', rf)}${sec('loin', 'Pour aller plus loin', loin)}
+      ${bases}${sec('rappel', 'Rappel', rappel)}${sec('observer', 'Observer et manipuler', obs)}${sec('retenir', 'Retenir', ret)}${sec('exos', 'S’exercer', ex)}<div id="resultat" hidden></div>${sec('reflexe', 'Réflexe', rf)}${defi}${sec('loin', 'Pour aller plus loin', loin)}
     </div><aside>${side}</aside></div>`;
   }
 
@@ -4892,6 +4927,8 @@ const LABO = (function () {
     const [id, ii] = el.dataset.k.split('-'); const t = el.dataset.t;
     let e;
     if (t === 'rappel') e = { kind: 'choice', items: T.s.rappel };
+    else if (t === 'bases') e = { kind: 'choice', items: T.s.bases.items };
+    else if (t === 'defi') e = T.s.defi[+id.slice(1)];
     else e = id[0] === 'm' ? T.s.manip[+id.slice(1)] : T.s.exos[+id.slice(1)];
     return { e, x: e.items[+ii], k: el.dataset.k, t };
   }
