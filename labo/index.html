@@ -411,6 +411,42 @@ html.dys{--ct:#1d1d1d}
 .memos .tw-petit table{width:auto;max-width:560px;font-size:.84rem}.memos .tw-petit th,.memos .tw-petit td{padding:4px 9px}.memos .tw-petit th{font-size:.66rem}
 @media (max-width:600px){.memos .tw-petit table{width:auto}.memos .tw-petit tr{padding:5px 10px}}
 
+/* ---------- Parcours par niveau (refonte 2026-11, lot 1) ---------- */
+.m-ho{--m:#8a5a14}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .m-ho{--m:#e0b56a}}
+:root[data-theme="dark"] .m-ho{--m:#e0b56a}
+.anciens-h{margin:18px 0 0;font-size:16px}
+.n-step{display:flex;flex-direction:column;gap:16px;min-width:0}
+.n-sec{background:var(--sheet);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;display:flex;flex-direction:column;gap:12px}
+.n-sec-h{display:flex;align-items:center;gap:10px;margin:0;font-size:17px}
+.n-sec-no{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--m,var(--icon));color:var(--sheet);font-size:13px;font-weight:700;flex:none}
+.n-sec .exo{border:0;padding:0;background:none}
+.n-ret{border-left:4px solid var(--m,var(--icon));padding-left:14px}
+.grps{display:flex;flex-wrap:wrap;gap:6px;position:relative}
+.grp{border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:10px;padding:6px 10px;font:inherit;cursor:pointer}
+.grp:hover:not(:disabled),.grp:focus-visible{border-color:var(--icon)}
+.grp.sel{border-color:var(--icon);box-shadow:0 0 0 2px var(--acc-soft);font-weight:600}
+.grp.ok{border-color:#2e7d4f;background:rgba(46,125,79,.12)}.grp.ko{border-color:var(--brick);background:var(--brick-soft)}
+.grp.pp{border-style:dashed;cursor:default;font-weight:700}
+.grps.fl{padding-top:30px}.fl-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;color:var(--icon);overflow:visible}
+.essai{margin:0;min-height:1.4em;color:var(--muted)}
+.etiq{display:flex;flex-wrap:wrap;gap:8px}
+.etq{display:flex;flex-direction:column;gap:4px;border:1px solid var(--line);border-radius:10px;padding:6px 8px;background:var(--paper)}
+.etq select{font:inherit;font-size:13px;border:1px solid var(--line);border-radius:8px;padding:3px 4px;background:var(--sheet);color:var(--ink)}
+.etq.ok{border-color:#2e7d4f}.etq.ko{border-color:var(--brick)}.etq-r{font-size:12px;color:#2e7d4f;font-weight:600}
+.blank.long{width:100%;max-width:560px;margin:4px 0}
+.trou{font-weight:700}
+.rf-box{border:1px solid var(--line);border-radius:var(--r);padding:14px;background:var(--paper);max-width:520px}
+.rf-top{display:flex;justify-content:space-between;color:var(--muted);font-size:13px;font-variant-numeric:tabular-nums}
+.rf-q{font-size:20px;margin:10px 0}
+/* parcours FLE : fond sable (Augustin, 22/11/2026) */
+html.fle:not(.dys){--paper:#f4ecdc;--sheet:#fffaf0;--soft:#ebe0c8;--line:#ddcfb2}
+.carte-fle:not(.x){background:#f8f0de;border-color:#ddcfb2}
+@media (prefers-color-scheme:dark){html.fle:not(.dys):not([data-theme="light"]){--paper:#211d15;--sheet:#2c271d;--soft:#3a3326;--line:#4b4232}:root:not([data-theme="light"]) .carte-fle{background:#2c271d;border-color:#4b4232}}
+html.fle[data-theme="dark"]:not(.dys){--paper:#211d15;--sheet:#2c271d;--soft:#3a3326;--line:#4b4232}
+:root[data-theme="dark"] .carte-fle{background:#2c271d;border-color:#4b4232}
+html.dys .carte-fle{background:var(--sheet)}
+
 /* styles des pages de l'appli des flashcards (app.html) */
 .res-page{max-width:860px}
 .res-kicker{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--brand);font-weight:700;margin-bottom:2px}
@@ -2946,6 +2982,225 @@ const MEMOS = `
 `;
 
 ;
+window.NOTIONS_LABO = {"P01": {"nom": "Verbe conjugué : repérage (temps composés, pronominal, négation)", "niv": {"6": "A", "5": "R", "4": "R", "3": "R"}, "fle": "A1", "manip": "encadrer par <i>ne… pas</i> ; changer le temps", "lots": ["verbe-sujet"]}, "P02": {"nom": "Sujet : natures, sujet inversé, multiple, séparé, éloigné", "niv": {"6": "A", "5": "A", "4": "A", "3": "R"}, "fle": "A1", "manip": "encadrer par <i>c’est… qui</i> ; remplacer par un pronom", "lots": ["verbe-sujet"]}, "P03": {"nom": "Types de phrases (déclarative, interrogative, impérative)", "niv": {"6": "R", "5": "R", "4": "R", "3": "R"}, "fle": "A1", "manip": "transformer d’un type à l’autre", "lots": ["la-phrase-6e", "la-phrase-5e", "la-phrase"]}, "P04": {"nom": "Formes négative et exclamative", "niv": {"6": "R", "5": "R", "4": "R", "3": "R"}, "fle": "A1", "manip": "transformer ; <i>ne… pas</i>, <i>ne… jamais</i>, <i>ne… plus</i>", "lots": ["la-phrase-6e", "la-phrase-5e", "la-phrase"]}, "P05": {"nom": "Forme impersonnelle", "niv": {"6": "—", "5": "—", "4": "N", "3": "R"}, "fle": "—", "manip": "remplacer <i>il</i> par un GN : impossible", "lots": ["la-phrase"]}, "P06": {"nom": "Ponctuation : rôle syntaxique", "niv": {"6": "R", "5": "N", "4": "R", "3": "A"}, "fle": "A2", "manip": "déplacer ou supprimer une virgule et comparer le sens", "lots": ["la-phrase-5e"]}, "P07": {"nom": "COD et COI", "niv": {"6": "A", "5": "A", "4": "R", "3": "R"}, "fle": "A2", "manip": "pronominaliser ; ni déplaçable ni supprimable", "lots": ["fonctions-6e", "fonctions-5e", "fonctions"]}, "P08": {"nom": "Attribut du sujet (à distinguer du COD)", "niv": {"6": "A", "5": "R", "4": "R", "3": "R"}, "fle": "A2", "manip": "remplacer le verbe par <i>être</i>", "lots": ["fonctions-6e", "fonctions-5e", "fonctions"]}, "P09": {"nom": "Attribut du COD", "niv": {"6": "—", "5": "—", "4": "—", "3": "N"}, "fle": "—", "manip": "remplacer par COD + <i>être</i> + attribut", "lots": ["fonctions"]}, "P10": {"nom": "CC de temps, de lieu, de cause", "niv": {"6": "A", "5": "R", "4": "R", "3": "R"}, "fle": "A2", "manip": "déplacer ; supprimer", "lots": ["fonctions-6e", "fonctions-5e", "fonctions"]}, "P11": {"nom": "CC de moyen, de manière, de but", "niv": {"6": "—", "5": "N", "4": "R", "3": "R"}, "fle": "B1", "manip": "déplacer ; poser la question avec prudence", "lots": ["fonctions-5e", "fonctions"]}, "P12": {"nom": "CC de conséquence", "niv": {"6": "—", "5": "—", "4": "N", "3": "R"}, "fle": "—", "manip": "déplacer ; reformuler avec <i>donc</i>", "lots": ["fonctions"]}, "P13": {"nom": "CC d’opposition (concession), d’hypothèse (condition), de comparaison", "niv": {"6": "—", "5": "—", "4": "—", "3": "N"}, "fle": "—", "manip": "reformuler avec <i>bien que</i>, <i>si</i>, <i>comme</i>", "lots": ["fonctions"]}, "P14": {"nom": "Proposition ; phrase simple et phrase complexe", "niv": {"6": "A", "5": "R", "4": "R", "3": "R"}, "fle": "A2", "manip": "compter les verbes conjugués", "lots": ["la-phrase-6e", "propositions-crochets"]}, "P15": {"nom": "Juxtaposition et coordination", "niv": {"6": "R", "5": "R", "4": "R", "3": "R"}, "fle": "A2", "manip": "remplacer la ponctuation par une conjonction", "lots": ["propositions-analyse", "propositions-crochets"]}, "P16": {"nom": "Subordination : principale, subordonnée, conjonction de subordination", "niv": {"6": "N", "5": "R", "4": "A", "3": "A"}, "fle": "B1", "manip": "supprimer la subordonnée : la principale reste", "lots": ["propositions-analyse", "propositions-crochets"]}, "P17": {"nom": "Subordonnée relative et pronom relatif (antécédent)", "niv": {"6": "—", "5": "N", "4": "R", "3": "A"}, "fle": "B1", "manip": "remplacer la relative par un adjectif", "lots": ["natures-difficulte", "propositions-analyse"]}, "P18": {"nom": "Subordonnée conjonctive complétive", "niv": {"6": "—", "5": "—", "4": "N", "3": "R"}, "fle": "—", "manip": "remplacer par <i>cela</i>", "lots": ["propositions-analyse"]}, "P19": {"nom": "Subordonnée conjonctive circonstancielle", "niv": {"6": "N", "5": "R", "4": "R", "3": "A"}, "fle": "B1", "manip": "déplacer ; supprimer", "lots": ["propositions-analyse"]}, "P20": {"nom": "Subordonnée interrogative indirecte", "niv": {"6": "—", "5": "—", "4": "N", "3": "R"}, "fle": "—", "manip": "transformer une question directe", "lots": ["propositions-analyse"]}, "P21": {"nom": "Subordonnées infinitive et participiale", "niv": {"6": "—", "5": "—", "4": "—", "3": "N"}, "fle": "—", "manip": "remplacer par une conjonctive", "lots": ["propositions-analyse"]}, "P22": {"nom": "Adverbe", "niv": {"6": "R", "5": "R", "4": "R", "3": "R"}, "fle": "A2", "manip": "supprimer ; insérer <i>hier</i>, <i>aujourd’hui</i>, <i>demain</i>", "lots": ["natures-de-mots-6e", "natures-de-mots"]}, "P23": {"nom": "Préposition", "niv": {"6": "R", "5": "R", "4": "A", "3": "R"}, "fle": "A2", "manip": "remplacer par une autre préposition", "lots": ["natures-de-mots-6e", "natures-de-mots"]}, "P24": {"nom": "Conjonctions de coordination et de subordination", "niv": {"6": "A", "5": "R", "4": "A", "3": "R"}, "fle": "A2", "manip": "remplacer ; tester <i>mais, ou, et, donc, or, ni, car</i>", "lots": ["natures-de-mots-6e", "natures-de-mots", "connecteurs-logiques"]}, "P25": {"nom": "Situation d’énonciation (qui parle, à qui, où, quand)", "niv": {"6": "—", "5": "N", "4": "R", "3": "R"}, "fle": "A2", "manip": "changer d’énonciateur et observer les pronoms", "lots": ["discours-rapporte"]}, "P26": {"nom": "Discours direct (dialogue, ponctuation)", "niv": {"6": "R", "5": "N", "4": "R", "3": "R"}, "fle": "A2", "manip": "ponctuer un dialogue", "lots": ["discours-rapporte"]}, "P27": {"nom": "Discours indirect et concordance des temps", "niv": {"6": "—", "5": "—", "4": "N", "3": "A"}, "fle": "B1", "manip": "transposer du direct à l’indirect", "lots": ["discours-rapporte", "reecritures"]}, "P28": {"nom": "Discours indirect libre", "niv": {"6": "—", "5": "—", "4": "—", "3": "N"}, "fle": "—", "manip": "repérer les marques de l’indirect et du direct", "lots": ["discours-rapporte"]}, "P29": {"nom": "Reprises nominales et pronominales (antécédent)", "niv": {"6": "A", "5": "R", "4": "A", "3": "R"}, "fle": "A2", "manip": "remplacer ; retrouver l’antécédent", "lots": ["reprises-pronominales-6e", "reprises-pronominales"]}, "P30": {"nom": "Connecteurs logiques et indicateurs de temps", "niv": {"6": "R", "5": "A", "4": "A", "3": "A"}, "fle": "A2", "manip": "remplacer par un connecteur de même sens", "lots": ["connecteurs-logiques-6e", "connecteurs-logiques", "choisir-la-suite"]}, "P31": {"nom": "Modalisation", "niv": {"6": "—", "5": "—", "4": "—", "3": "N"}, "fle": "—", "manip": "ajouter ou retirer <i>peut-être</i>, <i>sans doute</i>", "lots": ["brevet-langue"]}, "V01": {"nom": "Radical, marque de temps, marque de personne ; groupes", "niv": {"6": "R", "5": "A", "4": "R", "3": "A"}, "fle": "A1", "manip": "segmenter la forme verbale", "lots": ["conjugaisons-6e", "conjugaisons"]}, "V02": {"nom": "Présent de l’indicatif", "niv": {"6": "R", "5": "R", "4": "R", "3": "R"}, "fle": "A1", "manip": "changer de personne", "lots": ["conjugaisons-6e", "conjugaisons"]}, "V03": {"nom": "Imparfait de l’indicatif", "niv": {"6": "R", "5": "R", "4": "R", "3": "R"}, "fle": "A2", "manip": "changer de personne", "lots": ["conjugaisons-6e", "conjugaisons"]}, "V04": {"nom": "Futur simple", "niv": {"6": "R", "5": "R", "4": "R", "3": "R"}, "fle": "A2", "manip": "changer de personne", "lots": ["conjugaisons-6e", "conjugaisons", "futur-conditionnel"]}, "V05": {"nom": "Passé simple", "niv": {"6": "A", "5": "A", "4": "R", "3": "R"}, "fle": "B1", "manip": "changer de personne", "lots": ["passe-simple-6e", "passe-simple", "passe-simple-textes"]}, "V06": {"nom": "Passé composé, plus-que-parfait ; choix de l’auxiliaire", "niv": {"6": "R", "5": "R", "4": "R", "3": "R"}, "fle": "A1", "manip": "remplacer l’auxiliaire", "lots": ["conjugaisons-6e", "auxiliaire-etre-avoir"]}, "V07": {"nom": "Futur antérieur et passé antérieur", "niv": {"6": "—", "5": "N", "4": "R", "3": "R"}, "fle": "—", "manip": "passer du simple au composé", "lots": ["conjugaisons"]}, "V08": {"nom": "Impératif présent", "niv": {"6": "N", "5": "R", "4": "R", "3": "R"}, "fle": "A1", "manip": "transformer une phrase déclarative", "lots": ["conjugaisons-6e", "conjugaison-modes"]}, "V09": {"nom": "Conditionnel présent", "niv": {"6": "N", "5": "A", "4": "R", "3": "R"}, "fle": "A2", "manip": "comparer futur et conditionnel (<i>-rai</i> / <i>-rais</i>)", "lots": ["conjugaisons-6e", "futur-conditionnel"]}, "V10": {"nom": "Conditionnel passé", "niv": {"6": "—", "5": "—", "4": "N", "3": "R"}, "fle": "B1", "manip": "passer du présent au passé", "lots": ["conjugaison-modes"]}, "V11": {"nom": "Subjonctif présent", "niv": {"6": "—", "5": "N", "4": "R", "3": "R"}, "fle": "B1", "manip": "<i>il faut que…</i>", "lots": ["conjugaison-modes"]}, "V12": {"nom": "Subjonctif passé", "niv": {"6": "—", "5": "—", "4": "N", "3": "R"}, "fle": "—", "manip": "<i>il faut que…</i> + auxiliaire", "lots": ["conjugaison-modes"]}, "V13": {"nom": "Subjonctif imparfait et plus-que-parfait (reconnaissance) ; <i>falloir</i>, <i>valoir</i>", "niv": {"6": "—", "5": "—", "4": "—", "3": "N"}, "fle": "—", "manip": "reconnaître dans un texte littéraire", "lots": ["conjugaison-modes"]}, "V14": {"nom": "Modes impersonnels : infinitif, participe, gérondif", "niv": {"6": "—", "5": "—", "4": "N", "3": "R"}, "fle": "A2", "manip": "remplacer par une forme conjuguée", "lots": ["conjugaison-modes"]}, "V15": {"nom": "Temps du discours et temps du récit", "niv": {"6": "N", "5": "R", "4": "R", "3": "R"}, "fle": "B1", "manip": "transposer un récit au présent", "lots": ["temps-valeurs", "temps-modes"]}, "V16": {"nom": "Valeurs du présent (énonciation, vérité générale, narration, habitude)", "niv": {"6": "—", "5": "N", "4": "R", "3": "R"}, "fle": "B1", "manip": "remplacer par un autre temps", "lots": ["temps-valeurs"]}, "V17": {"nom": "Passé simple et imparfait : premier plan, arrière-plan", "niv": {"6": "—", "5": "N", "4": "R", "3": "R"}, "fle": "B1", "manip": "remplacer l’un par l’autre et comparer", "lots": ["temps-valeurs", "passe-simple-textes"]}, "V18": {"nom": "Valeurs du futur et du conditionnel (futur dans le passé, hypothèse, erreur <i>si j’aurais</i>)", "niv": {"6": "N", "5": "A", "4": "A", "3": "R"}, "fle": "B1", "manip": "transposer au passé ; <i>si</i> + imparfait", "lots": ["futur-conditionnel", "temps-valeurs"]}, "V19": {"nom": "Aspect : accompli / non accompli, borné / non borné", "niv": {"6": "—", "5": "—", "4": "N", "3": "A"}, "fle": "—", "manip": "comparer temps simple et temps composé", "lots": ["temps-valeurs"]}, "V20": {"nom": "Emplois du subjonctif (souhait, ordre, doute ; après <i>bien que</i>, <i>pour que…</i>)", "niv": {"6": "—", "5": "—", "4": "N", "3": "A"}, "fle": "—", "manip": "remplacer <i>je crois que</i> par <i>je doute que</i>", "lots": ["conjugaison-modes"]}, "V21": {"nom": "Voix active et voix passive ; complément d’agent", "niv": {"6": "—", "5": "N", "4": "A", "3": "A"}, "fle": "B1", "manip": "transformer actif / passif", "lots": ["voix-active-passive"]}, "G01": {"nom": "Nom commun, nom propre ; genre et nombre", "niv": {"6": "R", "5": "R", "4": "R", "3": "R"}, "fle": "A1", "manip": "changer le nombre ; ajouter un déterminant", "lots": ["natures-de-mots-6e", "genre-des-noms"]}, "G02": {"nom": "Déterminants : articles, possessifs, démonstratifs", "niv": {"6": "R", "5": "R", "4": "R", "3": "R"}, "fle": "A1", "manip": "remplacer un déterminant par un autre", "lots": ["natures-de-mots-6e", "natures-de-mots"]}, "G03": {"nom": "Article partitif ; déterminants interrogatifs, exclamatifs, indéfinis, numéraux", "niv": {"6": "—", "5": "N", "4": "R", "3": "R"}, "fle": "A1", "manip": "remplacer par un article", "lots": ["natures-de-mots"]}, "G04": {"nom": "Expansions du nom : adjectif épithète, complément du nom", "niv": {"6": "A", "5": "R", "4": "R", "3": "R"}, "fle": "A2", "manip": "supprimer les expansions ; remplacer par un adjectif", "lots": ["fonctions-6e", "natures-difficulte"]}, "G05": {"nom": "Apposition (à distinguer de l’épithète et du complément du nom)", "niv": {"6": "—", "5": "—", "4": "N", "3": "A"}, "fle": "—", "manip": "déplacer ; la virgule", "lots": ["fonctions"]}, "G06": {"nom": "Degrés de l’adjectif : comparatif, superlatif", "niv": {"6": "—", "5": "—", "4": "N", "3": "R"}, "fle": "A2", "manip": "insérer <i>plus</i>, <i>moins</i>, <i>aussi</i>, <i>le plus</i>", "lots": ["natures-de-mots"]}, "G07": {"nom": "Pronoms personnels et leur fonction ; <i>en</i>, <i>y</i>", "niv": {"6": "R", "5": "A", "4": "R", "3": "A"}, "fle": "A2", "manip": "remplacer un GN par un pronom", "lots": ["natures-de-mots-6e", "reprises-pronominales"]}, "G08": {"nom": "Pronoms démonstratifs et possessifs", "niv": {"6": "—", "5": "—", "4": "N", "3": "R"}, "fle": "A2", "manip": "remplacer le GN", "lots": ["natures-de-mots"]}, "G09": {"nom": "Pronoms indéfinis et interrogatifs", "niv": {"6": "—", "5": "—", "4": "—", "3": "N"}, "fle": "B1", "manip": "remplacer le GN", "lots": ["natures-de-mots"]}, "G10": {"nom": "Chaîne d’accords dans le GN", "niv": {"6": "R", "5": "R", "4": "A", "3": "A"}, "fle": "A1", "manip": "changer le genre ou le nombre du nom noyau", "lots": ["ou-est-l-erreur-6e", "ou-est-l-erreur", "accords-difficiles"]}, "G11": {"nom": "Pluriels et féminins particuliers (<i>-al / -aux</i>, <i>-x</i>, couleurs, nombres)", "niv": {"6": "A", "5": "R", "4": "A", "3": "R"}, "fle": "A2", "manip": "passer au pluriel ou au féminin", "lots": ["pluriels-feminins", "adjectifs-couleur", "ecriture-des-nombres"]}, "G12": {"nom": "Accord sujet-verbe (sujet multiple, inversé, éloigné)", "niv": {"6": "A", "5": "A", "4": "A", "3": "R"}, "fle": "A1", "manip": "encadrer le sujet par <i>c’est… qui</i>", "lots": ["ou-est-l-erreur-6e", "ou-est-l-erreur", "verbe-sujet"]}, "G13": {"nom": "Accord de l’attribut du sujet", "niv": {"6": "R", "5": "R", "4": "R", "3": "R"}, "fle": "A2", "manip": "remplacer le verbe par <i>être</i>", "lots": ["ou-est-l-erreur"]}, "G14": {"nom": "Participe passé employé avec <i>être</i>", "niv": {"6": "R", "5": "R", "4": "R", "3": "R"}, "fle": "A2", "manip": "remplacer par un adjectif (<i>vendu</i> / <i>vendue</i>)", "lots": ["accords-participe-passe-6e", "accords-participe-passe-5e"]}, "G15": {"nom": "Participe passé employé avec <i>avoir</i> (COD placé avant ou après, pronom personnel)", "niv": {"6": "N", "5": "A", "4": "A", "3": "R"}, "fle": "B1", "manip": "chercher le COD et sa place (flèche)", "lots": ["accords-participe-passe-6e", "accords-participe-passe-5e", "accords-participe-passe-4e"]}, "G16": {"nom": "Participe passé avec <i>avoir</i>, COD pronom relatif", "niv": {"6": "—", "5": "—", "4": "—", "3": "N"}, "fle": "—", "manip": "remonter au pronom relatif puis à l’antécédent", "lots": ["accords-participe-passe"]}, "H01": {"nom": "<i>a / à, et / est, on / ont, son / sont, ou / où</i>", "niv": {"6": "R", "5": "R", "4": "R", "3": "R"}, "fle": "A2", "manip": "remplacer par <i>avait</i>, <i>était</i>, <i>avaient…</i>", "lots": ["homophones", "homophones-2"]}, "H02": {"nom": "<i>ces / ses / c’est / s’est, ce / se, la / l’a / là, ma / m’a, ta / t’a</i>", "niv": {"6": "A", "5": "R", "4": "R", "3": "R"}, "fle": "B1", "manip": "changer de personne ou de nombre", "lots": ["homophones", "homophones-2"]}, "H03": {"nom": "Fins de verbes en [e] : <i>é / er / ez / ait</i>", "niv": {"6": "A", "5": "R", "4": "R", "3": "R"}, "fle": "A2", "manip": "remplacer par <i>vendre</i> / <i>vendu</i>", "lots": ["ecrire-verbes-6e5e", "ecrire-verbes-4e3e"]}, "H04": {"nom": "<i>leur / leurs, tout / tous, mon / m’ont, peu / peut, près / prêt</i>", "niv": {"6": "A", "5": "R", "4": "R", "3": "R"}, "fle": "B1", "manip": "changer de nombre", "lots": ["homophones-3", "leur-leurs"]}, "H05": {"nom": "<i>sans / s’en, dans / d’en, quand / quant / qu’en, ni / n’y, si / s’y, des / dès</i>", "niv": {"6": "—", "5": "A", "4": "R", "3": "R"}, "fle": "—", "manip": "décomposer : <i>se</i> + <i>en</i>", "lots": ["homophones-4"]}, "H06": {"nom": "<i>quel que / quelque, quoique / quoi que, plutôt / plus tôt, du / dû, davantage</i>", "niv": {"6": "—", "5": "—", "4": "A", "3": "A"}, "fle": "—", "manip": "remplacer par <i>bien que</i>, <i>plus tard</i>", "lots": ["homophones-5"]}, "H07": {"nom": "Homophones nom / verbe (<i>travail</i> / <i>travaille</i>), <i>voir</i> / <i>voire</i>, <i>censé</i> / <i>sensé</i>", "niv": {"6": "N", "5": "R", "4": "—", "3": "—"}, "fle": "—", "manip": "remplacer par un autre nom ou verbe", "lots": ["homophones-6", "homophones-7"]}, "H08": {"nom": "Lettres muettes et familles de mots", "niv": {"6": "R", "5": "R", "4": "R", "3": "R"}, "fle": "A2", "manip": "chercher un mot de la même famille", "lots": ["lettres-muettes"]}, "H09": {"nom": "Consonnes doubles, accents ; rectifications de 1990", "niv": {"6": "R", "5": "R", "4": "R", "3": "R"}, "fle": "—", "manip": "comparer les deux graphies admises", "lots": ["consonnes-doubles"]}, "H10": {"nom": "Mots invariables fréquents ; genre des noms trompeurs", "niv": {"6": "R", "5": "A", "4": "R", "3": "—"}, "fle": "A2", "manip": "ajouter un déterminant (<i>un</i> / <i>une</i>)", "lots": ["mots-invariables", "genre-des-noms"]}, "H11": {"nom": "Orthographe par l’étymologie (<i>ph</i>, <i>th</i>, <i>y</i>, <i>h</i>)", "niv": {"6": "—", "5": "A", "4": "A", "3": "A"}, "fle": "—", "manip": "retrouver la racine grecque ou latine", "lots": ["mots-grec-latin", "lettres-muettes"]}, "L01": {"nom": "Mots simples, dérivés, composés ; radical, préfixe, suffixe", "niv": {"6": "R", "5": "R", "4": "A", "3": "R"}, "fle": "B1", "manip": "décomposer ; former un dérivé", "lots": ["formation-des-mots"]}, "L02": {"nom": "Familles de mots", "niv": {"6": "R", "5": "R", "4": "R", "3": "—"}, "fle": "A2", "manip": "classer ; chercher l’intrus", "lots": ["formation-des-mots"]}, "L03": {"nom": "Racines latines et grecques ; étymologie", "niv": {"6": "A", "5": "A", "4": "A", "3": "A"}, "fle": "—", "manip": "deviner le sens par la racine", "lots": ["etymologie-flashcards", "etymologie-dominos", "mots-grec-latin", "latin-5e", "latin-4e", "latin-3e"]}, "L04": {"nom": "Emprunts et néologismes", "niv": {"6": "—", "5": "—", "4": "N", "3": "A"}, "fle": "—", "manip": "retrouver la langue d’origine", "lots": ["mots-ailleurs", "francais-ici-ailleurs"]}, "L05": {"nom": "Synonymes et antonymes", "niv": {"6": "R", "5": "R", "4": "R", "3": "R"}, "fle": "A2", "manip": "remplacer dans la phrase", "lots": ["relations-mots"]}, "L06": {"nom": "Homonymes et paronymes", "niv": {"6": "N", "5": "R", "4": "A", "3": "R"}, "fle": "B1", "manip": "employer dans une phrase", "lots": ["relations-mots"]}, "L07": {"nom": "Polysémie ; sens propre et sens figuré", "niv": {"6": "N", "5": "R", "4": "R", "3": "A"}, "fle": "B1", "manip": "changer le contexte", "lots": ["sens-figure-flashcards", "sens-figure-memory"]}, "L08": {"nom": "Hyperonymes et hyponymes", "niv": {"6": "N", "5": "R", "4": "—", "3": "—"}, "fle": "A2", "manip": "classer du général au particulier", "lots": ["relations-mots"]}, "L09": {"nom": "Champ lexical et champ sémantique", "niv": {"6": "—", "5": "N", "4": "R", "3": "R"}, "fle": "—", "manip": "relever les mots d’un thème", "lots": ["vocabulaire-5e"]}, "L10": {"nom": "Degré d’intensité et de généralité", "niv": {"6": "—", "5": "—", "4": "N", "3": "R"}, "fle": "—", "manip": "ranger du plus faible au plus fort", "lots": ["vocabulaire-4e"]}, "L11": {"nom": "Expressions figées et locutions", "niv": {"6": "A", "5": "R", "4": "R", "3": "A"}, "fle": "B1", "manip": "expliquer puis réemployer", "lots": ["expressions", "expressions-expert"]}, "L12": {"nom": "Niveaux de langue", "niv": {"6": "R", "5": "A", "4": "A", "3": "A"}, "fle": "B1", "manip": "transposer d’un niveau à l’autre", "lots": ["niveaux-de-langue", "argot-jeunes"]}, "L13": {"nom": "Variation de la langue (lieux, époques, situations)", "niv": {"6": "—", "5": "—", "4": "N", "3": "A"}, "fle": "—", "manip": "comparer deux façons de dire", "lots": ["francais-ici-ailleurs", "argot-jeunes"]}, "L14": {"nom": "Figures de style (comparaison, métaphore, personnification…)", "niv": {"6": "—", "5": "N", "4": "A", "3": "A"}, "fle": "—", "manip": "supprimer l’outil de comparaison (<i>comme</i>)", "lots": ["figures-de-style"]}, "L15": {"nom": "Oral et écrit : liaison, élision", "niv": {"6": "—", "5": "N", "4": "R", "3": "—"}, "fle": "A1", "manip": "lire à voix haute ; marquer la liaison", "lots": ["liaisons"]}, "L16": {"nom": "Vocabulaire enrichi par thème (rare, soutenu)", "niv": {"6": "A", "5": "A", "4": "A", "3": "A"}, "fle": "—", "manip": "réemployer dans une phrase", "lots": ["vocabulaire-6e", "vocabulaire-5e", "vocabulaire-4e", "vocabulaire-3e"]}};
+;
+/* Parcours 6ᵉ — écrit pour le Laboratoire de la langue (M. Lesage, enseignant de français), licence CC BY-NC-SA 4.0.
+   Lot 1 (22/11/2026) : démonstration, une étape par domaine. Le parcours complet (15 étapes, diagnostic de 20 questions) arrive au lot 2.
+   Notions : laboratoire/referentiel/notions.txt. Format : voir parcours2.js. */
+window.NPARC = window.NPARC || {};
+NPARC.n6 = {
+  titre: 'Parcours 6ᵉ',
+  public: 'Élèves de 6ᵉ · programme du cycle 3 (2025)',
+  duree: 'démonstration : 5 étapes',
+  resume: 'Une étape par domaine de l’étude de la langue : la phrase, le verbe, les accords, les homophones et le lexique. Chaque étape suit le même chemin : rappel, manipulation, mémo, exercices, série Réflexe.',
+  diagnostic: [
+    { n: 'P01', q: 'Dans <i>Le soir, les hiboux chassent dans la forêt.</i>, quel est le verbe conjugué ?', r: 'chassent', o: ['soir', 'hiboux', 'chassent', 'forêt'], x: 'On peut l’encadrer par <i>ne… pas</i> : <i>ils ne chassent pas</i>.', err: 'verbe-repere' },
+    { n: 'P02', q: 'Dans <i>Au fond du jardin poussent des tomates.</i>, quel est le sujet du verbe <i>poussent</i> ?', r: 'des tomates', o: ['Au fond du jardin', 'des tomates', 'le jardin'], x: '<i>Ce sont des tomates qui poussent</i> : le sujet est placé après le verbe.', err: 'sujet-inverse' },
+    { n: 'V08', q: 'Quelle phrase est à l’impératif ?', r: 'Range ta chambre !', o: ['Tu ranges ta chambre.', 'Range ta chambre !', 'Tu rangerais ta chambre.'], x: 'L’impératif donne un ordre ou un conseil, sans sujet exprimé.', err: 'imperatif-forme' },
+    { n: 'V09', q: 'Dans <i>Si j’avais le temps, je ___ un gâteau.</i>, quelle forme convient ?', r: 'ferais', o: ['ferai', 'ferais'], x: 'Après <i>si</i> + imparfait, on emploie le conditionnel : <i>je ferais</i>.', err: 'cond-futur' },
+    { n: 'G14', q: '<i>Mes cousines sont ___ hier.</i>', r: 'arrivées', o: ['arrivé', 'arrivés', 'arrivées'], x: 'Avec <i>être</i>, le participe passé s’accorde avec le sujet <i>mes cousines</i> (féminin pluriel).', err: 'pp-etre' },
+    { n: 'G15', q: '<i>Mes cousines ont ___ le train.</i>', r: 'pris', o: ['pris', 'prise', 'prises'], x: 'Avec <i>avoir</i>, le participe passé ne s’accorde pas avec le sujet.', err: 'pp-avoir-sujet' },
+    { n: 'H01', q: '<i>Il ___ oublié son sac ___ la maison.</i>', r: 'a / à', o: ['a / a', 'à / à', 'a / à', 'à / a'], x: 'On peut dire <i>il avait oublié</i> : c’est le verbe <i>a</i>. On ne peut pas dire <i>avait la maison</i> : c’est la préposition <i>à</i>.', err: 'homo-a' },
+    { n: 'H02', q: '<i>Elle range ___ affaires dans ___ tiroirs-là.</i>', r: 'ses / ces', o: ['ces / ses', 'ses / ces', 'ses / ses', 'ces / ces'], x: '<i>ses</i> = les siennes ; <i>ces</i> montre (<i>ces tiroirs-là</i>).', err: 'homo-ces' },
+    { n: 'L07', q: 'Dans <i>Le prix de ce vélo est salé.</i>, le mot <i>salé</i> veut dire…', r: 'très cher', o: ['qui contient du sel', 'très cher', 'mouillé'], x: 'Un mot polysémique a plusieurs sens ; ici, <i>salé</i> est employé au sens figuré.', err: 'polysemie' },
+    { n: 'L08', q: 'Quel mot est l’hyperonyme de <i>tulipe, rose, marguerite</i> ?', r: 'fleur', o: ['jardin', 'fleur', 'bouquet', 'pétale'], x: 'L’hyperonyme est le mot de sens général qui englobe les autres.', err: 'hyper' }
+  ],
+  modules: [
+    { dom: 'P', steps: [{
+      id: '6-P1', titre: 'Verbe conjugué et sujet', sub: 'Repérer le verbe par les manipulations, puis trouver son sujet, même placé après lui.', notions: ['P01', 'P02'],
+      rappel: [
+        ['Dans <i>Les oiseaux chantent au lever du jour.</i>, quel mot change si l’on raconte au passé ?', 'chantent', 'Au passé, on dirait <i>chantaient</i> : c’est le verbe conjugué qui change.', ['oiseaux', 'chantent', 'lever'], 'verbe-repere'],
+        ['Dans <i>Ma sœur lit un roman.</i>, qui fait l’action ?', 'Ma sœur', '<i>C’est ma sœur qui lit</i>.', ['Ma sœur', 'un roman'], 'sujet-repere'],
+        ['Le verbe conjugué s’accorde avec…', 'son sujet', 'Le verbe prend la personne et le nombre de son sujet.', ['son sujet', 'le mot placé juste avant', 'le COD'], 'sujet-repere']
+      ],
+      rappelVers: 'Si tu as manqué une question, relis le mémo « Le verbe et son sujet » dans les Mémos.',
+      observer: '<p>Compare ces trois phrases.</p><ul><li><i>Les enfants <b>jouent</b> dans la cour.</i></li><li><i>Les enfants ne <b>jouent</b> pas dans la cour.</i></li><li><i>Hier, les enfants <b>jouaient</b> dans la cour.</i></li></ul><p>Un seul mot se laisse encadrer par <i>ne… pas</i> et change quand on change le temps : c’est le verbe conjugué.</p>',
+      manip: [
+        { kind: 'cadre', cadre: ['ne', 'pas'], titre: 'Encadrer par ne… pas', consigne: 'Touche un groupe : la phrase s’affiche avec <i>ne… pas</i> autour. Garde le groupe qui donne une phrase correcte.', err: 'verbe-repere',
+          items: [
+            { p: 'Le facteur / apporte / une lettre.', r: 1, t: 'Le facteur n’apporte pas une lettre.', x: '<i>apporte</i> est le verbe conjugué.' },
+            { p: 'Chaque matin, / mon frère / promène / le chien.', r: 2, t: 'Chaque matin, mon frère ne promène pas le chien.', x: '<i>promène</i> est le verbe conjugué ; <i>chaque matin</i> est un complément.' },
+            { p: 'La pluie / tombe / sur les toits.', r: 1, t: 'La pluie ne tombe pas sur les toits.', x: '<i>tombe</i> est le verbe conjugué.' }
+          ] },
+        { kind: 'cadre', cadre: ['C’est', 'qui'], titre: 'Encadrer par c’est… qui', consigne: 'Touche le groupe que l’on peut encadrer par <i>c’est… qui</i> (ou <i>ce sont… qui</i>) : c’est le sujet.', err: 'sujet-repere',
+          items: [
+            { p: 'Le chat / dort / sur le canapé.', r: 0, t: 'C’est le chat qui dort sur le canapé.', x: 'Le sujet est <i>le chat</i>.' },
+            { p: 'Dans la forêt / vivait / un vieux loup.', r: 2, t: 'C’est un vieux loup qui vivait dans la forêt.', x: 'Le sujet <i>un vieux loup</i> est placé après le verbe : on dit qu’il est inversé.', err: 'sujet-inverse' },
+            { p: 'Léa et Tom / préparent / le gouter.', r: 0, t: 'Ce sont Léa et Tom qui préparent le gouter.', x: 'Le sujet est formé de deux noms : le verbe est au pluriel.' }
+          ] }
+      ],
+      retenir: '<p>Le <b>verbe conjugué</b> est le mot qui <em class="fx">change quand on change le temps</em> et qui <em class="fx">se laisse encadrer par <i>ne… pas</i></em> : <i>il <b>parle</b> → il ne <b>parle</b> pas → il <b>parlait</b></i>.</p><p>Le <b>sujet</b> est le groupe que l’on peut <em class="fx">encadrer par <i>c’est… qui</i></em> : <i>C’est <b>le chat</b> qui dort.</i> Le verbe s’accorde avec lui.</p><ul><li>Il peut être placé après le verbe : <i>Dans la forêt vivait <b>un vieux loup</b>.</i></li><li>Il peut être formé de plusieurs groupes : <i><b>Léa et Tom</b> préparent le gouter.</i></li><li>Il peut être un pronom : <i><b>Elle</b> chante.</i></li></ul>',
+      exos: [
+        { kind: 'etiqueter', titre: 'Verbe, sujet ou autre ?', consigne: 'Étiquette chaque groupe.', labels: ['sujet', 'verbe conjugué', 'autre'], err: 'sujet-repere',
+          items: [
+            { g: ['Mes voisins', 'organisent', 'une fête'], l: ['sujet', 'verbe conjugué', 'autre'], x: '<i>Ce sont mes voisins qui organisent une fête.</i>' },
+            { g: ['Sur la table', 'brillent', 'les bougies'], l: ['autre', 'verbe conjugué', 'sujet'], x: 'Sujet inversé : <i>ce sont les bougies qui brillent</i>.' },
+            { g: ['Le vent', 'ne souffle', 'plus'], l: ['sujet', 'verbe conjugué', 'autre'], x: 'La négation encadre déjà le verbe : <i>ne souffle plus</i>.' }
+          ] },
+        { kind: 'choice', titre: 'Le bon accord', consigne: 'Choisis la forme du verbe qui s’accorde avec son sujet.', err: 'sujet-inverse',
+          items: [
+            ['<i>Sur la colline ___ deux moulins.</i>', 'tournent', '<i>Ce sont deux moulins qui tournent</i> : sujet pluriel, placé après le verbe.', ['tourne', 'tournent']],
+            ['<i>Le chien de mes voisins ___ toute la nuit.</i>', 'aboie', 'Le sujet est <i>le chien de mes voisins</i> : son noyau, <i>chien</i>, est au singulier.', ['aboie', 'aboient']],
+            ['<i>Ma mère et ma tante ___ au marché.</i>', 'vont', 'Deux sujets coordonnés valent un pluriel.', ['va', 'vont']],
+            ['<i>Les élèves que je ___ sont en 6ᵉ.</i>', 'connais', 'Le sujet de <i>connais</i> est <i>je</i>, pas <i>les élèves</i>.', ['connais', 'connaissent']]
+          ] }
+      ],
+      reflexe: { consigne: 'Le mot en surbrillance est-il le verbe conjugué ?', options: ['verbe conjugué', 'autre mot'], err: 'verbe-repere', cible: 40,
+        items: [
+          ['Le **marché** ouvre à huit heures.', 'autre mot'], ['Le marché **ouvre** à huit heures.', 'verbe conjugué'], ['Nous **marchons** vite.', 'verbe conjugué'],
+          ['Une **marche** en forêt.', 'autre mot'], ['Tu **ranges** ta chambre.', 'verbe conjugué'], ['Les **rangs** de chaises.', 'autre mot'],
+          ['Il **porte** un sac.', 'verbe conjugué'], ['Ferme la **porte**.', 'autre mot'], ['Les oiseaux **volent**.', 'verbe conjugué'],
+          ['Un **vol** de nuit.', 'autre mot'], ['Elle **danse** bien.', 'verbe conjugué'], ['Une **danse** rapide.', 'autre mot'],
+          ['Le **soir**, je lis.', 'autre mot'], ['Je **lis** le soir.', 'verbe conjugué']
+        ] },
+      loin: { lots: ['verbe-sujet'] }
+    }] },
+    { dom: 'V', steps: [{
+      id: '6-V1', titre: 'Impératif et conditionnel présents', sub: 'Donner un ordre sans sujet ; imaginer avec le conditionnel.', notions: ['V08', 'V09'],
+      rappel: [
+        ['<i>Demain, nous ___ au musée.</i>', 'irons', 'Futur de <i>aller</i> : <i>nous irons</i>.', ['allons', 'irons', 'irions'], 'cond-futur'],
+        ['<i>Autrefois, je ___ à pied.</i> (imparfait)', 'marchais', 'Imparfait : terminaisons <i>-ais, -ais, -ait, -ions, -iez, -aient</i>.', ['marchai', 'marchais', 'marcherai'], 'cond-forme'],
+        ['<i>Tu ___ tes devoirs.</i> (présent de <i>finir</i>)', 'finis', '2ᵉ groupe au présent : <i>je finis, tu finis, il finit</i>.', ['finis', 'finit', 'finie'], 'cond-forme']
+      ],
+      observer: '<p>Compare.</p><ul><li><i>Tu <b>ranges</b> ta chambre.</i> (présent)</li><li><i><b>Range</b> ta chambre !</i> (impératif)</li><li><i>Si j’avais le temps, je <b>rangerais</b> ma chambre.</i> (conditionnel)</li></ul><p>À l’impératif, le sujet disparait. Au conditionnel, on retrouve le <i>r</i> du futur et la terminaison de l’imparfait.</p>',
+      manip: [
+        { kind: 'transformer', titre: 'Donner un ordre', consigne: 'Transforme la phrase à l’impératif : supprime le sujet et ajoute un point d’exclamation.', err: 'imperatif-forme',
+          items: [
+            { p: '<i>Tu ranges tes affaires.</i>', r: 'Range tes affaires !|Range tes affaires.', x: '1ᵉʳ groupe : pas de <i>-s</i> à la 2ᵉ personne du singulier.', err: 'imperatif-s' },
+            { p: '<i>Nous finissons le travail.</i>', r: 'Finissons le travail !|Finissons le travail.', x: 'À la 1ʳᵉ personne du pluriel : <i>finissons</i>.' },
+            { p: '<i>Vous prenez vos cahiers.</i>', r: 'Prenez vos cahiers !|Prenez vos cahiers.', x: '<i>Prenez</i>, sans le sujet <i>vous</i>.' }
+          ] },
+        { kind: 'essai', essai: 'demain', titre: 'Futur ou conditionnel ?', consigne: 'Essaie de remplacer par <i>demain</i> pour entendre la différence, puis choisis. Le conditionnel exprime ce qu’on imagine, souvent après <i>si</i> + imparfait.', err: 'cond-futur',
+          items: [
+            { p: 'Si j’étais riche, j’___ un bateau.', o: ['achèterai', 'achèterais'], r: 'achèterais', essai: 'achèterais', x: 'Après <i>si</i> + imparfait : conditionnel, <i>j’achèterais</i>.' },
+            { p: 'Je te ___ demain, c’est promis.', o: ['téléphonerai', 'téléphonerais'], r: 'téléphonerai', essai: 'téléphonerai', x: 'Une action prévue, certaine : futur, <i>je téléphonerai</i>.' },
+            { p: 'À ta place, je ___ un pull.', o: ['mettrai', 'mettrais'], r: 'mettrais', essai: 'mettrais', x: 'Un conseil, une situation imaginée : conditionnel.' }
+          ] }
+      ],
+      retenir: '<p>L’<b>impératif</b> donne un ordre, un conseil : il n’a <em class="fx">pas de sujet exprimé</em> et seulement trois personnes : <i>range, rangeons, rangez</i>.</p><ul><li>1ᵉʳ groupe : <em class="fx">pas de <i>-s</i> à la 2ᵉ personne</em> : <i>Range !</i> (mais <i>Penses-y !</i>)</li><li><i>être</i> : <i>sois, soyons, soyez</i> ; <i>avoir</i> : <i>aie, ayons, ayez</i>.</li></ul><p>Le <b>conditionnel présent</b> exprime ce que l’on imagine ou souhaite. On le forme avec <em class="fx">le radical du futur + les terminaisons de l’imparfait</em> : <i>je ranger<b>ais</b>, tu ranger<b>ais</b>, il ranger<b>ait</b>, nous ranger<b>ions</b>, vous ranger<b>iez</b>, ils ranger<b>aient</b></i>.</p><p>À la 1ʳᵉ personne du singulier, on entend la différence : <i>je rangerai</i> (futur, [e]) / <i>je rangerais</i> (conditionnel, [ɛ]).</p>',
+      exos: [
+        { kind: 'input', titre: 'Conjuguer', consigne: 'Écris le verbe au temps demandé.', err: 'cond-forme',
+          items: [
+            ['<i>(être, impératif, 2ᵉ pers. sing.)</i> ___ prudent !', 'Sois|sois', 'Impératif de <i>être</i> : <i>sois, soyons, soyez</i>.', 'imperatif-forme'],
+            ['<i>(chanter, impératif, 2ᵉ pers. sing.)</i> ___ plus fort !', 'Chante|chante', '1ᵉʳ groupe : pas de <i>-s</i>.', 'imperatif-s'],
+            ['<i>(pouvoir, conditionnel)</i> Nous ___ partir plus tôt.', 'pourrions', 'Radical du futur <i>pourr-</i> + <i>-ions</i>.'],
+            ['<i>(faire, conditionnel)</i> Ils ___ du vélo s’il faisait beau.', 'feraient', 'Radical du futur <i>fer-</i> + <i>-aient</i>.'],
+            ['<i>(venir, conditionnel)</i> Tu ___ avec nous ?', 'viendrais', 'Radical du futur <i>viendr-</i> + <i>-ais</i>.']
+          ] }
+      ],
+      reflexe: { consigne: 'Futur ou conditionnel ?', options: ['futur', 'conditionnel'], err: 'cond-futur', cible: 35,
+        items: [['je chanterai', 'futur'], ['je chanterais', 'conditionnel'], ['nous partirions', 'conditionnel'], ['nous partirons', 'futur'], ['tu serais', 'conditionnel'], ['tu seras', 'futur'], ['ils auraient', 'conditionnel'], ['ils auront', 'futur'], ['vous viendriez', 'conditionnel'], ['vous viendrez', 'futur'], ['elle ferait', 'conditionnel'], ['elle fera', 'futur'], ['je pourrai', 'futur'], ['je pourrais', 'conditionnel']] },
+      loin: { lots: ['conjugaisons', 'futur-conditionnel'] }
+    }] },
+    { dom: 'G', steps: [{
+      id: '6-G3', titre: 'Le participe passé avec <i>être</i> et avec <i>avoir</i>', sub: 'Chercher le mot qui commande l’accord : la flèche le montre.', notions: ['G14', 'G15'],
+      rappel: [
+        ['Dans <i>Elle est partie.</i>, l’auxiliaire est…', 'être', 'Le passé composé se forme avec <i>être</i> ou <i>avoir</i> + participe passé.', ['être', 'avoir'], 'pp-etre'],
+        ['Quel est le participe passé de <i>prendre</i> ?', 'pris', '<i>pris</i> : on entend le <i>s</i> au féminin, <i>prise</i>.', ['prendu', 'pris', 'prit'], 'pp-avoir-sujet'],
+        ['<i>Les voitures sont ___.</i> (garer)', 'garées', 'Comme un adjectif : <i>des voitures garées</i>.', ['garé', 'garées', 'garer'], 'pp-etre']
+      ],
+      observer: '<p>Compare.</p><ul><li><i>Les filles sont <b>parties</b>.</i></li><li><i>Les filles ont <b>pris</b> le bus.</i></li><li><i>Ces photos, je les ai <b>prises</b> hier.</i></li></ul><p>Avec <i>être</i>, le participe s’accorde avec le sujet. Avec <i>avoir</i>, il ne s’accorde jamais avec le sujet, mais il s’accorde avec le COD quand celui-ci est un pronom placé avant.</p>',
+      manip: [
+        { kind: 'fleche', titre: 'Tracer la flèche de l’accord', consigne: 'Touche le mot qui commande l’accord du participe : la flèche le relie au participe. Puis choisis la bonne forme.',
+          items: [
+            { g: ['Les filles', 'sont', '…'], pp: 2, cible: 0, o: ['parti', 'partie', 'partis', 'parties'], r: 'parties', x: 'Avec <i>être</i> : accord avec le sujet <i>les filles</i> (féminin pluriel).', err: 'pp-etre' },
+            { g: ['Mes amis', 'ont', '…', 'des crêpes'], pp: 2, cible: -1, o: ['mangé', 'mangés', 'mangées'], r: 'mangé', x: 'Avec <i>avoir</i> : pas d’accord avec le sujet, et le COD <i>des crêpes</i> est placé après.', err: 'pp-avoir-sujet' },
+            { g: ['Ces lettres,', 'je', 'les', 'ai', '…'], pp: 4, cible: 2, o: ['écrit', 'écrits', 'écrite', 'écrites'], r: 'écrites', x: 'Le COD <i>les</i> (= ces lettres) est placé avant <i>avoir</i> : accord au féminin pluriel.', err: 'pp-avoir-cod' },
+            { g: ['La porte', 'était', '…'], pp: 2, cible: 0, o: ['ouvert', 'ouverte', 'ouverts'], r: 'ouverte', x: 'Avec <i>être</i> : accord avec <i>la porte</i>.', err: 'pp-etre' },
+            { g: ['Ma tante ?', 'Je', 'l’', 'ai', '…', 'hier'], pp: 4, cible: 2, o: ['vu', 'vue', 'vus'], r: 'vue', x: '<i>l’</i> remplace <i>ma tante</i> : COD placé avant, accord au féminin singulier.', err: 'pp-avoir-cod' }
+          ] }
+      ],
+      retenir: '<p>Pour accorder un participe passé, on cherche d’abord l’auxiliaire.</p><ul><li>Avec <b>être</b>, le participe s’accorde <em class="fx">avec le sujet</em> : <i>Les filles sont <b>parties</b>.</i></li><li>Avec <b>avoir</b>, il <em class="fx">ne s’accorde jamais avec le sujet</em> : <i>Les filles ont <b>pris</b> le bus.</i></li><li>Avec <b>avoir</b>, il s’accorde avec le COD <em class="fx">quand c’est un pronom placé avant</em> (<i>le, la, l’, les</i>) : <i>Ces photos, je les ai <b>prises</b>.</i></li></ul><p>Astuce : pour entendre la marque du féminin, prends un verbe comme <i>prendre</i> ou <i>faire</i> : <i>prise, faite</i>.</p>',
+      exos: [
+        { kind: 'choice', titre: 'Choisir la bonne forme', consigne: 'Choisis le participe passé correctement accordé.',
+          items: [
+            ['<i>Nos voisins sont ___ en vacances.</i>', 'partis', 'Avec <i>être</i> : accord avec <i>nos voisins</i>.', ['parti', 'partis', 'parties'], 'pp-etre'],
+            ['<i>Ma sœur a ___ une tarte.</i>', 'préparé', 'Avec <i>avoir</i> : pas d’accord avec <i>ma sœur</i>.', ['préparé', 'préparée'], 'pp-avoir-sujet'],
+            ['<i>Cette tarte, ma sœur l’a ___ seule.</i>', 'préparée', '<i>l’</i> = cette tarte, COD placé avant : accord.', ['préparé', 'préparée'], 'pp-avoir-cod'],
+            ['<i>Les élèves ont ___ leurs exercices.</i>', 'fini', 'COD placé après : pas d’accord.', ['fini', 'finis'], 'pp-avoir-sujet'],
+            ['<i>Ces chansons, nous les avons ___ ensemble.</i>', 'chantées', '<i>les</i> = ces chansons : accord au féminin pluriel.', ['chanté', 'chantés', 'chantées'], 'pp-avoir-cod']
+          ] }
+      ],
+      reflexe: { consigne: 'Accord ou pas d’accord ?', options: ['accord', 'pas d’accord'], err: 'pp-avoir-sujet', cible: 40,
+        items: [['Elles sont **venu…**', 'accord'], ['Elles ont **mangé…** des pommes', 'pas d’accord'], ['Ces pommes, elles les ont **mangé…**', 'accord'], ['La fenêtre est **fermé…**', 'accord'], ['Ils ont **fermé…** la fenêtre', 'pas d’accord'], ['Mes amies sont **arrivé…**', 'accord'], ['Mes amies ont **appelé…** Paul', 'pas d’accord'], ['Paul ? Mes amies l’ont **appelé…**', 'pas d’accord'], ['Ta lettre, je l’ai **lu…**', 'accord'], ['Nous avons **lu…** ta lettre', 'pas d’accord'], ['Les portes sont **peint…**', 'accord'], ['Les élèves ont **peint…** les portes', 'pas d’accord']] },
+      loin: { lots: ['accords-participe-passe', 'auxiliaire-etre-avoir'] }
+    }] },
+    { dom: 'H', steps: [{
+      id: '6-H1', titre: 'Les homophones grammaticaux', sub: 'Remplacer pour choisir : a / à, et / est, son / sont, on / ont, ses / ces, leur / leurs.', notions: ['H01', 'H02', 'H04'],
+      rappel: [
+        ['<i>Il ___ un vélo rouge.</i>', 'a', 'On peut dire <i>il avait un vélo</i> : verbe <i>avoir</i>.', ['a', 'à'], 'homo-a'],
+        ['<i>Le ciel ___ bleu.</i>', 'est', 'On peut dire <i>le ciel était bleu</i> : verbe <i>être</i>.', ['et', 'est'], 'homo-et'],
+        ['<i>Ils ___ faim.</i>', 'ont', 'On peut dire <i>ils avaient faim</i>.', ['on', 'ont'], 'homo-on']
+      ],
+      observer: '<p>Les homophones se prononcent de la même façon mais ne s’écrivent pas pareil, car ce ne sont pas les mêmes mots. Pour choisir, on <b>remplace</b> par un mot qui, lui, s’entend différemment.</p><ul><li><i>Il <b>a</b> faim → Il <b>avait</b> faim</i> : ça marche, c’est le verbe <i>avoir</i>.</li><li><i>Il va <b>à</b> Lyon → Il va <b>avait</b> Lyon</i> : impossible, c’est la préposition <i>à</i>.</li></ul>',
+      manip: [
+        { kind: 'essai', titre: 'Remplacer pour choisir', consigne: 'Essaie le remplacement proposé : si la phrase reste correcte, c’est le verbe. Puis choisis.',
+          items: [
+            { p: 'Lucas ___ perdu ses clés.', o: ['a', 'à'], r: 'a', essai: 'avait', x: '<i>Lucas avait perdu</i> : verbe <i>avoir</i>.', err: 'homo-a' },
+            { p: 'Nous allons ___ la piscine.', o: ['a', 'à'], r: 'à', essai: 'avait', x: '<i>Nous allons avait la piscine</i> est impossible : préposition <i>à</i>.', err: 'homo-a' },
+            { p: 'Mes parents ___ partis tôt.', o: ['son', 'sont'], r: 'sont', essai: 'étaient', x: '<i>Mes parents étaient partis</i> : verbe <i>être</i>.', err: 'homo-son' },
+            { p: 'Il a oublié ___ cartable.', o: ['son', 'sont'], r: 'son', essai: 'étaient', x: '<i>Il a oublié étaient cartable</i> est impossible : <i>son</i> = le sien.', err: 'homo-son' },
+            { p: 'La soupe ___ chaude ___ salée.', o: ['est / et', 'et / est', 'est / est'], r: 'est / et', essai: 'était', x: '<i>La soupe était chaude</i> ; <i>et</i> relie <i>chaude</i> et <i>salée</i> (on peut dire <i>et puis</i>).', err: 'homo-et' }
+          ] }
+      ],
+      retenir: '<div class="tw"><table><tr><th>Mot</th><th>Ce que c’est</th><th>On remplace par</th></tr><tr><td><i>a</i></td><td>verbe <i>avoir</i></td><td><em class="fx"><i>avait</i></em></td></tr><tr><td><i>à</i></td><td>préposition</td><td>impossible</td></tr><tr><td><i>est</i></td><td>verbe <i>être</i></td><td><em class="fx"><i>était</i></em></td></tr><tr><td><i>et</i></td><td>conjonction (relie)</td><td><i>et puis</i></td></tr><tr><td><i>sont / ont</i></td><td>verbes <i>être / avoir</i></td><td><em class="fx"><i>étaient / avaient</i></em></td></tr><tr><td><i>son / on</i></td><td>déterminant / pronom</td><td><i>mon</i> / <i>il</i></td></tr><tr><td><i>ses / ces</i></td><td>les siens / ceux-là</td><td><i>mes</i> / <i>ces… -là</i></td></tr><tr><td><i>leur / leurs</i></td><td>devant un verbe : pronom, invariable ; devant un nom : déterminant</td><td><em class="fx"><i>lui</i></em> (pronom) ; <i>son / ses</i> (déterminant)</td></tr></table></div>',
+      exos: [
+        { kind: 'choice', titre: 'Choisir le bon mot', consigne: 'Remplace dans ta tête, puis choisis.',
+          items: [
+            ['<i>___ dit qu’il va pleuvoir.</i>', 'On', 'On peut dire <i>il dit</i> : pronom <i>on</i>.', ['On', 'Ont'], 'homo-on'],
+            ['<i>Elle a rangé ___ livres.</i>', 'ses', '<i>ses livres</i> = les siens.', ['ses', 'ces'], 'homo-ces'],
+            ['<i>Regarde ___ nuages-là !</i>', 'ces', '<i>ces… -là</i> : on montre.', ['ses', 'ces'], 'homo-ces'],
+            ['<i>Je ___ ai prêté mon stylo.</i>', 'leur', 'Devant un verbe, <i>leur</i> = <i>lui</i> au pluriel : invariable.', ['leur', 'leurs'], 'homo-leur'],
+            ['<i>Ils ont pris ___ manteaux.</i>', 'leurs', 'Devant un nom pluriel, le déterminant <i>leurs</i> s’accorde.', ['leur', 'leurs'], 'homo-leur'],
+            ['<i>Le gâteau ___ prêt.</i>', 'est', '<i>Le gâteau était prêt.</i>', ['et', 'est'], 'homo-et']
+          ] }
+      ],
+      reflexe: { consigne: '<i>a</i> ou <i>à</i> ?', options: ['a', 'à'], err: 'homo-a', cible: 30,
+        items: [['Il ___ froid.', 'a'], ['Je vais ___ Paris.', 'à'], ['Elle ___ un chat.', 'a'], ['C’est ___ toi.', 'à'], ['Il ___ fini.', 'a'], ['Une tasse ___ café.', 'à'], ['On ___ gagné !', 'a'], ['Rendez-vous ___ midi.', 'à'], ['Marie ___ dix ans.', 'a'], ['Une glace ___ la vanille.', 'à'], ['Tom ___ raison.', 'a'], ['Il pense ___ toi.', 'à']] },
+      loin: { lots: ['homophones', 'homophones-2', 'leur-leurs'] }
+    }] },
+    { dom: 'L', steps: [{
+      id: '6-L2', titre: 'Polysémie, homonymes, hyperonymes', sub: 'Un mot, plusieurs sens ; des mots qui se ressemblent ; des mots qui en englobent d’autres.', notions: ['L06', 'L07', 'L08'],
+      rappel: [
+        ['Un synonyme de <i>content</i> est…', 'joyeux', 'Des synonymes ont un sens proche et appartiennent à la même classe (ici, deux adjectifs).', ['triste', 'joyeux', 'gentil'], 'polysemie'],
+        ['Le contraire de <i>allumer</i> est…', 'éteindre', 'Un antonyme a un sens contraire.', ['éclairer', 'éteindre', 'bruler'], 'polysemie'],
+        ['Dans le dictionnaire, les différents sens d’un mot sont…', 'numérotés', 'Chaque sens a son numéro et son exemple.', ['numérotés', 'en couleur', 'cachés'], 'polysemie']
+      ],
+      observer: '<p>Observe.</p><ul><li><i>La <b>souris</b> grignote le fromage.</i> / <i>Clique avec la <b>souris</b>.</i> → un même mot, deux sens : il est <b>polysémique</b>.</li><li><i>La <b>mer</b>, ma <b>mère</b>, le <b>maire</b></i> → trois mots différents qui se prononcent pareil : ce sont des <b>homonymes</b>.</li><li><i><b>Fruit</b> : pomme, poire, cerise</i> → <i>fruit</i> englobe les autres : c’est un <b>hyperonyme</b>.</li></ul>',
+      manip: [
+        { kind: 'etiqueter', titre: 'Du général au particulier', consigne: 'Pour chaque série, trouve le mot général (hyperonyme) : les autres sont ses hyponymes.', labels: ['hyperonyme', 'hyponyme'], err: 'hyper',
+          items: [
+            { g: ['pomme', 'fruit', 'cerise', 'poire'], l: ['hyponyme', 'hyperonyme', 'hyponyme', 'hyponyme'], x: '<i>fruit</i> englobe les trois autres.' },
+            { g: ['violon', 'piano', 'instrument', 'flute'], l: ['hyponyme', 'hyponyme', 'hyperonyme', 'hyponyme'], x: '<i>instrument</i> est le mot général.' },
+            { g: ['véhicule', 'vélo', 'camion', 'bus'], l: ['hyperonyme', 'hyponyme', 'hyponyme', 'hyponyme'], x: '<i>véhicule</i> est le mot général.' }
+          ] }
+      ],
+      retenir: '<ul><li>Un mot <b>polysémique</b> a <em class="fx">plusieurs sens</em> ; c’est <em class="fx">le contexte</em> qui indique le bon : <i>une <b>feuille</b> d’arbre / une <b>feuille</b> de papier</i>. On parle de sens propre (<i>une soupe <b>salée</b></i>) et de sens figuré (<i>une facture <b>salée</b></i>).</li><li>Des <b>homonymes</b> sont des mots <em class="fx">différents</em> qui se prononcent (et parfois s’écrivent) de la même façon : <i>mer / mère / maire</i>, <i>un livre / une livre</i>.</li><li>Un <b>hyperonyme</b> est un mot <em class="fx">de sens général</em> qui englobe des mots plus précis, ses <b>hyponymes</b> : <i>meuble → table, chaise, armoire</i>.</li></ul>',
+      exos: [
+        { kind: 'choice', titre: 'Quel sens ?', consigne: 'Choisis le sens du mot dans la phrase.', err: 'polysemie',
+          items: [
+            ['<i>Il a une <b>mémoire</b> d’éléphant.</i> Le mot <i>mémoire</i> désigne…', 'la capacité de se souvenir', 'Ici, sens courant ; dans <i>la mémoire de l’ordinateur</i>, c’est l’endroit où sont rangées les données.', ['la capacité de se souvenir', 'un objet', 'un animal']],
+            ['<i>Elle a la tête dans les <b>nuages</b>.</i> Ici, le mot est employé…', 'au sens figuré', 'Elle est distraite : ce n’est pas un vrai nuage.', ['au sens propre', 'au sens figuré']],
+            ['<i>Le <b>maire</b> inaugure l’école.</i> Lequel est un homonyme de <i>maire</i> ?', 'mer', '<i>maire</i> et <i>mer</i> se prononcent pareil mais n’ont pas le même sens.', ['mairie', 'mer', 'ville'], 'homonymes'],
+            ['Quel mot est l’hyperonyme de <i>chêne, sapin, bouleau</i> ?', 'arbre', 'Le mot général est <i>arbre</i>.', ['forêt', 'arbre', 'feuille'], 'hyper']
+          ] }
+      ],
+      reflexe: { consigne: 'Le mot est-il employé au sens propre ou au sens figuré ?', options: ['sens propre', 'sens figuré'], err: 'polysemie', cible: 45,
+        items: [['Une **pluie** de compliments', 'sens figuré'], ['Une **pluie** fine', 'sens propre'], ['Un cœur de **pierre**', 'sens figuré'], ['Un mur de **pierre**', 'sens propre'], ['Il **brule** d’impatience', 'sens figuré'], ['Le bois **brule**', 'sens propre'], ['Une **montagne** de devoirs', 'sens figuré'], ['Gravir une **montagne**', 'sens propre'], ['Elle a un **poil** dans la main', 'sens figuré'], ['Le **poil** du chat', 'sens propre'], ['Il pleut des **cordes**', 'sens figuré'], ['Les **cordes** du violon', 'sens propre']] },
+      loin: { lots: ['relations-mots', 'sens-figure-flashcards'] }
+    }] }
+  ]
+};
+
+;
+/* Parcours 5ᵉ, 4ᵉ, 3ᵉ et FLE — en préparation (lots 3 et 4 de la refonte). Laboratoire de la langue, M. Lesage, enseignant de français, CC BY-NC-SA 4.0. */
+window.NPARC = window.NPARC || {};
+NPARC.n5 = { titre: 'Parcours 5ᵉ', public: 'Élèves de 5ᵉ · cycle 4', enPreparation: true, resume: 'Sujet séparé du verbe, compléments circonstanciels, subordonnée relative, énonciation, temps de l’indicatif, subjonctif présent, déterminants, participe passé, homophones, lexique.' };
+NPARC.n4 = { titre: 'Parcours 4ᵉ', public: 'Élèves de 4ᵉ · cycle 4', enPreparation: true, resume: 'Sujet éloigné, complétive et interrogative indirecte, discours indirect, emplois du conditionnel et du subjonctif, aspect, apposition, participe passé, homophones rares, lexique.' };
+NPARC.n3 = { titre: 'Parcours 3ᵉ', public: 'Élèves de 3ᵉ · cycle 4 et brevet', enPreparation: true, resume: 'Attribut du COD, tous les compléments circonstanciels, fonction des subordonnées, discours indirect libre, subjonctif, accords difficiles, questions de langue et réécriture du brevet.' };
+NPARC.nfle = { titre: 'Parcours FLE · FLS', public: 'Élèves allophones · étapes A1, A2, B1', fle: true, enPreparation: true, resume: 'Le français pour communiquer à l’école : articles et accords, présent, négation, questions, passé composé et imparfait, pronoms, consignes et connecteurs.' };
+
+;
 /* Lots de flashcards de la rubrique Entrainements (version élève, fichier flashcards.html).
    id = id du lot dans l'appli des flashcards ; niv = niveaux du lot ; th = thème du Laboratoire (ceintures) ;
    rub = rubrique de l'appli des flashcards (Homophones, Orthographe…), utilisée par la page Entrainements.
@@ -3717,7 +3972,9 @@ const LABO = (function () {
 
   function liste() {
     const conseil = S.niveau === '6' ? 'cycle3' : 'college';
-    return `<div class="page-h"><h2>Parcours</h2><p>La leçon progressive et la mise à niveau. Chaque parcours commence par un diagnostic de dix questions${NB}: il repère ce que tu sais déjà et ce que tu dois travailler, puis te propose un parcours personnalisé.</p></div>
+    const P2 = window.PARC2;
+    return `<div class="page-h"><h2>Parcours</h2><p>La leçon progressive et la mise à niveau. Chaque parcours commence par un diagnostic${NB}: il repère, notion par notion, ce que tu sais déjà et ce que tu dois travailler, puis te propose un parcours personnalisé.</p></div>
+    ${P2 ? `<div class="grid2">${P2.cartes()}</div><h3 class="anciens-h">Les anciens parcours</h3><p class="small muted">Ils restent ouverts le temps que les nouveaux parcours soient tous prêts.</p>` : ''}
     <div class="grid2">${PIDS.map(pid => {
       const p = PARCOURS[pid], pr = progres(pid), d = diagFait(pid);
       return `<div class="card"><div class="row" style="justify-content:space-between"><h3>${esc(p.titre)}</h3>${pid === conseil ? `<span class="pill warn">Conseillé en ${niv(S.niveau)}</span>` : ''}</div>
@@ -3949,6 +4206,365 @@ const LABO = (function () {
     if ((m = h.match(/^diag-(cycle3|college|fle)$/))) return diag(m[1]);
     if ((m = h.match(/^etape-(cycle3|college|fle)-(\d+)$/))) return etape(m[1], Number(m[2]));
     return null;
+  };
+})();
+
+;
+/* ====================================================================
+   Parcours par niveau (refonte 2026-11, lot 1) : 6ᵉ, 5ᵉ, 4ᵉ, 3ᵉ et FLE.
+   Contenus écrits pour le Laboratoire (CC BY-NC-SA), dans parcours-donnees/n*.js.
+   Référentiel des notions : NOTIONS_LABO (construit depuis laboratoire/referentiel/notions.txt).
+
+   NPARC[pid] = { titre, public, duree, resume, fle?, enPreparation?, diagnostic, modules }
+   - pid : n6, n5, n4, n3, nfle
+   - diagnostic : [{ n: 'P01', q, r, x, o: [options], err? }] ; « Je ne sais pas » s’ajoute
+   - module = { dom: P|V|G|H|L, steps: [étape] }
+   - étape = { id, titre, sub, notions: [...], rappel: [choix], observer: html, manip: [exo],
+               retenir: html, exos: [exo], reflexe: { consigne, options, items: [[énoncé, réponse]], err }, loin: { lots: [...] } }
+   - exo = { kind, titre, consigne, err?, items } ; kind :
+       choice   [énoncé, réponse, explication, options?, err?]
+       input    [énoncé avec ___, réponses a|b, explication, err?]
+       transformer { p, r: 'a|b', x, err? }
+       cadre    { p: 'groupe / groupe / …', r: indice ou [indices], t: phrase transformée juste, x }  (exo.cadre = ['ne','pas'] ou ['C’est','qui'])
+       etiqueter { g: [groupes], l: [étiquettes attendues], x }  (exo.labels = étiquettes proposées)
+       fleche   { g: [mots], pp: indice du participe, cible: indice du mot donneur (-1 : pas d’accord), o: [formes], r, x }
+       essai    { p: '… ___ …', o: [options], r, essai: mot de remplacement, x }  (exo.essai par défaut)
+   Erreurs : chaque réponse fausse est rangée par type (err) dans S.parcours.err pour « Mes bilans ».
+   ==================================================================== */
+(function () {
+  const { S, save, esc, NB, vues, niv, today, shuffle } = LABO;
+  const P = S.parcours; P.err = P.err || {};
+  const NP = window.NPARC || {};
+  const ORDRE = ['n6', 'n5', 'n4', 'n3', 'nfle'];
+  const NIVP = { n6: '6', n5: '5', n4: '4', n3: '3' };
+  const NSP = 'Je ne sais pas';
+  const DOM = { P: ['La phrase et ses fonctions', 'ph'], V: ['Le verbe', 'gv'], G: ['Le groupe nominal et les accords', 'gn'], H: ['Les homophones et l’orthographe', 'ho'], L: ['Le lexique', 'fm'] };
+  /* types d’erreurs (libellé montré dans « Mes bilans ») */
+  const ERR = {
+    'verbe-repere': 'Repérer le verbe conjugué', 'sujet-repere': 'Repérer le sujet', 'sujet-inverse': 'Sujet placé après le verbe',
+    'imperatif-s': 'Le <i>-s</i> à l’impératif', 'imperatif-forme': 'Former l’impératif', 'cond-futur': 'Futur ou conditionnel',
+    'cond-forme': 'Former le conditionnel', 'pp-etre': 'Participe passé avec <i>être</i>', 'pp-avoir-sujet': 'Accord avec le sujet après <i>avoir</i>',
+    'pp-avoir-cod': 'COD placé avant le verbe', 'homo-a': '<i>a / à</i>', 'homo-et': '<i>et / est</i>', 'homo-son': '<i>son / sont</i>',
+    'homo-on': '<i>on / ont</i>', 'homo-ces': '<i>ces / ses</i>', 'homo-leur': '<i>leur / leurs</i>', 'polysemie': 'Polysémie', 'homonymes': 'Homonymes',
+    'hyper': 'Hyperonymes et hyponymes'
+  };
+  const nb = s => String(s == null ? '' : s).replace(/ ([:;!?])/g, ' $1');
+  const fmt = s => nb(String(s).replace(/\*\*(.+?)\*\*/g, '<mark>$1</mark>'));
+  const plain = s => String(s).replace(/<[^>]+>/g, '').replace(/\*\*/g, '').replace(/\s+/g, ' ').trim();
+  const norm = s => String(s).normalize('NFC').toLowerCase().replace(/[’`´]/g, "'").replace(/[  ]/g, ' ').replace(/\s+/g, ' ').replace(/^[\s.,;:!?«»"]+|[\s.,;:!?«»"]+$/g, '').trim();
+  const key = (pid, s) => pid + ':' + s.id;
+  const flat = pid => { const out = []; (NP[pid].modules || []).forEach(m => m.steps.forEach(s => out.push({ m, s }))); return out; };
+  const fait = (pid, s) => P.prog[key(pid, s)] && P.prog[key(pid, s)].done;
+  const progres = pid => { const f = flat(pid); return { done: f.filter(e => fait(pid, e.s)).length, total: f.length }; };
+  const etoiles = (ok, total) => { const n = total ? Math.floor(5 * ok / total) : 0; return `<span class="etoiles" role="img" aria-label="${n} étoile${n > 1 ? 's' : ''} sur 5">${'★'.repeat(n)}<span class="v">${'☆'.repeat(5 - n)}</span></span>`; };
+  const nomNotion = id => { const n = (window.NOTIONS_LABO || {})[id]; return n ? n.nom : id; };
+
+  function logErr(type, ex) {
+    if (!type) return;
+    const e = P.err[type] || { n: 0 };
+    e.n++; e.d = today(); e.ex = plain(ex).slice(0, 90);
+    P.err[type] = e;
+  }
+
+  /* ---------- Diagnostic par notion : acquis, fragile, à travailler ---------- */
+  const diagFait = pid => { const d = P.diag[pid]; return d && Array.isArray(d.rep) && d.rep.length === NP[pid].diagnostic.length ? d : null; };
+  function statuts(pid) {
+    const d = diagFait(pid); if (!d) return null;
+    const c = {};
+    NP[pid].diagnostic.forEach((q, i) => { const x = c[q.n] || (c[q.n] = { ok: 0, n: 0 }); x.n++; if (d.rep[i] === q.r) x.ok++; });
+    const st = {}; Object.keys(c).forEach(n => { st[n] = c[n].ok === c[n].n ? 'acquis' : c[n].ok ? 'fragile' : 'travail'; });
+    return st;
+  }
+  function roles(pid) {
+    const st = statuts(pid); if (!st) return null;
+    const r = {};
+    flat(pid).forEach(({ s }) => { const v = s.notions.map(n => st[n]).filter(Boolean); r[s.id] = v.includes('travail') ? 'travail' : v.includes('fragile') ? 'verif' : v.length ? 'acquis' : 'travail'; });
+    return r;
+  }
+  const ROLE_T = { travail: ['à travailler', ''], verif: ['à consolider', 'verif'], acquis: ['déjà acquis', 'fac'] };
+  const roleHTML = (r, s) => { const x = r && ROLE_T[r[s.id]]; return x ? `<span class="role-t ${x[1]}">${x[0]}</span>` : ''; };
+  function premiereAFaire(pid) {
+    const f = flat(pid), r = roles(pid);
+    let i = r ? f.findIndex(e => r[e.s.id] !== 'acquis' && !fait(pid, e.s)) : -1;
+    if (i < 0) i = f.findIndex(e => !fait(pid, e.s));
+    return i < 0 ? 0 : i;
+  }
+  function suivante(pid, i) {
+    const f = flat(pid), r = roles(pid);
+    const j = f.findIndex((e, k) => k > i && !fait(pid, e.s) && (!r || r[e.s.id] !== 'acquis'));
+    return j >= 0 ? j : i < f.length - 1 ? i + 1 : null;
+  }
+
+  /* ---------- Vues ---------- */
+  const crumbs = (...c) => `<nav class="crumbs" aria-label="Fil d’Ariane"><a href="#parcours">Parcours</a>${c.map(x => ` › ${x}`).join('')}</nav>`;
+  function cartes() {
+    const conseil = 'n' + S.niveau;
+    return ORDRE.filter(pid => NP[pid]).map(pid => {
+      const p = NP[pid], pr = p.enPreparation ? null : progres(pid), d = p.enPreparation ? null : diagFait(pid);
+      const btn = p.enPreparation ? `<a class="btn ghost small" href="#parcours-${pid}">En préparation</a>`
+        : `<a class="btn small" href="${d || pr.done ? `#etape-${pid}-${premiereAFaire(pid)}` : `#diag-${pid}`}">${pr.done ? 'Reprendre' : d ? 'Commencer mon parcours' : 'Faire le diagnostic'}</a><a class="btn ghost small" href="#parcours-${pid}">Voir le plan</a>`;
+      return `<div class="card${p.fle ? ' carte-fle' : ''}"><div class="row" style="justify-content:space-between"><h3>${esc(p.titre)}</h3>${pid === conseil ? `<span class="pill warn">Conseillé en ${niv(S.niveau)}</span>` : ''}</div>
+        <p class="small muted">${esc(p.public)}${p.duree ? ' · ' + esc(p.duree) : ''}</p><p class="small">${nb(p.resume)}</p>
+        ${pr ? `<p class="small muted">${pr.done ? `${pr.done} étape${pr.done > 1 ? 's' : ''} sur ${pr.total}` : 'Pas encore commencé'}${d ? ' · diagnostic fait le ' + esc(d.date || '') : ''}</p>` : ''}
+        <div class="row">${btn}</div></div>`;
+    }).join('');
+  }
+
+  function plan(pid) {
+    const p = NP[pid];
+    if (p.enPreparation) return `${crumbs(esc(p.titre))}<div class="page-h"><h2>${esc(p.titre)}</h2><p>${nb(p.resume)}</p></div><div class="card"><p>Ce parcours est en préparation. En attendant, les <a href="#memos">mémos</a> et les <a href="#entrainements">entrainements</a> restent ouverts.</p></div>`;
+    const r = roles(pid), d = diagFait(pid), st = statuts(pid);
+    let i = -1;
+    return `${crumbs(esc(p.titre))}
+    <div class="page-h"><h2>${esc(p.titre)}</h2><p>${nb(p.resume)}</p></div>
+    <div class="card"><div class="row">${d ? `<a class="btn small" href="#etape-${pid}-${premiereAFaire(pid)}">Suite de mon parcours →</a><a class="btn ghost small" href="#diag-${pid}">Refaire le diagnostic</a>` : `<a class="btn small" href="#diag-${pid}">Faire le diagnostic</a><a class="btn ghost small" href="#etape-${pid}-0">Commencer sans diagnostic</a>`}</div>
+      ${d ? `<p class="small muted" style="margin-top:8px">Ton parcours personnalisé${NB}: d’abord les étapes « à travailler », puis celles « à consolider »${NB}; les notions déjà acquises restent ouvertes.</p>` : ''}</div>
+    <div class="plan">${p.modules.map(m => `<section class="mod m-${DOM[m.dom][1]}"><h3><span class="mdot"></span>${DOM[m.dom][0]}</h3><ol>${m.steps.map(s => {
+      i++; const pr = P.prog[key(pid, s)];
+      const ok = pr && pr.done ? '✓ ' + etoiles(pr.score, pr.total) : '';
+      return `<li><a class="stp" href="#etape-${pid}-${i}"><span class="t"><b>${nb(s.titre)}</b><span>${nb(s.sub || '')}</span></span><span class="s">${roleHTML(r, s)}${ok}</span></a></li>`;
+    }).join('')}</ol></section>`).join('')}</div>
+    ${st ? `<p class="small muted">Diagnostic${NB}: ${Object.keys(st).map(n => `${esc(n)} ${st[n] === 'acquis' ? 'acquis' : st[n] === 'fragile' ? 'fragile' : 'à travailler'}`).join(' · ')}</p>` : ''}`;
+  }
+
+  let diagRep = null;
+  function diag(pid) {
+    const p = NP[pid];
+    diagRep = new Array(p.diagnostic.length).fill(null);
+    return `${crumbs(`<a href="#parcours-${pid}">${esc(p.titre)}</a>`, 'Diagnostic')}
+    <div class="page-h"><h2>Diagnostic · ${esc(p.titre)}</h2><p>${p.diagnostic.length} questions pour savoir où tu en es, notion par notion. Ce n’est pas noté${NB}: réponds « ${NSP} » plutôt que de répondre au hasard.</p></div>
+    <div class="exo" id="n-diag" data-pid="${pid}">${p.diagnostic.map((q, i) => `<div class="item diag-q" data-i="${i}"><p class="q"><span class="n">${i + 1}.</span><span>${fmt(q.q)}</span></p>
+      <div class="opts">${q.o.concat(NSP).map(o => `<button type="button" class="opt" data-x="d-rep" data-v="${esc(o)}">${nb(o)}</button>`).join('')}</div><div class="fb" hidden></div></div>`).join('')}</div>
+    <div class="row"><button class="btn" type="button" data-x="d-ok" disabled id="n-d-ok">Voir mes résultats</button><span class="small muted" id="n-d-reste">${p.diagnostic.length} questions sans réponse</span></div>
+    <div id="n-d-res"></div>`;
+  }
+
+  /* ---------- Étape ---------- */
+  let T = null; /* état de l’étape : { pid, i, s, main: { total, seen, ok }, rappel: {…} } */
+  const SECS = [['rappel', 'Rappel express'], ['observer', 'Observer et manipuler'], ['retenir', 'Retenir'], ['exos', 'S’exercer'], ['reflexe', 'Réflexe'], ['loin', 'Pour aller plus loin']];
+  function etape(pid, i) {
+    const f = flat(pid); if (!f[i]) return plan(pid);
+    const { m, s } = f[i];
+    P.last = { pid, i }; save();
+    T = { pid, i, s, main: { total: 0, n: 0, ok: 0, seen: {} }, rappel: { total: 0, n: 0, ok: 0, seen: {} } };
+    const r = roles(pid);
+    const sec = (id, titre, html) => html ? `<section class="n-sec" id="sec-${id}"><h3 class="n-sec-h"><span class="n-sec-no">${SECS.findIndex(x => x[0] === id) + 1}</span>${titre}</h3>${html}</section>` : '';
+    const rappel = s.rappel && s.rappel.length ? exo({ kind: 'choice', titre: 'Ce que tu sais déjà', consigne: 'Trois questions sur ce que tu as appris avant. Si tu en manques, relis le mémo indiqué avant de continuer.', items: s.rappel }, 'rappel', 0) + (s.rappelVers ? `<p class="small muted">${nb(s.rappelVers)}</p>` : '') : '';
+    const obs = (s.observer ? `<div class="cours n-obs">${nb(s.observer)}</div>` : '') + (s.manip || []).map((e, ei) => exo(e, 'main', 'm' + ei)).join('');
+    const ret = s.retenir ? `<div class="cours memos n-ret">${nb(s.retenir)}</div>` : '';
+    const ex = (s.exos || []).map((e, ei) => exo(e, 'main', 'e' + ei)).join('');
+    const rf = s.reflexe ? reflexeHTML(s) : '';
+    const lots = ((s.loin || {}).lots || []).map(id => lotPourNiveau(id, NIVP[pid] || S.niveau) || DECKS.find(d => d.id === id || d.base === id)).filter(Boolean);
+    const loin = `<div class="conseils">${lots.map(d => `<a href="${LABO.lienLot(d.id)}"><span>${esc(d.nom)}</span><span class="tag conseil">Flashcards</span></a>`).join('')}<a href="#ceintures"><span>Passer la ceinture de ce domaine</span><span class="tag">Ceinture</span></a><a href="#memos"><span>Relire les mémos</span><span class="tag">Mémos</span></a></div>`;
+    let k = -1;
+    const side = `<div class="card side-plan${NP[pid].fle ? ' carte-fle' : ''}"><b>${esc(NP[pid].titre)}</b>${NP[pid].modules.map(mm => `<div class="mh m-${DOM[mm.dom][1]}"><span class="mdot"></span>${DOM[mm.dom][0]}</div>${mm.steps.map(ss => { k++; const pr = P.prog[key(pid, ss)]; return `<a href="#etape-${pid}-${k}" class="${k === i ? 'cur' : ''}"><span>${nb(ss.titre)}</span>${pr && pr.done ? '<span class="ok">✓</span>' : r && r[ss.id] === 'travail' ? '<span class="role-t">!</span>' : ''}</a>`; }).join('')}`).join('')}</div>`;
+    return `${crumbs(`<a href="#parcours-${pid}">${esc(NP[pid].titre)}</a>`, DOM[m.dom][0])}
+    <div class="layout-step"><div class="n-step m-${DOM[m.dom][1]}">
+      <div class="page-h"><div class="row"><span class="pill">${DOM[m.dom][0]}</span>${roleHTML(r, s)}</div><h2>${nb(s.titre)}</h2>${s.sub ? `<p>${nb(s.sub)}</p>` : ''}
+        <p class="small muted">${s.notions.map(n => esc(n) + ' ' + nb(nomNotion(n))).join(' · ')}</p></div>
+      ${sec('rappel', 'Rappel express', rappel)}${sec('observer', 'Observer et manipuler', obs)}${sec('retenir', 'Retenir', ret)}${sec('exos', 'S’exercer', ex)}<div id="resultat" hidden></div>${sec('reflexe', 'Réflexe', rf)}${sec('loin', 'Pour aller plus loin', loin)}
+    </div><aside>${side}</aside></div>`;
+  }
+
+  /* un exercice ; t = 'main' ou 'rappel' (compté à part) ; id = identifiant dans l’étape */
+  function exo(e, t, id) {
+    const C = T[t];
+    const head = `<div class="exo-h">${t === 'rappel' ? '' : `<span class="no">${e.kind === 'choice' || e.kind === 'input' ? 'Exercice' : 'Manipulation'}</span>`}<h3>${nb(e.titre)}</h3></div>${e.consigne ? `<p class="consigne">${nb(e.consigne)}</p>` : ''}`;
+    const it = (ii, inner) => { C.total++; return `<div class="item" data-t="${t}" data-k="${id}-${ii}"><p class="q"><span class="n">${ii + 1}.</span>${inner}</div>`; };
+    const grp = (g, ii, cls) => g.map((x, gi) => `<button type="button" class="grp ${cls || ''}" data-x="grp" data-g="${gi}">${nb(x)}</button>`).join('');
+    let items = '';
+    if (e.kind === 'choice') items = e.items.map((x, ii) => it(ii, `<span>${fmt(x[0])}</span></p><div class="opts">${(x[3] || e.options).map(o => `<button type="button" class="opt" data-x="choix" data-v="${esc(o)}">${nb(o)}</button>`).join('')}</div><div class="fb" hidden></div>`)).join('');
+    else if (e.kind === 'input') items = e.items.map((x, ii) => { const parts = x[0].split('___'), w = Math.max(10, x[1].split('|')[0].length + 3); return it(ii, `<span>${fmt(parts[0])}<input class="blank" style="width:${w}ch" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Réponse ${ii + 1}">${fmt(parts[1] || '')}</span></p><div class="row acts"><button type="button" class="btn small" data-x="verif">Vérifier</button></div><div class="fb" hidden></div>`); }).join('');
+    else if (e.kind === 'transformer') items = e.items.map((x, ii) => it(ii, `<span>${fmt(x.p)}</span></p><input class="blank long" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Phrase transformée ${ii + 1}"><div class="row acts"><button type="button" class="btn small" data-x="verif">Vérifier</button></div><div class="fb" hidden></div>`)).join('');
+    else if (e.kind === 'cadre') items = e.items.map((x, ii) => it(ii, `</p><div class="grps">${grp(x.p.split(' / '), ii)}</div><p class="essai" aria-live="polite"></p><div class="row acts"><button type="button" class="btn small" data-x="cadre-ok" disabled>Valider ce groupe</button></div><div class="fb" hidden></div>`)).join('');
+    else if (e.kind === 'etiqueter') items = e.items.map((x, ii) => it(ii, `</p><div class="etiq">${x.g.map((g, gi) => `<label class="etq"><span>${nb(g)}</span><select data-g="${gi}" aria-label="Étiquette de « ${esc(plain(g))} »"><option value="">…</option>${e.labels.map(l => `<option>${esc(l)}</option>`).join('')}</select></label>`).join('')}</div><div class="row acts"><button type="button" class="btn small" data-x="etq-ok">Valider</button></div><div class="fb" hidden></div>`)).join('');
+    else if (e.kind === 'fleche') items = e.items.map((x, ii) => it(ii, `</p><div class="grps fl">${x.g.map((g, gi) => gi === x.pp ? `<span class="grp pp" data-g="${gi}">…</span>` : `<button type="button" class="grp" data-x="fl-cible" data-g="${gi}">${nb(g)}</button>`).join('')}<svg class="fl-svg" aria-hidden="true"></svg></div><div class="row"><button type="button" class="btn ghost small" data-x="fl-cible" data-g="-1">Pas d’accord</button></div><div class="opts" hidden>${x.o.map(o => `<button type="button" class="opt" data-x="fl-forme" data-v="${esc(o)}">${nb(o)}</button>`).join('')}</div><div class="fb" hidden></div>`)).join('');
+    else if (e.kind === 'essai') items = e.items.map((x, ii) => { const ess = x.essai || e.essai; return it(ii, `<span class="phr">${fmt(x.p.replace('___', '<span class="trou">___</span>'))}</span></p><div class="row"><button type="button" class="btn ghost small" data-x="essai" data-w="${esc(ess)}">Essayer avec <i>${esc(ess)}</i></button></div><p class="essai" aria-live="polite"></p><div class="opts">${x.o.map(o => `<button type="button" class="opt" data-x="choix" data-v="${esc(o)}">${nb(o)}</button>`).join('')}</div><div class="fb" hidden></div>`); }).join('');
+    return `<section class="exo" data-kind="${e.kind}">${head}${items}</section>`;
+  }
+  function trouve(el) {
+    const [id, ii] = el.dataset.k.split('-'); const t = el.dataset.t;
+    let e;
+    if (t === 'rappel') e = { kind: 'choice', items: T.s.rappel };
+    else e = id[0] === 'm' ? T.s.manip[+id.slice(1)] : T.s.exos[+id.slice(1)];
+    return { e, x: e.items[+ii], k: el.dataset.k, t };
+  }
+  function fb(el, ok, html) { const f = el.querySelector('.fb'); f.className = 'fb ' + (ok ? 'ok' : 'ko'); f.innerHTML = nb(html); f.hidden = false; }
+  function noter(t, k, ok, err, ex) {
+    const C = T && T[t]; if (!C || C.seen[k] !== undefined) return;
+    C.seen[k] = ok; C.n++; if (ok) C.ok++;
+    if (!ok) { logErr(err, ex); save(); }
+    if (t === 'rappel' && C.n === C.total && C.ok < C.total) document.getElementById('sec-rappel').insertAdjacentHTML('beforeend', `<p class="fb ko">Relis le mémo ou l’étape du niveau précédent avant de continuer${NB}: la suite s’appuie dessus.</p>`);
+    if (t === 'main' && C.n === C.total) terminer();
+  }
+  function terminer() {
+    const { pid, i, s } = T, M = T.main;
+    const pr = P.prog[key(pid, s)] || {};
+    P.prog[key(pid, s)] = Object.assign(pr, { done: true, score: M.ok, total: M.total, rappel: T.rappel.total ? [T.rappel.ok, T.rappel.total] : undefined, date: today() }); save();
+    const pct = M.ok / M.total, nx = suivante(pid, i);
+    const msg = pct >= .85 ? 'Notion maîtrisée. Fais la série Réflexe pour l’automatiser, puis passe à l’étape suivante.' : pct >= .6 ? 'Bonne base. Relis le mémo et les explications des réponses manquées, puis fais la série Réflexe.' : 'Relis la partie « Retenir », puis refais l’étape.';
+    const res = document.getElementById('resultat');
+    res.innerHTML = `<div class="result"><span class="big">${etoiles(M.ok, M.total)} <span class="small muted">${M.ok}/${M.total} au premier essai</span></span><p style="margin:0">${nb(msg)}</p>
+      <div class="row"><button type="button" class="btn ghost" data-x="refaire">Refaire l’étape</button>${nx != null ? `<a class="btn" href="#etape-${pid}-${nx}">Étape suivante →</a>` : `<a class="btn" href="#parcours-${pid}">Retour au plan</a>`}</div></div>`;
+    res.hidden = false;
+  }
+
+  /* ---------- Série Réflexe : dix questions, chronométrées ---------- */
+  let R = null;
+  function reflexeHTML(s) {
+    const pr = P.prog[key(T.pid, s)] || {}, b = pr.reflexe;
+    return `<p class="consigne">${nb(s.reflexe.consigne)} Dix questions, le plus vite possible${NB}: vise 10/10 en moins de ${s.reflexe.cible || 40} secondes.</p>
+      ${b ? `<p class="small muted">Ton meilleur score${NB}: ${b[0]}/10 en ${b[1]} s.</p>` : ''}<div id="rf"><button type="button" class="btn" data-x="rf-go">Lancer la série</button></div>`;
+  }
+  function rfQuestion() {
+    const q = R.items[R.i];
+    document.getElementById('rf').innerHTML = `<div class="rf-box"><div class="rf-top"><span>${R.i + 1}/10</span><span id="rf-t">${Math.round((Date.now() - R.t0) / 1000)} s</span></div><p class="rf-q">${fmt(q[0])}</p><div class="opts">${(q[2] || T.s.reflexe.options).map(o => `<button type="button" class="opt" data-x="rf-rep" data-v="${esc(o)}">${nb(o)}</button>`).join('')}</div></div>`;
+  }
+  function rfFin() {
+    clearInterval(R.tick);
+    const sec = Math.round((Date.now() - R.t0) / 1000), k = key(T.pid, T.s), pr = P.prog[k] || (P.prog[k] = {});
+    const b = pr.reflexe; if (!b || R.ok > b[0] || (R.ok === b[0] && sec < b[1])) pr.reflexe = [R.ok, sec];
+    save();
+    const cible = T.s.reflexe.cible || 40;
+    document.getElementById('rf').innerHTML = `<div class="result"><span class="big">${R.ok}/10 <span class="small muted">en ${sec} s</span></span><p style="margin:0">${R.ok === 10 && sec <= cible ? 'Réflexe acquis.' : R.ok >= 8 ? 'Presque automatique. Recommence pour gagner en vitesse.' : 'Relis le mémo, puis recommence.'}</p>${R.faux.length ? `<ul class="small">${R.faux.map(f => `<li>${fmt(f[0])} → <b>${nb(f[1])}</b></li>`).join('')}</ul>` : ''}<div class="row"><button type="button" class="btn" data-x="rf-go">Recommencer</button></div></div>`;
+  }
+
+  /* ---------- Interactions ---------- */
+  function apercuCadre(e, x, gi) {
+    const g = x.p.split(' / '), bon = [].concat(x.r).includes(gi);
+    if (bon && x.t) return x.t;
+    const c = e.cadre || ['C’est', 'qui'];
+    const maj = t => t.replace(/^./, ch => ch.toUpperCase()), min = t => t.replace(/^./, ch => ch.toLowerCase());
+    if (c[1] === 'pas') { const w = g[gi]; const ne = /^[aeiouyéèêàâîôûh]/i.test(w) ? 'n’' : 'ne '; return maj(g.map((y, j) => j === gi ? ne + (j ? y : min(y)) + ' ' + c[1] : y).join(' ')); }
+    const reste = g.filter((y, j) => j !== gi).join(' ');
+    return `${c[0]} ${g[gi].replace(/^./, ch => ch.toLowerCase())} ${c[1]} ${reste.replace(/^./, ch => ch.toLowerCase())}`;
+  }
+  function fleche(item, from, to) {
+    const box = item.querySelector('.grps.fl'), svg = box.querySelector('.fl-svg');
+    if (from < 0) { svg.innerHTML = ''; return; }
+    const r0 = box.getBoundingClientRect(), a = box.querySelector(`[data-g="${from}"]`).getBoundingClientRect(), b = box.querySelector(`[data-g="${to}"]`).getBoundingClientRect();
+    const x1 = a.left + a.width / 2 - r0.left, x2 = b.left + b.width / 2 - r0.left, y = Math.min(a.top, b.top) - r0.top;
+    svg.setAttribute('viewBox', `0 0 ${r0.width} ${r0.height}`);
+    svg.innerHTML = `<defs><marker id="fl-m" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="currentColor"/></marker></defs><path d="M${x1} ${y + 2} C ${x1} ${y - 22}, ${x2} ${y - 22}, ${x2} ${y + 2}" fill="none" stroke="currentColor" stroke-width="2" marker-end="url(#fl-m)"/>`;
+  }
+  document.addEventListener('click', ev => {
+    const b = ev.target.closest('[data-x]'); if (!b || !b.closest('#vue')) return;
+    const a = b.dataset.x;
+    if (a === 'd-rep') {
+      const q = b.closest('.diag-q'), i = Number(q.dataset.i); if (q.dataset.done) return;
+      q.querySelectorAll('.opt').forEach(o => o.classList.toggle('ok', o === b)); diagRep[i] = b.dataset.v;
+      const reste = diagRep.filter(x => x == null).length;
+      document.getElementById('n-d-reste').textContent = reste ? `${reste} question${reste > 1 ? 's' : ''} sans réponse` : 'Toutes les questions ont une réponse.';
+      document.getElementById('n-d-ok').disabled = !!reste; return;
+    }
+    if (a === 'd-ok') {
+      const pid = document.getElementById('n-diag').dataset.pid, p = NP[pid];
+      P.diag[pid] = { rep: diagRep.slice(), date: today() };
+      let ok = 0;
+      document.querySelectorAll('.diag-q').forEach((q, i) => {
+        const Q = p.diagnostic[i], juste = diagRep[i] === Q.r; if (juste) ok++; else if (diagRep[i] !== NSP) logErr(Q.err, Q.q);
+        q.dataset.done = 1;
+        q.querySelectorAll('.opt').forEach(o => { o.disabled = true; o.classList.remove('ok'); if (o.dataset.v === Q.r) o.classList.add('ok'); else if (o.dataset.v === diagRep[i]) o.classList.add('ko'); });
+        fb(q, juste, `<strong>${juste ? 'Juste.' : diagRep[i] === NSP ? 'À apprendre.' : 'Non.'}</strong> ${juste ? '' : `Réponse attendue${NB}: <b>${Q.r}</b>. `}${Q.x || ''}`);
+      });
+      save(); b.remove(); document.getElementById('n-d-reste').textContent = '';
+      const st = statuts(pid), cnt = v => Object.values(st).filter(x => x === v).length;
+      document.getElementById('n-d-res').innerHTML = `<div class="result"><span class="big">${ok}/${p.diagnostic.length}</span><p style="margin:0">Notions acquises${NB}: ${cnt('acquis')} · fragiles${NB}: ${cnt('fragile')} · à travailler${NB}: ${cnt('travail')}. Ton parcours commence par les notions à travailler.</p><div class="row"><a class="btn" href="#etape-${pid}-${premiereAFaire(pid)}">Commencer mon parcours →</a><a class="btn ghost" href="#parcours-${pid}">Voir le plan</a></div></div>`;
+      return;
+    }
+    if (a === 'refaire') { LABO.route(); window.scrollTo(0, 0); return; }
+    if (a === 'rf-go') {
+      const src = T.s.reflexe.items; R = { items: shuffle(src.slice()).slice(0, 10), i: 0, ok: 0, faux: [], t0: Date.now() };
+      R.tick = setInterval(() => { const t = document.getElementById('rf-t'); if (t) t.textContent = Math.round((Date.now() - R.t0) / 1000) + ' s'; else clearInterval(R.tick); }, 500);
+      rfQuestion(); return;
+    }
+    if (a === 'rf-rep') {
+      const q = R.items[R.i], ok = b.dataset.v === q[1];
+      if (ok) R.ok++; else { R.faux.push(q); logErr(T.s.reflexe.err, q[0]); }
+      R.i++; if (R.i < R.items.length) rfQuestion(); else rfFin(); return;
+    }
+    const item = b.closest('.item'); if (!item || !T || !item.dataset.k) return;
+    const { e, x, k, t } = trouve(item);
+    const err = Array.isArray(x) ? (x[e.kind === 'input' ? 3 : 4] || e.err) : (x.err || e.err);
+    if (a === 'choix') {
+      const r = Array.isArray(x) ? x[1] : x.r, expl = Array.isArray(x) ? x[2] : x.x, ok = b.dataset.v === r;
+      item.querySelectorAll('.opt').forEach(o => { o.disabled = true; if (o.dataset.v === r) o.classList.add('ok'); });
+      if (!ok) b.classList.add('ko');
+      if (e.kind === 'essai') item.querySelector('.trou').textContent = r;
+      fb(item, ok, `<strong>${ok ? 'Juste.' : 'Non.'}</strong> ${ok ? '' : `Réponse attendue${NB}: <b>${r}</b>. `}${expl || ''}`);
+      noter(t, k, ok, err, Array.isArray(x) ? x[0] : x.p);
+    }
+    if (a === 'essai') { item.querySelector('.essai').innerHTML = 'Essai' + NB + ': ' + fmt(x.p.replace('___', `<b>${esc(b.dataset.w)}</b>`)); }
+    if (a === 'verif') {
+      const inp = item.querySelector('.blank'), rep = (Array.isArray(x) ? x[1] : x.r).split('|'), expl = Array.isArray(x) ? x[2] : x.x;
+      if (!inp.value.trim()) { inp.focus(); return; }
+      const ok = rep.some(y => norm(y) === norm(inp.value));
+      if (ok) { inp.classList.add('ok'); inp.disabled = true; item.querySelector('.acts').innerHTML = ''; fb(item, true, `<strong>Juste.</strong> ${expl || ''}`); noter(t, k, true); }
+      else { inp.classList.add('ko'); noter(t, k, false, err, Array.isArray(x) ? x[0] : x.p); item.querySelector('.acts').innerHTML = `<button type="button" class="btn small" data-x="verif">Vérifier à nouveau</button><button type="button" class="btn ghost small" data-x="voir">Voir la réponse</button>`; fb(item, false, '<strong>Pas encore.</strong> Relis la règle, corrige puis vérifie à nouveau, ou affiche la réponse.'); }
+    }
+    if (a === 'voir') {
+      const inp = item.querySelector('.blank'), rep = (Array.isArray(x) ? x[1] : x.r).split('|');
+      inp.value = rep[0]; inp.disabled = true; item.querySelector('.acts').innerHTML = '';
+      fb(item, false, `<strong>Réponse${NB}: ${rep.join(' / ')}.</strong> ${(Array.isArray(x) ? x[2] : x.x) || ''}`);
+    }
+    if (a === 'grp' && e.kind === 'cadre') {
+      if (item.dataset.fini) return;
+      item.querySelectorAll('.grp').forEach(g => g.classList.toggle('sel', g === b));
+      item.querySelector('.essai').innerHTML = 'Essai' + NB + ': <i>' + nb(apercuCadre(e, x, +b.dataset.g)) + '</i>';
+      item.querySelector('[data-x="cadre-ok"]').disabled = false;
+    }
+    if (a === 'cadre-ok') {
+      const sel = item.querySelector('.grp.sel'); if (!sel) return;
+      const gi = +sel.dataset.g, ok = [].concat(x.r).includes(gi);
+      item.dataset.fini = 1; b.remove();
+      item.querySelectorAll('.grp').forEach(g => { g.disabled = true; if ([].concat(x.r).includes(+g.dataset.g)) g.classList.add('ok'); else if (g === sel) g.classList.add('ko'); });
+      fb(item, ok, `<strong>${ok ? 'Juste.' : 'Non.'}</strong> ${ok ? '' : `La bonne transformation${NB}: <i>${nb(x.t || '')}</i>. `}${x.x || ''}`);
+      noter(t, k, ok, err, x.p.replace(/ \/ /g, ' '));
+    }
+    if (a === 'etq-ok') {
+      const sels = [...item.querySelectorAll('select')];
+      if (sels.some(s => !s.value)) { fb(item, false, 'Choisis d’abord une étiquette pour chaque groupe.'); return; }
+      let ok = true;
+      sels.forEach(s => { const bon = s.value === x.l[+s.dataset.g]; if (!bon) ok = false; s.disabled = true; s.parentNode.classList.add(bon ? 'ok' : 'ko'); if (!bon) s.insertAdjacentHTML('afterend', `<span class="etq-r">${esc(x.l[+s.dataset.g])}</span>`); });
+      b.remove();
+      fb(item, ok, `<strong>${ok ? 'Juste.' : 'Pas tout à fait.'}</strong> ${x.x || ''}`);
+      noter(t, k, ok, err, x.g.join(' '));
+    }
+    if (a === 'fl-cible') {
+      if (item.dataset.fini) return;
+      const gi = +b.dataset.g; item.dataset.cible = gi;
+      item.querySelectorAll('[data-x="fl-cible"]').forEach(g => g.classList.toggle('sel', g === b));
+      fleche(item, gi, x.pp);
+      item.querySelector('.opts').hidden = false;
+    }
+    if (a === 'fl-forme') {
+      if (item.dataset.fini) return; item.dataset.fini = 1;
+      const cibleOk = +item.dataset.cible === x.cible, formeOk = b.dataset.v === x.r, ok = cibleOk && formeOk;
+      item.querySelectorAll('.opt').forEach(o => { o.disabled = true; if (o.dataset.v === x.r) o.classList.add('ok'); });
+      if (!formeOk) b.classList.add('ko');
+      item.querySelectorAll('[data-x="fl-cible"]').forEach(g => g.disabled = true);
+      item.querySelector('.grp.pp').textContent = x.r;
+      fleche(item, x.cible, x.pp);
+      fb(item, ok, `<strong>${ok ? 'Juste.' : 'Non.'}</strong> ${cibleOk ? '' : x.cible < 0 ? 'Ici, le participe ne s’accorde pas. ' : `L’accord se fait avec <b>${nb(x.g[x.cible])}</b>. `}${formeOk ? '' : `Forme attendue${NB}: <b>${x.r}</b>. `}${x.x || ''}`);
+      noter(t, k, ok, err, x.g.map((g, j) => j === x.pp ? x.r : g).join(' '));
+    }
+  });
+  document.addEventListener('keydown', ev => {
+    if (ev.key === 'Enter' && ev.target.classList && ev.target.classList.contains('blank')) { const it = ev.target.closest('.item'); const btn = it && it.querySelector('[data-x="verif"]'); if (btn) { ev.preventDefault(); btn.click(); } }
+  });
+
+  /* fond sable dans le parcours FLE */
+  const fleFond = () => document.documentElement.classList.toggle('fle', /^#(parcours|diag|etape)-nfle/.test(location.hash));
+  window.addEventListener('hashchange', fleFond);
+
+  window.PARC2 = { cartes, flat, progres, roles, statuts, ERR, DOM, NP };
+  vues.parcours2 = h => {
+    fleFond();
+    const m = h.match(/^(parcours|diag|etape)-(n6|n5|n4|n3|nfle)(?:-(\d+))?$/); if (!m || !NP[m[2]]) return null;
+    if (m[1] === 'parcours') return plan(m[2]);
+    if (NP[m[2]].enPreparation) return plan(m[2]);
+    if (m[1] === 'diag') return diag(m[2]);
+    return etape(m[2], Number(m[3] || 0));
   };
 })();
 
