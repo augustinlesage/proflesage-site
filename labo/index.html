@@ -3052,7 +3052,7 @@ NPARC.n6 = {
       ],
       retenir: '<p>Le <b>verbe conjugué</b> est le mot qui <em class="fx">change quand on change le temps</em> et qui <em class="fx">se laisse encadrer par <i>ne… pas</i></em> : <i>il <b>parle</b> → il ne <b>parle</b> pas → il <b>parlait</b></i>.</p><p>Le <b>sujet</b> est le groupe que l’on peut <em class="fx">encadrer par <i>c’est… qui</i></em> : <i>C’est <b>le chat</b> qui dort.</i> Le verbe s’accorde avec lui.</p><ul><li>Il peut être placé après le verbe : <i>Dans la forêt vivait <b>un vieux loup</b>.</i></li><li>Il peut être formé de plusieurs groupes : <i><b>Léa et Tom</b> préparent le gouter.</i></li><li>Il peut être un pronom : <i><b>Elle</b> chante.</i></li></ul>',
       exos: [
-        { kind: 'etiqueter', titre: 'Verbe, sujet ou autre ?', consigne: 'Étiquette chaque groupe.', labels: ['sujet', 'verbe conjugué', 'autre'], err: 'sujet-repere',
+        { kind: 'etiqueter', titre: 'Verbe, sujet ou autre ?', consigne: 'Glisse les étiquettes sur chaque groupe.', labels: ['sujet', 'verbe conjugué', 'autre'], err: 'sujet-repere',
           items: [
             { g: ['Mes voisins', 'organisent', 'une fête'], l: ['sujet', 'verbe conjugué', 'autre'], x: '<i>Ce sont mes voisins qui organisent une fête.</i>' },
             { g: ['Sur la table', 'brillent', 'les bougies'], l: ['autre', 'verbe conjugué', 'sujet'], x: 'Sujet inversé : <i>ce sont les bougies qui brillent</i>.' },
@@ -3190,7 +3190,7 @@ NPARC.n6 = {
       ],
       observer: { obs: '<p>Observe.</p><ul><li><i>La <b>souris</b> grignote le fromage.</i> / <i>Clique avec la <b>souris</b>.</i></li><li><i>La <b>mer</b>, ma <b>mère</b>, le <b>maire</b></i></li><li><i><b>Fruit</b> : pomme, poire, cerise</i></li></ul>', regle: '<ul><li>Un même mot qui a plusieurs sens est <b>polysémique</b> (<i>souris</i>).</li><li>Des mots différents qui se prononcent pareil sont des <b>homonymes</b> (<i>mer, mère, maire</i>).</li><li>Un mot général qui en englobe d’autres est un <b>hyperonyme</b> (<i>fruit</i>).</li></ul>' },
       manip: [
-        { kind: 'etiqueter', titre: 'Du général au particulier', consigne: 'Pour chaque série, trouve le mot général (hyperonyme) : les autres sont ses hyponymes.', labels: ['hyperonyme', 'hyponyme'], err: 'hyper',
+        { kind: 'etiqueter', titre: 'Du général au particulier', consigne: 'Glisse les étiquettes sur chaque mot : le mot général (hyperonyme) englobe les autres (ses hyponymes).', labels: ['hyperonyme', 'hyponyme'], err: 'hyper',
           items: [
             { g: ['pomme', 'fruit', 'cerise', 'poire'], l: ['hyponyme', 'hyperonyme', 'hyponyme', 'hyponyme'], x: '<i>fruit</i> englobe les trois autres.' },
             { g: ['violon', 'piano', 'instrument', 'flute'], l: ['hyponyme', 'hyponyme', 'hyperonyme', 'hyponyme'], x: '<i>instrument</i> est le mot général.' },
@@ -4461,6 +4461,11 @@ const LABO = (function () {
   const COURANTS = /^(le|la|les|l’|l'|un|une|des|du|de|d’|mon|ma|mes|ton|ta|tes|son|sa|ses|ce|cet|cette|ces|notre|nos|votre|vos|leur|leurs|il|elle|ils|elles|on|je|j’|tu|nous|vous|dans|sur|sous|au|aux|en|à|chaque|hier|demain|aujourd’hui|ce|tout|tous|toute|toutes|plusieurs|quelques|certains|certaines|après|avant|pendant|depuis|quand|lorsque|si|soudain|enfin|puis|alors|devant|derrière|chez|par|pour|avec|sans)$/i;
   const min = t => { const m = t.match(/^([^\s’']+[’']?)/); return m && COURANTS.test(m[1]) ? t.replace(/^./, ch => ch.toLowerCase()) : t; };
   const maj = t => t.replace(/^./, ch => ch.toUpperCase());
+  /* les mots de l’encadrement (ne… pas, c’est… qui) en gras dans l’essai */
+  function grasCadre(s, c) {
+    if (c[1] === 'pas') return s.replace(/(^|\s)(ne|Ne)(?=\s)|(^|\s)(n’|N’)/, (m, a, b, a2, b2) => b ? `${a}<b>${b}</b>` : `${a2}<b>${b2}</b>`).replace(/\spas(?=[\s.!?…,]|$)/, ' <b>pas</b>');
+    return s.replace(/^(C’est|Ce sont|c’est|ce sont)(?=\s)/, '<b>$1</b>').replace(new RegExp('\\s(' + c[1] + ')(?=\\s)'), ' <b>$1</b>');
+  }
   function apercuCadre(e, x, gi) {
     const bon = [].concat(x.r).includes(gi);
     if (bon && x.t) return x.t;
@@ -4580,7 +4585,7 @@ const LABO = (function () {
     if (a === 'grp' && e.kind === 'cadre') {
       if (item.dataset.fini) return;
       item.querySelectorAll('.grp').forEach(g => g.classList.toggle('sel', g === b));
-      item.querySelector('.essai').innerHTML = 'Essai' + NB + ': <i>' + nb(apercuCadre(e, x, +b.dataset.g)) + '</i>';
+      item.querySelector('.essai').innerHTML = 'Essai' + NB + ': <i>' + nb(grasCadre(apercuCadre(e, x, +b.dataset.g), e.cadre || ['C’est', 'qui'])) + '</i>';
       item.querySelector('[data-x="cadre-ok"]').disabled = false;
     }
     if (a === 'cadre-ok') {
