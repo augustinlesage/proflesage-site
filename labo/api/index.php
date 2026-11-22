@@ -537,7 +537,13 @@ function recevoirBadgesCahier($args): array {
       'badges' => array_values(array_filter(array_map(fn($b) => badgePropre($b, false), array_slice((array) ($x['badges'] ?? []), 0, 300)))),
       'trophees' => array_values(array_filter(array_map(fn($b) => badgePropre($b, true), array_slice((array) ($x['trophees'] ?? []), 0, 50))))];
   }
-  ecrireJ('cahier-badges.json', ['date' => maintenant(), 'eleves' => $out ?: new stdClass()]);
+  /* catalogue complet du Cahier (22/11/2026) : pour montrer à l'élève, en gris, les badges qui restent à gagner. Absent (ancien Cahier) : on garde le précédent. */
+  $K = is_array($args['catalogue'] ?? null) ? $args['catalogue'] : null;
+  if ($K !== null) $cat = ['cats' => array_values(array_filter(array_map(fn($c) => mb_substr(trim((string) $c), 0, 30), array_slice((array) ($K['cats'] ?? []), 0, 30)), 'strlen')),
+    'badges' => array_values(array_filter(array_map(fn($b) => badgePropre($b, false), array_slice((array) ($K['badges'] ?? []), 0, 400)))),
+    'trophees' => array_values(array_filter(array_map(fn($b) => badgePropre($b, true), array_slice((array) ($K['trophees'] ?? []), 0, 60))))];
+  else $cat = lireJ('cahier-badges.json', [])['catalogue'] ?? null;
+  ecrireJ('cahier-badges.json', ['date' => maintenant(), 'eleves' => $out ?: new stdClass(), 'catalogue' => $cat]);
   return ['ok' => true, 'eleves' => count($out), 'ignores' => $ign];
 }
 /* Espace élève : badges du Laboratoire et des ceintures (calculés ici) + badges du Cahier */
@@ -545,7 +551,7 @@ function badgesEleve(string $cl, string $el): array {
   $c = classeParId($cl); $e = eleveDe($c, $el); if (!$c || !$e) return ['labo' => new stdClass(), 'cahier' => null];
   $niv = preg_match('/([3456])/', (string) $c['nom'], $m) ? $m[1] : '';
   $x = eleveCahier($c, $e, $niv); $C = lireJ('cahier-badges.json', []);
-  return ['labo' => $x['badges'], 'stats' => $x['stats'], 'cahier' => $C['eleves'][$el] ?? null, 'cahierDate' => $C['date'] ?? null];
+  return ['labo' => $x['badges'], 'stats' => $x['stats'], 'cahier' => $C['eleves'][$el] ?? null, 'cahierDate' => $C['date'] ?? null, 'cahierCatalogue' => $C['catalogue'] ?? null];
 }
 
 /* ---------------------------- connecteur MCP pour le Cahier de suivi ----------------------------
@@ -578,9 +584,11 @@ function mcpUn(array $q): ?array {
   $b = ['type' => 'object', 'properties' => ['id' => ['type' => 'string'], 'lib' => ['type' => 'string'], 'desc' => ['type' => 'string'], 'cat' => ['type' => 'string'], 'forme' => ['type' => 'string'], 'coul' => ['type' => 'string'],
     'ico' => ['type' => 'string', 'description' => 'Tracés SVG de l’icône (viewBox 24)'], 'emoji' => ['type' => 'string'], 'n' => ['type' => 'integer'], 'date' => ['type' => 'string', 'description' => 'YYYY-MM-DD']], 'required' => ['id', 'lib']];
   $envoi = ['name' => 'envoyer_badges_cahier', 'title' => 'Envoyer les badges du Cahier au Laboratoire',
-    'description' => "Remplace la copie des badges du Cahier de suivi gardée par le Laboratoire (badges obtenus et trophées de chaque élève, identifié par son id Laboratoire), pour que chaque élève les voie dans son espace.",
+    'description' => "Remplace la copie des badges du Cahier de suivi gardée par le Laboratoire (badges obtenus et trophées de chaque élève, identifié par son id Laboratoire, et catalogue complet des badges), pour que chaque élève les voie dans son espace.",
     'inputSchema' => ['type' => 'object', 'properties' => ['eleves' => ['type' => 'array', 'items' => ['type' => 'object', 'properties' => ['el' => ['type' => 'string'], 'n' => ['type' => 'integer'], 'dif' => ['type' => 'integer'], 'pass' => ['type' => 'integer'], 'actif' => ['type' => 'boolean'],
-      'badges' => ['type' => 'array', 'items' => $b], 'trophees' => ['type' => 'array', 'items' => $b]], 'required' => ['el']]]], 'required' => ['eleves']],
+      'badges' => ['type' => 'array', 'items' => $b], 'trophees' => ['type' => 'array', 'items' => $b]], 'required' => ['el']]],
+      'catalogue' => ['type' => 'object', 'description' => 'Catalogue complet du Cahier (badges obtenus ou non), pour montrer en gris ceux qui restent à gagner',
+        'properties' => ['cats' => ['type' => 'array', 'items' => ['type' => 'string']], 'badges' => ['type' => 'array', 'items' => $b], 'trophees' => ['type' => 'array', 'items' => $b]]]], 'required' => ['eleves']],
     'annotations' => ['title' => 'Envoyer les badges du Cahier au Laboratoire', 'readOnlyHint' => false, 'destructiveHint' => false, 'idempotentHint' => true, 'openWorldHint' => false]];
   switch ($meth) {
     case 'initialize':
