@@ -31,6 +31,8 @@
   --brick:#ec8f85; --brick-soft:rgba(236,143,133,.16); --sun-soft:rgba(247,204,115,.18); --sun-ink:#f7cc73; --sage-soft:rgba(166,189,185,.14);
   --b-blanche:#ffffff; --b-jaune:#ffd21a; --b-orange:#ff8424; --b-verte:#34b956; --b-bleue:#3d82f2; --b-marron:#a0612f; --b-noire:#050506; --belt-edge:rgba(255,255,255,.7);
 }
+/* noms de variables des pages reprises de l'appli des flashcards (Notions par niveau, À propos) */
+:root{--panel:var(--sheet);--brand:var(--icon);--radius:var(--r);--shadow:none;--acc-ink:var(--sheet);--bg:var(--paper)}
 *{box-sizing:border-box}
 body{background:var(--paper);color:var(--ink);font-family:var(--font-ui);font-size:15px;line-height:1.5}
 .wrap{max-width:1080px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:22px 48px;display:flex;flex-direction:column;gap:28px}
@@ -374,6 +376,16 @@ html.dys .tw tr:nth-child(even) td{background:transparent}
 /* « Mon passeport » : titres des parties (ceintures, badges), repris dans sync.css */
 .pp-h{margin:22px 0 10px;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 .pp-h span{font-weight:400;letter-spacing:0;margin-left:4px;text-transform:none}
+
+/* Notions par niveau et À propos (reprises de l'appli des flashcards) */
+.fcp .res-page,.fcp .nv-page{max-width:none}
+.fcp .deck-head h1{font-size:1.6rem}
+.fcp .res-kicker{color:var(--muted)}
+.fcp .lv-chip{font-size:.8rem;padding:4px 12px}
+.fcp-bar{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}
+.fcp-bar a{text-decoration:none;font-weight:600;font-size:.85rem;padding:5px 14px;border-radius:999px;border:1px solid var(--line);background:var(--sheet);color:var(--ink)}
+.fcp-bar a[aria-current="page"]{background:var(--ink);border-color:var(--ink);color:var(--sheet)}
+.labo-about{margin-top:26px}
 
 /* Espace professeur */
 .p-tabs{display:flex;gap:6px;flex-wrap:wrap}
