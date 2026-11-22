@@ -3007,14 +3007,15 @@ const LABO = (function () {
     b.setAttribute('aria-label', S.dys ? 'Quitter le mode Dys' : 'Activer le mode Dys');
   }
 
+  let lotsTous = false; /* filtre « Tous » des Entraînements, non enregistré */
   function niveauxHTML(id) {
     return `<div class="levels" role="group" aria-label="Mon niveau" id="${id}">${NIVEAUX.map(n => `<button type="button" data-niv="${n}" aria-pressed="${S.niveau === n}">${niv(n)}</button>`).join('')}</div>`;
   }
   document.addEventListener('click', e => {
     const t = e.target.closest('[data-lots-tous]');
-    if (t) { S.lotsTous = true; save(); route(); return; } /* « Tous » de la page Entraînements : n'a pas d'effet sur « Mon niveau » */
+    if (t) { lotsTous = true; route(); return; } /* « Tous » de la page Entraînements : n'a pas d'effet sur « Mon niveau » */
     const b = e.target.closest('[data-niv]'); if (!b) return;
-    S.niveau = b.dataset.niv; if (b.closest('#levels-e')) S.lotsTous = false; save(); syncFlashcards(); route();
+    S.niveau = b.dataset.niv; lotsTous = false; save(); syncFlashcards(); route();
   });
 
   /* ---------- Navigation ---------- */
@@ -3128,7 +3129,7 @@ const LABO = (function () {
      avec un filtre « Tous · 6ᵉ · 5ᵉ · 4ᵉ · 3ᵉ » (Augustin, 22/11/2026). */
   vues.entr = h => {
     if (h !== 'entrainements') return null;
-    const tous = S.lotsTous !== false; /* par défaut : tous les lots */
+    const tous = lotsTous; /* par défaut : le niveau de l'élève ; « Tous » vaut pour la visite en cours (Augustin, 22/11/2026) */
     const lots = tous ? DECKS.slice() : lotsDuNiveau();
     const P = window.PARC; const cons = P ? P.lotsConseilles() : [];
     const filtre = `<div class="levels" role="group" aria-label="Niveau des lots" id="levels-e"><button type="button" data-lots-tous aria-pressed="${tous}">Tous</button>${NIVEAUX.map(n => `<button type="button" data-niv="${n}" aria-pressed="${!tous && S.niveau === n}">${niv(n)}</button>`).join('')}</div>`;
