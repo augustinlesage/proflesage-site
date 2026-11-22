@@ -3217,6 +3217,468 @@ NPARC.n6 = {
 };
 
 ;
+/* Parcours 6ᵉ, lot 2 (22/11/2026) — les dix étapes qui complètent la démonstration du lot 1,
+   le diagnostic d’entrée à 20 questions et le diagnostic de sortie.
+   Écrit pour le Laboratoire de la langue (M. Lesage, enseignant de français), licence CC BY-NC-SA 4.0.
+   Ordre des étapes : laboratoire/referentiel/parcours.txt. Format : voir parcours2.js. */
+(function () {
+  const N = NPARC.n6;
+  const ORDRE = ['6-P1', '6-P2', '6-P3', '6-P4', '6-V1', '6-V2', '6-V3', '6-G1', '6-G2', '6-G3', '6-H1', '6-H2', '6-L1', '6-L2', '6-L3'];
+  const ADD = { P: [], V: [], G: [], H: [], L: [] };
+
+  /* ---------- La phrase et ses fonctions ---------- */
+  ADD.P.push({
+    id: '6-P2', titre: 'COD, COI, attribut du sujet', sub: 'Remplacer le complément par un pronom pour savoir s’il est direct ou indirect ; reconnaitre l’attribut après un verbe d’état.', notions: ['P07', 'P08'],
+    rappel: [
+      ['Dans <i>Léa mange une pomme.</i>, quel groupe complète le verbe ?', 'une pomme', '<i>Léa mange quoi ? une pomme</i>.', ['Léa', 'mange', 'une pomme'], 'cod-coi'],
+      ['Dans <i>Tom parle à son frère.</i>, le complément du verbe commence par…', 'une préposition', '<i>à</i> est une préposition.', ['une préposition', 'un déterminant', 'un adverbe'], 'cod-coi'],
+      ['Dans <i>Le chat semble fatigué.</i>, le mot <i>fatigué</i> donne une information sur…', 'le sujet', 'C’est le chat qui est fatigué.', ['le sujet', 'le verbe', 'un lieu'], 'attribut']
+    ],
+    rappelVers: 'Si tu as manqué une question, relis le mémo « Les fonctions autour du verbe » dans les Mémos.',
+    observer: { obs: '<p>Compare.</p><ul><li><i>Léa mange <b>une pomme</b>.</i> → <i>Léa <b>la</b> mange.</i></li><li><i>Tom parle <b>à son frère</b>.</i> → <i>Tom <b>lui</b> parle.</i></li><li><i>Le chat semble <b>fatigué</b>.</i> → <i>Le chat <b>est</b> fatigué.</i></li></ul>', regle: '<p>Le complément qui suit directement le verbe se remplace par <i>le, la, les</i> : c’est le COD. Celui qui commence par <i>à</i> ou <i>de</i> se remplace par <i>lui, leur, en, y</i> : c’est le COI. Après <i>sembler</i>, on peut mettre <i>être</i> : <i>fatigué</i> est attribut du sujet.</p>' },
+    manip: [
+      { kind: 'transformer', titre: 'Remplacer par un pronom', consigne: 'Récris la phrase en remplaçant le groupe souligné par un pronom : <i>le, la, l’, les, lui</i> ou <i>leur</i>.', err: 'pronom-compl',
+        items: [
+          { p: '<i>Le facteur apporte <u>le colis</u>.</i>', r: 'Le facteur l’apporte.', x: '<i>le colis</i> devient <i>l’</i> : c’est un COD.' },
+          { p: '<i>Nina téléphone <u>à sa grand-mère</u>.</i>', r: 'Nina lui téléphone.', x: '<i>à sa grand-mère</i> devient <i>lui</i> : c’est un COI.' },
+          { p: '<i>Les enfants regardent <u>les étoiles</u>.</i>', r: 'Les enfants les regardent.', x: '<i>les étoiles</i> devient <i>les</i> : COD.' },
+          { p: '<i>Je parle <u>à mes amis</u>.</i>', r: 'Je leur parle.', x: '<i>à mes amis</i> devient <i>leur</i> (sans <i>-s</i>) : COI.' }
+        ] },
+      { kind: 'etiqueter', titre: 'Sujet, verbe et compléments', consigne: 'Glisse les étiquettes sur chaque groupe.', labels: ['sujet', 'verbe', 'COD', 'COI', 'attribut du sujet'], err: 'cod-coi',
+        items: [
+          { g: ['Les élèves', 'écoutent', 'le professeur'], l: ['sujet', 'verbe', 'COD'], x: '<i>Les élèves l’écoutent</i> : COD.' },
+          { g: ['Ce chien', 'obéit', 'à Julie'], l: ['sujet', 'verbe', 'COI'], x: '<i>Ce chien lui obéit</i> : COI.' },
+          { g: ['Mon frère', 'devient', 'très grand'], l: ['sujet', 'verbe', 'attribut du sujet'], x: '<i>devenir</i> est un verbe d’état : <i>mon frère est très grand</i>.', err: 'attribut' }
+        ] }
+    ],
+    retenir: '<p>Les compléments du verbe ne se déplacent pas et, en général, ne se suppriment pas.</p><ul><li>Le <b>COD</b> se construit <em class="fx">sans préposition</em> ; on le remplace par <i>le, la, l’, les</i> : <i>Léa mange une pomme → Léa la mange</i>.</li><li>Le <b>COI</b> est introduit par <em class="fx">une préposition</em> (<i>à, de</i>) ; on le remplace par <i>lui, leur, en, y</i> : <i>Tom parle à son frère → Tom lui parle</i>.</li><li>L’<b>attribut du sujet</b> suit un <em class="fx">verbe d’état</em> (<i>être, sembler, paraitre, devenir, rester, demeurer</i>) et caractérise le sujet : <i>Le chat semble fatigué</i>.</li></ul>',
+    exos: [
+      { kind: 'choice', titre: 'Quelle fonction ?', consigne: 'Donne la fonction du groupe en gras.',
+        items: [
+          ['<i>Elle range <b>sa chambre</b>.</i>', 'COD', 'On peut dire <i>elle la range</i>.', ['COD', 'COI', 'attribut du sujet'], 'cod-coi'],
+          ['<i>Il pense <b>à ses vacances</b>.</i>', 'COI', 'Préposition <i>à</i> : <i>il y pense</i>.', ['COD', 'COI', 'attribut du sujet'], 'cod-coi'],
+          ['<i>Ma voisine est <b>infirmière</b>.</i>', 'attribut du sujet', 'Verbe d’état <i>être</i> : <i>infirmière</i> caractérise <i>ma voisine</i>.', ['COD', 'COI', 'attribut du sujet'], 'attribut'],
+          ['<i>Nous avons besoin <b>de calme</b>.</i>', 'COI', 'Préposition <i>de</i> : <i>nous en avons besoin</i>.', ['COD', 'COI', 'attribut du sujet'], 'cod-coi'],
+          ['<i>Ces fleurs restent <b>fraiches</b>.</i>', 'attribut du sujet', '<i>rester</i> est un verbe d’état : <i>ces fleurs sont fraiches</i>.', ['COD', 'COI', 'attribut du sujet'], 'attribut'],
+          ['<i>Le chien ronge <b>un os</b>.</i>', 'COD', '<i>Le chien le ronge.</i>', ['COD', 'COI', 'attribut du sujet'], 'cod-coi']
+        ] }
+    ],
+    reflexe: { consigne: 'Le groupe en surbrillance est-il COD ou COI ?', options: ['COD', 'COI'], err: 'cod-coi', cible: 40,
+      items: [['Je lis **un roman**.', 'COD'], ['Je pense **à toi**.', 'COI'], ['Il mange **une pomme**.', 'COD'], ['Elle parle **de son voyage**.', 'COI'], ['Nous aimons **la musique**.', 'COD'], ['Tu obéis **à tes parents**.', 'COI'], ['Ils regardent **le film**.', 'COD'], ['Il se souvient **de cette histoire**.', 'COI'], ['Je prends **le bus**.', 'COD'], ['Elle ressemble **à sa mère**.', 'COI'], ['On écoute **la radio**.', 'COD'], ['Je doute **de sa réponse**.', 'COI']] },
+    loin: { lots: ['fonctions-6e', 'fonctions'] }
+  }, {
+    id: '6-P3', titre: 'CC de temps, de lieu, de cause', sub: 'Déplacer et supprimer pour reconnaitre le complément circonstanciel, puis trouver son sens.', notions: ['P10'],
+    rappel: [
+      ['Dans <i>Hier, nous avons joué au parc.</i>, quel groupe indique quand ?', 'Hier', '<i>Hier</i> répond à la question <i>quand ?</i>', ['Hier', 'nous', 'au parc'], 'cc-type'],
+      ['Dans <i>Hier, nous avons joué au parc.</i>, quel groupe indique où ?', 'au parc', '<i>au parc</i> répond à la question <i>où ?</i>', ['Hier', 'avons joué', 'au parc'], 'cc-type'],
+      ['Peut-on écrire <i>Nous avons joué au parc hier.</i> ?', 'oui', '<i>hier</i> se déplace sans problème.', ['oui', 'non'], 'cc-repere']
+    ],
+    rappelVers: 'Si tu as manqué une question, relis le mémo « Les fonctions autour du verbe » dans les Mémos.',
+    observer: { obs: '<p>Compare.</p><ul><li><i><b>Ce matin</b>, Lina a pris le bus.</i></li><li><i>Lina a pris le bus <b>ce matin</b>.</i></li><li><i>Lina a pris le bus.</i></li></ul>', regle: '<p>Le groupe <i>ce matin</i> se déplace et se supprime : la phrase reste correcte. C’est un complément circonstanciel, ici de temps.</p>' },
+    manip: [
+      { kind: 'transformer', titre: 'Déplacer le complément', consigne: 'Récris la phrase en plaçant le complément circonstanciel au début, suivi d’une virgule.', err: 'cc-repere',
+        items: [
+          { p: '<i>Les hirondelles reviennent au printemps.</i>', r: 'Au printemps, les hirondelles reviennent.', x: '<i>au printemps</i> se déplace : CC de temps.' },
+          { p: '<i>Mon chat dort sous le lit.</i>', r: 'Sous le lit, mon chat dort.', x: '<i>sous le lit</i> se déplace : CC de lieu.' },
+          { p: '<i>Le match est annulé à cause de la pluie.</i>', r: 'À cause de la pluie, le match est annulé.|A cause de la pluie, le match est annulé.', x: '<i>à cause de la pluie</i> se déplace : CC de cause.' }
+        ] },
+      { kind: 'etiqueter', titre: 'Temps, lieu ou cause ?', consigne: 'Glisse les étiquettes sur chaque complément circonstanciel.', labels: ['temps', 'lieu', 'cause'], err: 'cc-type',
+        items: [
+          { g: ['Pendant la nuit', 'dans la forêt', 'à cause du vent'], l: ['temps', 'lieu', 'cause'], x: 'On pose les questions <i>quand ?</i>, <i>où ?</i>, <i>pourquoi ?</i>' },
+          { g: ['par peur', 'sous la table', 'ce soir'], l: ['cause', 'lieu', 'temps'], x: '<i>pourquoi ? par peur</i> ; <i>où ? sous la table</i> ; <i>quand ? ce soir</i>.' },
+          { g: ['ici', 'grâce à toi', 'demain'], l: ['lieu', 'cause', 'temps'], x: 'Un adverbe peut être CC : <i>ici</i>, <i>demain</i>.' }
+        ] }
+    ],
+    retenir: '<p>Le <b>complément circonstanciel</b> (CC) précise les circonstances de l’action. On le reconnait parce qu’il est <em class="fx">déplaçable et supprimable</em>.</p><ul><li>CC de <b>temps</b> (<i>quand ?</i>) : <i>hier, ce matin, pendant la nuit</i>.</li><li>CC de <b>lieu</b> (<i>où ?</i>) : <i>au parc, sous le lit, ici</i>.</li><li>CC de <b>cause</b> (<i>pourquoi ?</i>) : <i>à cause de la pluie, par peur, grâce à toi</i>.</li></ul><p>Le CC peut être un groupe nominal (<i>ce matin</i>), un groupe prépositionnel (<i>au parc</i>) ou un adverbe (<i>hier</i>).</p>',
+    exos: [
+      { kind: 'choice', titre: 'Quel complément ?', consigne: 'Le groupe en gras est un CC de temps, de lieu ou de cause ?',
+        items: [
+          ['<i>Nous partirons <b>dans deux jours</b>.</i>', 'temps', '<i>Quand partirons-nous ?</i>', ['temps', 'lieu', 'cause'], 'cc-type'],
+          ['<i>Les clés sont restées <b>dans le tiroir</b>.</i>', 'lieu', '<i>Où sont-elles ?</i>', ['temps', 'lieu', 'cause'], 'cc-type'],
+          ['<i>Il tremble <b>de froid</b>.</i>', 'cause', '<i>Pourquoi tremble-t-il ?</i>', ['temps', 'lieu', 'cause'], 'cc-type'],
+          ['<i><b>Grâce à son courage</b>, il a réussi.</i>', 'cause', '<i>Pourquoi a-t-il réussi ?</i>', ['temps', 'lieu', 'cause'], 'cc-type'],
+          ['<i><b>Partout</b>, on entendait des cris.</i>', 'lieu', 'Adverbe de lieu.', ['temps', 'lieu', 'cause'], 'cc-type']
+        ] },
+      { kind: 'choice', titre: 'CC ou complément du verbe ?', consigne: 'Essaie de déplacer et de supprimer le groupe en gras.',
+        items: [
+          ['<i>Le chat mange <b>dans la cuisine</b>.</i>', 'CC', '<i>Dans la cuisine, le chat mange.</i> Le groupe se déplace.', ['CC', 'complément du verbe'], 'cc-repere'],
+          ['<i>Le chat mange <b>sa pâtée</b>.</i>', 'complément du verbe', '<i>Sa pâtée, le chat mange</i> est impossible : c’est un COD.', ['CC', 'complément du verbe'], 'cc-repere'],
+          ['<i>Elle va <b>à Marseille</b>.</i>', 'complément du verbe', '<i>Elle va</i> seul ne suffit pas : <i>à Marseille</i> complète le verbe <i>aller</i>.', ['CC', 'complément du verbe'], 'cc-repere'],
+          ['<i>Elle chante <b>à Marseille</b>.</i>', 'CC', '<i>Elle chante.</i> reste correct : CC de lieu.', ['CC', 'complément du verbe'], 'cc-repere']
+        ] }
+    ],
+    reflexe: { consigne: 'Temps, lieu ou cause ?', options: ['temps', 'lieu', 'cause'], err: 'cc-type', cible: 45,
+      items: [['**Hier**, il a neigé.', 'temps'], ['Il dort **sur le canapé**.', 'lieu'], ['Il pleure **de joie**.', 'cause'], ['**À midi**, on mange.', 'temps'], ['Je t’attends **devant l’école**.', 'lieu'], ['**À cause du bruit**, je ne dors pas.', 'cause'], ['**Ce soir**, on sort.', 'temps'], ['Les poissons vivent **dans la mer**.', 'lieu'], ['Il est absent **pour maladie**.', 'cause'], ['**Depuis lundi**, il pleut.', 'temps'], ['**Ici**, tout est calme.', 'lieu'], ['Elle rougit **de honte**.', 'cause']] },
+    loin: { lots: ['fonctions-6e', 'fonctions'] }
+  }, {
+    id: '6-P4', titre: 'La phrase complexe', sub: 'Compter les verbes conjugués ; relier les propositions par juxtaposition, coordination ou subordination.', notions: ['P14', 'P15', 'P16', 'P19', 'P24'],
+    rappel: [
+      ['Combien de verbes conjugués dans <i>Le chien aboie et le chat s’enfuit.</i> ?', '2', '<i>aboie</i> et <i>s’enfuit</i>.', ['1', '2', '3'], 'propositions'],
+      ['Quel mot est une conjonction de coordination ?', 'mais', 'Les conjonctions de coordination : <i>mais, ou, et, donc, or, ni, car</i>.', ['mais', 'quand', 'très'], 'conj-coord'],
+      ['Une phrase qui n’a qu’un seul verbe conjugué est…', 'une phrase simple', 'Un verbe conjugué, une proposition : phrase simple.', ['une phrase simple', 'une phrase complexe'], 'propositions']
+    ],
+    rappelVers: 'Si tu as manqué une question, relis le mémo « La phrase » dans les Mémos.',
+    observer: { obs: '<p>Compare.</p><ul><li><i>Il pleut. Nous restons à la maison.</i></li><li><i>Il pleut, nous restons à la maison.</i></li><li><i>Il pleut, <b>donc</b> nous restons à la maison.</i></li><li><i>Nous restons à la maison <b>parce qu’</b>il pleut.</i></li></ul>', regle: '<p>Les trois dernières phrases ont deux verbes conjugués : ce sont des phrases complexes. Les deux propositions sont reliées par une virgule, par <i>donc</i> ou par <i>parce que</i>.</p>' },
+    manip: [
+      { kind: 'transformer', titre: 'Relier deux propositions', consigne: 'Fais une seule phrase avec le mot indiqué.', err: 'liaison-prop',
+        items: [
+          { p: '<i>Il fait beau. Nous allons à la plage.</i> (avec <i>donc</i>)', r: 'Il fait beau, donc nous allons à la plage.|Il fait beau donc nous allons à la plage.', x: 'Coordination avec <i>donc</i>, qui exprime la conséquence.' },
+          { p: '<i>Je suis fatigué. J’ai mal dormi.</i> (avec <i>car</i>)', r: 'Je suis fatigué, car j’ai mal dormi.|Je suis fatigué car j’ai mal dormi.', x: 'Coordination avec <i>car</i>, qui exprime la cause.' },
+          { p: '<i>Tu rentreras. Nous dinerons.</i> (avec <i>quand</i>, au début de la phrase)', r: 'Quand tu rentreras, nous dinerons.', x: 'Subordination : <i>quand tu rentreras</i> est une subordonnée ; <i>nous dinerons</i> est la principale.' }
+        ] },
+      { kind: 'etiqueter', titre: 'Comment sont-elles reliées ?', consigne: 'Glisse les étiquettes sur chaque phrase.', labels: ['juxtaposition', 'coordination', 'subordination'], err: 'liaison-prop',
+        items: [
+          { g: ['Il pleut, nous restons.', 'Il pleut, donc nous restons.', 'Nous restons parce qu’il pleut.'], l: ['juxtaposition', 'coordination', 'subordination'], x: 'Une virgule, une conjonction de coordination (<i>donc</i>), une conjonction de subordination (<i>parce que</i>).' },
+          { g: ['Je l’appelle mais il ne répond pas.', 'Si tu veux, je viens.', 'Le ciel se couvre ; l’orage approche.'], l: ['coordination', 'subordination', 'juxtaposition'], x: '<i>mais</i> coordonne ; <i>si</i> subordonne ; le point-virgule juxtapose.' }
+        ] }
+    ],
+    retenir: '<p>Une <b>proposition</b> s’organise autour d’<em class="fx">un verbe conjugué</em> : il y a autant de propositions que de verbes conjugués.</p><ul><li><b>Phrase simple</b> : une seule proposition. <b>Phrase complexe</b> : plusieurs propositions.</li><li><b>Juxtaposition</b> : une ponctuation (virgule, point-virgule, deux-points) relie les propositions.</li><li><b>Coordination</b> : une <em class="fx">conjonction de coordination</em> (<i>mais, ou, et, donc, or, ni, car</i>).</li><li><b>Subordination</b> : une <em class="fx">conjonction de subordination</em> (<i>quand, parce que, si, lorsque, puisque</i>) introduit une subordonnée. Si on la supprime, la <b>principale</b> reste : <i>Nous sortirons <s>quand la pluie cessera</s>.</i></li></ul>',
+    exos: [
+      { kind: 'choice', titre: 'Combien de propositions ?', consigne: 'Compte les verbes conjugués.',
+        items: [
+          ['<i>Les enfants jouent dans la cour.</i>', '1', 'Un seul verbe conjugué : <i>jouent</i>.', ['1', '2', '3'], 'propositions'],
+          ['<i>Je crois qu’il viendra demain.</i>', '2', '<i>crois</i> et <i>viendra</i>.', ['1', '2', '3'], 'propositions'],
+          ['<i>Il entre, pose son sac et s’assoit.</i>', '3', '<i>entre</i>, <i>pose</i>, <i>s’assoit</i>.', ['1', '2', '3'], 'propositions'],
+          ['<i>Pour réussir, il faut travailler.</i>', '1', '<i>réussir</i> et <i>travailler</i> sont à l’infinitif : un seul verbe conjugué, <i>faut</i>.', ['1', '2', '3'], 'propositions']
+        ] },
+      { kind: 'choice', titre: 'Quel mot pour relier ?', consigne: 'Choisis le mot qui convient au sens.',
+        items: [
+          ['<i>J’ai couru ___ j’ai raté le bus.</i>', 'mais', 'Opposition : <i>mais</i>.', ['mais', 'car', 'donc'], 'conj-coord'],
+          ['<i>Il est puni ___ il a menti.</i>', 'car', 'Cause : <i>car</i>.', ['mais', 'car', 'donc'], 'conj-coord'],
+          ['<i>Tu veux du thé ___ du café ?</i>', 'ou', 'Choix : <i>ou</i>.', ['et', 'ou', 'ni'], 'conj-coord'],
+          ['<i>Je resterai ___ tu as besoin de moi.</i>', 'si', 'Condition, avec une conjonction de subordination : <i>si</i>.', ['si', 'donc', 'or'], 'liaison-prop']
+        ] }
+    ],
+    reflexe: { consigne: 'Phrase simple ou phrase complexe ?', options: ['simple', 'complexe'], err: 'propositions', cible: 40,
+      items: [['Le soleil se lève.', 'simple'], ['Le soleil se lève et les oiseaux chantent.', 'complexe'], ['Il aime lire le soir.', 'simple'], ['Je sais qu’il ment.', 'complexe'], ['Après le repas, nous irons au cinéma.', 'simple'], ['Quand il pleut, je reste au chaud.', 'complexe'], ['Elle veut devenir pilote.', 'simple'], ['Il crie, personne ne répond.', 'complexe'], ['Mon frère et ma sœur jouent aux cartes.', 'simple'], ['Viens vite, le film commence !', 'complexe'], ['Sans bruit, le chat traverse le jardin.', 'simple'], ['Je suis content parce que tu es là.', 'complexe']] },
+    loin: { lots: ['la-phrase-6e', 'propositions-crochets'] }
+  });
+
+  /* ---------- Le verbe ---------- */
+  ADD.V.push({
+    id: '6-V2', titre: 'Le passé simple ; rappel des temps composés', sub: 'Changer de personne pour trouver la terminaison ; choisir l’auxiliaire des temps composés.', notions: ['V05', 'V06'],
+    rappel: [
+      ['<i>Hier, nous ___ au cinéma.</i> (passé composé de <i>aller</i>)', 'sommes allés', '<i>aller</i> se conjugue avec l’auxiliaire <i>être</i>.', ['avons allé', 'sommes allés', 'allions'], 'aux-choix'],
+      ['Le passé composé est formé…', 'd’un auxiliaire et d’un participe passé', '<i>j’ai chanté</i>, <i>je suis venu</i>.', ['d’un auxiliaire et d’un participe passé', 'd’un seul mot'], 'temps-compose'],
+      ['À quel temps est le verbe dans <i>Il marchait lentement.</i> ?', 'imparfait', 'Terminaison <i>-ait</i> : imparfait.', ['imparfait', 'passé simple', 'présent'], 'ps-imparfait']
+    ],
+    rappelVers: 'Si tu as manqué une question, relis le mémo « Les marques du temps » dans les Mémos.',
+    observer: { obs: '<p>Compare.</p><ul><li><i>Le loup <b>arriva</b> devant la maison. Il <b>frappa</b> à la porte.</i></li><li><i>Le loup <b>est arrivé</b> devant la maison. Il <b>a frappé</b> à la porte.</i></li></ul><p>Change de personne : <i>il frappa → ils frappèrent</i> ; <i>il finit → ils finirent</i> ; <i>il prit → ils prirent</i>.</p>', regle: '<p>Le passé simple tient en un seul mot. Le passé composé en a deux : l’auxiliaire <i>avoir</i> ou <i>être</i> au présent, puis le participe passé.</p>' },
+    manip: [
+      { kind: 'input', titre: 'Changer de personne', consigne: 'Écris le verbe au passé simple, à la personne demandée.', err: 'ps-forme',
+        items: [
+          ['<i>il chanta → ils ___</i>', 'chantèrent', '1<sup>er</sup> groupe : <i>-a</i> au singulier, <i>-èrent</i> au pluriel.'],
+          ['<i>elle finit → elles ___</i>', 'finirent', '2ᵉ groupe : <i>-it</i>, <i>-irent</i>.'],
+          ['<i>il prit → ils ___</i>', 'prirent', '<i>prendre</i> : <i>il prit, ils prirent</i>.'],
+          ['<i>il fut → ils ___</i>', 'furent', '<i>être</i> : <i>il fut, ils furent</i>.'],
+          ['<i>il eut → ils ___</i>', 'eurent', '<i>avoir</i> : <i>il eut, ils eurent</i>.'],
+          ['<i>je marchai → nous ___</i>', 'marchâmes', '1<sup>er</sup> groupe : <i>nous marchâmes</i>, avec un accent circonflexe.']
+        ] },
+      { kind: 'choice', titre: 'Avoir ou être ?', consigne: 'Choisis l’auxiliaire du passé composé.',
+        items: [
+          ['<i>Elle ___ tombée.</i>', 'est', '<i>tomber</i> se conjugue avec <i>être</i>.', ['a', 'est'], 'aux-choix'],
+          ['<i>Nous ___ mangé.</i>', 'avons', 'La plupart des verbes se conjuguent avec <i>avoir</i>.', ['avons', 'sommes'], 'aux-choix'],
+          ['<i>Ils ___ partis.</i>', 'sont', '<i>partir</i> se conjugue avec <i>être</i>.', ['ont', 'sont'], 'aux-choix'],
+          ['<i>Tu ___ couru.</i>', 'as', '<i>courir</i> se conjugue avec <i>avoir</i>, même s’il exprime un mouvement.', ['as', 'es'], 'aux-choix']
+        ] }
+    ],
+    retenir: '<p>Le <b>passé simple</b> est un temps du récit, <em class="fx">en un seul mot</em>.</p><div class="tw"><table><tr><th></th><th>1<sup>er</sup> groupe</th><th>2ᵉ groupe</th><th><i>être</i></th><th><i>avoir</i></th></tr><tr><td>il, elle</td><td><i>chant<b>a</b></i></td><td><i>fin<b>it</b></i></td><td><i>fut</i></td><td><i>eut</i></td></tr><tr><td>ils, elles</td><td><i>chant<b>èrent</b></i></td><td><i>fin<b>irent</b></i></td><td><i>furent</i></td><td><i>eurent</i></td></tr></table></div><p>Les <b>temps composés</b> ont <em class="fx">deux mots</em> : l’auxiliaire <i>avoir</i> ou <i>être</i>, puis le participe passé. Passé composé : auxiliaire au présent (<i>il <b>a</b> chanté</i>). Plus-que-parfait : auxiliaire à l’imparfait (<i>il <b>avait</b> chanté</i>). Les verbes de mouvement ou de changement d’état (<i>aller, venir, partir, tomber, naitre, mourir</i>) prennent <i>être</i>.</p>',
+    exos: [
+      { kind: 'choice', titre: 'Quel temps ?', consigne: 'Donne le temps du verbe.',
+        items: [
+          ['<i>Ils partirent à l’aube.</i>', 'passé simple', 'Un seul mot, terminaison <i>-irent</i>.', ['passé simple', 'passé composé', 'plus-que-parfait', 'imparfait'], 'ps-imparfait'],
+          ['<i>Nous avions fini.</i>', 'plus-que-parfait', 'Auxiliaire à l’imparfait + participe passé.', ['passé simple', 'passé composé', 'plus-que-parfait', 'imparfait'], 'temps-compose'],
+          ['<i>Elle est venue.</i>', 'passé composé', 'Auxiliaire au présent + participe passé.', ['passé simple', 'passé composé', 'plus-que-parfait', 'imparfait'], 'temps-compose'],
+          ['<i>Il regardait la mer.</i>', 'imparfait', 'Terminaison <i>-ait</i>.', ['passé simple', 'passé composé', 'plus-que-parfait', 'imparfait'], 'ps-imparfait'],
+          ['<i>Je vis un éclair.</i>', 'passé simple', '<i>voir</i> au passé simple : <i>je vis</i>.', ['passé simple', 'passé composé', 'plus-que-parfait', 'imparfait'], 'ps-imparfait']
+        ] },
+      { kind: 'input', titre: 'Conjuguer', consigne: 'Écris le verbe au temps demandé.', err: 'ps-forme',
+        items: [
+          ['<i>(faire, passé simple)</i> Il ___ un grand feu.', 'fit', '<i>faire</i> : <i>il fit</i>.'],
+          ['<i>(venir, passé composé)</i> Elles ___ hier.', 'sont venues', 'Avec <i>être</i>, le participe s’accorde avec <i>elles</i>.', 'temps-compose'],
+          ['<i>(dire, passé simple)</i> Ils ___ adieu.', 'dirent', '<i>dire</i> : <i>il dit, ils dirent</i>.'],
+          ['<i>(lire, plus-que-parfait)</i> Nous ___ ce livre.', 'avions lu', 'Auxiliaire <i>avoir</i> à l’imparfait + <i>lu</i>.', 'temps-compose']
+        ] }
+    ],
+    reflexe: { consigne: 'Passé simple ou imparfait ?', options: ['passé simple', 'imparfait'], err: 'ps-imparfait', cible: 40,
+      items: [['il chanta', 'passé simple'], ['il chantait', 'imparfait'], ['nous finîmes', 'passé simple'], ['nous finissions', 'imparfait'], ['elle prit', 'passé simple'], ['elle prenait', 'imparfait'], ['ils furent', 'passé simple'], ['ils étaient', 'imparfait'], ['tu marchas', 'passé simple'], ['tu marchais', 'imparfait'], ['je vins', 'passé simple'], ['je venais', 'imparfait']] },
+    loin: { lots: ['passe-simple-6e', 'passe-simple', 'auxiliaire-etre-avoir'] }
+  }, {
+    id: '6-V3', titre: 'Temps du discours, temps du récit', sub: 'Reconnaitre les deux systèmes de temps ; transposer un récit au présent.', notions: ['V15', 'V18'],
+    rappel: [
+      ['Dans un récit au passé, quels temps emploie-t-on surtout ?', 'passé simple et imparfait', 'Le passé simple pour les actions, l’imparfait pour le décor.', ['passé simple et imparfait', 'présent et futur'], 'discours-recit'],
+      ['Dans <i>« Je viendrai demain. »</i>, à quel temps est le verbe ?', 'futur', '<i>viendrai</i> : futur.', ['futur', 'conditionnel', 'passé simple'], 'discours-recit'],
+      ['Transposer un texte au présent, c’est…', 'changer le temps des verbes', 'On garde le sens et on change le temps.', ['changer le temps des verbes', 'changer les personnages'], 'transposer']
+    ],
+    rappelVers: 'Si tu as manqué une question, relis le mémo « La concordance des temps » dans les Mémos.',
+    observer: { obs: '<p>Compare.</p><ul><li>Récit : <i>Le soleil <b>se couchait</b>. Soudain, un cri <b>retentit</b>.</i></li><li>Discours : <i>« Je <b>suis</b> fatigué. J’<b>ai couru</b> toute la journée. Demain, je <b>dormirai</b> tard. »</i></li></ul>', regle: '<p>Le récit raconte avec le passé simple et l’imparfait, sans lien avec le moment où l’on parle. Le discours part de ce moment : présent, passé composé, futur.</p>' },
+    manip: [
+      { kind: 'transformer', titre: 'Transposer au présent', consigne: 'Récris la phrase au présent.', err: 'transposer',
+        items: [
+          { p: '<i>Le chat sauta sur la table.</i>', r: 'Le chat saute sur la table.', x: '<i>sauta</i> (passé simple) devient <i>saute</i>.' },
+          { p: '<i>Les enfants couraient dans le jardin.</i>', r: 'Les enfants courent dans le jardin.', x: '<i>couraient</i> (imparfait) devient <i>courent</i>.' },
+          { p: '<i>Il prit son manteau et sortit.</i>', r: 'Il prend son manteau et sort.', x: '<i>prit</i> devient <i>prend</i> ; <i>sortit</i> devient <i>sort</i>.' }
+        ] },
+      { kind: 'etiqueter', titre: 'Discours ou récit ?', consigne: 'Glisse les étiquettes sur chaque phrase.', labels: ['discours', 'récit'], err: 'discours-recit',
+        items: [
+          { g: ['Il ouvrit la porte.', 'J’ouvre la porte.', 'Demain, j’ouvrirai la porte.', 'Elle aperçut un loup.'], l: ['récit', 'discours', 'discours', 'récit'], x: 'Passé simple : récit. Présent et futur : discours.' },
+          { g: ['Nous avons gagné !', 'Ils arrivèrent à minuit.', 'Tu viendras avec moi ?', 'Le roi mourut.'], l: ['discours', 'récit', 'discours', 'récit'], x: 'Passé composé et futur : discours. Passé simple : récit.' }
+        ] }
+    ],
+    retenir: '<p>On distingue deux systèmes de temps.</p><ul><li>Le <b>récit</b> raconte des faits passés, coupés du moment où l’on parle : <em class="fx">passé simple et imparfait</em> (<i>Un cri retentit. Il faisait nuit.</i>).</li><li>Le <b>discours</b> est lié au moment où l’on parle (dialogue, lettre, article) : <em class="fx">présent, passé composé, futur</em> (<i>Je suis fatigué ; j’ai couru ; je dormirai</i>).</li></ul><p>Après un verbe au passé, le futur devient conditionnel : <i>Il promet qu’il viendra → Il promit qu’il <b>viendrait</b></i>. Après <i>si</i>, jamais de conditionnel : <i>Si j’<b>avais</b> le temps, je viendrais</i>.</p>',
+    exos: [
+      { kind: 'choice', titre: 'Futur ou conditionnel ?', consigne: 'Regarde le temps du premier verbe, puis choisis.',
+        items: [
+          ['<i>Il promet qu’il ___.</i>', 'viendra', 'Verbe au présent : futur.', ['viendra', 'viendrait'], 'discours-recit'],
+          ['<i>Il promit qu’il ___.</i>', 'viendrait', 'Verbe au passé : le futur devient conditionnel (futur dans le passé).', ['viendra', 'viendrait'], 'discours-recit'],
+          ['<i>Elle pense qu’il ___ beau.</i>', 'fera', 'Verbe au présent : futur.', ['fera', 'ferait'], 'discours-recit'],
+          ['<i>Elle pensait qu’il ___ beau.</i>', 'ferait', 'Verbe au passé : conditionnel.', ['fera', 'ferait'], 'discours-recit'],
+          ['<i>Si j’___ le temps, je viendrais.</i>', 'avais', 'Après <i>si</i>, pas de conditionnel : <i>si j’avais</i>.', ['aurais', 'avais'], 'cond-futur']
+        ] }
+    ],
+    reflexe: { consigne: 'Temps du discours ou temps du récit ?', options: ['discours', 'récit'], err: 'discours-recit', cible: 40,
+      items: [['il partit', 'récit'], ['il est parti', 'discours'], ['je pars', 'discours'], ['elle chanta', 'récit'], ['nous partirons', 'discours'], ['ils arrivèrent', 'récit'], ['tu as fini', 'discours'], ['on marcha', 'récit'], ['vous viendrez', 'discours'], ['je compris', 'récit'], ['elle dort', 'discours'], ['il fut', 'récit']] },
+    loin: { lots: ['temps-valeurs', 'futur-conditionnel'] }
+  });
+
+  /* ---------- Le groupe nominal et les accords ---------- */
+  ADD.G.push({
+    id: '6-G1', titre: 'Le GN, ses expansions et sa chaine d’accords', sub: 'Changer le nombre du nom noyau pour voir ce qui s’accorde avec lui.', notions: ['G04', 'G10', 'G11'],
+    rappel: [
+      ['Dans <i>un grand chien noir</i>, quel est le nom noyau ?', 'chien', 'Le nom noyau est le nom autour duquel s’organise le groupe.', ['grand', 'chien', 'noir'], 'expansion'],
+      ['Quel est le pluriel de <i>un cheval</i> ?', 'des chevaux', 'Les noms en <i>-al</i> font en général <i>-aux</i>.', ['des chevals', 'des chevaux'], 'pluriel-fem'],
+      ['<i>une robe ___</i>', 'bleue', 'L’adjectif s’accorde avec le nom <i>robe</i> (féminin).', ['bleu', 'bleue'], 'gn-accord']
+    ],
+    rappelVers: 'Si tu as manqué une question, relis le mémo « Les fonctions dans le groupe nominal » dans les Mémos.',
+    observer: { obs: '<p>Compare.</p><ul><li><i>un <b>petit</b> chat <b>gris</b> → des <b>petits</b> chats <b>gris</b> → une <b>petite</b> chatte <b>grise</b></i></li><li><i>un chat <b>de gouttière</b> → des chats <b>de gouttière</b></i></li></ul>', regle: '<p>Quand le nom noyau change de genre ou de nombre, le déterminant et les adjectifs changent avec lui. Le complément du nom, lui, ne bouge pas.</p>' },
+    manip: [
+      { kind: 'transformer', titre: 'Passer au pluriel', consigne: 'Récris le groupe nominal au pluriel.', err: 'gn-accord',
+        items: [
+          { p: '<i>un petit chat gris</i>', r: 'des petits chats gris', x: '<i>gris</i> se termine déjà par <i>-s</i>.' },
+          { p: '<i>le journal local</i>', r: 'les journaux locaux', x: '<i>-al</i> devient <i>-aux</i>, pour le nom comme pour l’adjectif.', err: 'pluriel-fem' },
+          { p: '<i>un beau gâteau</i>', r: 'de beaux gâteaux|des beaux gâteaux', x: '<i>-eau</i> devient <i>-eaux</i>. À l’écrit soigné, <i>des</i> devient <i>de</i> devant un adjectif : <i>de beaux gâteaux</i>.', err: 'pluriel-fem' },
+          { p: '<i>ce vieux bijou précieux</i>', r: 'ces vieux bijoux précieux', x: '<i>bijou</i> fait partie des sept noms en <i>-ou</i> qui prennent un <i>-x</i>.', err: 'pluriel-fem' }
+        ] },
+      { kind: 'etiqueter', titre: 'Les mots du groupe nominal', consigne: 'Glisse les étiquettes sur chaque mot ou groupe.', labels: ['déterminant', 'nom noyau', 'adjectif épithète', 'complément du nom'], err: 'expansion',
+        items: [
+          { g: ['une', 'tasse', 'bleue', 'à café'], l: ['déterminant', 'nom noyau', 'adjectif épithète', 'complément du nom'], x: '<i>à café</i> commence par une préposition : complément du nom.' },
+          { g: ['ces', 'énormes', 'vagues', 'de l’océan'], l: ['déterminant', 'adjectif épithète', 'nom noyau', 'complément du nom'], x: 'L’épithète peut se placer avant le nom.' },
+          { g: ['le', 'vélo', 'de mon frère', 'neuf'], l: ['déterminant', 'nom noyau', 'complément du nom', 'adjectif épithète'], x: '<i>neuf</i> s’accorde avec <i>vélo</i>.' }
+        ] }
+    ],
+    retenir: '<p>Le <b>groupe nominal</b> s’organise autour d’un <b>nom noyau</b>. Il peut être enrichi par des <b>expansions</b> : l’<b>adjectif épithète</b> (<i>un chat <b>gris</b></i>) et le <b>complément du nom</b> (<i>un chat <b>de gouttière</b></i>).</p><ul><li>Le déterminant et les adjectifs <em class="fx">s’accordent en genre et en nombre avec le nom noyau</em> : <i>des petit<b>s</b> chat<b>s</b> gris</i>.</li><li>Le complément du nom ne s’accorde pas avec le noyau : <i>des chats de gouttière</i>.</li><li>Pluriels particuliers : <i>-al → -aux</i> (<i>cheval, chevaux</i>) ; <i>-eau → -eaux</i> ; sept noms en <i>-ou</i> prennent <i>-x</i> (<i>bijou, caillou, chou, genou, hibou, joujou, pou</i>).</li></ul>',
+    exos: [
+      { kind: 'choice', titre: 'Choisir la forme', consigne: 'Choisis la forme correctement accordée.',
+        items: [
+          ['<i>des fleurs ___</i> (adjectif <i>parfumé</i>)', 'parfumées', 'Accord avec <i>fleurs</i>, féminin pluriel.', ['parfumé', 'parfumés', 'parfumées'], 'gn-accord'],
+          ['<i>une ___ idée</i> (adjectif <i>bon</i>)', 'bonne', 'Accord avec <i>idée</i>, féminin singulier.', ['bon', 'bonne'], 'gn-accord'],
+          ['<i>des gestes ___</i> (adjectif <i>amical</i>)', 'amicaux', '<i>-al</i> devient <i>-aux</i> au masculin pluriel.', ['amicals', 'amicaux'], 'pluriel-fem'],
+          ['<i>les ___ de la ferme</i> (pluriel de <i>animal</i>)', 'animaux', '<i>animal, animaux</i>.', ['animals', 'animaux'], 'pluriel-fem'],
+          ['<i>des chaussures de ___</i>', 'sport', 'Le complément du nom ne s’accorde pas avec <i>chaussures</i>.', ['sport', 'sports'], 'gn-accord']
+        ] }
+    ],
+    reflexe: { consigne: 'Le groupe nominal est-il bien accordé ?', options: ['oui', 'non'], err: 'gn-accord', cible: 40,
+      items: [['des chats noirs', 'oui'], ['une maison blanc', 'non'], ['les journaux locaux', 'oui'], ['des chevals', 'non'], ['une petite fille', 'oui'], ['des robes vert', 'non'], ['de beaux jours', 'oui'], ['les genous', 'non'], ['des amis fidèles', 'oui'], ['une voiture neuf', 'non'], ['ces bijoux précieux', 'oui'], ['des idées originals', 'non']] },
+    loin: { lots: ['ou-est-l-erreur-6e', 'pluriels-feminins', 'accords-difficiles'] }
+  }, {
+    id: '6-G2', titre: 'Accord sujet-verbe', sub: 'Chercher le noyau du sujet, même éloigné ou placé après le verbe : la flèche le montre.', notions: ['G12'],
+    rappel: [
+      ['<i>Les oiseaux ___.</i>', 'chantent', 'Sujet pluriel : <i>-ent</i>.', ['chante', 'chantent'], 'accord-sv'],
+      ['<i>Tu ___ vite.</i>', 'cours', '2ᵉ personne du singulier : <i>-s</i>.', ['cour', 'cours', 'court'], 'accord-sv'],
+      ['Pour trouver le sujet, on encadre le groupe par…', 'c’est… qui', '<i>C’est le chien qui aboie.</i>', ['c’est… qui', 'ne… pas'], 'sujet-repere']
+    ],
+    rappelVers: 'Si tu as manqué une question, relis le mémo « Les accords difficiles » dans les Mémos.',
+    observer: { obs: '<p>Compare.</p><ul><li><i>Le <b>chien</b> de mes voisins <b>aboie</b>.</i></li><li><i>Les <b>chiens</b> de mon voisin <b>aboient</b>.</i></li><li><i>Dans le jardin <b>jouent</b> les <b>enfants</b>.</i></li><li><i><b>Léa et Tom</b> <b>partent</b>.</i></li></ul>', regle: '<p>Le verbe s’accorde avec le noyau du sujet, même quand un autre nom est placé juste avant le verbe, et même quand le sujet est placé après lui. Deux sujets coordonnés donnent un pluriel.</p>' },
+    manip: [
+      { kind: 'fleche', pasAccord: false, titre: 'La flèche d’accord', consigne: 'Touche le mot qui commande l’accord du verbe, puis choisis la forme du verbe.', err: 'accord-sv',
+        items: [
+          { g: ['Le chien', 'de mes voisins', '…'], pp: 2, cible: 0, o: ['aboie', 'aboient'], r: 'aboie', x: 'Le noyau du sujet est <i>chien</i>, au singulier ; <i>de mes voisins</i> est un complément du nom.', err: 'sv-eloigne' },
+          { g: ['Dans la cour', '…', 'les enfants'], pp: 1, cible: 2, o: ['joue', 'jouent'], r: 'jouent', x: 'Sujet inversé : <i>ce sont les enfants qui jouent</i>.', err: 'sv-eloigne' },
+          { g: ['Léa et Tom', '…', 'au parc'], pp: 1, cible: 0, o: ['va', 'vont'], r: 'vont', x: 'Deux sujets coordonnés : pluriel.' },
+          { g: ['Mes amis', 'les', '…', 'devant l’école'], pp: 2, cible: 0, o: ['attend', 'attendent'], r: 'attendent', x: '<i>les</i> est un pronom COD : le sujet est <i>mes amis</i>.' }
+        ] },
+      { kind: 'cadre', cadre: ['C’est', 'qui'], titre: 'Encadrer par c’est… qui', consigne: 'Touche le groupe sujet : la phrase s’affiche avec <i>c’est… qui</i> (ou <i>ce sont… qui</i>) autour. Garde celui qui donne une phrase correcte.', err: 'sujet-repere',
+        items: [
+          { p: 'Au fond de la classe / bavardent / deux élèves.', r: 2, t: 'Ce sont deux élèves qui bavardent au fond de la classe.', x: 'Le sujet <i>deux élèves</i> est placé après le verbe.' },
+          { p: 'Les feuilles / de ce vieil arbre / tombent.', r: 0, t: 'Ce sont les feuilles de ce vieil arbre qui tombent.', x: 'Le noyau du sujet est <i>feuilles</i> : le verbe est au pluriel.' }
+        ] }
+    ],
+    retenir: '<p>Le verbe <em class="fx">s’accorde en personne et en nombre avec le noyau de son sujet</em>.</p><ul><li>Sujet éloigné : <i>Le <b>chien</b> de mes voisins <b>aboie</b></i>. On cherche le noyau, pas le nom le plus proche.</li><li>Sujet inversé : <i>Dans la cour <b>jouent</b> les <b>enfants</b></i> (<i>ce sont les enfants qui jouent</i>).</li><li>Sujets coordonnés : <i>Léa et Tom <b>partent</b></i>.</li><li>Un pronom placé devant le verbe n’est pas toujours le sujet : <i>Mes amis les <b>attendent</b></i>.</li></ul>',
+    exos: [
+      { kind: 'choice', titre: 'Accorder le verbe', consigne: 'Cherche le sujet, puis choisis la forme du verbe.',
+        items: [
+          ['<i>Les feuilles de cet arbre ___ en automne.</i>', 'tombent', 'Noyau du sujet : <i>feuilles</i>.', ['tombe', 'tombent'], 'sv-eloigne'],
+          ['<i>Où ___ tes parents ?</i>', 'sont', 'Sujet inversé : <i>tes parents</i>.', ['est', 'sont'], 'sv-eloigne'],
+          ['<i>Le bruit des vagues me ___.</i>', 'berce', 'Noyau du sujet : <i>bruit</i>.', ['berce', 'bercent'], 'sv-eloigne'],
+          ['<i>Mon cousin et moi ___ au foot.</i>', 'jouons', '<i>mon cousin et moi</i> = <i>nous</i>.', ['joue', 'jouons', 'jouent'], 'accord-sv'],
+          ['<i>Je les ___ souvent.</i>', 'vois', 'Le sujet est <i>je</i> ; <i>les</i> est COD.', ['vois', 'voient'], 'accord-sv']
+        ] }
+    ],
+    reflexe: { consigne: 'Le verbe est-il bien accordé ?', options: ['oui', 'non'], err: 'accord-sv', cible: 40,
+      items: [['Les enfants **joue**.', 'non'], ['Le chat de mes voisins **miaule**.', 'oui'], ['Les amis de Paul **arrive**.', 'non'], ['Tu **chantes** bien.', 'oui'], ['Dans le ciel **brille** les étoiles.', 'non'], ['Léa et moi **partons**.', 'oui'], ['Je les **regardent**.', 'non'], ['Le bruit des moteurs **résonne**.', 'oui'], ['Mes sœurs **danse**.', 'non'], ['Nous **finissons**.', 'oui'], ['Vous **dites** vrai.', 'oui'], ['Ils **mange**.', 'non']] },
+    loin: { lots: ['verbe-sujet', 'ou-est-l-erreur-6e'] }
+  });
+
+  /* ---------- Les homophones et l’orthographe ---------- */
+  ADD.H.push({
+    id: '6-H2', titre: 'Fins de verbes en [e] ; nom ou verbe', sub: 'Remplacer par <i>vendre</i> ou <i>vendu</i> pour choisir entre <i>-er</i> et <i>-é</i> ; distinguer <i>le travail</i> et <i>il travaille</i>.', notions: ['H03', 'H07'],
+    rappel: [
+      ['<i>Il faut ___ la porte.</i>', 'fermer', 'Après <i>il faut</i>, on met l’infinitif : <i>il faut vendre</i>.', ['fermé', 'fermer'], 'fin-e'],
+      ['<i>La porte est ___.</i>', 'fermée', '<i>La porte est vendue</i> : participe passé, accordé avec <i>la porte</i>.', ['fermer', 'fermée'], 'fin-e'],
+      ['<i>Vous ___ trop vite.</i>', 'parlez', 'Avec <i>vous</i>, la terminaison est <i>-ez</i>.', ['parlez', 'parler', 'parlé'], 'fin-e']
+    ],
+    rappelVers: 'Si tu as manqué une question, relis le mémo « Les manipulations » dans les Mémos.',
+    observer: { obs: '<p>Remplace par <i>vendre</i> ou par <i>vendu</i>.</p><ul><li><i>Je vais <b>manger</b>. → Je vais <b>vendre</b>.</i></li><li><i>J’ai <b>mangé</b>. → J’ai <b>vendu</b>.</i></li></ul>', regle: '<p>Si <i>vendre</i> convient, c’est l’infinitif en <i>-er</i>. Si <i>vendu</i> convient, c’est le participe passé en <i>-é</i>, qui peut s’accorder.</p>' },
+    manip: [
+      { kind: 'essai', titre: 'Remplacer pour choisir', consigne: 'Essaie chaque remplacement proposé : celui qui donne une phrase correcte t’indique la bonne terminaison. Puis choisis.', err: 'fin-e',
+        items: [
+          { p: 'Elle commence à ___ ses affaires.', o: ['ranger', 'rangé'], r: 'ranger', essais: ['vendre', 'vendu'], x: '<i>Elle commence à vendre</i> : infinitif.' },
+          { p: 'Il a ___ ses affaires.', o: ['ranger', 'rangé'], r: 'rangé', essais: ['vendre', 'vendu'], x: '<i>Il a vendu</i> : participe passé.' },
+          { p: 'Tu dois ___ ce soir.', o: ['travailler', 'travaillé'], r: 'travailler', essais: ['vendre', 'vendu'], x: '<i>Tu dois vendre</i> : infinitif.' },
+          { p: 'Nous avons beaucoup ___.', o: ['travailler', 'travaillé'], r: 'travaillé', essais: ['vendre', 'vendu'], x: '<i>Nous avons vendu</i> : participe passé.' },
+          { p: 'Les enfants sont ___ tard.', o: ['rentrer', 'rentrés'], r: 'rentrés', essais: ['vendre', 'vendus'], x: '<i>Les enfants sont vendus</i> se dit (même si c’est étrange) ; <i>sont vendre</i>, non : participe passé, accordé avec <i>les enfants</i>.' }
+        ] }
+    ],
+    retenir: '<p>Pour choisir entre <i>-er</i> et <i>-é</i>, on <em class="fx">remplace par un verbe du 3ᵉ groupe</em>, comme <i>vendre</i>.</p><ul><li>On peut dire <i>vendre</i> : infinitif en <b>-er</b> (<i>Je vais <b>manger</b></i>). C’est le cas après une préposition (<i>à, de, pour, sans</i>) et après un autre verbe (<i>il faut, je dois, je vais</i>).</li><li>On peut dire <i>vendu</i> : participe passé en <b>-é</b>, qui s’accorde selon les règles (<i>Elles sont <b>rentrées</b></i>).</li><li>Avec <i>vous</i> : <b>-ez</b> (<i>vous mangez</i>). À l’imparfait : <b>-ait</b> (<i>il mangeait</i>).</li></ul><p>Certains noms et verbes se prononcent pareil : <i>un <b>travail</b> / il <b>travaille</b></i>, <i>le <b>réveil</b> / je me <b>réveille</b></i>. Le nom suit un <em class="fx">déterminant</em> ; le verbe suit un <em class="fx">sujet</em>.</p>',
+    exos: [
+      { kind: 'choice', titre: 'Choisir la terminaison', consigne: 'Remplace dans ta tête, puis choisis.',
+        items: [
+          ['<i>Vous ___ en retard.</i>', 'arrivez', 'Avec <i>vous</i> : <i>-ez</i>.', ['arriver', 'arrivez', 'arrivé'], 'fin-e'],
+          ['<i>Autrefois, il ___ à pied.</i>', 'allait', 'Imparfait : <i>-ait</i>.', ['aller', 'allé', 'allait'], 'fin-e'],
+          ['<i>Les fleurs sont ___.</i>', 'fanées', 'On peut dire <i>vendues</i> : participe passé, accordé avec <i>les fleurs</i>.', ['faner', 'fanées'], 'fin-e'],
+          ['<i>Mon ___ sonne à sept heures.</i>', 'réveil', 'Après le déterminant <i>mon</i>, c’est le nom.', ['réveil', 'réveille'], 'nom-verbe'],
+          ['<i>Il ___ dans un garage.</i>', 'travaille', 'Après le sujet <i>il</i>, c’est le verbe.', ['travail', 'travaille'], 'nom-verbe'],
+          ['<i>J’ai fini mon ___.</i>', 'travail', 'Après le déterminant <i>mon</i>, c’est le nom.', ['travail', 'travaille'], 'nom-verbe']
+        ] }
+    ],
+    reflexe: { consigne: 'Infinitif en <i>-er</i> ou participe passé en <i>-é</i> ?', options: ['infinitif', 'participe passé'], err: 'fin-e', cible: 40,
+      items: [['Je vais nag___.', 'infinitif'], ['J’ai nag___.', 'participe passé'], ['Il faut rest___.', 'infinitif'], ['Ils sont rest___.', 'participe passé'], ['Pour gagn___, il faut jouer.', 'infinitif'], ['Le match est gagn___.', 'participe passé'], ['Tu peux mang___.', 'infinitif'], ['Nous avons mang___.', 'participe passé'], ['Elle aime chant___.', 'infinitif'], ['Une chanson chant___ par tous.', 'participe passé'], ['Il part sans parl___.', 'infinitif'], ['Un livre oubli___ sur la table.', 'participe passé']] },
+    loin: { lots: ['ecrire-verbes-6e5e', 'homophones-7'] }
+  });
+
+  /* ---------- Le lexique ---------- */
+  ADD.L.push({
+    id: '6-L1', titre: 'Former les mots ; l’étymologie', sub: 'Décomposer un mot en préfixe, radical et suffixe ; deviner le sens grâce aux racines grecques et latines.', notions: ['L01', 'L03'],
+    rappel: [
+      ['Dans <i>refaire</i>, quel est le préfixe ?', 're-', '<i>re-</i> (de nouveau) + <i>faire</i>.', ['re-', 'faire', '-re'], 'formation'],
+      ['Quel mot est de la même famille que <i>terre</i> ?', 'terrain', '<i>terrain</i> a le même radical et un sens proche.', ['terrain', 'tirer', 'taire'], 'formation'],
+      ['Le mot <i>géographie</i> vient…', 'du grec', '<i>gê</i> : la terre ; <i>graphein</i> : écrire.', ['du grec', 'de l’anglais'], 'etymologie']
+    ],
+    rappelVers: 'Si tu as manqué une question, relis le mémo « La formation des mots » dans les Mémos.',
+    observer: { obs: '<p>Compare.</p><ul><li><i><b>dé</b>coll<b>age</b></i> : préfixe <i>dé-</i> + radical <i>coll</i> + suffixe <i>-age</i>.</li><li><i>un <b>porte-monnaie</b></i> : deux mots réunis.</li><li><i><b>télé</b>phone</i> : <i>télé</i> (loin) + <i>phone</i> (la voix), deux racines grecques.</li></ul>', regle: '<p>Un mot dérivé se forme avec un radical, un préfixe placé avant et un suffixe placé après. Un mot composé réunit plusieurs mots. Les racines grecques et latines aident à deviner le sens.</p>' },
+    manip: [
+      { kind: 'etiqueter', titre: 'Décomposer le mot', consigne: 'Glisse les étiquettes sur chaque partie du mot.', labels: ['préfixe', 'radical', 'suffixe'], err: 'formation',
+        items: [
+          { g: ['dé', 'coll', 'age'], l: ['préfixe', 'radical', 'suffixe'], x: '<i>décollage</i> : l’action de décoller.' },
+          { g: ['in', 'vis', 'ible'], l: ['préfixe', 'radical', 'suffixe'], x: '<i>in-</i> exprime le contraire ; <i>-ible</i>, la possibilité.' },
+          { g: ['jardin', 'ier'], l: ['radical', 'suffixe'], x: '<i>-ier</i> forme des noms de métier.' },
+          { g: ['dés', 'ordre'], l: ['préfixe', 'radical'], x: '<i>dés-</i> exprime le contraire.' }
+        ] },
+      { kind: 'transformer', titre: 'Former un mot', consigne: 'Écris le mot demandé.', err: 'formation',
+        items: [
+          { p: 'Le contraire de <i>possible</i>, avec un préfixe :', r: 'impossible', x: '<i>im-</i> devant <i>p</i> : <i>impossible</i>.' },
+          { p: 'Celui qui vend des fleurs :', r: 'fleuriste|un fleuriste|le fleuriste', x: 'Suffixe <i>-iste</i>.' },
+          { p: 'L’action de laver :', r: 'lavage|le lavage', x: 'Suffixe <i>-age</i>.' },
+          { p: 'Rendre plus court :', r: 'raccourcir', x: 'Préfixe <i>r(a)-</i> et suffixe <i>-ir</i> autour de <i>court</i>.' }
+        ] }
+    ],
+    retenir: '<p>Un <b>mot simple</b> ne se décompose pas (<i>terre</i>). Un <b>mot dérivé</b> ajoute au <b>radical</b> un <em class="fx">préfixe avant</em> et un <em class="fx">suffixe après</em> : <i><b>dé</b>coll<b>age</b></i>. Un <b>mot composé</b> réunit plusieurs mots : <i>porte-monnaie</i>, <i>pomme de terre</i>.</p><ul><li>Préfixes fréquents : <i>re-</i> (de nouveau), <i>dé-, in-, im-</i> (le contraire), <i>pré-</i> (avant).</li><li>Suffixes fréquents : <i>-age, -ment</i> (l’action), <i>-ier, -iste</i> (le métier), <i>-able, -ible</i> (la possibilité).</li><li><b>Racines grecques et latines</b> : <i>géo</i> (terre), <i>graph</i> (écrire), <i>phone</i> (voix), <i>bio</i> (vie), <i>hydr</i> et <i>aqua</i> (eau).</li></ul>',
+    exos: [
+      { kind: 'choice', titre: 'Deviner le sens', consigne: 'Aide-toi des préfixes, des suffixes et des racines.',
+        items: [
+          ['Un <i>hydravion</i> peut se poser…', 'sur l’eau', '<i>hydr-</i> : l’eau (grec).', ['sur l’eau', 'sur la neige', 'dans les arbres'], 'etymologie'],
+          ['Un <i>biographe</i> écrit…', 'la vie de quelqu’un', '<i>bio</i> : la vie ; <i>graphe</i> : celui qui écrit.', ['la vie de quelqu’un', 'des chansons', 'des lettres'], 'etymologie'],
+          ['Un <i>aquarium</i> contient…', 'de l’eau', '<i>aqua</i> : l’eau (latin).', ['de l’eau', 'de l’air', 'du sable'], 'etymologie'],
+          ['Quel mot n’est pas de la même famille que <i>dent</i> ?', 'danse', '<i>danse</i> se prononce presque pareil, mais n’a aucun lien de sens.', ['dentiste', 'dentier', 'danse'], 'formation'],
+          ['<i>illisible</i> veut dire…', 'qu’on ne peut pas lire', '<i>il-</i> (le contraire) + <i>lis</i> + <i>-ible</i> (la possibilité).', ['qu’on ne peut pas lire', 'qu’on lit souvent'], 'formation']
+        ] }
+    ],
+    reflexe: { consigne: 'Mot simple, dérivé ou composé ?', options: ['simple', 'dérivé', 'composé'], err: 'formation', cible: 45,
+      items: [['table', 'simple'], ['chanteur', 'dérivé'], ['arc-en-ciel', 'composé'], ['fleur', 'simple'], ['refaire', 'dérivé'], ['chou-fleur', 'composé'], ['maison', 'simple'], ['lavage', 'dérivé'], ['porte-clé', 'composé'], ['soleil', 'simple'], ['impoli', 'dérivé'], ['grand-mère', 'composé']] },
+    loin: { lots: ['formation-des-mots', 'mots-grec-latin', 'etymologie-dominos'] }
+  }, {
+    id: '6-L3', titre: 'Expressions et vocabulaire', sub: 'Comprendre une expression figée par l’ensemble, pas mot à mot ; choisir le mot le plus précis.', notions: ['L11', 'L16'],
+    rappel: [
+      ['Que veut dire <i>avoir le cœur sur la main</i> ?', 'être généreux', 'On comprend l’ensemble, pas chaque mot.', ['être généreux', 'avoir mal au cœur'], 'expressions'],
+      ['Quel est un synonyme de <i>effrayé</i> ?', 'apeuré', '<i>effrayé</i> et <i>apeuré</i> : qui a peur.', ['apeuré', 'fatigué', 'pressé'], 'vocabulaire'],
+      ['<i>Il pleut des cordes</i> veut dire qu’il pleut…', 'très fort', 'Image de la pluie qui tombe en traits épais.', ['très fort', 'un peu'], 'expressions']
+    ],
+    rappelVers: 'Si tu as manqué une question, ouvre les flashcards « Expressions » dans les Entrainements.',
+    observer: { obs: '<p>Compare.</p><ul><li><i>Il a <b>donné sa langue au chat</b>.</i> : il renonce à trouver la réponse.</li><li><i>Il a donné un poisson au chat.</i> : sens habituel.</li></ul>', regle: '<p>Dans une expression figée, on comprend l’ensemble, pas chaque mot. On ne peut pas en changer les mots : <i>donner sa langue au chien</i> ne se dit pas.</p>' },
+    manip: [
+      { kind: 'choice', titre: 'Expliquer l’expression', consigne: 'Choisis le sens de l’expression.',
+        items: [
+          ['<i>Il a la tête dans les nuages.</i>', 'il est distrait', 'Il pense à autre chose.', ['il est distrait', 'il est très grand', 'il est en avion'], 'expressions'],
+          ['<i>Elle a un poil dans la main.</i>', 'elle est paresseuse', 'Elle ne travaille pas assez.', ['elle est paresseuse', 'elle est malade', 'elle est forte'], 'expressions'],
+          ['<i>C’est la fin des haricots.</i>', 'tout est perdu', 'Plus rien n’est possible.', ['tout est perdu', 'le repas est fini'], 'expressions'],
+          ['<i>Il a une faim de loup.</i>', 'il a très faim', 'L’image du loup affamé.', ['il a très faim', 'il est méchant'], 'expressions']
+        ] },
+      { kind: 'input', titre: 'Compléter l’expression', consigne: 'Écris le mot qui manque.', err: 'expressions',
+        items: [
+          ['<i>Il pleut des ___.</i>', 'cordes', 'Il pleut très fort.'],
+          ['<i>Ne mets pas la charrue avant les ___.</i>', 'bœufs|boeufs', 'Il faut faire les choses dans l’ordre.'],
+          ['<i>Être gai comme un ___.</i>', 'pinson', 'Être très joyeux.'],
+          ['<i>Avoir une mémoire d’___.</i>', 'éléphant|elephant', 'Se souvenir de tout.']
+        ] }
+    ],
+    retenir: '<p>Une <b>expression figée</b> (ou locution) est un groupe de mots dont <em class="fx">le sens vient de l’ensemble</em>, pas de chaque mot : <i>donner sa langue au chat</i> = renoncer à trouver. On ne peut pas en changer les mots.</p><ul><li>Beaucoup d’expressions utilisent des images : les animaux (<i>une faim de loup</i>), le corps (<i>avoir le cœur sur la main</i>), la météo (<i>il pleut des cordes</i>).</li><li>Pour enrichir ses phrases, on choisit le <b>mot le plus précis</b> : <i>dire → murmurer, crier, affirmer</i> ; <i>beau → magnifique, splendide</i>.</li></ul>',
+    exos: [
+      { kind: 'choice', titre: 'Le mot le plus précis', consigne: 'Choisis le mot qui correspond le mieux à l’indication.',
+        items: [
+          ['<i>Il ___ à l’oreille de son voisin.</i> (dire tout bas)', 'murmure', '<i>murmurer</i> : parler tout bas.', ['dit', 'murmure', 'hurle'], 'vocabulaire'],
+          ['<i>Le paysage est ___.</i> (très beau)', 'splendide', '<i>splendide</i> : d’une grande beauté.', ['joli', 'splendide', 'correct'], 'vocabulaire'],
+          ['<i>Il ___ son repas en deux minutes.</i> (manger très vite)', 'dévore', '<i>dévorer</i> : manger avec avidité.', ['mange', 'dévore', 'grignote'], 'vocabulaire'],
+          ['Quel verbe dit <i>avoir peur</i> dans une langue soutenue ?', 'craindre', '<i>craindre</i> appartient à la langue soutenue.', ['craindre', 'flipper', 'paniquer'], 'vocabulaire']
+        ] }
+    ],
+    reflexe: { consigne: 'Expression figée ou sens habituel ?', options: ['expression', 'sens habituel'], err: 'expressions', cible: 40,
+      items: [['Il **donne sa langue au chat**.', 'expression'], ['Il **donne du lait au chat**.', 'sens habituel'], ['Elle **a le cafard**.', 'expression'], ['Elle **a un chat**.', 'sens habituel'], ['Il **casse les pieds** de tout le monde.', 'expression'], ['Il **casse un verre**.', 'sens habituel'], ['Ça **coute les yeux de la tête**.', 'expression'], ['Ça **coute dix euros**.', 'sens habituel'], ['Il **tombe dans les pommes**.', 'expression'], ['Il **mange des pommes**.', 'sens habituel'], ['Elle **prend la mouche**.', 'expression'], ['Elle **prend le bus**.', 'sens habituel']] },
+    loin: { lots: ['expressions', 'vocabulaire-6e'] }
+  });
+
+  /* ---------- Diagnostic d’entrée : 10 questions de plus (20 en tout, au moins une par étape) ---------- */
+  const DIAG = [
+    { n: 'P07', q: 'Dans <i>Léa offre un livre à son frère.</i>, quelle est la fonction de <i>un livre</i> ?', r: 'COD', o: ['COD', 'COI', 'sujet'], x: '<i>Léa l’offre</i> : on le remplace par <i>l’</i>, sans préposition.', err: 'cod-coi' },
+    { n: 'P10', q: 'Dans <i>Pendant les vacances, nous irons à la mer.</i>, <i>pendant les vacances</i> est un complément circonstanciel…', r: 'de temps', o: ['de temps', 'de lieu', 'de cause'], x: 'Il répond à la question <i>quand ?</i>', err: 'cc-type' },
+    { n: 'P16', q: 'Combien de propositions dans <i>Quand il rentre, il prend une douche.</i> ?', r: '2', o: ['1', '2', '3'], x: 'Deux verbes conjugués, <i>rentre</i> et <i>prend</i> : deux propositions.', err: 'propositions' },
+    { n: 'V05', q: '<i>Hier soir, ils ___ un bruit étrange.</i> (<i>entendre</i>, passé simple)', r: 'entendirent', o: ['entendirent', 'entendaient', 'entendèrent'], x: '<i>entendre</i> : <i>il entendit, ils entendirent</i>.', err: 'ps-forme' },
+    { n: 'V15', q: 'Quels temps emploie-t-on surtout pour raconter une histoire au passé ?', r: 'passé simple et imparfait', o: ['passé simple et imparfait', 'présent et futur', 'futur et conditionnel'], x: 'Ce sont les temps du récit.', err: 'discours-recit' },
+    { n: 'G10', q: 'Quel groupe nominal est bien accordé ?', r: 'des journaux locaux', o: ['des journals locals', 'des journaux locaux', 'des journaux locals'], x: 'Le nom et l’adjectif en <i>-al</i> font <i>-aux</i>.', err: 'gn-accord' },
+    { n: 'G12', q: '<i>Les cris des enfants ___ dans la cour.</i>', r: 'résonnent', o: ['résonne', 'résonnent'], x: 'Le noyau du sujet est <i>cris</i>, au pluriel.', err: 'sv-eloigne' },
+    { n: 'H03', q: '<i>Elle va ___ ses amis.</i>', r: 'inviter', o: ['inviter', 'invité', 'invitez'], x: 'On peut dire <i>elle va vendre</i> : infinitif.', err: 'fin-e' },
+    { n: 'L01', q: 'Dans <i>imprudent</i>, le préfixe <i>im-</i> exprime…', r: 'le contraire', o: ['le contraire', 'la répétition', 'le lieu'], x: '<i>imprudent</i> : qui n’est pas prudent.', err: 'formation' },
+    { n: 'L11', q: 'Que veut dire <i>avoir une faim de loup</i> ?', r: 'avoir très faim', o: ['avoir très faim', 'avoir peur des loups', 'être méchant'], x: 'Une expression figée se comprend dans son ensemble.', err: 'expressions' }
+  ];
+
+  /* ---------- Diagnostic de sortie : une question par étape, d’autres phrases que l’entrée ---------- */
+  N.sortie = [
+    { n: 'P01', q: 'Dans <i>Demain, mes cousins viendront nous voir.</i>, quel est le verbe conjugué ?', r: 'viendront', o: ['Demain', 'cousins', 'viendront', 'voir'], x: '<i>ils ne viendront pas</i> ; <i>voir</i> est à l’infinitif.', err: 'verbe-repere' },
+    { n: 'P08', q: 'Dans <i>Mon frère reste calme.</i>, <i>calme</i> est…', r: 'attribut du sujet', o: ['COD', 'attribut du sujet', 'COI'], x: '<i>rester</i> est un verbe d’état : <i>mon frère est calme</i>.', err: 'attribut' },
+    { n: 'P10', q: 'Dans <i>Il est rentré à cause de l’orage.</i>, <i>à cause de l’orage</i> est un CC…', r: 'de cause', o: ['de temps', 'de lieu', 'de cause'], x: 'Il répond à la question <i>pourquoi ?</i>', err: 'cc-type' },
+    { n: 'P15', q: 'Dans <i>Je l’appelle, mais il ne répond pas.</i>, les deux propositions sont…', r: 'coordonnées', o: ['juxtaposées', 'coordonnées', 'subordonnées'], x: '<i>mais</i> est une conjonction de coordination.', err: 'liaison-prop' },
+    { n: 'V08', q: 'Quelle phrase est correctement écrite ?', r: 'Mange ta soupe !', o: ['Manges ta soupe !', 'Mange ta soupe !', 'Mangent ta soupe !'], x: '1<sup>er</sup> groupe : pas de <i>-s</i> à l’impératif.', err: 'imperatif-s' },
+    { n: 'V05', q: '<i>Les élèves ___ leur travail.</i> (<i>finir</i>, passé simple)', r: 'finirent', o: ['finirent', 'finissaient', 'finissent'], x: '2ᵉ groupe : <i>ils finirent</i>.', err: 'ps-forme' },
+    { n: 'V18', q: '<i>Il disait qu’il ___ le lendemain.</i>', r: 'reviendrait', o: ['reviendra', 'reviendrait'], x: 'Après un verbe au passé : futur dans le passé, au conditionnel.', err: 'discours-recit' },
+    { n: 'G11', q: 'Quel est le pluriel de <i>un caillou</i> ?', r: 'des cailloux', o: ['des caillous', 'des cailloux'], x: '<i>caillou</i> fait partie des sept noms en <i>-ou</i> qui prennent <i>-x</i>.', err: 'pluriel-fem' },
+    { n: 'G12', q: '<i>Sur la branche ___ deux oiseaux.</i>', r: 'chantent', o: ['chante', 'chantent'], x: 'Sujet inversé : <i>ce sont deux oiseaux qui chantent</i>.', err: 'sv-eloigne' },
+    { n: 'G14', q: '<i>Les portes sont ___.</i>', r: 'fermées', o: ['fermé', 'fermés', 'fermées'], x: 'Avec <i>être</i>, accord avec le sujet <i>les portes</i>.', err: 'pp-etre' },
+    { n: 'H01', q: '<i>Ils ___ pris le train.</i>', r: 'ont', o: ['on', 'ont'], x: 'On peut dire <i>ils avaient pris</i>.', err: 'homo-on' },
+    { n: 'H03', q: '<i>Nous avons ___ la table.</i>', r: 'débarrassé', o: ['débarrasser', 'débarrassé', 'débarrassez'], x: 'On peut dire <i>nous avons vendu</i> : participe passé.', err: 'fin-e' },
+    { n: 'L03', q: 'Un <i>thermomètre</i> mesure…', r: 'la température', o: ['la température', 'la distance', 'le poids'], x: '<i>thermo</i> : la chaleur ; <i>mètre</i> : la mesure.', err: 'etymologie' },
+    { n: 'L06', q: '<i>Un verre d’eau</i> et <i>un ver de terre</i> : <i>verre</i> et <i>ver</i> sont…', r: 'des homonymes', o: ['des synonymes', 'des homonymes', 'des antonymes'], x: 'Même prononciation, sens différents.', err: 'homonymes' },
+    { n: 'L11', q: 'Que veut dire <i>tomber dans les pommes</i> ?', r: 's’évanouir', o: ['s’évanouir', 'manger des fruits', 'trébucher'], x: 'Une expression figée se comprend dans son ensemble.', err: 'expressions' }
+  ];
+
+  /* ---------- Assemblage : étapes dans l’ordre du référentiel, diagnostic rangé par étape ---------- */
+  N.duree = '15 étapes, environ 6 h';
+  N.resume = 'Quinze étapes réparties en cinq domaines : la phrase, le verbe, le groupe nominal et les accords, les homophones et l’orthographe, le lexique. Chaque étape suit le même chemin : rappel, manipulation, mémo, exercices, série Réflexe. Un diagnostic de 20 questions t’oriente au départ ; un diagnostic de sortie mesure tes progrès.';
+  N.modules.forEach(m => { m.steps = m.steps.concat(ADD[m.dom] || []); m.steps.sort((a, b) => ORDRE.indexOf(a.id) - ORDRE.indexOf(b.id)); });
+  const RANG = {};
+  N.modules.forEach(m => m.steps.forEach(s => s.notions.forEach(n => { if (RANG[n] === undefined) RANG[n] = ORDRE.indexOf(s.id); })));
+  N.diagnostic = N.diagnostic.concat(DIAG).sort((a, b) => RANG[a.n] - RANG[b.n]);
+})();
+
+;
 /* Parcours 5ᵉ, 4ᵉ, 3ᵉ et FLE — en préparation (lots 3 et 4 de la refonte). Laboratoire de la langue, M. Lesage, enseignant de français, CC BY-NC-SA 4.0. */
 window.NPARC = window.NPARC || {};
 NPARC.n5 = { titre: 'Parcours 5ᵉ', public: 'Élèves de 5ᵉ · cycle 4', enPreparation: true, resume: 'Sujet séparé du verbe, compléments circonstanciels, subordonnée relative, énonciation, temps de l’indicatif, subjonctif présent, déterminants, participe passé, homophones, lexique.' };
@@ -4242,6 +4704,7 @@ const LABO = (function () {
    NPARC[pid] = { titre, public, duree, resume, fle?, enPreparation?, diagnostic, modules }
    - pid : n6, n5, n4, n3, nfle
    - diagnostic : [{ n: 'P01', q, r, x, o: [options], err? }] ; « Je ne sais pas » s’ajoute
+   - sortie : même format, diagnostic de fin de parcours (#sortie-pid), comparé au diagnostic d’entrée
    - module = { dom: P|V|G|H|L, steps: [étape] }
    - étape = { id, titre, sub, notions: [...], rappel: [choix], observer: { obs: html, regle: html }, manip: [exo],
                retenir: html, exos: [exo], reflexe: { consigne, options, items: [[énoncé, réponse]], err }, loin: { lots: [...] } }
@@ -4270,7 +4733,16 @@ const LABO = (function () {
     'cond-forme': 'Former le conditionnel', 'pp-etre': 'Participe passé avec <i>être</i>', 'pp-avoir-sujet': 'Accord avec le sujet après <i>avoir</i>',
     'pp-avoir-cod': 'COD placé avant le verbe', 'homo-a': '<i>a / à</i>', 'homo-et': '<i>et / est</i>', 'homo-son': '<i>son / sont</i>',
     'homo-on': '<i>on / ont</i>', 'homo-ces': '<i>ces / ses</i>', 'homo-leur': '<i>leur / leurs</i>', 'polysemie': 'Polysémie', 'homonymes': 'Homonymes',
-    'hyper': 'Hyperonymes et hyponymes'
+    'hyper': 'Hyperonymes et hyponymes',
+    'cod-coi': 'COD ou COI', 'attribut': 'Attribut du sujet ou COD', 'pronom-compl': 'Remplacer un complément par un pronom',
+    'cc-type': 'Sens du complément circonstanciel', 'cc-repere': 'Repérer un complément circonstanciel',
+    'propositions': 'Compter les propositions', 'liaison-prop': 'Juxtaposition, coordination, subordination', 'conj-coord': 'Conjonctions de coordination',
+    'ps-forme': 'Former le passé simple', 'ps-imparfait': 'Passé simple ou imparfait', 'aux-choix': 'Choisir l’auxiliaire', 'temps-compose': 'Former un temps composé',
+    'discours-recit': 'Temps du discours, temps du récit', 'transposer': 'Transposer un texte',
+    'gn-accord': 'Chaîne d’accords dans le GN', 'pluriel-fem': 'Pluriels et féminins particuliers', 'expansion': 'Expansions du nom',
+    'accord-sv': 'Accord du verbe avec le sujet', 'sv-eloigne': 'Sujet éloigné ou inversé',
+    'fin-e': 'Fins de verbes en [e]', 'nom-verbe': 'Nom ou verbe homophones',
+    'formation': 'Former les mots', 'etymologie': 'Racines et étymologie', 'expressions': 'Expressions et locutions', 'vocabulaire': 'Vocabulaire'
   };
   const nb0 = s => String(s == null ? '' : s).replace(/ ([:;!?])/g, ' $1');
   /* phrase citée entière (majuscule … point) : classe phr, surlignée dans les questions (p.q) */
@@ -4344,6 +4816,7 @@ const LABO = (function () {
     return `${crumbs(esc(p.titre))}
     <div class="page-h"><h2>${esc(p.titre)}</h2><p>${nb(p.resume)}</p></div>
     <div class="card"><div class="row">${d ? `<a class="btn small" href="#etape-${pid}-${premiereAFaire(pid)}">Suite de mon parcours →</a><a class="btn ghost small" href="#diag-${pid}">Refaire le diagnostic</a>` : `<a class="btn small" href="#diag-${pid}">Faire le diagnostic</a><a class="btn ghost small" href="#etape-${pid}-0">Commencer sans diagnostic</a>`}</div>
+      ${p.sortie ? (() => { const pr = progres(pid), so = P.sortie && P.sortie[pid]; return `<p class="small muted" style="margin-top:8px">${pr.done >= pr.total ? 'Tu as fini toutes les étapes' + NB + ': ' : `Quand tu auras fini les ${pr.total} étapes${NB}: `}<a href="#sortie-${pid}">diagnostic de sortie</a>${so ? ' (fait le ' + esc(so.date || '') + ')' : ''}.</p>`; })() : ''}
       ${d ? `<p class="small muted" style="margin-top:8px">Ton parcours personnalisé${NB}: d’abord les étapes « à travailler », puis celles « à consolider »${NB}; les notions déjà acquises restent ouvertes.</p>` : ''}</div>
     <div class="plan">${p.modules.map(m => `<section class="mod m-${DOM[m.dom][1]}"><h3><span class="mdot"></span>${DOM[m.dom][0]}</h3><ol>${m.steps.map(s => {
       i++; const pr = P.prog[key(pid, s)];
@@ -4354,14 +4827,15 @@ const LABO = (function () {
   }
 
   let diagRep = null;
-  function diag(pid) {
-    const p = NP[pid];
-    diagRep = new Array(p.diagnostic.length).fill(null);
-    return `${crumbs(`<a href="#parcours-${pid}">${esc(p.titre)}</a>`, 'Diagnostic')}
-    <div class="page-h"><h2>Diagnostic · ${esc(p.titre)}</h2><p>${p.diagnostic.length} questions pour savoir où tu en es, notion par notion. Ce n’est pas noté${NB}: réponds « ${NSP} » plutôt que de répondre au hasard.</p></div>
-    <div class="exo" id="n-diag" data-pid="${pid}">${p.diagnostic.map((q, i) => `<div class="item diag-q" data-i="${i}"><p class="q"><span class="n">${i + 1}.</span><span>${fmt(q.q)}</span></p>
+  function diag(pid, sortie) {
+    const p = NP[pid], Q = sortie ? p.sortie : p.diagnostic;
+    diagRep = new Array(Q.length).fill(null);
+    const intro = sortie ? `${Q.length} questions, une par étape, pour mesurer ce que tu as appris depuis le début du parcours. Ce n’est pas noté.` : `${Q.length} questions pour savoir où tu en es, notion par notion. Ce n’est pas noté${NB}: réponds « ${NSP} » plutôt que de répondre au hasard.`;
+    return `${crumbs(`<a href="#parcours-${pid}">${esc(p.titre)}</a>`, sortie ? 'Diagnostic de sortie' : 'Diagnostic')}
+    <div class="page-h"><h2>${sortie ? 'Diagnostic de sortie' : 'Diagnostic'} · ${esc(p.titre)}</h2><p>${intro}</p></div>
+    <div class="exo" id="n-diag" data-pid="${pid}"${sortie ? ' data-sortie="1"' : ''}>${Q.map((q, i) => `<div class="item diag-q" data-i="${i}"><p class="q"><span class="n">${i + 1}.</span><span>${fmt(q.q)}</span></p>
       <div class="opts">${q.o.concat(NSP).map(o => `<button type="button" class="opt" data-x="d-rep" data-v="${esc(o)}">${nb(o)}</button>`).join('')}</div><div class="fb" hidden></div></div>`).join('')}</div>
-    <div class="row"><button class="btn" type="button" data-x="d-ok" disabled id="n-d-ok">Voir mes résultats</button><span class="small muted" id="n-d-reste">${p.diagnostic.length} questions sans réponse</span></div>
+    <div class="row"><button class="btn" type="button" data-x="d-ok" disabled id="n-d-ok">Voir mes résultats</button><span class="small muted" id="n-d-reste">${Q.length} questions sans réponse</span></div>
     <div id="n-d-res"></div>`;
   }
 
@@ -4404,7 +4878,7 @@ const LABO = (function () {
     else if (e.kind === 'transformer') items = e.items.map((x, ii) => it(ii, `<span>${fmt(x.p)}</span></p><input class="blank long" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Phrase transformée ${ii + 1}"><div class="row acts"><button type="button" class="btn small" data-x="verif">Vérifier</button></div><div class="fb" hidden></div>`)).join('');
     else if (e.kind === 'cadre') items = e.items.map((x, ii) => it(ii, `</p><div class="grps">${grp(x.p.split(' / '), ii)}</div><p class="essai" aria-live="polite"></p><div class="row acts"><button type="button" class="btn small" data-x="cadre-ok" disabled>Valider ce groupe</button></div><div class="fb" hidden></div>`)).join('');
     else if (e.kind === 'etiqueter') items = e.items.map((x, ii) => it(ii, `</p><div class="etq-banc" role="group" aria-label="Étiquettes">${e.labels.map(l => `<button type="button" class="etq-lab" data-x="etq-lab" data-v="${esc(l)}">${nb(l)}</button>`).join('')}</div><div class="etiq">${x.g.map((g, gi) => `<div class="etq"><span>${nb(g)}</span><button type="button" class="etq-slot" data-x="etq-slot" data-g="${gi}" aria-label="Étiquette de « ${esc(plain(g))} »">dépose ici</button></div>`).join('')}</div><div class="row acts"><button type="button" class="btn small" data-x="etq-ok">Valider</button></div><div class="fb" hidden></div>`)).join('');
-    else if (e.kind === 'fleche') items = e.items.map((x, ii) => it(ii, `</p><div class="grps fl">${x.g.map((g, gi) => gi === x.pp ? `<span class="grp pp" data-g="${gi}">…</span>` : `<button type="button" class="grp" data-x="fl-cible" data-g="${gi}">${nb(g)}</button>`).join('')}<svg class="fl-svg" aria-hidden="true"></svg></div><div class="row"><button type="button" class="btn ghost small" data-x="fl-cible" data-g="-1">Pas d’accord</button></div><div class="opts" hidden>${x.o.map(o => `<button type="button" class="opt" data-x="fl-forme" data-v="${esc(o)}">${nb(o)}</button>`).join('')}</div><div class="fb" hidden></div>`)).join('');
+    else if (e.kind === 'fleche') items = e.items.map((x, ii) => it(ii, `</p><div class="grps fl">${x.g.map((g, gi) => gi === x.pp ? `<span class="grp pp" data-g="${gi}">…</span>` : `<button type="button" class="grp" data-x="fl-cible" data-g="${gi}">${nb(g)}</button>`).join('')}<svg class="fl-svg" aria-hidden="true"></svg></div>${e.pasAccord === false ? '' : `<div class="row"><button type="button" class="btn ghost small" data-x="fl-cible" data-g="-1">Pas d’accord</button></div>`}<div class="opts" hidden>${x.o.map(o => `<button type="button" class="opt" data-x="fl-forme" data-v="${esc(o)}">${nb(o)}</button>`).join('')}</div><div class="fb" hidden></div>`)).join('');
     else if (e.kind === 'essai') items = e.items.map((x, ii) => { if (x.trous) return it(ii, essaiTrous(x)); const ess = [].concat(x.essais || x.essai || e.essai); return it(ii, `<span class="phr">${fmt(x.p.replace(/___/g, '<span class="trou">___</span>'))}</span></p><div class="row">${x.nous ? `<button type="button" class="btn ghost small" data-x="essai-nous">Essayer avec <i>nous</i></button>` : `<button type="button" class="btn ghost small" data-x="essai" data-w="${esc(ess.join('|'))}" data-i="0">Essayer avec <i>${esc(ess[0])}</i></button>`}</div><p class="essai" aria-live="polite"></p><div class="opts">${x.o.map(o => `<button type="button" class="opt" data-x="choix" data-v="${esc(o)}">${nb(o)}</button>`).join('')}</div><div class="fb" hidden></div>`); }).join('');
     return `<section class="exo" data-kind="${e.kind}">${head}${items}</section>`;
   }
@@ -4540,16 +5014,22 @@ const LABO = (function () {
       document.getElementById('n-d-ok').disabled = !!reste; return;
     }
     if (a === 'd-ok') {
-      const pid = document.getElementById('n-diag').dataset.pid, p = NP[pid];
-      P.diag[pid] = { rep: diagRep.slice(), date: today() };
+      const box = document.getElementById('n-diag'), pid = box.dataset.pid, p = NP[pid], sortie = !!box.dataset.sortie, L = sortie ? p.sortie : p.diagnostic;
+      if (sortie) { P.sortie = P.sortie || {}; P.sortie[pid] = { rep: diagRep.slice(), date: today() }; } else P.diag[pid] = { rep: diagRep.slice(), date: today() };
       let ok = 0;
       document.querySelectorAll('.diag-q').forEach((q, i) => {
-        const Q = p.diagnostic[i], juste = diagRep[i] === Q.r; if (juste) ok++; else if (diagRep[i] !== NSP) logErr(Q.err, Q.q);
+        const Q = L[i], juste = diagRep[i] === Q.r; if (juste) ok++; else if (diagRep[i] !== NSP) logErr(Q.err, Q.q);
         q.dataset.done = 1;
         q.querySelectorAll('.opt').forEach(o => { o.disabled = true; o.classList.remove('ok'); if (o.dataset.v === Q.r) o.classList.add('ok'); else if (o.dataset.v === diagRep[i]) o.classList.add('ko'); });
         fb(q, juste, `<strong>${juste ? 'Juste.' : diagRep[i] === NSP ? 'À apprendre.' : 'Non.'}</strong> ${juste ? '' : `Réponse attendue${NB}: <b>${Q.r}</b>. `}${Q.x || ''}`);
       });
       save(); b.remove(); document.getElementById('n-d-reste').textContent = '';
+      if (sortie) {
+        const d = diagFait(pid), avant = d ? p.diagnostic.filter((q, i) => d.rep[i] === q.r).length : null;
+        const pc = x => Math.round(100 * x);
+        document.getElementById('n-d-res').innerHTML = `<div class="result"><span class="big">${ok}/${L.length}</span><p style="margin:0">${avant != null ? `Au diagnostic d’entrée, tu avais ${pc(avant / p.diagnostic.length)}${NB}% de bonnes réponses${NB}; aujourd’hui, ${pc(ok / L.length)}${NB}%. ` : ''}${ok === L.length ? 'Toutes les notions du parcours sont acquises.' : 'Les questions manquées te montrent les étapes à revoir.'}</p><div class="row"><a class="btn ghost" href="#parcours-${pid}">Revenir au plan</a></div></div>`;
+        return;
+      }
       const st = statuts(pid), cnt = v => Object.values(st).filter(x => x === v).length;
       document.getElementById('n-d-res').innerHTML = `<div class="result"><span class="big">${ok}/${p.diagnostic.length}</span><p style="margin:0">Notions acquises${NB}: ${cnt('acquis')} · fragiles${NB}: ${cnt('fragile')} · à travailler${NB}: ${cnt('travail')}. Ton parcours commence par les notions à travailler.</p><div class="row"><a class="btn" href="#etape-${pid}-${premiereAFaire(pid)}">Commencer mon parcours →</a><a class="btn ghost" href="#parcours-${pid}">Voir le plan</a></div></div>`;
       return;
@@ -4667,16 +5147,17 @@ const LABO = (function () {
   });
 
   /* fond sable dans le parcours FLE */
-  const fleFond = () => document.documentElement.classList.toggle('fle', /^#(parcours|diag|etape)-nfle/.test(location.hash));
+  const fleFond = () => document.documentElement.classList.toggle('fle', /^#(parcours|diag|sortie|etape)-nfle/.test(location.hash));
   window.addEventListener('hashchange', fleFond);
 
   window.PARC2 = { cartes, flat, progres, roles, statuts, ERR, DOM, NP };
   vues.parcours2 = h => {
     fleFond();
-    const m = h.match(/^(parcours|diag|etape)-(n6|n5|n4|n3|nfle)(?:-(\d+))?$/); if (!m || !NP[m[2]]) return null;
+    const m = h.match(/^(parcours|diag|sortie|etape)-(n6|n5|n4|n3|nfle)(?:-(\d+))?$/); if (!m || !NP[m[2]]) return null;
     if (m[1] === 'parcours') return plan(m[2]);
     if (NP[m[2]].enPreparation) return plan(m[2]);
     if (m[1] === 'diag') return diag(m[2]);
+    if (m[1] === 'sortie') return NP[m[2]].sortie ? diag(m[2], true) : plan(m[2]);
     return etape(m[2], Number(m[3] || 0));
   };
 })();
