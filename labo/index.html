@@ -3249,7 +3249,7 @@ const LABO = (function () {
   const vues = {};
   const RUBRIQUES = [
     ['accueil', 'Accueil'], ['parcours', 'Parcours'], ['approfondissement', 'Approfondissement'],
-    ['entrainements', 'Entrainements'], ['ceintures', 'Ceintures'], ['memos', 'Mémos']
+    ['entrainements', 'Entrainements'], ['ceintures', 'Ceintures'], ['memos', 'Aide'] /* « Aide » : Mémos + Notions (Augustin, 22/11/2026) */
   ];
   function rubriqueDe(h) {
     if (!h || h === 'accueil') return 'accueil';
@@ -3506,7 +3506,7 @@ const LABO = (function () {
       <span id="reset-zone" hidden><span class="small">Tout effacer sur cet appareil${NB}?</span> <button class="btn small" type="button" id="reset-do">Oui, effacer</button></span></section></div>`;
   };
   /* Notions par niveau : la page de l'appli des flashcards ; les lots s'ouvrent dans les flashcards */
-  const fcpBar = h => `<nav class="fcp-bar" aria-label="Mémos et notions"><a href="#memos"${h === 'memos' ? ' aria-current="page"' : ''}>Mémos</a><a href="#notions"${h === 'notions' ? ' aria-current="page"' : ''}>Notions par niveau</a></nav>`;
+  const fcpBar = h => `<nav class="fcp-bar" aria-label="Aide"><a href="#memos"${h === 'memos' ? ' aria-current="page"' : ''}>Mémos</a><a href="#notions"${h === 'notions' ? ' aria-current="page"' : ''}>Notions</a></nav>`;
   vues.notions = h => h === 'notions' ? `${fcpBar('notions')}<div class="fcp">${FCP.notionsHTML(true, S.niveau)}</div>` : null;
   document.addEventListener('click', e => {
     const lv = e.target.closest('[data-nv-lv]');
