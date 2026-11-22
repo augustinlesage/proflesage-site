@@ -2905,7 +2905,7 @@ const LABO = (function () {
   const vues = {};
   const RUBRIQUES = [
     ['accueil', 'Accueil'], ['parcours', 'Parcours'], ['approfondissement', 'Approfondissement'],
-    ['entrainements', 'Entraînements'], ['ceintures', 'Ceintures'], ['badges', 'Badges'], ['memos', 'Mémos']
+    ['entrainements', 'Entraînements'], ['ceintures', 'Ceintures'], ['memos', 'Mémos']
   ];
   function rubriqueDe(h) {
     if (!h || h === 'accueil') return 'accueil';
@@ -4127,7 +4127,7 @@ ${nouveau ? '<label class="field">Tape-le une deuxième fois<input id="arr-pin2"
     const r = document.querySelector('#labo .top-right'); if (!r || document.getElementById('compte')) return;
     const html = compte
       ? `<div class="compte" id="compte"><button type="button" class="compte-b" id="compte-b" aria-expanded="false"><span class="compte-n">${esc(compte.prenom)}</span><span class="compte-c">${esc(compte.classe)}</span></button>
-<div class="compte-menu" id="compte-menu" hidden><p class="small"><span id="compte-etat"></span></p><button type="button" class="btn" id="compte-out">Ce n’est pas moi / Se déconnecter</button></div></div>`
+<div class="compte-menu" id="compte-menu" hidden><a class="btn ghost compte-badges" href="#badges">Mes badges</a><p class="small"><span id="compte-etat"></span></p><button type="button" class="btn" id="compte-out">Ce n’est pas moi / Se déconnecter</button></div></div>`
       : `<div class="compte" id="compte"><button type="button" class="compte-b" id="compte-in"><span class="compte-n">Se connecter</span></button></div>`;
     r.insertAdjacentHTML('afterbegin', html);
     const m = document.getElementById('compte-menu');
@@ -4135,6 +4135,8 @@ ${nouveau ? '<label class="field">Tape-le une deuxième fois<input id="arr-pin2"
       document.getElementById('compte-b').addEventListener('click', ev => { m.hidden = !m.hidden; ev.currentTarget.setAttribute('aria-expanded', String(!m.hidden)); });
       document.getElementById('compte-out').addEventListener('click', () => { envoyer(); setTimeout(() => deconnexion(false), 400); });
       document.addEventListener('click', ev => { if (!m.hidden && !ev.target.closest('#compte')) m.hidden = true; });
+      /* « Badges » sous le nom de l'élève (Augustin, 22/11/2026) : le menu se referme en ouvrant la page */
+      m.querySelector('.compte-badges').addEventListener('click', () => { m.hidden = true; document.getElementById('compte-b').setAttribute('aria-expanded', 'false'); });
       pastille();
     } else document.getElementById('compte-in').addEventListener('click', () => { try { sessionStorage.removeItem('labo.invite'); } catch (x) { } location.reload(); });
   }
