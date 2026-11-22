@@ -377,11 +377,11 @@ html.dys .tw tr:nth-child(even) td{background:transparent}
 .arr-noms{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
 .arr-nom{font:inherit;font-weight:700;font-size:1rem;padding:14px 10px;border-radius:var(--r);border:1px solid var(--line);background:var(--sheet);color:var(--ink);cursor:pointer;text-align:center}
 .arr-nom:hover,.arr-nom:focus-visible{border-color:var(--brick);outline:none;box-shadow:0 0 0 3px var(--brick-soft)}
-.compte{position:relative;flex:none}
+.compte{position:relative;flex:none;margin-left:auto}
 .compte-b{font:inherit;display:inline-flex;flex-direction:column;align-items:flex-start;line-height:1.1;padding:5px 12px;border-radius:999px;border:1px solid var(--line);background:var(--sheet);color:var(--ink);cursor:pointer;max-width:150px}
 .compte-n{font-weight:700;font-size:.85rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 .compte-c{font-size:.7rem;color:var(--muted)}
-.compte-menu{position:absolute;left:0;top:calc(100% + 6px);z-index:30;background:var(--sheet);border:1px solid var(--line);border-radius:var(--r);padding:12px;display:flex;flex-direction:column;gap:8px;width:230px;box-shadow:0 8px 24px rgba(0,0,0,.12)}
+.compte-menu{position:absolute;right:0;top:calc(100% + 6px);z-index:30;background:var(--sheet);border:1px solid var(--line);border-radius:var(--r);padding:12px;display:flex;flex-direction:column;gap:8px;width:230px;box-shadow:0 8px 24px rgba(0,0,0,.12)}
 .compte-menu[hidden]{display:none}
 .compte-menu p{margin:0;color:var(--muted)}
 #compte-etat[data-s="ok"]::before{content:"✓ ";color:var(--sage,#5b8a6b)}
@@ -3082,7 +3082,7 @@ const LABO = (function () {
   <section class="intro">
     <div class="lead">
       <div class="eyebrow">Bienvenue</div>
-      <h2>Comprendre la langue, s’entraîner, puis le prouver.</h2>
+      <h2>Comprendre la langue et s’entraîner.</h2>
       <p>Commence par un parcours${NB}: il repère ce qui te manque. Les approfondissements et les entraînements t’aident à le travailler, et les ceintures certifient ce que tu sais.</p>
       <div class="levels-row">${niveauxHTML('levels')}<span class="hint">Mon niveau</span></div>
     </div>
@@ -4174,7 +4174,7 @@ ${nouveau ? '<label class="field">Tape-le une deuxième fois<input id="arr-pin2"
       ? `<div class="compte" id="compte"><button type="button" class="compte-b" id="compte-b" aria-expanded="false"><span class="compte-n">${esc(compte.prenom)}</span><span class="compte-c">${esc(compte.classe)}</span></button>
 <div class="compte-menu" id="compte-menu" hidden><a class="btn ghost compte-badges" href="#badges">Mes badges</a><p class="small"><span id="compte-etat"></span></p><button type="button" class="btn" id="compte-out">Ce n’est pas moi / Se déconnecter</button></div></div>`
       : `<div class="compte" id="compte"><button type="button" class="compte-b" id="compte-in"><span class="compte-n">Se connecter</span></button></div>`;
-    r.insertAdjacentHTML('afterbegin', html);
+    r.insertAdjacentHTML('beforebegin', html); /* en haut à droite de la page, sur la ligne du titre (Augustin, 22/11/2026) */
     const m = document.getElementById('compte-menu');
     if (compte) {
       document.getElementById('compte-b').addEventListener('click', ev => { m.hidden = !m.hidden; ev.currentTarget.setAttribute('aria-expanded', String(!m.hidden)); });
