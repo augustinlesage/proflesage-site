@@ -388,6 +388,22 @@ html.dys .tw tr:nth-child(even) td{background:transparent}
 .fcp-bar a[aria-current="page"]{background:var(--ink);border-color:var(--ink);color:var(--sheet)}
 .labo-about{margin-top:26px}
 
+/* Mémos réécrits (22/11/2026) : règles des explications des flashcards */
+:root{--ct:#1d5c96;--err:#b25751}
+:root[data-theme="dark"]{--ct:#8fbbea;--err:#ec8f85}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ct:#8fbbea;--err:#ec8f85}}
+html.dys{--ct:#1d1d1d}
+.memos i.ct{color:var(--ct);font-style:italic}
+.memos em.fx{font-style:inherit;font-weight:700;color:inherit}
+.memos .err{color:var(--err);font-style:italic}
+.memos b{font-weight:700;color:var(--ink)}
+.memos .tw td{font-weight:400}
+.memos .tw td:first-child{font-weight:700}
+.memos .memo-lead{margin:4px 0 10px}
+.memos .memo-note{margin:8px 0 0;font-size:.92rem;color:var(--muted)}
+.memos .memo-note b{color:var(--ink)}
+@media (max-width:600px){.memos .tw table,.memos .tw tbody,.memos .tw tr,.memos .tw td{display:block;width:auto}.memos .tw tr:first-child{display:none}.memos .tw tr{border-top:1px solid var(--line);padding:8px 10px}.memos .tw tr:nth-child(2){border-top:0}.memos .tw td{border:0!important;padding:2px 0;background:transparent!important}.memos .tw td[data-l]:not(:first-child)::before{content:attr(data-l);display:block;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-top:4px}.memos .tw td:first-child{font-size:1rem}.memos .tw tr:nth-child(even){background:color-mix(in srgb,var(--soft) 22%,var(--sheet))}}
+
 /* Espace professeur */
 .p-tabs{display:flex;gap:6px;flex-wrap:wrap}
 .p-tabs button{font:inherit;font-weight:600;font-size:.9rem;padding:6px 14px;border-radius:999px;border:1px solid var(--line);background:var(--sheet);color:var(--ink);cursor:pointer}
