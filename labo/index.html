@@ -4469,7 +4469,9 @@ const LABO = (function () {
     const r0 = box.getBoundingClientRect(), a = box.querySelector(`[data-g="${from}"]`).getBoundingClientRect(), b = box.querySelector(`[data-g="${to}"]`).getBoundingClientRect();
     const x1 = a.left + a.width / 2 - r0.left, x2 = b.left + b.width / 2 - r0.left, y = Math.min(a.top, b.top) - r0.top;
     svg.setAttribute('viewBox', `0 0 ${r0.width} ${r0.height}`);
-    svg.innerHTML = `<defs><marker id="fl-m" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="currentColor"/></marker></defs><path d="M${x1} ${y + 2} C ${x1} ${y - 22}, ${x2} ${y - 22}, ${x2} ${y + 2}" fill="none" stroke="currentColor" stroke-width="2" marker-end="url(#fl-m)"/>`;
+    const dx = x2 - x1, h = Math.min(34, 18 + Math.abs(dx) / 12);
+    /* arc : départ et arrivée en biais, la pointe suit la courbe */
+    svg.innerHTML = `<defs><marker id="fl-m" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="currentColor"/></marker></defs><path d="M${x1} ${y + 2} C ${x1 + dx * 0.25} ${y - h}, ${x2 - dx * 0.25} ${y - h}, ${x2} ${y + 2}" fill="none" stroke="currentColor" stroke-width="2" marker-end="url(#fl-m)"/>`;
   }
   /* étiquettes à glisser-déposer (souris ou doigt) ; un toucher sur l’étiquette puis sur le groupe marche aussi */
   function poserEtq(slot, v) {
