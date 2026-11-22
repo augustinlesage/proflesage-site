@@ -15,7 +15,7 @@ Ce script prend ce fichier unique et produit, dans le dossier cible :
 Usage : python3 outils/alleger_flashcards.py "Flashcards - élèves.html" flashcards/
 (le fichier source doit déjà contenir le script FC_BILAN_API.)
 """
-import base64, hashlib, io, json, os, re, sys
+import base64, hashlib, io, json, os, re, subprocess, sys
 
 try:
     from PIL import Image
@@ -110,6 +110,13 @@ def main(src, dest):
 
     print('index.html : %.2f Mo (avant %.2f Mo)' % (len(s.encode()) / 1e6, os.path.getsize(src) / 1e6))
     print('a/ : %d fichiers, %.2f Mo' % (len(ecrits), sum(ecrits.values()) / 1e6))
+
+    # 6. Liste des lots pour le Laboratoire (rubrique Entraînements) : lots.json
+    try:
+        subprocess.run(['node', os.path.join(os.path.dirname(os.path.abspath(__file__)), 'lots_flashcards.js'),
+                        os.path.join(dest, 'index.html'), os.path.join(dest, 'lots.json')], check=True)
+    except Exception as e:
+        print('ATTENTION : lots.json non mis à jour (%s) ; lance outils/lots_flashcards.js à la main.' % e)
 
 
 SW_REG = """<script>
