@@ -293,7 +293,7 @@ function eleve(string $action, array $body): void {
     if (!is_array($b) || strlen((string) json_encode($b)) > MAX_BILAN) erreur('Bilan invalide.');
     $ts = (string) (int) round(microtime(true) * 1000);
     ecrireJ("bilans/{$c['id']}/{$e['id']}/$ts.json", ['recu' => maintenant(), 'bilan' => $b]);
-    ajouterJournal($c['id'], $e['id'], [['ts' => maintenant(), 't' => 'bilan', 'cle' => $ts, 'lots' => count($b['lots'] ?? [])]]);
+    integrerBilan($c['id'], $e['id'], $b, maintenant(), [['ts' => maintenant(), 't' => 'bilan', 'cle' => $ts, 'lots' => count($b['lots'] ?? [])], ['ts' => maintenant(), 't' => 'bilan-integre', 'cle' => $ts, 'import' => 1]]);
     $fs = glob(chemin("bilans/{$c['id']}/{$e['id']}/*.json")) ?: []; sort($fs);
     foreach (array_slice($fs, 0, max(0, count($fs) - BILANS_PAR_ELEVE)) as $f) @unlink($f);
     repondre(['ok' => true, 'prenom' => $e['prenom'], 'classe' => $c['nom']]);
@@ -338,6 +338,7 @@ function prof(string $action, array $body): void {
     $cl = $body['cl']; $out = [];
     $c = classeParId($cl);
     foreach (($c['eleves'] ?? []) as $e) {
+      reparerBilans($cl, $e['id']);
       $r = lireJ(recRel($cl, $e['id']));
       $out[] = ['el' => $e['id'], 'etat' => $r ? etatPropre($r['etat'] ?? []) : null, 'cree' => $r['cree'] ?? null, 'vu' => $r['vu'] ?? null, 'maj' => $r['maj'] ?? null, 'code' => codeBilansDe($r, $e['id']) !== '', 'bcode' => codeBilansDe($r, $e['id']),
         'journal' => lireJournal($cl, $e['id']), 'bilans' => listeBilans($cl, $e['id'])];
@@ -421,6 +422,47 @@ function prof(string $action, array $body): void {
 /* Import (ancien serveur Netlify ou sauvegarde) : on fusionne, on ne remplace jamais une progression plus récente.
    Les bilans et l'état importés produisent des lignes de journal datées (marquées « import »). */
 function tsDeFr($d, string $repli): string { return preg_match('/^(\d\d)\/(\d\d)\/(\d{4})$/', (string) $d, $m) ? "{$m[3]}-{$m[2]}-{$m[1]}T12:00:00.000Z" : $repli; }
+/* Un bilan reçu (envoyé par l'élève sans connexion, ou importé) alimente aussi le journal (séries, test) et la progression
+   de l'élève, sinon le tableau de bord afficherait « Aucune série terminée ». Sans doublon : une série déjà présente
+   (même lot, date, score) n'est pas réécrite. Renvoie le nombre de lignes ajoutées au journal. */
+function integrerBilan(string $cl, string $el, array $bilan, string $recu, array $evs = []): int {
+  $recu = $recu ?: maintenant();
+  return avecVerrou("$cl-$el", function () use ($cl, $el, $bilan, $recu, $evs) {
+    $deja = []; foreach (lireJournal($cl, $el) as $e) { $t = $e['t'] ?? '';
+      if ($t === 'serie') $deja[($e['id'] ?? '') . '|' . ($e['date'] ?? '') . '|' . ($e['ok'] ?? '') . '|' . ($e['n'] ?? '')] = 1;
+      if ($t === 'test') $deja['test|' . ($e['date'] ?? '')] = 1; }
+    $res = [];
+    foreach (($bilan['lots'] ?? []) as $l) { if (!is_array($l) || empty($l['id']) || empty($l['n'])) continue;
+      $res[$l['id']] = array_intersect_key($l, array_flip(['ok', 'n', 'date', 'sec', 'tot', 'mode', 'val', 'nb', 'best', 'nom', 'niv']));
+      $k = $l['id'] . '|' . ($l['date'] ?? '') . '|' . ($l['ok'] ?? '') . '|' . $l['n']; if (isset($deja[$k])) continue; $deja[$k] = 1;
+      $e = ['ts' => tsDeFr($l['date'] ?? '', $recu), 't' => 'serie', 'id' => (string) $l['id'], 'import' => 1];
+      foreach (['ok', 'n', 'date', 'sec', 'tot', 'mode', 'val', 'nb', 'best', 'nom', 'niv'] as $kk) if (array_key_exists($kk, $l)) $e[$kk] = $l[$kk];
+      $evs[] = $e; }
+    $t = $bilan['test'] ?? null;
+    if (is_array($t) && !empty($t['doms']) && is_array($t['doms']) && !isset($deja['test|' . ($t['date'] ?? '')])) {
+      $doms = []; foreach ($t['doms'] as $k => $d) $doms[$k] = is_array($d) ? ($d['status'] ?? '') : (string) $d;
+      $evs[] = ['ts' => tsDeFr($t['date'] ?? '', $recu), 't' => 'test', 'date' => $t['date'] ?? '', 'cls' => $t['cls'] ?? '', 'doms' => $doms, 'import' => 1]; }
+    /* la progression de l'élève reprend aussi ces résultats (utile quand il se connecte sur un autre appareil) */
+    $neuf = ['labo' => [], 'fc' => ['res' => $res]]; if (is_array($t) && !empty($t['doms'])) $neuf['fc']['test'] = $t;
+    if ($res || count($neuf['fc']) > 1) {
+      $rec = lireJ(recRel($cl, $el)) ?: ['etat' => ['labo' => [], 'fc' => []], 'cree' => $recu, 'pv' => 0];
+      $rec['etat'] = fusion(etatPropreA($rec['etat'] ?? []), $neuf); ecrireJ(recRel($cl, $el), $rec);
+    }
+    usort($evs, fn($x, $y) => strcmp($x['ts'], $y['ts']));
+    ajouterJournal($cl, $el, $evs); return count($evs);
+  });
+}
+/* Réparation (23/11/2026) : les bilans envoyés sans connexion avant ce correctif n'avaient pas produit de séries. */
+function reparerBilans(string $cl, string $el): void {
+  $f = chemin("bilans/$cl/$el"); if (!is_dir($f)) return;
+  $J = lireJournal($cl, $el); $faits = [];
+  foreach ($J as $e) if (($e['t'] ?? '') === 'bilan-integre') $faits[(string) ($e['cle'] ?? '')] = 1;
+  $fs = glob("$f/*.json") ?: []; sort($fs);
+  foreach ($fs as $g) { $cle = basename($g, '.json'); if (isset($faits[$cle])) continue;
+    $r = json_decode((string) file_get_contents($g), true);
+    if (is_array($r) && is_array($r['bilan'] ?? null)) integrerBilan($cl, $el, $r['bilan'], (string) ($r['recu'] ?? ''), [['ts' => ($r['recu'] ?? '') ?: maintenant(), 't' => 'bilan-integre', 'cle' => $cle, 'import' => 1]]);
+  }
+}
 function importer(array $D): void {
   $n = ['classes' => 0, 'eleves' => 0, 'bilans' => 0, 'journal' => 0];
   if (!empty($D['classes']['list']) && is_array($D['classes']['list'])) {
@@ -439,24 +481,7 @@ function importer(array $D): void {
     if (!okId($cl) || !okId($el) || !preg_match('/^\d+$/', $ts) || !is_array($b['bilan'] ?? null)) continue;
     $rel = "bilans/$cl/$el/$ts.json"; if (is_file(chemin($rel))) continue;
     ecrireJ($rel, ['recu' => $b['recu'] ?? '', 'bilan' => $b['bilan']]); $n['bilans']++;
-    $evs = [['ts' => $b['recu'] ?: maintenant(), 't' => 'bilan', 'cle' => $ts, 'lots' => count($b['bilan']['lots'] ?? []), 'import' => 1]];
-    $deja = []; foreach (lireJournal($cl, $el) as $e) if (($e['t'] ?? '') === 'serie') $deja[($e['id'] ?? '') . '|' . ($e['date'] ?? '') . '|' . ($e['ok'] ?? '') . '|' . ($e['n'] ?? '')] = 1;
-    foreach (($b['bilan']['lots'] ?? []) as $l) { if (!is_array($l) || empty($l['id']) || empty($l['n'])) continue;
-      $k = $l['id'] . '|' . ($l['date'] ?? '') . '|' . ($l['ok'] ?? '') . '|' . $l['n']; if (isset($deja[$k])) continue; $deja[$k] = 1;
-      $e = ['ts' => tsDeFr($l['date'] ?? '', $b['recu'] ?? maintenant()), 't' => 'serie', 'id' => (string) $l['id'], 'import' => 1];
-      foreach (['ok', 'n', 'date', 'sec', 'tot', 'mode', 'val', 'nb', 'best', 'nom', 'niv'] as $kk) if (array_key_exists($kk, $l)) $e[$kk] = $l[$kk];
-      $evs[] = $e; }
-    /* la progression de l'élève reprend aussi ces résultats (utile quand il se connecte sur un autre appareil) */
-    $res = []; foreach (($b['bilan']['lots'] ?? []) as $l) if (is_array($l) && !empty($l['id']) && !empty($l['n'])) $res[$l['id']] = array_intersect_key($l, array_flip(['ok', 'n', 'date', 'sec', 'tot', 'mode', 'val', 'nb', 'best', 'nom', 'niv']));
-    $neuf = ['labo' => [], 'fc' => ['res' => $res]]; if (!empty($b['bilan']['test']['doms'])) $neuf['fc']['test'] = $b['bilan']['test'];
-    avecVerrou("$cl-$el", function () use ($cl, $el, $neuf, $b) {
-      $rec = lireJ(recRel($cl, $el)) ?: ['etat' => ['labo' => [], 'fc' => []], 'cree' => $b['recu'] ?? maintenant(), 'pv' => 0];
-      $rec['etat'] = fusion(etatPropreA($rec['etat'] ?? []), $neuf); ecrireJ(recRel($cl, $el), $rec);
-    });
-    if (!empty($b['bilan']['test']['doms'])) { $t = $b['bilan']['test']; $doms = []; foreach ($t['doms'] as $k => $d) $doms[$k] = $d['status'] ?? '';
-      $evs[] = ['ts' => tsDeFr($t['date'] ?? '', $b['recu'] ?? maintenant()), 't' => 'test', 'date' => $t['date'] ?? '', 'cls' => $t['cls'] ?? '', 'doms' => $doms, 'import' => 1]; }
-    usort($evs, fn($x, $y) => strcmp($x['ts'], $y['ts']));
-    avecVerrou("$cl-$el", fn() => ajouterJournal($cl, $el, $evs)); $n['journal'] += count($evs);
+    $n['journal'] += integrerBilan($cl, $el, $b['bilan'], $b['recu'] ?? '', [['ts' => $b['recu'] ?: maintenant(), 't' => 'bilan', 'cle' => $ts, 'lots' => count($b['bilan']['lots'] ?? []), 'import' => 1], ['ts' => $b['recu'] ?: maintenant(), 't' => 'bilan-integre', 'cle' => $ts, 'import' => 1]]);
   }
   foreach (($D['eleves'] ?? []) as $x) {
     $cl = $x['cl'] ?? ''; $el = $x['el'] ?? ''; if (!okId($cl) || !okId($el)) continue;
