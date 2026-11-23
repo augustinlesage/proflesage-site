@@ -2051,7 +2051,7 @@ const LABO_TDB = (function () {
   function analyse(x, ctx, noms) {
     const R = ctx.BAR || {};
     const vMin = +R.vMin || 2, cible = +R.cible || 45;
-    const J = (x.journal || []).slice().sort((a, b) => (a.ts || '').localeCompare(b.ts || ''));
+    const J = (x.journal || []).filter(e => e.t !== 'bilan-integre').sort((a, b) => (a.ts || '').localeCompare(b.ts || ''));
     const etat = x.etat || { labo: {}, fc: {} };
     /* séries : un événement est une nouvelle série si le nombre de séries augmente (ou, sans ce nombre, si le résultat change) ;
        sinon c'est du temps passé à revoir les cartes ratées */
