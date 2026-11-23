@@ -111,6 +111,14 @@ function jeton(string $cl, string $el, int $pv): string {
   $exp = (int) round(microtime(true) * 1000) + JOURS_JETON * 86400000; $base = "$cl.$el.$pv.$exp";
   return $base . '.' . signe($base);
 }
+/* « Mes bilans » (lot 6) : code haché avec le secret du serveur, jeton d'ouverture valable 30 minutes */
+function hBilans(string $el, string $code): string { return hash_hmac('sha256', "bilans/$el/$code", secret()); }
+function jetonBilans(string $cl, string $el): string { $base = "b.$cl.$el." . ((int) round(microtime(true) * 1000) + 1800000); return $base . '.' . signe($base); }
+function jetonBilansOk($t, string $cl, string $el): bool {
+  $p = explode('.', (string) $t); if (count($p) !== 5 || $p[0] !== 'b' || $p[1] !== $cl || $p[2] !== $el) return false;
+  return hash_equals(signe(implode('.', array_slice($p, 0, 4))), $p[4]) && (float) $p[3] >= microtime(true) * 1000;
+}
+function codeBilansDe(array $rec, string $el): string { return !empty($rec['bperso']) ? 'perso' : (!empty(lireJ('codes-bilans.json', [])[$el]) ? 'cahier' : ''); }
 function lireJeton($t): ?array {
   $p = explode('.', (string) $t); if (count($p) !== 5) return null;
   $base = implode('.', array_slice($p, 0, 4));
@@ -143,7 +151,14 @@ function fusion($A, $B): array {
     if (!$v || (!empty($s['done']) && empty($v['done'])) || ((bool) ($s['done'] ?? false) === (bool) ($v['done'] ?? false) && (float) ($s['score'] ?? 0) >= (float) ($v['score'] ?? 0))) $P[$k] = $s; }
   $labo = array_merge($la, $lb);
   $labo['ceintures'] = $C ?: new stdClass();
-  $labo['parcours'] = array_merge($pa, $pb, ['prog' => $P ?: new stdClass(), 'diag' => (array_merge(objA($pa['diag'] ?? []), objA($pb['diag'] ?? [])) ?: new stdClass()), 'last' => $pb['last'] ?? ($pa['last'] ?? null)]);
+  /* « Mes bilans » (lot 6) : erreurs par type (compte le plus haut), historique des diagnostics (réunion), diagnostics de sortie */
+  $E = objA($pa['err'] ?? []);
+  foreach (objA($pb['err'] ?? []) as $t => $e) { $v = $E[$t] ?? null; if (!$v || (float) (objA($e)['n'] ?? 0) >= (float) (objA($v)['n'] ?? 0)) $E[$t] = $e; }
+  $H = []; $vu = [];
+  foreach (array_merge(is_array($pa['diagH'] ?? null) ? array_values($pa['diagH']) : [], is_array($pb['diagH'] ?? null) ? array_values($pb['diagH']) : []) as $h) {
+    if (!is_array($h)) continue; $c = implode('|', [$h['pid'] ?? '', $h['k'] ?? '', $h['date'] ?? '', $h['ok'] ?? '']); if (isset($vu[$c])) continue; $vu[$c] = 1; $H[] = $h; }
+  usort($H, fn($x, $y) => jourFr($x['date'] ?? '') <=> jourFr($y['date'] ?? ''));
+  $labo['parcours'] = array_merge($pa, $pb, ['prog' => $P ?: new stdClass(), 'diag' => (array_merge(objA($pa['diag'] ?? []), objA($pb['diag'] ?? [])) ?: new stdClass()), 'sortie' => (array_merge(objA($pa['sortie'] ?? []), objA($pb['sortie'] ?? [])) ?: new stdClass()), 'err' => $E ?: new stdClass(), 'diagH' => array_slice($H, -30), 'last' => $pb['last'] ?? ($pa['last'] ?? null)]);
   foreach (['exercices', 'lecons'] as $k) if (isset($la[$k]) || isset($lb[$k])) $labo[$k] = array_merge(objA($la[$k] ?? []), objA($lb[$k] ?? [])) ?: new stdClass();
   $R = objA($fa['res'] ?? []);
   foreach (objA($fb['res'] ?? []) as $k => $s) { $v = $R[$k] ?? null; if (!$v || plusRecent($s, $v)) $R[$k] = $s; }
@@ -243,6 +258,36 @@ function eleve(string $action, array $body): void {
       repondre(['ok' => true, 'etat' => etatPropre($apres)]);
     });
   }
+  /* « Mes bilans » (lot 6, 23/11/2026) : code à 4 chiffres propre à cette page. Par défaut, celui que le Cahier de suivi envoie
+     par le connecteur (JJMM de la date de naissance), gardé haché dans codes-bilans.json ; l'élève peut le changer (bperso) ;
+     le professeur peut revenir au code par défaut (prof/reinit-bilans). Sans code par défaut, l'élève en choisit un à la première ouverture. */
+  if ($action === 'bilans-code' || $action === 'bilans-changer') {
+    $j = lireJeton($body['jeton'] ?? ''); if (!$j) erreur('Session expirée : reconnecte-toi.', 401);
+    $code = (string) ($body['code'] ?? ''); if (!preg_match('/^\d{4}$/', $code)) erreur('Le code, c’est 4 chiffres.');
+    avecVerrou("{$j['cl']}-{$j['el']}", function () use ($j, $action, $body, $code) {
+      $cl = $j['cl']; $el = $j['el']; $rec = lireJ(recRel($cl, $el)); $now = microtime(true) * 1000;
+      if (!$rec || (int) ($rec['pv'] ?? 0) !== $j['pv']) erreur('Session expirée : reconnecte-toi.', 401);
+      if ($action === 'bilans-changer') {
+        if (!jetonBilansOk($body['bjeton'] ?? '', $cl, $el)) erreur('Tes bilans se sont refermés : retape ton code.', 403);
+        $rec['bperso'] = hBilans($el, $code); ajouterJournal($cl, $el, [['ts' => maintenant(), 't' => 'code', 'quoi' => 'de « Mes bilans » changé par l’élève']]);
+        ecrireJ(recRel($cl, $el), $rec); repondre(['ok' => true, 'bjeton' => jetonBilans($cl, $el)]);
+      }
+      $h = (string) (($rec['bperso'] ?? '') ?: (lireJ('codes-bilans.json', [])[$el] ?? ''));
+      if ($h === '') {
+        if (empty($body['nouveau'])) repondre(['nouveau' => true]);
+        $rec['bperso'] = hBilans($el, $code); ajouterJournal($cl, $el, [['ts' => maintenant(), 't' => 'code', 'quoi' => 'de « Mes bilans » choisi par l’élève']]);
+        ecrireJ(recRel($cl, $el), $rec); repondre(['bjeton' => jetonBilans($cl, $el)]);
+      }
+      if (($rec['bbloque'] ?? 0) > $now) erreur('Trop d’essais. Réessaie dans ' . ceil(($rec['bbloque'] - $now) / 60000) . ' min ou demande à ton professeur.', 429);
+      if (!hash_equals($h, hBilans($el, $code))) {
+        $rec['bessais'] = ($rec['bessais'] ?? 0) + 1;
+        if ($rec['bessais'] >= 5) { $rec['bbloque'] = $now + 600000; $rec['bessais'] = 0; }
+        ecrireJ(recRel($cl, $el), $rec); erreur('Ce n’est pas le bon code.', 403);
+      }
+      if (!empty($rec['bessais']) || !empty($rec['bbloque'])) { $rec['bessais'] = 0; $rec['bbloque'] = 0; ecrireJ(recRel($cl, $el), $rec); }
+      repondre(['bjeton' => jetonBilans($cl, $el)]);
+    });
+  }
   if ($action === 'bilan') {
     $c = classeParCode($body['code'] ?? ''); $e = ($c && okId($body['el'] ?? null)) ? eleveDe($c, $body['el']) : null;
     if (!$e) erreur('Élève inconnu.', 404);
@@ -281,7 +326,7 @@ function prof(string $action, array $body): void {
       $cl = basename(dirname($f)); $el = basename($f, '.json');
       if (!empty($body['cl']) && $body['cl'] !== $cl) continue;
       $r = json_decode((string) file_get_contents($f), true); if (!$r) continue;
-      $out[] = ['cl' => $cl, 'el' => $el, 'etat' => etatPropre($r['etat'] ?? []), 'cree' => $r['cree'] ?? null, 'maj' => $r['maj'] ?? null, 'vu' => $r['vu'] ?? null, 'code' => !empty($r['pin']), 'bloque' => ($r['bloque'] ?? 0) > microtime(true) * 1000];
+      $out[] = ['cl' => $cl, 'el' => $el, 'etat' => etatPropre($r['etat'] ?? []), 'cree' => $r['cree'] ?? null, 'maj' => $r['maj'] ?? null, 'vu' => $r['vu'] ?? null, 'code' => !empty($r['pin']), 'bcode' => codeBilansDe($r, $el), 'bloque' => ($r['bloque'] ?? 0) > microtime(true) * 1000];
     }
     repondre(['eleves' => $out]);
   }
@@ -296,7 +341,7 @@ function prof(string $action, array $body): void {
     $c = classeParId($cl);
     foreach (($c['eleves'] ?? []) as $e) {
       $r = lireJ(recRel($cl, $e['id']));
-      $out[] = ['el' => $e['id'], 'etat' => $r ? etatPropre($r['etat'] ?? []) : null, 'cree' => $r['cree'] ?? null, 'vu' => $r['vu'] ?? null, 'maj' => $r['maj'] ?? null, 'code' => !empty($r['pin']),
+      $out[] = ['el' => $e['id'], 'etat' => $r ? etatPropre($r['etat'] ?? []) : null, 'cree' => $r['cree'] ?? null, 'vu' => $r['vu'] ?? null, 'maj' => $r['maj'] ?? null, 'code' => !empty($r['pin']), 'bcode' => $r ? codeBilansDe($r, $e['id']) : (!empty(lireJ('codes-bilans.json', [])[$e['id']]) ? 'cahier' : ''),
         'journal' => lireJournal($cl, $e['id']), 'bilans' => listeBilans($cl, $e['id'])];
     }
     repondre(['eleves' => $out, 'maintenant' => maintenant()]);
@@ -305,7 +350,7 @@ function prof(string $action, array $body): void {
     $k = $body['cle'] ?? ''; if (!is_string($k) || !preg_match('/^b\/([a-z0-9_-]+)\/([a-z0-9_-]+)\/(\d+)$/i', $k, $m)) erreur('Bilan inconnu.');
     @unlink(chemin("bilans/{$m[1]}/{$m[2]}/{$m[3]}.json")); repondre(['ok' => true]);
   }
-  if (in_array($action, ['reinit-code', 'effacer', 'valider'], true)) {
+  if (in_array($action, ['reinit-code', 'reinit-bilans', 'effacer', 'valider'], true)) {
     $cl = $body['cl'] ?? ''; $el = $body['el'] ?? ''; if (!okId($cl) || !okId($el)) erreur('Élève inconnu.');
     avecVerrou("$cl-$el", function () use ($action, $cl, $el, $body) {
       if ($action === 'effacer') {
@@ -314,7 +359,8 @@ function prof(string $action, array $body): void {
         repondre(['ok' => true]);
       }
       $r = lireJ(recRel($cl, $el)); if (!$r) erreur('Élève sans progression.', 404);
-      if ($action === 'reinit-code') { $r['pin'] = ''; $r['pv'] = ($r['pv'] ?? 0) + 1; $r['essais'] = 0; $r['bloque'] = 0; ajouterJournal($cl, $el, [['ts' => maintenant(), 't' => 'code', 'quoi' => 'remis à zéro']]); }
+      if ($action === 'reinit-bilans') { unset($r['bperso'], $r['bessais'], $r['bbloque']); ajouterJournal($cl, $el, [['ts' => maintenant(), 't' => 'code', 'quoi' => 'de « Mes bilans » remis par défaut']]); }
+      else if ($action === 'reinit-code') { $r['pin'] = ''; $r['pv'] = ($r['pv'] ?? 0) + 1; $r['essais'] = 0; $r['bloque'] = 0; ajouterJournal($cl, $el, [['ts' => maintenant(), 't' => 'code', 'quoi' => 'remis à zéro']]); }
       else {
         $avant = etatPropreA($r['etat'] ?? []);
         $s = $r['etat']['labo']['ceintures'][$body['ceinture'] ?? ''] ?? null;
@@ -328,7 +374,7 @@ function prof(string $action, array $body): void {
   }
   if ($action === 'exporter') { /* sauvegarde complète, à garder sur l'ordinateur du professeur */
     $el = []; foreach (glob(chemin('eleves/*/*.json')) ?: [] as $f) { $cl = basename(dirname($f)); $id = basename($f, '.json'); $r = json_decode((string) file_get_contents($f), true);
-      if ($r) { unset($r['pin']); $el[] = ['cl' => $cl, 'el' => $id, 'rec' => $r, 'journal' => lireJournal($cl, $id)]; } }
+      if ($r) { unset($r['pin'], $r['bperso']); $el[] = ['cl' => $cl, 'el' => $id, 'rec' => $r, 'journal' => lireJournal($cl, $id)]; } }
     $bi = []; foreach (glob(chemin('bilans/*/*/*.json')) ?: [] as $f) { $r = json_decode((string) file_get_contents($f), true);
       if ($r) $bi[] = ['cl' => basename(dirname($f, 2)), 'el' => basename(dirname($f)), 'ts' => basename($f, '.json'), 'recu' => $r['recu'] ?? '', 'bilan' => $r['bilan'] ?? null]; }
     repondre(['format' => 'labo-sauvegarde-1', 'date' => maintenant(), 'classes' => classes(), 'eleves' => $el, 'bilans' => $bi]);
@@ -530,9 +576,11 @@ function badgePropre($b, bool $tro): ?array {
 function recevoirBadgesCahier($args): array {
   $L = is_array($args['eleves'] ?? null) ? $args['eleves'] : null; if ($L === null) return ['ok' => false, 'erreur' => 'Liste « eleves » manquante.'];
   $connus = []; foreach (classes()['list'] as $c) foreach (($c['eleves'] ?? []) as $e) $connus[$e['id']] = 1;
-  $out = []; $ign = 0;
+  $out = []; $ign = 0; $codes = lireJ('codes-bilans.json', []); $codes = is_array($codes) ? $codes : []; $avant = $codes;
   foreach (array_slice($L, 0, 2000) as $x) {
     $el = (string) ($x['el'] ?? ''); if (!isset($connus[$el])) { $ign++; continue; }
+    /* code par défaut de « Mes bilans » (lot 6) : JJMM de la date de naissance, envoyé par le Cahier, jamais gardé en clair */
+    if (preg_match('/^\d{4}$/', (string) ($x['code'] ?? ''))) $codes[$el] = hBilans($el, (string) $x['code']);
     $out[$el] = ['n' => max(0, (int) ($x['n'] ?? 0)), 'dif' => max(0, (int) ($x['dif'] ?? 0)), 'pass' => max(0, (int) ($x['pass'] ?? 0)), 'actif' => !empty($x['actif']),
       'badges' => array_values(array_filter(array_map(fn($b) => badgePropre($b, false), array_slice((array) ($x['badges'] ?? []), 0, 300)))),
       'trophees' => array_values(array_filter(array_map(fn($b) => badgePropre($b, true), array_slice((array) ($x['trophees'] ?? []), 0, 50))))];
@@ -544,7 +592,8 @@ function recevoirBadgesCahier($args): array {
     'trophees' => array_values(array_filter(array_map(fn($b) => badgePropre($b, true), array_slice((array) ($K['trophees'] ?? []), 0, 60))))];
   else $cat = lireJ('cahier-badges.json', [])['catalogue'] ?? null;
   ecrireJ('cahier-badges.json', ['date' => maintenant(), 'eleves' => $out ?: new stdClass(), 'catalogue' => $cat]);
-  return ['ok' => true, 'eleves' => count($out), 'ignores' => $ign];
+  if ($codes !== $avant) ecrireJ('codes-bilans.json', $codes ?: new stdClass());
+  return ['ok' => true, 'eleves' => count($out), 'ignores' => $ign, 'codes' => count(array_intersect_key($codes, $out))];
 }
 /* Espace élève : badges du Laboratoire et des ceintures (calculés ici) + badges du Cahier */
 function badgesEleve(string $cl, string $el): array {
@@ -585,7 +634,7 @@ function mcpUn(array $q): ?array {
     'ico' => ['type' => 'string', 'description' => 'Tracés SVG de l’icône (viewBox 24)'], 'emoji' => ['type' => 'string'], 'n' => ['type' => 'integer'], 'date' => ['type' => 'string', 'description' => 'YYYY-MM-DD']], 'required' => ['id', 'lib']];
   $envoi = ['name' => 'envoyer_badges_cahier', 'title' => 'Envoyer les badges du Cahier au Laboratoire',
     'description' => "Remplace la copie des badges du Cahier de suivi gardée par le Laboratoire (badges obtenus et trophées de chaque élève, identifié par son id Laboratoire, et catalogue complet des badges), pour que chaque élève les voie dans son espace.",
-    'inputSchema' => ['type' => 'object', 'properties' => ['eleves' => ['type' => 'array', 'items' => ['type' => 'object', 'properties' => ['el' => ['type' => 'string'], 'n' => ['type' => 'integer'], 'dif' => ['type' => 'integer'], 'pass' => ['type' => 'integer'], 'actif' => ['type' => 'boolean'],
+    'inputSchema' => ['type' => 'object', 'properties' => ['eleves' => ['type' => 'array', 'items' => ['type' => 'object', 'properties' => ['el' => ['type' => 'string'], 'n' => ['type' => 'integer'], 'dif' => ['type' => 'integer'], 'pass' => ['type' => 'integer'], 'actif' => ['type' => 'boolean'], 'code' => ['type' => 'string', 'description' => 'Code par défaut de « Mes bilans » : 4 chiffres, JJMM de la date de naissance (gardé haché)'],
       'badges' => ['type' => 'array', 'items' => $b], 'trophees' => ['type' => 'array', 'items' => $b]], 'required' => ['el']]],
       'catalogue' => ['type' => 'object', 'description' => 'Catalogue complet du Cahier (badges obtenus ou non), pour montrer en gris ceux qui restent à gagner',
         'properties' => ['cats' => ['type' => 'array', 'items' => ['type' => 'string']], 'badges' => ['type' => 'array', 'items' => $b], 'trophees' => ['type' => 'array', 'items' => $b]]]], 'required' => ['eleves']],

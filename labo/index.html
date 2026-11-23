@@ -483,6 +483,35 @@ html.dys .q i.phr{background:none;text-decoration:underline;text-decoration-thic
 .n-couche>:not(summary){margin-left:16px;margin-right:16px}.n-couche[open]{padding-bottom:12px}
 .n-bases{border-left:4px solid var(--icon)}.n-defi{border-left:4px solid #e3b85a}
 .ex-resolu{background:var(--paper);border-radius:10px;padding:8px 12px;margin:8px 0}.ex-resolu ol{margin:4px 0;padding-left:20px}
+/* « Mes bilans » (lot 6) : espace élève (#bilans) et fiche élève du tableau de bord */
+.bilans{display:grid;gap:14px}
+.bl-sec h3{margin:0 0 4px;font-size:1.05rem}.bl-sec>.small.muted{margin:0 0 10px}
+.bl-doms{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.bl-doms li{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) auto;gap:10px;align-items:center}
+.bl-dn{display:flex;align-items:center;gap:8px;font-weight:600}
+.bl-barre{display:inline-block;width:calc(100% - 52px);max-width:160px;height:8px;border-radius:4px;background:var(--soft);vertical-align:middle;overflow:hidden;margin-right:6px}
+.bl-barre span{display:block;height:100%;border-radius:4px}
+.bl-barre .ok{background:#3f7d4e}.bl-barre .moy{background:#c48a1c}.bl-barre .ko{background:var(--brick)}
+.bl-pct{font-size:.85rem}
+.bl-nots{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.bl-ncol{border:1px solid var(--line);border-radius:var(--r);padding:10px 12px;border-top:4px solid var(--clay)}
+.bl-ncol.travail{border-top-color:var(--brick)}.bl-ncol.fragile{border-top-color:#c48a1c}.bl-ncol.acquis{border-top-color:#3f7d4e}
+.bl-ncol h4{margin:0 0 6px;font-size:.92rem;display:flex;justify-content:space-between}.bl-ncol h4 span{color:var(--muted)}
+.bl-ncol ul{margin:0;padding-left:18px;font-size:.9rem}.bl-ncol li{margin:2px 0}
+.bl-errs{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.bl-errs li{border-left:3px solid var(--brick);padding:4px 0 4px 12px}
+.bl-eh{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline}
+.bl-ex,.bl-errs .small{margin:4px 0 0}
+.bl-tab td.n{text-align:right;white-space:nowrap}
+.bl-plan{border-color:var(--icon)}
+.bl-plan ol{margin:0;padding-left:22px;display:grid;gap:8px}
+.bl-plan li>*{vertical-align:baseline}.bl-plan li{padding-right:56px;position:relative}
+.bl-min{position:absolute;right:0;top:0;font-size:.85rem;font-weight:600;color:var(--muted)}
+.bl-code{max-width:440px}.bl-outils{margin-top:14px}.bl-msg-ok{color:#3f7d4e;font-weight:600}
+@media (max-width:640px){.bl-nots{grid-template-columns:1fr}.bl-doms li{grid-template-columns:1fr auto}.bl-dv{grid-column:1/-1;grid-row:2}}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .bl-barre .ok{background:#6fb27f}:root:not([data-theme="light"]) .bl-ncol.acquis{border-top-color:#6fb27f}:root:not([data-theme="light"]) .bl-msg-ok{color:#6fb27f}}
+:root[data-theme="dark"] .bl-barre .ok{background:#6fb27f}:root[data-theme="dark"] .bl-ncol.acquis{border-top-color:#6fb27f}:root[data-theme="dark"] .bl-msg-ok{color:#6fb27f}
+html.dys .bl-ncol,html.dys .bl-errs li{border-width:2px}
 
 /* styles des pages de l'appli des flashcards (app.html) */
 .res-page{max-width:860px}
@@ -10466,6 +10495,7 @@ const LABO = (function () {
     if (h === 'memos' || h === 'notions') return 'memos'; /* « Notions par niveau » : avec les Mémos (Augustin, 22/11/2026) */
     if (/^(parcours|diag|etape)/.test(h)) return 'parcours';
     if (h === 'badges') return 'badges'; /* onglet « Badges » (Augustin, 22/11/2026) */
+    if (h === 'bilans') return 'bilans'; /* « Mes bilans » (lot 6) */
     if (/^(ceinture|test|passeport)/.test(h)) return 'ceintures';
     return h;
   }
@@ -10639,6 +10669,11 @@ const LABO = (function () {
      Rempli dans #pp-badges par serveur/sync.js quand l'élève est connecté ; les ceintures elles-mêmes restent dans l'onglet Ceintures (passeport). */
   vues.badges = h => h === 'badges' ? `<div class="page-h"><h2>Badges</h2><p>${S.prenom ? esc(S.prenom) + ' · ' : ''}Tous les badges à gagner : en couleur ceux que tu as obtenus, en gris ceux qui restent.</p></div>
     <div id="pp-badges"><p class="empty">Connecte-toi au Laboratoire pour voir tes badges.</p></div>` : null;
+  /* « Mes bilans » (refonte des parcours, lot 6) : calcul et affichage dans bilans.js. Version en ligne : serveur/sync.js
+     remplit #mes-bilans après le code à 4 chiffres (élève connecté) ; sans compte, la page montre directement les résultats de cet appareil. */
+  const bilansHTML = () => window.LABO_BILANS ? LABO_BILANS.html(LABO_BILANS.calc(S.parcours, LABO_BILANS.ref(), S.niveau)) : '';
+  vues.bilans = h => h === 'bilans' ? `<div class="page-h"><h2>Mes bilans</h2><p>${S.prenom ? esc(S.prenom) + ' · ' : ''}Où tu en es dans les parcours${NB}: ta réussite par domaine, tes notions, tes erreurs récurrentes, tes diagnostics et un plan pour ton prochain entrainement.</p></div>
+    <div id="mes-bilans">${window.LABO_API ? '<p class="small muted">Chargement…</p>' : bilansHTML()}</div>` : null;
   vues.appro = h => h === 'approfondissement' && window.PARC2 ? window.PARC2.approPage() : null;
 
   /* ---------- Entrainements ---------- */
@@ -10718,8 +10753,255 @@ const LABO = (function () {
   });
 
   function start() { shell(); syncFlashcards(); route(); lotsEnLigne(); }
-  return { S, save, esc, NB, niv, today, shuffle, vues, route, start, lienLot, NIVEAUX, fcpBar };
+  return { S, save, esc, NB, niv, today, shuffle, vues, route, start, lienLot, NIVEAUX, fcpBar, bilansHTML };
 })();
+
+;
+/* ====================================================================
+   « Mes bilans » (refonte des parcours, lot 6, 23/11/2026).
+   Calcul et affichage communs à l’espace élève du Laboratoire (#bilans, ouvert par le code à 4 chiffres)
+   et à la fiche élève du tableau de bord (prof.html), qui montre la même vue.
+   - LABO_BILANS.ref()        : référentiel compact construit depuis NPARC, APPRO et NOTIONS_LABO (dans la page)
+                                 ou lu dans window.LABO_BILANS_REF (prof.html, écrit par build_ovh.py)
+   - LABO_BILANS.calc(P, R, niveau) : P = état du parcours de l’élève (S.parcours : prog, diag, sortie, diagH, err)
+   - LABO_BILANS.html(B, { prof })  : la page ; prof = troisième personne et pas de liens vers le Laboratoire
+   - LABO_BILANS.classe(liste de P, R) : erreurs récurrentes de la classe (tableau de bord)
+   Types d’erreurs (ERR) et domaines (DOM) : définis ici, repris par parcours2.js.
+   ==================================================================== */
+(function (g) {
+  const NB = ' ';
+  const DOM = { P: ['La phrase et ses fonctions', 'ph'], V: ['Le verbe', 'gv'], G: ['Le groupe nominal et les accords', 'gn'], H: ['Les homophones et l’orthographe', 'ho'], L: ['Le lexique', 'fm'] };
+  /* types d’erreurs (libellé montré dans « Mes bilans ») */
+  const ERR = {
+    'verbe-repere': 'Repérer le verbe conjugué', 'sujet-repere': 'Repérer le sujet', 'sujet-inverse': 'Sujet placé après le verbe',
+    'imperatif-s': 'Le <i>-s</i> à l’impératif', 'imperatif-forme': 'Former l’impératif', 'cond-futur': 'Futur ou conditionnel',
+    'cond-forme': 'Former le conditionnel', 'pp-etre': 'Participe passé avec <i>être</i>', 'pp-avoir-sujet': 'Accord avec le sujet après <i>avoir</i>',
+    'pp-avoir-cod': 'COD placé avant le verbe', 'homo-a': '<i>a / à</i>', 'homo-et': '<i>et / est</i>', 'homo-son': '<i>son / sont</i>',
+    'homo-on': '<i>on / ont</i>', 'homo-ces': '<i>ces / ses</i>', 'homo-leur': '<i>leur / leurs</i>', 'polysemie': 'Polysémie', 'homonymes': 'Homonymes',
+    'hyper': 'Hyperonymes et hyponymes',
+    'cod-coi': 'COD ou COI', 'attribut': 'Attribut du sujet ou COD', 'pronom-compl': 'Remplacer un complément par un pronom',
+    'cc-type': 'Sens du complément circonstanciel', 'cc-repere': 'Repérer un complément circonstanciel',
+    'propositions': 'Compter les propositions', 'liaison-prop': 'Juxtaposition, coordination, subordination', 'conj-coord': 'Conjonctions de coordination',
+    'ps-forme': 'Former le passé simple', 'ps-imparfait': 'Passé simple ou imparfait', 'aux-choix': 'Choisir l’auxiliaire', 'temps-compose': 'Former un temps composé',
+    'discours-recit': 'Temps du discours, temps du récit', 'transposer': 'Transposer un texte',
+    'gn-accord': 'Chaine d’accords dans le GN', 'pluriel-fem': 'Pluriels et féminins particuliers', 'expansion': 'Expansions du nom',
+    'accord-sv': 'Accord du verbe avec le sujet', 'sv-eloigne': 'Sujet éloigné ou inversé',
+    'fin-e': 'Fins de verbes en [e]', 'nom-verbe': 'Nom ou verbe homophones',
+    'formation': 'Former les mots', 'etymologie': 'Racines et étymologie', 'expressions': 'Expressions et locutions', 'vocabulaire': 'Vocabulaire',
+    'relative': 'Subordonnée relative et antécédent',
+    'enonciation': 'Situation d’énonciation',
+    'ponctuation': 'Ponctuation et dialogue',
+    'temps-forme': 'Radical, marque de temps, marque de personne',
+    'subj-forme': 'Former et employer le subjonctif',
+    'valeur-present': 'Valeurs du présent',
+    'determinant': 'Les déterminants',
+    'voix-passive': 'Voix active et voix passive',
+    'homo-decomp': '<i>sans / s’en, dans / d’en, quand / qu’en…</i>',
+    'genre-nom': 'Genre des noms',
+    'ortho-etym': 'Orthographe et étymologie',
+    'champ-lexical': 'Champ lexical',
+    'figures': 'Figures de style',
+    'niveaux-langue': 'Niveaux de langue',
+    'liaison-elision': 'Liaison et élision',
+    'impersonnel': 'Forme impersonnelle',
+    'connecteurs': 'Connecteurs logiques',
+    'completive': 'Subordonnée complétive',
+    'interro-indirecte': 'Interrogative indirecte',
+    'discours-indirect': 'Discours indirect et concordance des temps',
+    'cond-passe': 'Conditionnel passé et subjonctif passé',
+    'modes-impersonnels': 'Infinitif, participe, gérondif',
+    'emplois-modes': 'Emplois du conditionnel et du subjonctif',
+    'aspect': 'Aspect du verbe',
+    'apposition': 'Apposition',
+    'degres-adj': 'Comparatif et superlatif',
+    'pronoms-demo-poss': 'Pronoms démonstratifs et possessifs',
+    'prep-conj': 'Prépositions et conjonctions',
+    'homo-rares': '<i>quel que, quoique, plutôt, dû…</i>',
+    'emprunts': 'Emprunts et néologismes',
+    'intensite': 'Intensité et généralité',
+    'paronymes': 'Paronymes',
+    'variation': 'Variation de la langue',
+    'attribut-cod': 'Attribut du COD',
+    'pronom-en-y': 'Pronoms <i>en</i> et <i>y</i>',
+    'fonction-sub': 'Fonction des subordonnées',
+    'infinitive-participiale': 'Subordonnées infinitive et participiale',
+    'dil': 'Discours indirect libre',
+    'modalisation': 'Modalisation',
+    'subj-imparfait': 'Subjonctif imparfait et plus-que-parfait',
+    'pronoms-indef-inter': 'Pronoms indéfinis et interrogatifs',
+    'pp-relatif': 'Participe passé et pronom relatif <i>que</i>',
+    'accord-apposition': 'Accord de l’apposition',
+    'reecriture': 'Réécriture',
+    'dictee': 'Dictée : consonnes doubles, accents, rectifications',
+    'sens-figure': 'Sens propre et sens figuré',
+    'types-phrase': 'Types de phrases',
+    'negation': 'La négation',
+    'present-forme': 'Le présent',
+    'article': 'Les articles',
+    'futur-proche': 'Futur proche et futur',
+    'consignes': 'Comprendre une consigne'
+  };
+  const ORDRE = ['n6', 'n5', 'n4', 'n3', 'nfle'];
+  const NOMP = { n6: '6ᵉ', n5: '5ᵉ', n4: '4ᵉ', n3: '3ᵉ', nfle: 'FLE' };
+  const ST_T = { acquis: 'Acquises', fragile: 'Fragiles', travail: 'À travailler' };
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const nb = s => String(s == null ? '' : s).replace(/ ([:;!?])/g, NB + '$1');
+  const obj = o => (o && typeof o === 'object' && !Array.isArray(o)) ? o : {};
+  const jour = d => { const m = /^(\d\d)\/(\d\d)\/(\d{4})$/.exec(d || ''); return m ? +(m[3] + m[2] + m[1]) : 0; };
+  const pc = (a, b) => b ? Math.round(100 * a / b) : null;
+
+  /* ---------- référentiel compact ---------- */
+  function typesExo(e) {
+    const out = []; if (!e) return out;
+    if (e.err) out.push(e.err);
+    (e.items || []).forEach(x => { const t = Array.isArray(x) ? x[e.kind === 'input' ? 3 : 4] : x && x.err; if (typeof t === 'string') out.push(t); });
+    return out;
+  }
+  let REF = null;
+  function ref() {
+    if (g.LABO_BILANS_REF) return g.LABO_BILANS_REF;
+    if (REF) return REF;
+    const NP = g.NPARC || {}, AP = g.APPRO || {}, NO = g.NOTIONS_LABO || {};
+    const R = { p: {}, notions: {}, err: {} };
+    const poser = (t, pid, i) => { if (!t) return; const e = R.err[t] || (R.err[t] = {}); if (e[pid] == null) e[pid] = i; };
+    ORDRE.forEach(pid => {
+      const p = NP[pid]; if (!p || p.enPreparation) return;
+      const S = []; (p.modules || []).forEach(m => m.steps.forEach(s => S.push({ s, d: m.dom })));
+      const A = AP[pid] || {};
+      R.p[pid] = { t: p.titre, s: S.map(({ s, d }) => ({ id: s.id, t: s.titre, d, n: s.notions || [], c: !!(A[s.id] && A[s.id].c), x: !!(A[s.id] && A[s.id].d) })),
+        dg: (p.diagnostic || []).map(q => [q.n, q.r]), so: (p.sortie || []).map(q => [q.n, q.r]) };
+      S.forEach(({ s }, i) => {
+        (s.manip || []).concat(s.exos || [], s.defi || []).forEach(e => typesExo(e).forEach(t => poser(t, pid, i)));
+        if (s.reflexe) poser(s.reflexe.err, pid, i);
+        ['c', 'd'].forEach(c => ((A[s.id] || {})[c] || []).forEach(e => typesExo(e).forEach(t => poser(t, pid, i))));
+      });
+      (p.diagnostic || []).concat(p.sortie || []).forEach(q => { if (!q.err) return; const i = S.findIndex(({ s }) => (s.notions || []).includes(q.n)); if (i >= 0) poser(q.err, pid, i); });
+    });
+    Object.keys(NO).forEach(id => { R.notions[id] = NO[id].nom; });
+    return (REF = R);
+  }
+
+  /* ---------- calcul ---------- */
+  const k = (pid, s) => pid + ':' + s.id;
+  function statutsDe(rep, Q) {
+    if (!Array.isArray(rep) || !Q || rep.length !== Q.length) return null;
+    const c = {}; Q.forEach(([n, r], i) => { const x = c[n] || (c[n] = { ok: 0, n: 0 }); x.n++; if (rep[i] === r) x.ok++; });
+    const st = {}; Object.keys(c).forEach(n => { st[n] = c[n].ok === c[n].n ? 'acquis' : c[n].ok ? 'fragile' : 'travail'; });
+    return st;
+  }
+  const compte = st => { const o = { a: 0, f: 0, t: 0 }; Object.values(st || {}).forEach(v => { o[v === 'acquis' ? 'a' : v === 'fragile' ? 'f' : 't']++; }); return o; };
+  /* résumé d’un diagnostic fini (enregistré dans P.diagH par parcours2.js) */
+  function resumeDiag(R, pid, sortie, rep, date) {
+    const p = R.p[pid]; if (!p) return null; const Q = sortie ? p.so : p.dg; const st = statutsDe(rep, Q); if (!st) return null;
+    const c = compte(st);
+    return { pid, k: sortie ? 's' : 'd', date, ok: Q.filter(([, r], i) => rep[i] === r).length, n: Q.length, a: c.a, f: c.f, t: c.t };
+  }
+  function calc(P, R, niveau) {
+    P = obj(P); R = R || ref();
+    const prog = obj(P.prog), diag = obj(P.diag), sortie = obj(P.sortie), err = obj(P.err);
+    const pids = ORDRE.filter(pid => R.p[pid]);
+    const actifs = pids.filter(pid => diag[pid] || sortie[pid] || R.p[pid].s.some(s => prog[k(pid, s)] || prog[k(pid, s) + ':c'] || prog[k(pid, s) + ':d']));
+    const lastPid = P.last && P.last.pid;
+    const conseil = 'n' + (niveau || '6');
+    const main = actifs.includes(lastPid) ? lastPid : actifs.includes(conseil) ? conseil : actifs[0] || (R.p[conseil] ? conseil : pids[0]);
+
+    /* réussite par domaine : étapes terminées et séries d’approfondissement, tous parcours confondus */
+    const doms = Object.keys(DOM).map(d => {
+      let somme = 0, nr = 0, faites = 0, total = 0;
+      (actifs.length ? actifs : [main]).forEach(pid => R.p[pid].s.filter(s => s.d === d).forEach(s => {
+        total++; const x = prog[k(pid, s)];
+        if (x && x.done) { faites++; if (x.total) { somme += x.score / x.total; nr++; } }
+        ['c', 'd'].forEach(c => { const y = prog[k(pid, s) + ':' + c]; if (y && y.total) { somme += y.score / y.total; nr++; } });
+      }));
+      return { d, nom: DOM[d][0], cl: DOM[d][1], moy: nr ? Math.round(100 * somme / nr) : null, faites, total, mesures: nr };
+    });
+
+    /* notions : dernier diagnostic (entrée ou sortie), puis résultats des étapes */
+    const base = {}, dateBase = {};
+    actifs.forEach(pid => {
+      const L = [[diag[pid], R.p[pid].dg], [sortie[pid], R.p[pid].so]].filter(([x]) => x && Array.isArray(x.rep));
+      L.forEach(([x, Q]) => { const st = statutsDe(x.rep, Q); if (!st) return; const j = jour(x.date);
+        Object.entries(st).forEach(([n, v]) => { if (dateBase[n] == null || j >= dateBase[n]) { base[n] = v; dateBase[n] = j; } }); });
+    });
+    const res = {};
+    actifs.forEach(pid => R.p[pid].s.forEach(s => { const x = prog[k(pid, s)]; if (x && x.done && x.total) s.n.forEach(n => { (res[n] = res[n] || []).push(x.score / x.total); }); }));
+    const st = {};
+    new Set(Object.keys(base).concat(Object.keys(res))).forEach(n => {
+      const b = base[n], r = res[n];
+      if (!r) { st[n] = b; return; }
+      const m = Math.min(...r);
+      st[n] = m >= .8 ? 'acquis' : m < .6 ? (b === 'acquis' ? 'fragile' : 'travail') : (b === 'acquis' ? 'acquis' : 'fragile');
+    });
+    const notions = { acquis: [], fragile: [], travail: [] };
+    Object.keys(st).sort().forEach(n => { if (notions[st[n]]) notions[st[n]].push({ id: n, nom: R.notions[n] || n }); });
+
+    /* erreurs récurrentes (au moins deux fois), avec un exemple et l’étape dont le mémo explique la règle */
+    const memoDe = t => { const e = R.err[t]; if (!e) return null; const pid = [main].concat(actifs, pids).find(q => e[q] != null && R.p[q]); return pid ? { pid, i: e[pid], t: R.p[pid].s[e[pid]].t, c: R.p[pid].s[e[pid]].c } : null; };
+    const erreurs = Object.entries(err).filter(([, e]) => e && e.n >= 2).sort((a, b) => b[1].n - a[1].n || jour(b[1].d) - jour(a[1].d)).slice(0, 8)
+      .map(([t, e]) => ({ t, lib: ERR[t] || t, n: e.n, d: e.d || '', ex: e.ex || '', memo: memoDe(t) }));
+
+    /* historique des diagnostics : P.diagH, complété par les diagnostics enregistrés avant le lot 6 */
+    const H = (Array.isArray(P.diagH) ? P.diagH : []).filter(x => x && R.p[x.pid]).slice();
+    actifs.forEach(pid => [[diag[pid], false], [sortie[pid], true]].forEach(([x, so]) => {
+      if (!x || !Array.isArray(x.rep) || H.some(h => h.pid === pid && h.k === (so ? 's' : 'd') && h.date === x.date)) return;
+      const r = resumeDiag(R, pid, so, x.rep, x.date); if (r) H.push(r);
+    }));
+    H.sort((a, b) => jour(b.date) - jour(a.date));
+
+    /* plan « Pour ton prochain entrainement » : environ 40 minutes */
+    const plan = [], P0 = R.p[main];
+    const ajoute = (x) => { if (plan.reduce((a, y) => a + y.min, 0) >= 40 || plan.some(y => y.href === x.href)) return; plan.push(x); };
+    if (P0 && !diag[main]) ajoute({ t: `Faire le diagnostic du ${P0.t.replace(/^Parcours /, 'parcours ')}`, why: 'pour savoir par où commencer', href: `#diag-${main}`, min: 10 });
+    erreurs.slice(0, 2).forEach(e => { if (!e.memo) return; const m = e.memo;
+      ajoute({ t: `Relire le mémo «${NB}${m.t}${NB}»${m.c ? ' puis faire la série de consolidation' : ' et refaire les exercices'}`, why: 'erreur fréquente' + NB + ': ' + e.lib, href: m.c ? `#serie-${m.pid}-${m.i}-c` : `#etape-${m.pid}-${m.i}`, min: m.c ? 15 : 10 }); });
+    if (P0) {
+      const aFaire = P0.s.findIndex(s => !(prog[k(main, s)] || {}).done && !s.n.every(n => st[n] === 'acquis'));
+      const i = aFaire >= 0 ? aFaire : P0.s.findIndex(s => !(prog[k(main, s)] || {}).done);
+      if (i >= 0) ajoute({ t: `Étape «${NB}${P0.s[i].t}${NB}»`, why: aFaire >= 0 ? 'prochaine étape du parcours' : 'pour finir le parcours', href: `#etape-${main}-${i}`, min: 20 });
+      else if (P0.so.length && !sortie[main]) ajoute({ t: 'Faire le diagnostic de sortie', why: 'toutes les étapes sont faites', href: `#sortie-${main}`, min: 10 });
+      P0.s.forEach((s, j) => { const x = prog[k(main, s)], y = prog[k(main, s) + ':d'];
+        if (s.x && x && x.done && x.total && x.score / x.total >= .85 && !(y && y.total && y.score / y.total >= .8)) ajoute({ t: `Défi «${NB}${s.t}${NB}»`, why: 'notion acquise' + NB + ': va plus loin', href: `#serie-${main}-${j}-d`, min: 10 }); });
+    }
+    const vide = !actifs.length && !erreurs.length;
+    return { main, mainT: P0 ? P0.t : '', actifs, doms, notions, erreurs, H, plan, vide };
+  }
+
+  /* ---------- affichage ---------- */
+  const barre = p => p == null ? '<span class="muted small">pas encore de résultat</span>' : `<span class="bl-barre"><span style="width:${Math.max(3, p)}%" class="${p >= 80 ? 'ok' : p >= 60 ? 'moy' : 'ko'}"></span></span><b class="bl-pct">${p}${NB}%</b>`;
+  function html(B, o) {
+    o = o || {}; const prof = !!o.prof;
+    const lien = (href, txt) => prof ? txt : `<a href="${href}">${txt}</a>`;
+    const T = prof ? { dom: 'Réussite par domaine', no: 'Notions', er: 'Erreurs récurrentes', dg: 'Diagnostics', pl: 'Pour son prochain entrainement' }
+      : { dom: 'Ma réussite par domaine', no: 'Mes notions', er: 'Mes erreurs récurrentes', dg: 'Mes diagnostics', pl: 'Pour ton prochain entrainement' };
+    if (B.vide) return `<div class="card bl-vide"><p>${prof ? 'Pas encore de résultat dans les parcours.' : `Tu n’as pas encore de résultat dans les parcours. Commence par le ${lien('#diag-' + B.main, 'diagnostic de ton parcours')}${NB}: tes bilans se rempliront au fil de ton travail.`}</p></div>`;
+    const doms = `<section class="card bl-sec"><h3>${T.dom}</h3><p class="small muted">Moyenne des étapes terminées et des séries d’approfondissement${B.actifs.length > 1 ? ', tous parcours confondus' : ''}.</p>
+      <ul class="bl-doms">${B.doms.map(d => `<li class="m-${d.cl}"><span class="bl-dn"><span class="mdot"></span>${esc(d.nom)}</span><span class="bl-dv">${barre(d.moy)}</span><span class="small muted bl-df">${d.faites}/${d.total} étape${d.total > 1 ? 's' : ''}</span></li>`).join('')}</ul></section>`;
+    const nT = B.notions.acquis.length + B.notions.fragile.length + B.notions.travail.length;
+    const notions = `<section class="card bl-sec"><h3>${T.no}</h3>${nT ? `<p class="small muted">D’après ${prof ? 'le' : 'ton'} dernier diagnostic et ${prof ? 'les' : 'tes'} résultats dans les étapes.</p><div class="bl-nots">${['travail', 'fragile', 'acquis'].map(s => `<div class="bl-ncol ${s}"><h4>${ST_T[s]} <span>${B.notions[s].length}</span></h4>${B.notions[s].length ? `<ul>${B.notions[s].map(n => `<li>${nb(n.nom)}</li>`).join('')}</ul>` : '<p class="small muted">Aucune.</p>'}</div>`).join('')}</div>`
+      : `<p class="small muted">${prof ? 'Pas encore de diagnostic.' : `Fais le ${lien('#diag-' + B.main, 'diagnostic')} pour voir où tu en es.`}</p>`}</section>`;
+    const erreurs = `<section class="card bl-sec"><h3>${T.er}</h3>${B.erreurs.length ? `<p class="small muted">Les erreurs faites au moins deux fois, avec ${prof ? 'la dernière' : 'ta dernière'} et le mémo qui explique la règle.</p><ul class="bl-errs">${B.erreurs.map(e => `<li><div class="bl-eh"><b>${nb(e.lib)}</b><span class="small muted">${e.n}${NB}fois${e.d ? ' · dernière le ' + esc(e.d) : ''}</span></div>${e.ex ? `<p class="bl-ex"><span class="small muted">Exemple${NB}:</span> <i>${esc(e.ex)}</i></p>` : ''}${e.memo ? `<p class="small">Mémo${NB}: ${lien(`#etape-${e.memo.pid}-${e.memo.i}`, '«' + NB + nb(e.memo.t) + NB + '»')}${prof ? '' : e.memo.c ? ` · ${lien(`#serie-${e.memo.pid}-${e.memo.i}-c`, 'série de consolidation')}` : ''} <span class="muted">(${NOMP[e.memo.pid]})</span></p>` : ''}</li>`).join('')}</ul>` : `<p class="small muted">Aucune erreur répétée pour l’instant.</p>`}</section>`;
+    const diags = `<section class="card bl-sec"><h3>${T.dg}</h3>${B.H.length ? `<div class="tw"><table class="bl-tab"><thead><tr><th>Date</th><th>Parcours</th><th>Diagnostic</th><th>Score</th><th>Acquises</th><th>Fragiles</th><th>À travailler</th></tr></thead><tbody>${B.H.slice(0, 20).map(h => `<tr><td>${esc(h.date)}</td><td>${NOMP[h.pid] || esc(h.pid)}</td><td>${h.k === 's' ? 'de sortie' : 'd’entrée'}</td><td class="n">${h.ok}/${h.n} <span class="muted small">(${pc(h.ok, h.n)}${NB}%)</span></td><td class="n">${h.a}</td><td class="n">${h.f}</td><td class="n">${h.t}</td></tr>`).join('')}</tbody></table></div>`
+      : `<p class="small muted">${prof ? 'Aucun diagnostic.' : 'Aucun diagnostic pour l’instant.'}</p>`}</section>`;
+    const tot = B.plan.reduce((a, x) => a + x.min, 0);
+    const plan = `<section class="card bl-sec bl-plan"><h3>${T.pl}</h3>${B.plan.length ? `<p class="small muted">Environ ${tot}${NB}minutes${B.mainT ? ', ' + esc(B.mainT.replace(/^Parcours /, 'parcours ')) : ''}.</p><ol>${B.plan.map(x => `<li><span>${prof ? nb(x.t) : `<a href="${x.href}">${nb(x.t)}</a>`}<span class="small muted"> · ${nb(x.why)}</span></span><span class="bl-min">${x.min}${NB}min</span></li>`).join('')}</ol>` : `<p class="small muted">Tout est fait${NB}! ${prof ? '' : `Choisis un défi dans ${lien('#approfondissement', 'Approfondissement')}.`}</p>`}</section>`;
+    return `<div class="bilans">${plan}${doms}${notions}${erreurs}${diags}</div>`;
+  }
+
+  /* ---------- tableau de bord : erreurs récurrentes de la classe ---------- */
+  function classe(liste, R) {
+    R = R || ref(); const T = {};
+    liste.forEach(P => Object.entries(obj(obj(P).err)).forEach(([t, e]) => {
+      if (!e || !(e.n >= 1)) return; const x = T[t] || (T[t] = { t, lib: ERR[t] || t, eleves: 0, rec: 0, n: 0, ex: '', d: 0 });
+      x.eleves++; if (e.n >= 2) x.rec++; x.n += e.n; if (jour(e.d) >= x.d && e.ex) { x.ex = e.ex; x.d = jour(e.d); }
+    }));
+    return Object.values(T).filter(x => x.rec).sort((a, b) => b.rec - a.rec || b.n - a.n).map(x => {
+      const e = R.err[x.t], pid = e && ORDRE.find(q => e[q] != null && R.p[q]);
+      return Object.assign(x, { memo: pid ? R.p[pid].s[e[pid]].t + ' (' + NOMP[pid] + ')' : '' });
+    });
+  }
+
+  g.LABO_BILANS = { ref, calc, html, classe, resumeDiag, statutsDe, ERR, DOM, NOMP };
+})(typeof globalThis !== 'undefined' ? globalThis : window);
 
 ;
 /* ====================================================================
@@ -11085,7 +11367,8 @@ const LABO = (function () {
        essai    { p: '… ___ …', o: [options], r, essai: mot de remplacement, x }  (exo.essai par défaut)
    Approfondissement (lot 5) : APPRO[pid][id de l’étape] = { c: [exo], d: [exo] } dans parcours-donnees/a*.js ;
      c = consolidation, d = défi ; route #serie-pid-i-c|d ; résultat dans P.prog['pid:id:c'] = { serie, score, total, date } (sans done).
-   Erreurs : chaque réponse fausse est rangée par type (err) dans S.parcours.err pour « Mes bilans ».
+   Erreurs : chaque réponse fausse est rangée par type (err) dans S.parcours.err pour « Mes bilans » (bilans.js, lot 6) ;
+   chaque diagnostic fini s’ajoute à S.parcours.diagH = [{ pid, k: d|s, date, ok, n, a, f, t }].
    ==================================================================== */
 (function () {
   const { S, save, esc, NB, vues, niv, today, shuffle } = LABO;
@@ -11094,77 +11377,8 @@ const LABO = (function () {
   const ORDRE = ['n6', 'n5', 'n4', 'n3', 'nfle'];
   const NIVP = { n6: '6', n5: '5', n4: '4', n3: '3' };
   const NSP = 'Je ne sais pas';
-  const DOM = { P: ['La phrase et ses fonctions', 'ph'], V: ['Le verbe', 'gv'], G: ['Le groupe nominal et les accords', 'gn'], H: ['Les homophones et l’orthographe', 'ho'], L: ['Le lexique', 'fm'] };
-  /* types d’erreurs (libellé montré dans « Mes bilans ») */
-  const ERR = {
-    'verbe-repere': 'Repérer le verbe conjugué', 'sujet-repere': 'Repérer le sujet', 'sujet-inverse': 'Sujet placé après le verbe',
-    'imperatif-s': 'Le <i>-s</i> à l’impératif', 'imperatif-forme': 'Former l’impératif', 'cond-futur': 'Futur ou conditionnel',
-    'cond-forme': 'Former le conditionnel', 'pp-etre': 'Participe passé avec <i>être</i>', 'pp-avoir-sujet': 'Accord avec le sujet après <i>avoir</i>',
-    'pp-avoir-cod': 'COD placé avant le verbe', 'homo-a': '<i>a / à</i>', 'homo-et': '<i>et / est</i>', 'homo-son': '<i>son / sont</i>',
-    'homo-on': '<i>on / ont</i>', 'homo-ces': '<i>ces / ses</i>', 'homo-leur': '<i>leur / leurs</i>', 'polysemie': 'Polysémie', 'homonymes': 'Homonymes',
-    'hyper': 'Hyperonymes et hyponymes',
-    'cod-coi': 'COD ou COI', 'attribut': 'Attribut du sujet ou COD', 'pronom-compl': 'Remplacer un complément par un pronom',
-    'cc-type': 'Sens du complément circonstanciel', 'cc-repere': 'Repérer un complément circonstanciel',
-    'propositions': 'Compter les propositions', 'liaison-prop': 'Juxtaposition, coordination, subordination', 'conj-coord': 'Conjonctions de coordination',
-    'ps-forme': 'Former le passé simple', 'ps-imparfait': 'Passé simple ou imparfait', 'aux-choix': 'Choisir l’auxiliaire', 'temps-compose': 'Former un temps composé',
-    'discours-recit': 'Temps du discours, temps du récit', 'transposer': 'Transposer un texte',
-    'gn-accord': 'Chaine d’accords dans le GN', 'pluriel-fem': 'Pluriels et féminins particuliers', 'expansion': 'Expansions du nom',
-    'accord-sv': 'Accord du verbe avec le sujet', 'sv-eloigne': 'Sujet éloigné ou inversé',
-    'fin-e': 'Fins de verbes en [e]', 'nom-verbe': 'Nom ou verbe homophones',
-    'formation': 'Former les mots', 'etymologie': 'Racines et étymologie', 'expressions': 'Expressions et locutions', 'vocabulaire': 'Vocabulaire',
-    'relative': 'Subordonnée relative et antécédent',
-    'enonciation': 'Situation d’énonciation',
-    'ponctuation': 'Ponctuation et dialogue',
-    'temps-forme': 'Radical, marque de temps, marque de personne',
-    'subj-forme': 'Former et employer le subjonctif',
-    'valeur-present': 'Valeurs du présent',
-    'determinant': 'Les déterminants',
-    'voix-passive': 'Voix active et voix passive',
-    'homo-decomp': '<i>sans / s’en, dans / d’en, quand / qu’en…</i>',
-    'genre-nom': 'Genre des noms',
-    'ortho-etym': 'Orthographe et étymologie',
-    'champ-lexical': 'Champ lexical',
-    'figures': 'Figures de style',
-    'niveaux-langue': 'Niveaux de langue',
-    'liaison-elision': 'Liaison et élision',
-    'impersonnel': 'Forme impersonnelle',
-    'connecteurs': 'Connecteurs logiques',
-    'completive': 'Subordonnée complétive',
-    'interro-indirecte': 'Interrogative indirecte',
-    'discours-indirect': 'Discours indirect et concordance des temps',
-    'cond-passe': 'Conditionnel passé et subjonctif passé',
-    'modes-impersonnels': 'Infinitif, participe, gérondif',
-    'emplois-modes': 'Emplois du conditionnel et du subjonctif',
-    'aspect': 'Aspect du verbe',
-    'apposition': 'Apposition',
-    'degres-adj': 'Comparatif et superlatif',
-    'pronoms-demo-poss': 'Pronoms démonstratifs et possessifs',
-    'prep-conj': 'Prépositions et conjonctions',
-    'homo-rares': '<i>quel que, quoique, plutôt, dû…</i>',
-    'emprunts': 'Emprunts et néologismes',
-    'intensite': 'Intensité et généralité',
-    'paronymes': 'Paronymes',
-    'variation': 'Variation de la langue',
-    'attribut-cod': 'Attribut du COD',
-    'pronom-en-y': 'Pronoms <i>en</i> et <i>y</i>',
-    'fonction-sub': 'Fonction des subordonnées',
-    'infinitive-participiale': 'Subordonnées infinitive et participiale',
-    'dil': 'Discours indirect libre',
-    'modalisation': 'Modalisation',
-    'subj-imparfait': 'Subjonctif imparfait et plus-que-parfait',
-    'pronoms-indef-inter': 'Pronoms indéfinis et interrogatifs',
-    'pp-relatif': 'Participe passé et pronom relatif <i>que</i>',
-    'accord-apposition': 'Accord de l’apposition',
-    'reecriture': 'Réécriture',
-    'dictee': 'Dictée : consonnes doubles, accents, rectifications',
-    'sens-figure': 'Sens propre et sens figuré',
-    'types-phrase': 'Types de phrases',
-    'negation': 'La négation',
-    'present-forme': 'Le présent',
-    'article': 'Les articles',
-    'futur-proche': 'Futur proche et futur',
-    'consignes': 'Comprendre une consigne'
-  };
+  /* domaines et types d’erreurs : bilans.js (communs avec le tableau de bord) */
+  const { DOM, ERR } = window.LABO_BILANS;
   const nb0 = s => String(s == null ? '' : s).replace(/ ([:;!?])/g, ' $1');
   /* phrase citée entière (majuscule … point) : classe phr, surlignée dans les questions (p.q) */
   const nb = s => nb0(s).replace(/<i>([A-ZÀÂÉÈÊÎÔÛÇ«](?:(?!<\/i>).)*?[.!?…])<\/i>/g, '<i class="phr">$1</i>');
@@ -11523,6 +11737,7 @@ const LABO = (function () {
     if (a === 'd-ok') {
       const box = document.getElementById('n-diag'), pid = box.dataset.pid, p = NP[pid], sortie = !!box.dataset.sortie, L = sortie ? p.sortie : p.diagnostic;
       if (sortie) { P.sortie = P.sortie || {}; P.sortie[pid] = { rep: diagRep.slice(), date: today() }; } else P.diag[pid] = { rep: diagRep.slice(), date: today() };
+      { const h = window.LABO_BILANS.resumeDiag(window.LABO_BILANS.ref(), pid, sortie, diagRep, today()); if (h) P.diagH = (Array.isArray(P.diagH) ? P.diagH : []).concat(h).slice(-30); } /* « Mes bilans » : historique */
       let ok = 0;
       document.querySelectorAll('.diag-q').forEach((q, i) => {
         const Q = L[i], juste = diagRep[i] === Q.r; if (juste) ok++; else if (diagRep[i] !== NSP) logErr(Q.err, Q.q);
@@ -11999,13 +12214,24 @@ window.LABO_API='/labo/api';
     for (const [k, s] of Object.entries(obj(b))) { const v = r[k]; if (!v || plusRecent(s, v)) r[k] = s; }
     return r;
   }
+  /* « Mes bilans » (lot 6) : erreurs par type (on garde le compte le plus haut) et historique des diagnostics (réunion des deux) */
+  function errs(a, b) {
+    const r = Object.assign({}, obj(a));
+    for (const [t, e] of Object.entries(obj(b))) { const v = r[t]; if (!v || (+obj(e).n || 0) >= (+obj(v).n || 0)) r[t] = e; }
+    return r;
+  }
+  function diagH(a, b) {
+    const L = [], vu = new Set();
+    (Array.isArray(a) ? a : []).concat(Array.isArray(b) ? b : []).forEach(h => { if (!h || typeof h !== 'object') return; const c = [h.pid, h.k, h.date, h.ok].join('|'); if (!vu.has(c)) { vu.add(c); L.push(h); } });
+    return L.sort((x, y) => jour(x.date) - jour(y.date)).slice(-30);
+  }
   function fusion(A, B) {
     A = obj(A); B = obj(B);
     const la = obj(A.labo), lb = obj(B.labo), fa = obj(A.fc), fb = obj(B.fc);
     const pa = obj(la.parcours), pb = obj(lb.parcours);
     const labo = Object.assign({}, la, lb, {
       ceintures: ceintures(la.ceintures, lb.ceintures),
-      parcours: Object.assign({}, pa, pb, { prog: prog(pa.prog, pb.prog), diag: Object.assign({}, obj(pa.diag), obj(pb.diag)), last: pb.last || pa.last || null })
+      parcours: Object.assign({}, pa, pb, { prog: prog(pa.prog, pb.prog), diag: Object.assign({}, obj(pa.diag), obj(pb.diag)), sortie: Object.assign({}, obj(pa.sortie), obj(pb.sortie)), err: errs(pa.err, pb.err), diagH: diagH(pa.diagH, pb.diagH), last: pb.last || pa.last || null })
     });
     const fc = Object.assign({}, fa, fb, { res: res(fa.res, fb.res) });
     if (fa.test && (!fb.test || jour(fa.test.date) > jour(fb.test.date))) fc.test = fa.test; /* le test le plus récent */
@@ -12212,7 +12438,7 @@ const LABO_SYNC = (function () {
     if (typeof LABO !== 'undefined' && LABO.S) {
       const S = LABO.S;
       Object.assign(S.ceintures, m.labo.ceintures || {});
-      if (m.labo.parcours) { Object.assign(S.parcours.prog, m.labo.parcours.prog || {}); Object.assign(S.parcours.diag, m.labo.parcours.diag || {}); }
+      if (m.labo.parcours) { const q = m.labo.parcours; Object.assign(S.parcours.prog, q.prog || {}); Object.assign(S.parcours.diag, q.diag || {}); S.parcours.sortie = q.sortie || {}; S.parcours.err = q.err || {}; S.parcours.diagH = q.diagH || []; }
       ecrire(KL, S);
     } else ecrire(KL, m.labo);
     ecrire(KF, Object.assign(lire(KF) || {}, { res: m.fc.res, test: m.fc.test }));
@@ -12224,6 +12450,7 @@ const LABO_SYNC = (function () {
   function deconnexion(expire) {
     const L = lire(KL) || {}, F = lire(KF) || {};
     localStorage.removeItem(KC);
+    try { sessionStorage.removeItem(KB); } catch (e) { }
     ecrire(KL, { theme: L.theme, dys: L.dys, niveau: L.niveau });
     ecrire(KF, { lv: F.lv, dys: F.dys });
     try { sessionStorage.removeItem('labo.invite'); if (expire) sessionStorage.setItem('labo.expire', '1'); } catch (e) { }
@@ -12322,7 +12549,7 @@ ${nouveau ? '<label class="field">Tape-le une deuxième fois<input id="arr-pin2"
     const r = document.querySelector('#labo .top-right'); if (!r || document.getElementById('compte')) return;
     const html = compte
       ? `<div class="compte" id="compte"><button type="button" class="compte-b" id="compte-b" aria-expanded="false"><span class="compte-n">${esc(compte.prenom)}</span><span class="compte-c">${esc(compte.classe)}</span></button>
-<div class="compte-menu" id="compte-menu" hidden><a class="btn ghost compte-badges" href="#badges">Mes badges</a><p class="small"><span id="compte-etat"></span></p><button type="button" class="btn" id="compte-out">Ce n’est pas moi / Se déconnecter</button></div></div>`
+<div class="compte-menu" id="compte-menu" hidden><a class="btn ghost compte-badges" href="#bilans">Mes bilans</a><a class="btn ghost compte-badges" href="#badges">Mes badges</a><p class="small"><span id="compte-etat"></span></p><button type="button" class="btn" id="compte-out">Ce n’est pas moi / Se déconnecter</button></div></div>`
       : `<div class="compte" id="compte"><button type="button" class="compte-b" id="compte-in"><span class="compte-n">Se connecter</span></button></div>`;
     r.insertAdjacentHTML('beforeend', html); /* au bout de la ligne des onglets, à droite (Augustin, 22/11/2026) */
     const m = document.getElementById('compte-menu');
@@ -12331,7 +12558,7 @@ ${nouveau ? '<label class="field">Tape-le une deuxième fois<input id="arr-pin2"
       document.getElementById('compte-out').addEventListener('click', () => { envoyer(); setTimeout(() => deconnexion(false), 400); });
       document.addEventListener('click', ev => { if (!m.hidden && !ev.target.closest('#compte')) m.hidden = true; });
       /* « Badges » sous le nom de l'élève (Augustin, 22/11/2026) : le menu se referme en ouvrant la page */
-      m.querySelector('.compte-badges').addEventListener('click', () => { m.hidden = true; document.getElementById('compte-b').setAttribute('aria-expanded', 'false'); });
+      m.querySelectorAll('.compte-badges').forEach(a => a.addEventListener('click', () => { m.hidden = true; document.getElementById('compte-b').setAttribute('aria-expanded', 'false'); }));
       pastille();
     } else document.getElementById('compte-in').addEventListener('click', () => { try { sessionStorage.removeItem('labo.invite'); } catch (x) { } location.reload(); });
   }
@@ -12377,9 +12604,63 @@ ${nouveau ? '<label class="field">Tape-le une deuxième fois<input id="arr-pin2"
     } else h += `<h3 class="bg-h pp-h">Badges du Cahier de suivi</h3><p class="small">Pas encore de badge du Cahier de suivi ici. Ils apparaîtront quand ton professeur t’en donnera.</p>`;
     z.innerHTML = `<p class="small pp-leg">Les badges en couleur sont obtenus${NB}; les gris sont encore à gagner.</p>` + h;
   }
+  /* ---------- « Mes bilans » (lot 6, 23/11/2026) : page ouverte par un code à 4 chiffres propre à elle ----------
+     Par défaut, le code est le JJMM de la date de naissance, envoyé par le Cahier de suivi (haché sur le serveur) ; l'élève peut le changer,
+     le professeur peut revenir au code par défaut. Le contenu (bilans.js) est calculé avec la progression synchronisée de l'élève.
+     Code juste : la page reste ouverte 30 minutes dans cet onglet. Sans compte : résultats de cet ordinateur, sans code. */
+  const KB = 'labo.bilans';
+  const bOuvert = () => { try { const b = JSON.parse(sessionStorage.getItem(KB) || 'null'); return b && compte && b.exp > Date.now() && b.el === compte.cl + '/' + compte.el ? b : null; } catch (e) { return null; } };
+  const bGarder = bj => { try { sessionStorage.setItem(KB, JSON.stringify({ el: compte.cl + '/' + compte.el, bj, exp: Date.now() + 29 * 60000 })); } catch (e) { } };
+  function bilansAfficher(z, m) {
+    z.innerHTML = (m ? `<p class="small bl-msg-ok" role="status">${esc(m)}</p>` : '') + LABO.bilansHTML()
+      + `<p class="small bl-outils"><a href="#" data-bl="changer">Changer mon code</a> · <a href="#" data-bl="fermer">Fermer mes bilans</a></p>`;
+  }
+  function bilansForm(z, mode, m) {
+    const neuf = mode !== 'code';
+    const champ = (id, lib) => `<label class="field">${lib}<input id="${id}" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off"></label>`;
+    z.innerHTML = `<form class="card arr-card bl-code" data-bl-mode="${mode}"><p>${mode === 'code'
+      ? `Tes bilans sont protégés par un <b>code à 4 chiffres</b>. Au départ, c’est ton jour et ton mois de naissance (par exemple <b>0703</b> si tu es né ou née le 7 mars), sauf si tu l’as changé.`
+      : mode === 'nouveau' ? `Choisis un <b>code à 4 chiffres</b> pour protéger tes bilans, et retiens-le bien${NB}: il te sera demandé à chaque fois.` : 'Choisis ton nouveau code à 4 chiffres.'}</p>
+${champ('bl-pin', neuf ? 'Nouveau code' : 'Code')}${neuf ? champ('bl-pin2', 'Tape-le une deuxième fois') : ''}
+<div class="row"><button class="btn" type="submit">${mode === 'code' ? 'Ouvrir mes bilans' : mode === 'nouveau' ? 'Créer mon code' : 'Changer mon code'}</button>${mode === 'changer' ? '<button type="button" class="btn ghost" data-bl="annuler">Annuler</button>' : ''}</div>
+<p class="small arr-msg" id="bl-msg" role="alert">${esc(m || '')}</p></form>${mode === 'code' ? '<p class="small muted">Code oublié' + NB + '? Demande à ton professeur.</p>' : ''}`;
+    const i = z.querySelector('#bl-pin'); if (i) setTimeout(() => i.focus(), 0);
+  }
+  async function bilansEnvoi(z, f) {
+    const mode = f.dataset.blMode, msg = t => { const e = z.querySelector('#bl-msg'); if (e) e.textContent = t; };
+    const c = f.querySelector('#bl-pin').value.trim(), c2 = f.querySelector('#bl-pin2');
+    if (!/^\d{4}$/.test(c)) return msg('Le code, c’est 4 chiffres.');
+    if (c2 && c2.value.trim() !== c) return msg('Les deux codes ne sont pas pareils. Recommence.');
+    msg('Vérification…');
+    try {
+      if (mode === 'changer') { const b = bOuvert(); const d = await appel('bilans-changer', { jeton: compte.jeton, bjeton: b ? b.bj : '', code: c }); bGarder(d.bjeton); return bilansAfficher(z, 'Ton code est changé. Retiens-le bien.'); }
+      const d = await appel('bilans-code', { jeton: compte.jeton, code: c, nouveau: mode === 'nouveau' });
+      if (d.nouveau) return bilansForm(z, 'nouveau', 'Tu n’as pas encore de code pour tes bilans.');
+      bGarder(d.bjeton); bilansAfficher(z, mode === 'nouveau' ? 'Ton code est créé. Retiens-le bien.' : '');
+    } catch (err) {
+      if (err.status === 401) return deconnexion(true);
+      if (mode === 'changer' && err.status === 403) { try { sessionStorage.removeItem(KB); } catch (e) { } return bilansForm(z, 'code', err.message); }
+      msg(err.status ? err.message : 'Pas de connexion à Internet. Réessaie.');
+    }
+  }
+  function remplirBilans() {
+    const z = document.getElementById('mes-bilans'); if (!z || z.dataset.pret) return;
+    z.dataset.pret = '1';
+    if (!compte) { z.innerHTML = '<p class="small muted">Tu n’es pas connecté' + NB + ': voici les résultats enregistrés sur cet ordinateur.</p>' + LABO.bilansHTML(); return; }
+    z.addEventListener('submit', ev => { const f = ev.target.closest('form[data-bl-mode]'); if (!f) return; ev.preventDefault(); bilansEnvoi(z, f); });
+    z.addEventListener('click', ev => {
+      const a = ev.target.closest('[data-bl]'); if (!a) return; ev.preventDefault();
+      if (a.dataset.bl === 'changer') return bOuvert() ? bilansForm(z, 'changer') : bilansForm(z, 'code', 'Retape ton code pour continuer.');
+      if (a.dataset.bl === 'annuler') return bOuvert() ? bilansAfficher(z) : bilansForm(z, 'code');
+      if (a.dataset.bl === 'fermer') { try { sessionStorage.removeItem(KB); } catch (e) { } location.hash = '#accueil'; }
+    });
+    if (bOuvert()) bilansAfficher(z); else bilansForm(z, 'code');
+  }
   /* ---------- démarrage ---------- */
   function demarrer() {
     LABO.start(); entete();
+    document.addEventListener('labo:vue', ev => { if (ev.detail === 'bilans') remplirBilans(); });
+    if (location.hash === '#bilans') remplirBilans();
     if (!compte) return;
     document.addEventListener('labo:vue', ev => { if (ev.detail === 'badges') remplirBadges(); });
     if (location.hash === '#badges') remplirBadges();

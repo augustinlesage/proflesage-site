@@ -479,6 +479,35 @@ html.dys .q i.phr{background:none;text-decoration:underline;text-decoration-thic
 .n-couche>:not(summary){margin-left:16px;margin-right:16px}.n-couche[open]{padding-bottom:12px}
 .n-bases{border-left:4px solid var(--icon)}.n-defi{border-left:4px solid #e3b85a}
 .ex-resolu{background:var(--paper);border-radius:10px;padding:8px 12px;margin:8px 0}.ex-resolu ol{margin:4px 0;padding-left:20px}
+/* « Mes bilans » (lot 6) : espace élève (#bilans) et fiche élève du tableau de bord */
+.bilans{display:grid;gap:14px}
+.bl-sec h3{margin:0 0 4px;font-size:1.05rem}.bl-sec>.small.muted{margin:0 0 10px}
+.bl-doms{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.bl-doms li{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) auto;gap:10px;align-items:center}
+.bl-dn{display:flex;align-items:center;gap:8px;font-weight:600}
+.bl-barre{display:inline-block;width:calc(100% - 52px);max-width:160px;height:8px;border-radius:4px;background:var(--soft);vertical-align:middle;overflow:hidden;margin-right:6px}
+.bl-barre span{display:block;height:100%;border-radius:4px}
+.bl-barre .ok{background:#3f7d4e}.bl-barre .moy{background:#c48a1c}.bl-barre .ko{background:var(--brick)}
+.bl-pct{font-size:.85rem}
+.bl-nots{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.bl-ncol{border:1px solid var(--line);border-radius:var(--r);padding:10px 12px;border-top:4px solid var(--clay)}
+.bl-ncol.travail{border-top-color:var(--brick)}.bl-ncol.fragile{border-top-color:#c48a1c}.bl-ncol.acquis{border-top-color:#3f7d4e}
+.bl-ncol h4{margin:0 0 6px;font-size:.92rem;display:flex;justify-content:space-between}.bl-ncol h4 span{color:var(--muted)}
+.bl-ncol ul{margin:0;padding-left:18px;font-size:.9rem}.bl-ncol li{margin:2px 0}
+.bl-errs{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.bl-errs li{border-left:3px solid var(--brick);padding:4px 0 4px 12px}
+.bl-eh{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline}
+.bl-ex,.bl-errs .small{margin:4px 0 0}
+.bl-tab td.n{text-align:right;white-space:nowrap}
+.bl-plan{border-color:var(--icon)}
+.bl-plan ol{margin:0;padding-left:22px;display:grid;gap:8px}
+.bl-plan li>*{vertical-align:baseline}.bl-plan li{padding-right:56px;position:relative}
+.bl-min{position:absolute;right:0;top:0;font-size:.85rem;font-weight:600;color:var(--muted)}
+.bl-code{max-width:440px}.bl-outils{margin-top:14px}.bl-msg-ok{color:#3f7d4e;font-weight:600}
+@media (max-width:640px){.bl-nots{grid-template-columns:1fr}.bl-doms li{grid-template-columns:1fr auto}.bl-dv{grid-column:1/-1;grid-row:2}}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .bl-barre .ok{background:#6fb27f}:root:not([data-theme="light"]) .bl-ncol.acquis{border-top-color:#6fb27f}:root:not([data-theme="light"]) .bl-msg-ok{color:#6fb27f}}
+:root[data-theme="dark"] .bl-barre .ok{background:#6fb27f}:root[data-theme="dark"] .bl-ncol.acquis{border-top-color:#6fb27f}:root[data-theme="dark"] .bl-msg-ok{color:#6fb27f}
+html.dys .bl-ncol,html.dys .bl-errs li{border-width:2px}
 
 /* Espace professeur */
 .p-tabs{display:flex;gap:6px;flex-wrap:wrap}
@@ -1132,13 +1161,24 @@ const CONSEILS = {
     for (const [k, s] of Object.entries(obj(b))) { const v = r[k]; if (!v || plusRecent(s, v)) r[k] = s; }
     return r;
   }
+  /* « Mes bilans » (lot 6) : erreurs par type (on garde le compte le plus haut) et historique des diagnostics (réunion des deux) */
+  function errs(a, b) {
+    const r = Object.assign({}, obj(a));
+    for (const [t, e] of Object.entries(obj(b))) { const v = r[t]; if (!v || (+obj(e).n || 0) >= (+obj(v).n || 0)) r[t] = e; }
+    return r;
+  }
+  function diagH(a, b) {
+    const L = [], vu = new Set();
+    (Array.isArray(a) ? a : []).concat(Array.isArray(b) ? b : []).forEach(h => { if (!h || typeof h !== 'object') return; const c = [h.pid, h.k, h.date, h.ok].join('|'); if (!vu.has(c)) { vu.add(c); L.push(h); } });
+    return L.sort((x, y) => jour(x.date) - jour(y.date)).slice(-30);
+  }
   function fusion(A, B) {
     A = obj(A); B = obj(B);
     const la = obj(A.labo), lb = obj(B.labo), fa = obj(A.fc), fb = obj(B.fc);
     const pa = obj(la.parcours), pb = obj(lb.parcours);
     const labo = Object.assign({}, la, lb, {
       ceintures: ceintures(la.ceintures, lb.ceintures),
-      parcours: Object.assign({}, pa, pb, { prog: prog(pa.prog, pb.prog), diag: Object.assign({}, obj(pa.diag), obj(pb.diag)), last: pb.last || pa.last || null })
+      parcours: Object.assign({}, pa, pb, { prog: prog(pa.prog, pb.prog), diag: Object.assign({}, obj(pa.diag), obj(pb.diag)), sortie: Object.assign({}, obj(pa.sortie), obj(pb.sortie)), err: errs(pa.err, pb.err), diagH: diagH(pa.diagH, pb.diagH), last: pb.last || pa.last || null })
     });
     const fc = Object.assign({}, fa, fb, { res: res(fa.res, fb.res) });
     if (fa.test && (!fb.test || jour(fa.test.date) > jour(fb.test.date))) fc.test = fa.test; /* le test le plus récent */
@@ -1686,6 +1726,254 @@ ${nb > 1 ? `<g transform="translate(38 40)"><circle r="14" fill="${(BG_COUL[b.co
 })();
 
 ;
+window.LABO_BILANS_REF={"p":{"n6":{"t":"Parcours 6ᵉ","s":[{"id":"6-P1","t":"Verbe conjugué et sujet","d":"P","n":["P01","P02"],"c":true,"x":true},{"id":"6-P2","t":"COD, COI, attribut du sujet","d":"P","n":["P07","P08"],"c":true,"x":true},{"id":"6-P3","t":"CC de temps, de lieu, de cause","d":"P","n":["P10"],"c":true,"x":true},{"id":"6-P4","t":"La phrase complexe","d":"P","n":["P14","P15","P16","P19","P24"],"c":true,"x":true},{"id":"6-V1","t":"Impératif et conditionnel présents","d":"V","n":["V08","V09"],"c":true,"x":true},{"id":"6-V2","t":"Le passé simple ; rappel des temps composés","d":"V","n":["V05","V06"],"c":true,"x":true},{"id":"6-V3","t":"Temps du discours, temps du récit","d":"V","n":["V15","V18"],"c":true,"x":true},{"id":"6-G1","t":"Le GN, ses expansions et sa chaine d’accords","d":"G","n":["G04","G10","G11"],"c":true,"x":true},{"id":"6-G2","t":"Accord sujet-verbe","d":"G","n":["G12"],"c":true,"x":true},{"id":"6-G3","t":"Le participe passé avec <i>être<\/i> et avec <i>avoir<\/i>","d":"G","n":["G14","G15"],"c":true,"x":true},{"id":"6-H1","t":"Les homophones grammaticaux","d":"H","n":["H01","H02","H04"],"c":true,"x":true},{"id":"6-H2","t":"Fins de verbes en [e] ; nom ou verbe","d":"H","n":["H03","H07"],"c":true,"x":true},{"id":"6-L1","t":"Former les mots ; l’étymologie","d":"L","n":["L01","L03"],"c":true,"x":true},{"id":"6-L2","t":"Polysémie, homonymes, hyperonymes","d":"L","n":["L06","L07","L08"],"c":true,"x":true},{"id":"6-L3","t":"Expressions et vocabulaire","d":"L","n":["L11","L16"],"c":true,"x":true}],"dg":[["P01","chassent"],["P02","des tomates"],["P07","COD"],["P10","de temps"],["P16","2"],["V08","Range ta chambre !"],["V09","ferais"],["V05","entendirent"],["V15","passé simple et imparfait"],["G10","des journaux locaux"],["G12","résonnent"],["G14","arrivées"],["G15","pris"],["H01","a / à"],["H02","ses / ces"],["H03","inviter"],["L01","le contraire"],["L07","très cher"],["L08","fleur"],["L11","avoir très faim"]],"so":[["P01","viendront"],["P08","attribut du sujet"],["P10","de cause"],["P15","coordonnées"],["V08","Mange ta soupe !"],["V05","finirent"],["V18","reviendrait"],["G11","des cailloux"],["G12","chantent"],["G14","fermées"],["H01","ont"],["H03","débarrassé"],["L03","la température"],["L06","des homonymes"],["L11","s’évanouir"]]},"n5":{"t":"Parcours 5ᵉ","s":[{"id":"5-P1","t":"Sujet séparé du verbe ; COD et COI pronoms","d":"P","n":["P02","P07","G07"],"c":true,"x":true},{"id":"5-P2","t":"CC de moyen, de manière, de but","d":"P","n":["P11"],"c":true,"x":true},{"id":"5-P3","t":"La subordonnée relative","d":"P","n":["P17"],"c":true,"x":true},{"id":"5-P4","t":"Énonciation, discours direct, ponctuation","d":"P","n":["P25","P26","P06"],"c":true,"x":true},{"id":"5-V1","t":"Former les temps ; futur antérieur et passé antérieur","d":"V","n":["V01","V07"],"c":true,"x":true},{"id":"5-V2","t":"Subjonctif présent et conditionnel","d":"V","n":["V11","V09"],"c":true,"x":true},{"id":"5-V3","t":"Valeurs du présent ; premier plan et arrière-plan","d":"V","n":["V16","V17","V18"],"c":true,"x":true},{"id":"5-G1","t":"Les déterminants","d":"G","n":["G03"],"c":true,"x":true},{"id":"5-G2","t":"Voix passive et participe passé avec <i>être<\/i>","d":"G","n":["V21","G14"],"c":true,"x":true},{"id":"5-G3","t":"Participe passé avec <i>avoir<\/i> ; accord sujet-verbe","d":"G","n":["G15","G12"],"c":true,"x":true},{"id":"5-H1","t":"Homophones : décomposer pour choisir","d":"H","n":["H05"],"c":true,"x":true},{"id":"5-H2","t":"Orthographe par l’étymologie ; genre des noms","d":"H","n":["H10","H11"],"c":true,"x":true},{"id":"5-L1","t":"Racines latines et grecques","d":"L","n":["L03"],"c":true,"x":true},{"id":"5-L2","t":"Champ lexical ; figures de style","d":"L","n":["L09","L14"],"c":true,"x":true},{"id":"5-L3","t":"Niveaux de langue ; liaison et élision","d":"L","n":["L12","L15"],"c":true,"x":true}],"dg":[["P02","Mes voisins"],["P07","COI"],["G07","les"],["P11","le moyen"],["P17","Le film"],["P25","le lieu où se trouve celui qui écrit"],["V07","auras fini"],["V11","sois"],["V09","mangerais"],["V16","une vérité générale"],["V17","était"],["G03","un article partitif"],["V21","Le voleur a été arrêté par la police."],["G14","construites"],["G15","lue"],["H05","s’en / sans"],["H10","une oasis"],["L03","tue les insectes"],["L14","une métaphore"],["L12","familier"]],"so":[["P02","Les élèves"],["P11","le but"],["P17","où"],["P25","Il dit qu’il partait le lendemain."],["V07","eut mangé"],["V11","soyez"],["V17","sonna"],["G03","Cet"],["V21","La souris a été mangée par le chat."],["G15","chantées"],["H05","Qu’en"],["H10","un orage"],["L03","de la viande"],["L14","une personnification"],["L12","travailler"]]},"n4":{"t":"Parcours 4ᵉ","s":[{"id":"4-P1","t":"Sujet éloigné ; forme impersonnelle","d":"P","n":["P02","P05"],"c":true,"x":true},{"id":"4-P2","t":"CC de conséquence ; connecteurs","d":"P","n":["P12","P30"],"c":true,"x":true},{"id":"4-P3","t":"Complétive, interrogative indirecte","d":"P","n":["P16","P18","P20"],"c":true,"x":true},{"id":"4-P4","t":"Discours indirect et concordance des temps","d":"P","n":["P27"],"c":true,"x":true},{"id":"4-V1","t":"Conditionnel passé, subjonctif passé, modes impersonnels","d":"V","n":["V10","V12","V14"],"c":true,"x":true},{"id":"4-V2","t":"Emplois du conditionnel et du subjonctif","d":"V","n":["V18","V20"],"c":true,"x":true},{"id":"4-V3","t":"Aspect ; construire la voix passive","d":"V","n":["V19","V21"],"c":true,"x":true},{"id":"4-G1","t":"Apposition ; degrés de l’adjectif","d":"G","n":["G05","G06"],"c":true,"x":true},{"id":"4-G2","t":"Pronoms démonstratifs et possessifs ; prépositions et conjonctions","d":"G","n":["G08","P23","P24"],"c":true,"x":true},{"id":"4-G3","t":"Participe passé avec avoir ; GN complexe","d":"G","n":["G15","G10","G11"],"c":true,"x":true},{"id":"4-H1","t":"Homophones rares","d":"H","n":["H06"],"c":true,"x":true},{"id":"4-H2","t":"Écrire par l’étymologie","d":"H","n":["H11"],"c":true,"x":true},{"id":"4-L1","t":"Dérivation et changement de classe ; néologismes, emprunts","d":"L","n":["L01","L04"],"c":true,"x":true},{"id":"4-L2","t":"Intensité et généralité ; paronymes","d":"L","n":["L10","L06"],"c":true,"x":true},{"id":"4-L3","t":"Niveaux de langue, variation, figures","d":"L","n":["L12","L13","L14"],"c":true,"x":true}],"dg":[["P02","sont"],["P05","ne désigne personne"],["P12","la conséquence"],["P18","une subordonnée complétive"],["P20","Il me demande où je vais."],["P27","Elle a dit qu’elle viendrait."],["V10","serais"],["V14","un gérondif"],["V20","soit"],["V19","en cours"],["V21","Les enfants mangeront le gâteau."],["G05","apposé"],["G06","superlatif"],["G08","la tienne"],["G15","cueillies"],["H06","dû"],["H11","temps"],["L04","de l’arabe"],["L06","éruption"],["L14","une hyperbole"]],"so":[["P02","réveille"],["P12","la conséquence"],["P20","si"],["P27","Il a affirmé qu’il avait fini la veille."],["V12","aies"],["V18","partirait"],["V21","L’incendie a été éteint par les pompiers."],["G05","élève de 3ᵉ"],["G08","celui-là"],["G15","choisie"],["H06","Quels que"],["H11","rythme"],["L01","l’adjectif lent"],["L10","tiède, chaud, brulant"],["L14","une litote"]]},"n3":{"t":"Parcours 3ᵉ","s":[{"id":"3-P1","t":"Attribut du COD ; pronoms en et y","d":"P","n":["P09","G07"],"c":true,"x":true},{"id":"3-P2","t":"Tous les compléments circonstanciels","d":"P","n":["P13"],"c":true,"x":true},{"id":"3-P3","t":"Fonction des subordonnées ; infinitive et participiale","d":"P","n":["P17","P19","P21"],"c":true,"x":true},{"id":"3-P4","t":"Discours indirect libre ; modalisation","d":"P","n":["P28","P31"],"c":true,"x":true},{"id":"3-V1","t":"Subjonctif imparfait et plus-que-parfait ; tous les modes","d":"V","n":["V13","V01"],"c":true,"x":true},{"id":"3-V2","t":"Subjonctif après conjonction ; aspect","d":"V","n":["V20","V19"],"c":true,"x":true},{"id":"3-V3","t":"Voix passive : effets de sens ; réécriture du brevet","d":"V","n":["V21","V18"],"c":true,"x":true},{"id":"3-G1","t":"Pronoms indéfinis et interrogatifs","d":"G","n":["G09"],"c":true,"x":true},{"id":"3-G2","t":"Participe passé avec avoir : le COD pronom relatif","d":"G","n":["G16"],"c":true,"x":true},{"id":"3-G3","t":"Accords avec relative et apposition","d":"G","n":["G10","G05"],"c":true,"x":true},{"id":"3-H1","t":"Homophones experts","d":"H","n":["H06"],"c":true,"x":true},{"id":"3-H2","t":"Écrire par l’étymologie ; la dictée du brevet","d":"H","n":["H11","H09"],"c":true,"x":true},{"id":"3-L1","t":"Racines et emprunts","d":"L","n":["L03","L04"],"c":true,"x":true},{"id":"3-L2","t":"Nuances de sens ; expressions","d":"L","n":["L07","L11"],"c":true,"x":true},{"id":"3-L3","t":"Variation, niveaux de langue, figures","d":"L","n":["L12","L13","L14"],"c":true,"x":true}],"dg":[["P09","attribut du COD"],["G07","y"],["P13","la concession"],["P21","une subordonnée infinitive"],["P28","discours indirect libre"],["P31","peut-être"],["V13","au subjonctif imparfait"],["V01","le conditionnel présent"],["V20","pleuve"],["V21","on ne sait pas qui l’a volé"],["V18","Je savais qu’il viendrait."],["G09","un pronom indéfini"],["G16","fournis"],["G05","Épuisées"],["H06","Quelles"],["H09","un évènement"],["L03","aime les hommes"],["L07","figuré"],["L11","ne pas venir au rendez-vous"],["L14","un oxymore"]],"so":[["G07","en"],["P13","la condition"],["P19","CC de temps"],["P31","ne pas garantir l’information"],["V13","au subjonctif plus-que-parfait"],["V20","voie"],["V21","le vaccin"],["G09","Lequel"],["G16","dormi"],["G10","avons"],["H06","quelque"],["H11","hémisphère"],["L04","de l’espagnol"],["L11","être très surpris"],["L12","je suis excédé"]]},"nfle":{"t":"Parcours FLE · FLS","s":[{"id":"F-A1-1","t":"Dire, demander, ordonner","d":"P","n":["P03","P01"],"c":false,"x":false},{"id":"F-A1-2","t":"Dire non : la négation","d":"P","n":["P04"],"c":false,"x":false},{"id":"F-A1-3","t":"Le présent : être, avoir, aller, faire et les verbes en -er","d":"V","n":["V02","V01"],"c":false,"x":false},{"id":"F-A1-4","t":"Le nom et les articles : un, le, du","d":"G","n":["G01","G02","G03"],"c":false,"x":false},{"id":"F-A1-5","t":"Les accords : décrire quelqu’un","d":"G","n":["G10","G12"],"c":false,"x":false},{"id":"F-A1-6","t":"L’oral et l’écrit : élision et liaison","d":"L","n":["L15"],"c":false,"x":false},{"id":"F-A2-1","t":"Raconter : le passé composé","d":"V","n":["V06","G14"],"c":false,"x":false},{"id":"F-A2-2","t":"Décrire le passé, faire des projets, comprendre une consigne","d":"V","n":["V03","V04","V08"],"c":false,"x":false},{"id":"F-A2-3","t":"Ne pas répéter : les pronoms le, la, lui, leur, en, y","d":"G","n":["G07","P07"],"c":false,"x":false},{"id":"F-A2-4","t":"Les homophones : a / à, et / est, on / ont, son / sont","d":"H","n":["H01","H03"],"c":false,"x":false},{"id":"F-A2-5","t":"Apprendre des mots : synonymes, contraires, familles","d":"L","n":["L05","L02","L08"],"c":false,"x":false},{"id":"F-B1-1","t":"Expliquer : phrases complexes et connecteurs","d":"P","n":["P16","P17","P30"],"c":false,"x":false},{"id":"F-B1-2","t":"Rapporter des paroles ; comprendre une consigne","d":"P","n":["P26","P27","P25"],"c":false,"x":false},{"id":"F-B1-3","t":"Être poli, souhaiter : le conditionnel et le subjonctif","d":"V","n":["V09","V11"],"c":false,"x":false},{"id":"F-B1-4","t":"Comprendre les textes : sens figuré, expressions, niveaux de langue","d":"L","n":["L07","L11","L12"],"c":false,"x":false}],"dg":[["P03","Tu viens ?"],["P04","Je n’aime pas le poisson."],["V02","sommes"],["V01","jouent"],["G02","une"],["G03","du"],["G10","noires"],["L15","l’école"],["V06","ai"],["G14","allée"],["V04","vais"],["V08","Ouvrez"],["G07","la"],["H01","a"],["L05","petit"],["P17","qui"],["P30","parce que"],["V09","voudrais"],["P27","de ranger"],["L11","il pleut très fort"]],"so":[["P03","Ferme la porte !"],["P04","Il n’a pas de vélo."],["V02","avez"],["G03","de l’"],["G10","petite"],["V06","sommes"],["V03","vivais"],["G07","lui"],["H01","ont"],["L08","fruit"],["P16","quand il fait beau"],["V11","fasses"],["P26","« Bonjour ! » dit Sami."],["L12","familier"],["L07","un objet"]]}},"notions":{"P01":"Verbe conjugué : repérage (temps composés, pronominal, négation)","P02":"Sujet : natures, sujet inversé, multiple, séparé, éloigné","P03":"Types de phrases (déclarative, interrogative, impérative)","P04":"Formes négative et exclamative","P05":"Forme impersonnelle","P06":"Ponctuation : rôle syntaxique","P07":"COD et COI","P08":"Attribut du sujet (à distinguer du COD)","P09":"Attribut du COD","P10":"CC de temps, de lieu, de cause","P11":"CC de moyen, de manière, de but","P12":"CC de conséquence","P13":"CC d’opposition (concession), d’hypothèse (condition), de comparaison","P14":"Proposition ; phrase simple et phrase complexe","P15":"Juxtaposition et coordination","P16":"Subordination : principale, subordonnée, conjonction de subordination","P17":"Subordonnée relative et pronom relatif (antécédent)","P18":"Subordonnée conjonctive complétive","P19":"Subordonnée conjonctive circonstancielle","P20":"Subordonnée interrogative indirecte","P21":"Subordonnées infinitive et participiale","P22":"Adverbe","P23":"Préposition","P24":"Conjonctions de coordination et de subordination","P25":"Situation d’énonciation (qui parle, à qui, où, quand)","P26":"Discours direct (dialogue, ponctuation)","P27":"Discours indirect et concordance des temps","P28":"Discours indirect libre","P29":"Reprises nominales et pronominales (antécédent)","P30":"Connecteurs logiques et indicateurs de temps","P31":"Modalisation","V01":"Radical, marque de temps, marque de personne ; groupes","V02":"Présent de l’indicatif","V03":"Imparfait de l’indicatif","V04":"Futur simple","V05":"Passé simple","V06":"Passé composé, plus-que-parfait ; choix de l’auxiliaire","V07":"Futur antérieur et passé antérieur","V08":"Impératif présent","V09":"Conditionnel présent","V10":"Conditionnel passé","V11":"Subjonctif présent","V12":"Subjonctif passé","V13":"Subjonctif imparfait et plus-que-parfait (reconnaissance) ; <i>falloir<\/i>, <i>valoir<\/i>","V14":"Modes impersonnels : infinitif, participe, gérondif","V15":"Temps du discours et temps du récit","V16":"Valeurs du présent (énonciation, vérité générale, narration, habitude)","V17":"Passé simple et imparfait : premier plan, arrière-plan","V18":"Valeurs du futur et du conditionnel (futur dans le passé, hypothèse, erreur <i>si j’aurais<\/i>)","V19":"Aspect : accompli / non accompli, borné / non borné","V20":"Emplois du subjonctif (souhait, ordre, doute ; après <i>bien que<\/i>, <i>pour que…<\/i>)","V21":"Voix active et voix passive ; complément d’agent","G01":"Nom commun, nom propre ; genre et nombre","G02":"Déterminants : articles, possessifs, démonstratifs","G03":"Article partitif ; déterminants interrogatifs, exclamatifs, indéfinis, numéraux","G04":"Expansions du nom : adjectif épithète, complément du nom","G05":"Apposition (à distinguer de l’épithète et du complément du nom)","G06":"Degrés de l’adjectif : comparatif, superlatif","G07":"Pronoms personnels et leur fonction ; <i>en<\/i>, <i>y<\/i>","G08":"Pronoms démonstratifs et possessifs","G09":"Pronoms indéfinis et interrogatifs","G10":"Chaîne d’accords dans le GN","G11":"Pluriels et féminins particuliers (<i>-al / -aux<\/i>, <i>-x<\/i>, couleurs, nombres)","G12":"Accord sujet-verbe (sujet multiple, inversé, éloigné)","G13":"Accord de l’attribut du sujet","G14":"Participe passé employé avec <i>être<\/i>","G15":"Participe passé employé avec <i>avoir<\/i> (COD placé avant ou après, pronom personnel)","G16":"Participe passé avec <i>avoir<\/i>, COD pronom relatif","H01":"<i>a / à, et / est, on / ont, son / sont, ou / où<\/i>","H02":"<i>ces / ses / c’est / s’est, ce / se, la / l’a / là, ma / m’a, ta / t’a<\/i>","H03":"Fins de verbes en [e] : <i>é / er / ez / ait<\/i>","H04":"<i>leur / leurs, tout / tous, mon / m’ont, peu / peut, près / prêt<\/i>","H05":"<i>sans / s’en, dans / d’en, quand / quant / qu’en, ni / n’y, si / s’y, des / dès<\/i>","H06":"<i>quel que / quelque, quoique / quoi que, plutôt / plus tôt, du / dû, davantage<\/i>","H07":"Homophones nom / verbe (<i>travail<\/i> / <i>travaille<\/i>), <i>voir<\/i> / <i>voire<\/i>, <i>censé<\/i> / <i>sensé<\/i>","H08":"Lettres muettes et familles de mots","H09":"Consonnes doubles, accents ; rectifications de 1990","H10":"Mots invariables fréquents ; genre des noms trompeurs","H11":"Orthographe par l’étymologie (<i>ph<\/i>, <i>th<\/i>, <i>y<\/i>, <i>h<\/i>)","L01":"Mots simples, dérivés, composés ; radical, préfixe, suffixe","L02":"Familles de mots","L03":"Racines latines et grecques ; étymologie","L04":"Emprunts et néologismes","L05":"Synonymes et antonymes","L06":"Homonymes et paronymes","L07":"Polysémie ; sens propre et sens figuré","L08":"Hyperonymes et hyponymes","L09":"Champ lexical et champ sémantique","L10":"Degré d’intensité et de généralité","L11":"Expressions figées et locutions","L12":"Niveaux de langue","L13":"Variation de la langue (lieux, époques, situations)","L14":"Figures de style (comparaison, métaphore, personnification…)","L15":"Oral et écrit : liaison, élision","L16":"Vocabulaire enrichi par thème (rare, soutenu)"},"err":{"verbe-repere":{"n6":0,"nfle":0},"sujet-repere":{"n6":0,"n5":0},"sujet-inverse":{"n6":0},"pronom-compl":{"n6":1,"n5":0,"nfle":8},"cod-coi":{"n6":1,"n5":0},"attribut":{"n6":1},"cc-repere":{"n6":2,"n5":1},"cc-type":{"n6":2,"n5":1,"n4":1,"n3":1},"liaison-prop":{"n6":3},"propositions":{"n6":3,"nfle":11},"conj-coord":{"n6":3},"imperatif-forme":{"n6":4,"nfle":7},"imperatif-s":{"n6":4,"nfle":7},"cond-futur":{"n6":4,"n5":5,"n4":5,"n3":6,"nfle":7},"cond-forme":{"n6":4,"nfle":13},"ps-forme":{"n6":5},"aux-choix":{"n6":5,"n5":4,"nfle":6},"ps-imparfait":{"n6":5,"n5":6},"temps-compose":{"n6":5,"n5":4,"nfle":6},"transposer":{"n6":6},"discours-recit":{"n6":6},"gn-accord":{"n6":7,"n4":9,"nfle":4},"pluriel-fem":{"n6":7,"n4":9,"nfle":4},"expansion":{"n6":7},"accord-sv":{"n6":8,"n5":9,"n4":0,"n3":7,"nfle":4},"sv-eloigne":{"n6":8,"n5":0,"n4":0},"pp-etre":{"n6":9,"n5":8,"n4":4,"nfle":6},"pp-avoir-sujet":{"n6":9,"n5":2,"n4":9},"pp-avoir-cod":{"n6":9,"n5":2,"n4":9},"homo-a":{"n6":10,"nfle":9},"homo-son":{"n6":10,"nfle":9},"homo-et":{"n6":10,"nfle":9},"homo-on":{"n6":10,"nfle":9},"homo-ces":{"n6":10},"homo-leur":{"n6":10,"nfle":8},"fin-e":{"n6":11,"nfle":9},"nom-verbe":{"n6":11},"formation":{"n6":12,"n4":12,"nfle":10},"etymologie":{"n6":12,"n5":12,"n3":12},"hyper":{"n6":13,"nfle":10},"polysemie":{"n6":13,"nfle":14},"homonymes":{"n6":13},"expressions":{"n6":14,"n3":13,"nfle":14},"vocabulaire":{"n6":14,"nfle":10},"relative":{"n5":2,"n4":2,"n3":2,"nfle":11},"enonciation":{"n5":3,"nfle":12},"ponctuation":{"n5":3,"nfle":12},"temps-forme":{"n5":4,"n3":4,"nfle":7},"subj-forme":{"n5":5,"n4":4,"nfle":13},"valeur-present":{"n5":6},"determinant":{"n5":7},"voix-passive":{"n5":8,"n4":6,"n3":6},"homo-decomp":{"n5":10},"genre-nom":{"n5":11,"nfle":3},"ortho-etym":{"n5":11,"n4":11,"n3":11},"figures":{"n5":13,"n4":14,"n3":14},"champ-lexical":{"n5":13},"niveaux-langue":{"n5":14,"n4":14,"n3":14,"nfle":14},"liaison-elision":{"n5":14,"nfle":5},"impersonnel":{"n4":0},"connecteurs":{"n4":1,"nfle":11},"completive":{"n4":2},"interro-indirecte":{"n4":2},"discours-indirect":{"n4":3,"nfle":12},"cond-passe":{"n4":4},"modes-impersonnels":{"n4":4,"n3":4},"emplois-modes":{"n4":5,"n3":5},"aspect":{"n4":6,"n3":5},"apposition":{"n4":7},"degres-adj":{"n4":7},"pronoms-demo-poss":{"n4":8},"prep-conj":{"n4":8},"homo-rares":{"n4":10,"n3":10},"emprunts":{"n4":12,"n3":12},"intensite":{"n4":13},"paronymes":{"n4":13},"variation":{"n4":14,"n3":14},"attribut-cod":{"n3":0},"pronom-en-y":{"n3":0},"fonction-sub":{"n3":2},"infinitive-participiale":{"n3":2},"dil":{"n3":3},"modalisation":{"n3":3},"subj-imparfait":{"n3":4},"reecriture":{"n3":6},"pronoms-indef-inter":{"n3":7},"pp-relatif":{"n3":8},"accord-apposition":{"n3":9},"dictee":{"n3":11},"sens-figure":{"n3":13},"types-phrase":{"nfle":0},"negation":{"nfle":1},"present-forme":{"nfle":2},"article":{"nfle":3},"consignes":{"nfle":7},"futur-proche":{"nfle":7}}};
+/* ====================================================================
+   « Mes bilans » (refonte des parcours, lot 6, 23/11/2026).
+   Calcul et affichage communs à l’espace élève du Laboratoire (#bilans, ouvert par le code à 4 chiffres)
+   et à la fiche élève du tableau de bord (prof.html), qui montre la même vue.
+   - LABO_BILANS.ref()        : référentiel compact construit depuis NPARC, APPRO et NOTIONS_LABO (dans la page)
+                                 ou lu dans window.LABO_BILANS_REF (prof.html, écrit par build_ovh.py)
+   - LABO_BILANS.calc(P, R, niveau) : P = état du parcours de l’élève (S.parcours : prog, diag, sortie, diagH, err)
+   - LABO_BILANS.html(B, { prof })  : la page ; prof = troisième personne et pas de liens vers le Laboratoire
+   - LABO_BILANS.classe(liste de P, R) : erreurs récurrentes de la classe (tableau de bord)
+   Types d’erreurs (ERR) et domaines (DOM) : définis ici, repris par parcours2.js.
+   ==================================================================== */
+(function (g) {
+  const NB = ' ';
+  const DOM = { P: ['La phrase et ses fonctions', 'ph'], V: ['Le verbe', 'gv'], G: ['Le groupe nominal et les accords', 'gn'], H: ['Les homophones et l’orthographe', 'ho'], L: ['Le lexique', 'fm'] };
+  /* types d’erreurs (libellé montré dans « Mes bilans ») */
+  const ERR = {
+    'verbe-repere': 'Repérer le verbe conjugué', 'sujet-repere': 'Repérer le sujet', 'sujet-inverse': 'Sujet placé après le verbe',
+    'imperatif-s': 'Le <i>-s</i> à l’impératif', 'imperatif-forme': 'Former l’impératif', 'cond-futur': 'Futur ou conditionnel',
+    'cond-forme': 'Former le conditionnel', 'pp-etre': 'Participe passé avec <i>être</i>', 'pp-avoir-sujet': 'Accord avec le sujet après <i>avoir</i>',
+    'pp-avoir-cod': 'COD placé avant le verbe', 'homo-a': '<i>a / à</i>', 'homo-et': '<i>et / est</i>', 'homo-son': '<i>son / sont</i>',
+    'homo-on': '<i>on / ont</i>', 'homo-ces': '<i>ces / ses</i>', 'homo-leur': '<i>leur / leurs</i>', 'polysemie': 'Polysémie', 'homonymes': 'Homonymes',
+    'hyper': 'Hyperonymes et hyponymes',
+    'cod-coi': 'COD ou COI', 'attribut': 'Attribut du sujet ou COD', 'pronom-compl': 'Remplacer un complément par un pronom',
+    'cc-type': 'Sens du complément circonstanciel', 'cc-repere': 'Repérer un complément circonstanciel',
+    'propositions': 'Compter les propositions', 'liaison-prop': 'Juxtaposition, coordination, subordination', 'conj-coord': 'Conjonctions de coordination',
+    'ps-forme': 'Former le passé simple', 'ps-imparfait': 'Passé simple ou imparfait', 'aux-choix': 'Choisir l’auxiliaire', 'temps-compose': 'Former un temps composé',
+    'discours-recit': 'Temps du discours, temps du récit', 'transposer': 'Transposer un texte',
+    'gn-accord': 'Chaine d’accords dans le GN', 'pluriel-fem': 'Pluriels et féminins particuliers', 'expansion': 'Expansions du nom',
+    'accord-sv': 'Accord du verbe avec le sujet', 'sv-eloigne': 'Sujet éloigné ou inversé',
+    'fin-e': 'Fins de verbes en [e]', 'nom-verbe': 'Nom ou verbe homophones',
+    'formation': 'Former les mots', 'etymologie': 'Racines et étymologie', 'expressions': 'Expressions et locutions', 'vocabulaire': 'Vocabulaire',
+    'relative': 'Subordonnée relative et antécédent',
+    'enonciation': 'Situation d’énonciation',
+    'ponctuation': 'Ponctuation et dialogue',
+    'temps-forme': 'Radical, marque de temps, marque de personne',
+    'subj-forme': 'Former et employer le subjonctif',
+    'valeur-present': 'Valeurs du présent',
+    'determinant': 'Les déterminants',
+    'voix-passive': 'Voix active et voix passive',
+    'homo-decomp': '<i>sans / s’en, dans / d’en, quand / qu’en…</i>',
+    'genre-nom': 'Genre des noms',
+    'ortho-etym': 'Orthographe et étymologie',
+    'champ-lexical': 'Champ lexical',
+    'figures': 'Figures de style',
+    'niveaux-langue': 'Niveaux de langue',
+    'liaison-elision': 'Liaison et élision',
+    'impersonnel': 'Forme impersonnelle',
+    'connecteurs': 'Connecteurs logiques',
+    'completive': 'Subordonnée complétive',
+    'interro-indirecte': 'Interrogative indirecte',
+    'discours-indirect': 'Discours indirect et concordance des temps',
+    'cond-passe': 'Conditionnel passé et subjonctif passé',
+    'modes-impersonnels': 'Infinitif, participe, gérondif',
+    'emplois-modes': 'Emplois du conditionnel et du subjonctif',
+    'aspect': 'Aspect du verbe',
+    'apposition': 'Apposition',
+    'degres-adj': 'Comparatif et superlatif',
+    'pronoms-demo-poss': 'Pronoms démonstratifs et possessifs',
+    'prep-conj': 'Prépositions et conjonctions',
+    'homo-rares': '<i>quel que, quoique, plutôt, dû…</i>',
+    'emprunts': 'Emprunts et néologismes',
+    'intensite': 'Intensité et généralité',
+    'paronymes': 'Paronymes',
+    'variation': 'Variation de la langue',
+    'attribut-cod': 'Attribut du COD',
+    'pronom-en-y': 'Pronoms <i>en</i> et <i>y</i>',
+    'fonction-sub': 'Fonction des subordonnées',
+    'infinitive-participiale': 'Subordonnées infinitive et participiale',
+    'dil': 'Discours indirect libre',
+    'modalisation': 'Modalisation',
+    'subj-imparfait': 'Subjonctif imparfait et plus-que-parfait',
+    'pronoms-indef-inter': 'Pronoms indéfinis et interrogatifs',
+    'pp-relatif': 'Participe passé et pronom relatif <i>que</i>',
+    'accord-apposition': 'Accord de l’apposition',
+    'reecriture': 'Réécriture',
+    'dictee': 'Dictée : consonnes doubles, accents, rectifications',
+    'sens-figure': 'Sens propre et sens figuré',
+    'types-phrase': 'Types de phrases',
+    'negation': 'La négation',
+    'present-forme': 'Le présent',
+    'article': 'Les articles',
+    'futur-proche': 'Futur proche et futur',
+    'consignes': 'Comprendre une consigne'
+  };
+  const ORDRE = ['n6', 'n5', 'n4', 'n3', 'nfle'];
+  const NOMP = { n6: '6ᵉ', n5: '5ᵉ', n4: '4ᵉ', n3: '3ᵉ', nfle: 'FLE' };
+  const ST_T = { acquis: 'Acquises', fragile: 'Fragiles', travail: 'À travailler' };
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const nb = s => String(s == null ? '' : s).replace(/ ([:;!?])/g, NB + '$1');
+  const obj = o => (o && typeof o === 'object' && !Array.isArray(o)) ? o : {};
+  const jour = d => { const m = /^(\d\d)\/(\d\d)\/(\d{4})$/.exec(d || ''); return m ? +(m[3] + m[2] + m[1]) : 0; };
+  const pc = (a, b) => b ? Math.round(100 * a / b) : null;
+
+  /* ---------- référentiel compact ---------- */
+  function typesExo(e) {
+    const out = []; if (!e) return out;
+    if (e.err) out.push(e.err);
+    (e.items || []).forEach(x => { const t = Array.isArray(x) ? x[e.kind === 'input' ? 3 : 4] : x && x.err; if (typeof t === 'string') out.push(t); });
+    return out;
+  }
+  let REF = null;
+  function ref() {
+    if (g.LABO_BILANS_REF) return g.LABO_BILANS_REF;
+    if (REF) return REF;
+    const NP = g.NPARC || {}, AP = g.APPRO || {}, NO = g.NOTIONS_LABO || {};
+    const R = { p: {}, notions: {}, err: {} };
+    const poser = (t, pid, i) => { if (!t) return; const e = R.err[t] || (R.err[t] = {}); if (e[pid] == null) e[pid] = i; };
+    ORDRE.forEach(pid => {
+      const p = NP[pid]; if (!p || p.enPreparation) return;
+      const S = []; (p.modules || []).forEach(m => m.steps.forEach(s => S.push({ s, d: m.dom })));
+      const A = AP[pid] || {};
+      R.p[pid] = { t: p.titre, s: S.map(({ s, d }) => ({ id: s.id, t: s.titre, d, n: s.notions || [], c: !!(A[s.id] && A[s.id].c), x: !!(A[s.id] && A[s.id].d) })),
+        dg: (p.diagnostic || []).map(q => [q.n, q.r]), so: (p.sortie || []).map(q => [q.n, q.r]) };
+      S.forEach(({ s }, i) => {
+        (s.manip || []).concat(s.exos || [], s.defi || []).forEach(e => typesExo(e).forEach(t => poser(t, pid, i)));
+        if (s.reflexe) poser(s.reflexe.err, pid, i);
+        ['c', 'd'].forEach(c => ((A[s.id] || {})[c] || []).forEach(e => typesExo(e).forEach(t => poser(t, pid, i))));
+      });
+      (p.diagnostic || []).concat(p.sortie || []).forEach(q => { if (!q.err) return; const i = S.findIndex(({ s }) => (s.notions || []).includes(q.n)); if (i >= 0) poser(q.err, pid, i); });
+    });
+    Object.keys(NO).forEach(id => { R.notions[id] = NO[id].nom; });
+    return (REF = R);
+  }
+
+  /* ---------- calcul ---------- */
+  const k = (pid, s) => pid + ':' + s.id;
+  function statutsDe(rep, Q) {
+    if (!Array.isArray(rep) || !Q || rep.length !== Q.length) return null;
+    const c = {}; Q.forEach(([n, r], i) => { const x = c[n] || (c[n] = { ok: 0, n: 0 }); x.n++; if (rep[i] === r) x.ok++; });
+    const st = {}; Object.keys(c).forEach(n => { st[n] = c[n].ok === c[n].n ? 'acquis' : c[n].ok ? 'fragile' : 'travail'; });
+    return st;
+  }
+  const compte = st => { const o = { a: 0, f: 0, t: 0 }; Object.values(st || {}).forEach(v => { o[v === 'acquis' ? 'a' : v === 'fragile' ? 'f' : 't']++; }); return o; };
+  /* résumé d’un diagnostic fini (enregistré dans P.diagH par parcours2.js) */
+  function resumeDiag(R, pid, sortie, rep, date) {
+    const p = R.p[pid]; if (!p) return null; const Q = sortie ? p.so : p.dg; const st = statutsDe(rep, Q); if (!st) return null;
+    const c = compte(st);
+    return { pid, k: sortie ? 's' : 'd', date, ok: Q.filter(([, r], i) => rep[i] === r).length, n: Q.length, a: c.a, f: c.f, t: c.t };
+  }
+  function calc(P, R, niveau) {
+    P = obj(P); R = R || ref();
+    const prog = obj(P.prog), diag = obj(P.diag), sortie = obj(P.sortie), err = obj(P.err);
+    const pids = ORDRE.filter(pid => R.p[pid]);
+    const actifs = pids.filter(pid => diag[pid] || sortie[pid] || R.p[pid].s.some(s => prog[k(pid, s)] || prog[k(pid, s) + ':c'] || prog[k(pid, s) + ':d']));
+    const lastPid = P.last && P.last.pid;
+    const conseil = 'n' + (niveau || '6');
+    const main = actifs.includes(lastPid) ? lastPid : actifs.includes(conseil) ? conseil : actifs[0] || (R.p[conseil] ? conseil : pids[0]);
+
+    /* réussite par domaine : étapes terminées et séries d’approfondissement, tous parcours confondus */
+    const doms = Object.keys(DOM).map(d => {
+      let somme = 0, nr = 0, faites = 0, total = 0;
+      (actifs.length ? actifs : [main]).forEach(pid => R.p[pid].s.filter(s => s.d === d).forEach(s => {
+        total++; const x = prog[k(pid, s)];
+        if (x && x.done) { faites++; if (x.total) { somme += x.score / x.total; nr++; } }
+        ['c', 'd'].forEach(c => { const y = prog[k(pid, s) + ':' + c]; if (y && y.total) { somme += y.score / y.total; nr++; } });
+      }));
+      return { d, nom: DOM[d][0], cl: DOM[d][1], moy: nr ? Math.round(100 * somme / nr) : null, faites, total, mesures: nr };
+    });
+
+    /* notions : dernier diagnostic (entrée ou sortie), puis résultats des étapes */
+    const base = {}, dateBase = {};
+    actifs.forEach(pid => {
+      const L = [[diag[pid], R.p[pid].dg], [sortie[pid], R.p[pid].so]].filter(([x]) => x && Array.isArray(x.rep));
+      L.forEach(([x, Q]) => { const st = statutsDe(x.rep, Q); if (!st) return; const j = jour(x.date);
+        Object.entries(st).forEach(([n, v]) => { if (dateBase[n] == null || j >= dateBase[n]) { base[n] = v; dateBase[n] = j; } }); });
+    });
+    const res = {};
+    actifs.forEach(pid => R.p[pid].s.forEach(s => { const x = prog[k(pid, s)]; if (x && x.done && x.total) s.n.forEach(n => { (res[n] = res[n] || []).push(x.score / x.total); }); }));
+    const st = {};
+    new Set(Object.keys(base).concat(Object.keys(res))).forEach(n => {
+      const b = base[n], r = res[n];
+      if (!r) { st[n] = b; return; }
+      const m = Math.min(...r);
+      st[n] = m >= .8 ? 'acquis' : m < .6 ? (b === 'acquis' ? 'fragile' : 'travail') : (b === 'acquis' ? 'acquis' : 'fragile');
+    });
+    const notions = { acquis: [], fragile: [], travail: [] };
+    Object.keys(st).sort().forEach(n => { if (notions[st[n]]) notions[st[n]].push({ id: n, nom: R.notions[n] || n }); });
+
+    /* erreurs récurrentes (au moins deux fois), avec un exemple et l’étape dont le mémo explique la règle */
+    const memoDe = t => { const e = R.err[t]; if (!e) return null; const pid = [main].concat(actifs, pids).find(q => e[q] != null && R.p[q]); return pid ? { pid, i: e[pid], t: R.p[pid].s[e[pid]].t, c: R.p[pid].s[e[pid]].c } : null; };
+    const erreurs = Object.entries(err).filter(([, e]) => e && e.n >= 2).sort((a, b) => b[1].n - a[1].n || jour(b[1].d) - jour(a[1].d)).slice(0, 8)
+      .map(([t, e]) => ({ t, lib: ERR[t] || t, n: e.n, d: e.d || '', ex: e.ex || '', memo: memoDe(t) }));
+
+    /* historique des diagnostics : P.diagH, complété par les diagnostics enregistrés avant le lot 6 */
+    const H = (Array.isArray(P.diagH) ? P.diagH : []).filter(x => x && R.p[x.pid]).slice();
+    actifs.forEach(pid => [[diag[pid], false], [sortie[pid], true]].forEach(([x, so]) => {
+      if (!x || !Array.isArray(x.rep) || H.some(h => h.pid === pid && h.k === (so ? 's' : 'd') && h.date === x.date)) return;
+      const r = resumeDiag(R, pid, so, x.rep, x.date); if (r) H.push(r);
+    }));
+    H.sort((a, b) => jour(b.date) - jour(a.date));
+
+    /* plan « Pour ton prochain entrainement » : environ 40 minutes */
+    const plan = [], P0 = R.p[main];
+    const ajoute = (x) => { if (plan.reduce((a, y) => a + y.min, 0) >= 40 || plan.some(y => y.href === x.href)) return; plan.push(x); };
+    if (P0 && !diag[main]) ajoute({ t: `Faire le diagnostic du ${P0.t.replace(/^Parcours /, 'parcours ')}`, why: 'pour savoir par où commencer', href: `#diag-${main}`, min: 10 });
+    erreurs.slice(0, 2).forEach(e => { if (!e.memo) return; const m = e.memo;
+      ajoute({ t: `Relire le mémo «${NB}${m.t}${NB}»${m.c ? ' puis faire la série de consolidation' : ' et refaire les exercices'}`, why: 'erreur fréquente' + NB + ': ' + e.lib, href: m.c ? `#serie-${m.pid}-${m.i}-c` : `#etape-${m.pid}-${m.i}`, min: m.c ? 15 : 10 }); });
+    if (P0) {
+      const aFaire = P0.s.findIndex(s => !(prog[k(main, s)] || {}).done && !s.n.every(n => st[n] === 'acquis'));
+      const i = aFaire >= 0 ? aFaire : P0.s.findIndex(s => !(prog[k(main, s)] || {}).done);
+      if (i >= 0) ajoute({ t: `Étape «${NB}${P0.s[i].t}${NB}»`, why: aFaire >= 0 ? 'prochaine étape du parcours' : 'pour finir le parcours', href: `#etape-${main}-${i}`, min: 20 });
+      else if (P0.so.length && !sortie[main]) ajoute({ t: 'Faire le diagnostic de sortie', why: 'toutes les étapes sont faites', href: `#sortie-${main}`, min: 10 });
+      P0.s.forEach((s, j) => { const x = prog[k(main, s)], y = prog[k(main, s) + ':d'];
+        if (s.x && x && x.done && x.total && x.score / x.total >= .85 && !(y && y.total && y.score / y.total >= .8)) ajoute({ t: `Défi «${NB}${s.t}${NB}»`, why: 'notion acquise' + NB + ': va plus loin', href: `#serie-${main}-${j}-d`, min: 10 }); });
+    }
+    const vide = !actifs.length && !erreurs.length;
+    return { main, mainT: P0 ? P0.t : '', actifs, doms, notions, erreurs, H, plan, vide };
+  }
+
+  /* ---------- affichage ---------- */
+  const barre = p => p == null ? '<span class="muted small">pas encore de résultat</span>' : `<span class="bl-barre"><span style="width:${Math.max(3, p)}%" class="${p >= 80 ? 'ok' : p >= 60 ? 'moy' : 'ko'}"></span></span><b class="bl-pct">${p}${NB}%</b>`;
+  function html(B, o) {
+    o = o || {}; const prof = !!o.prof;
+    const lien = (href, txt) => prof ? txt : `<a href="${href}">${txt}</a>`;
+    const T = prof ? { dom: 'Réussite par domaine', no: 'Notions', er: 'Erreurs récurrentes', dg: 'Diagnostics', pl: 'Pour son prochain entrainement' }
+      : { dom: 'Ma réussite par domaine', no: 'Mes notions', er: 'Mes erreurs récurrentes', dg: 'Mes diagnostics', pl: 'Pour ton prochain entrainement' };
+    if (B.vide) return `<div class="card bl-vide"><p>${prof ? 'Pas encore de résultat dans les parcours.' : `Tu n’as pas encore de résultat dans les parcours. Commence par le ${lien('#diag-' + B.main, 'diagnostic de ton parcours')}${NB}: tes bilans se rempliront au fil de ton travail.`}</p></div>`;
+    const doms = `<section class="card bl-sec"><h3>${T.dom}</h3><p class="small muted">Moyenne des étapes terminées et des séries d’approfondissement${B.actifs.length > 1 ? ', tous parcours confondus' : ''}.</p>
+      <ul class="bl-doms">${B.doms.map(d => `<li class="m-${d.cl}"><span class="bl-dn"><span class="mdot"></span>${esc(d.nom)}</span><span class="bl-dv">${barre(d.moy)}</span><span class="small muted bl-df">${d.faites}/${d.total} étape${d.total > 1 ? 's' : ''}</span></li>`).join('')}</ul></section>`;
+    const nT = B.notions.acquis.length + B.notions.fragile.length + B.notions.travail.length;
+    const notions = `<section class="card bl-sec"><h3>${T.no}</h3>${nT ? `<p class="small muted">D’après ${prof ? 'le' : 'ton'} dernier diagnostic et ${prof ? 'les' : 'tes'} résultats dans les étapes.</p><div class="bl-nots">${['travail', 'fragile', 'acquis'].map(s => `<div class="bl-ncol ${s}"><h4>${ST_T[s]} <span>${B.notions[s].length}</span></h4>${B.notions[s].length ? `<ul>${B.notions[s].map(n => `<li>${nb(n.nom)}</li>`).join('')}</ul>` : '<p class="small muted">Aucune.</p>'}</div>`).join('')}</div>`
+      : `<p class="small muted">${prof ? 'Pas encore de diagnostic.' : `Fais le ${lien('#diag-' + B.main, 'diagnostic')} pour voir où tu en es.`}</p>`}</section>`;
+    const erreurs = `<section class="card bl-sec"><h3>${T.er}</h3>${B.erreurs.length ? `<p class="small muted">Les erreurs faites au moins deux fois, avec ${prof ? 'la dernière' : 'ta dernière'} et le mémo qui explique la règle.</p><ul class="bl-errs">${B.erreurs.map(e => `<li><div class="bl-eh"><b>${nb(e.lib)}</b><span class="small muted">${e.n}${NB}fois${e.d ? ' · dernière le ' + esc(e.d) : ''}</span></div>${e.ex ? `<p class="bl-ex"><span class="small muted">Exemple${NB}:</span> <i>${esc(e.ex)}</i></p>` : ''}${e.memo ? `<p class="small">Mémo${NB}: ${lien(`#etape-${e.memo.pid}-${e.memo.i}`, '«' + NB + nb(e.memo.t) + NB + '»')}${prof ? '' : e.memo.c ? ` · ${lien(`#serie-${e.memo.pid}-${e.memo.i}-c`, 'série de consolidation')}` : ''} <span class="muted">(${NOMP[e.memo.pid]})</span></p>` : ''}</li>`).join('')}</ul>` : `<p class="small muted">Aucune erreur répétée pour l’instant.</p>`}</section>`;
+    const diags = `<section class="card bl-sec"><h3>${T.dg}</h3>${B.H.length ? `<div class="tw"><table class="bl-tab"><thead><tr><th>Date</th><th>Parcours</th><th>Diagnostic</th><th>Score</th><th>Acquises</th><th>Fragiles</th><th>À travailler</th></tr></thead><tbody>${B.H.slice(0, 20).map(h => `<tr><td>${esc(h.date)}</td><td>${NOMP[h.pid] || esc(h.pid)}</td><td>${h.k === 's' ? 'de sortie' : 'd’entrée'}</td><td class="n">${h.ok}/${h.n} <span class="muted small">(${pc(h.ok, h.n)}${NB}%)</span></td><td class="n">${h.a}</td><td class="n">${h.f}</td><td class="n">${h.t}</td></tr>`).join('')}</tbody></table></div>`
+      : `<p class="small muted">${prof ? 'Aucun diagnostic.' : 'Aucun diagnostic pour l’instant.'}</p>`}</section>`;
+    const tot = B.plan.reduce((a, x) => a + x.min, 0);
+    const plan = `<section class="card bl-sec bl-plan"><h3>${T.pl}</h3>${B.plan.length ? `<p class="small muted">Environ ${tot}${NB}minutes${B.mainT ? ', ' + esc(B.mainT.replace(/^Parcours /, 'parcours ')) : ''}.</p><ol>${B.plan.map(x => `<li><span>${prof ? nb(x.t) : `<a href="${x.href}">${nb(x.t)}</a>`}<span class="small muted"> · ${nb(x.why)}</span></span><span class="bl-min">${x.min}${NB}min</span></li>`).join('')}</ol>` : `<p class="small muted">Tout est fait${NB}! ${prof ? '' : `Choisis un défi dans ${lien('#approfondissement', 'Approfondissement')}.`}</p>`}</section>`;
+    return `<div class="bilans">${plan}${doms}${notions}${erreurs}${diags}</div>`;
+  }
+
+  /* ---------- tableau de bord : erreurs récurrentes de la classe ---------- */
+  function classe(liste, R) {
+    R = R || ref(); const T = {};
+    liste.forEach(P => Object.entries(obj(obj(P).err)).forEach(([t, e]) => {
+      if (!e || !(e.n >= 1)) return; const x = T[t] || (T[t] = { t, lib: ERR[t] || t, eleves: 0, rec: 0, n: 0, ex: '', d: 0 });
+      x.eleves++; if (e.n >= 2) x.rec++; x.n += e.n; if (jour(e.d) >= x.d && e.ex) { x.ex = e.ex; x.d = jour(e.d); }
+    }));
+    return Object.values(T).filter(x => x.rec).sort((a, b) => b.rec - a.rec || b.n - a.n).map(x => {
+      const e = R.err[x.t], pid = e && ORDRE.find(q => e[q] != null && R.p[q]);
+      return Object.assign(x, { memo: pid ? R.p[pid].s[e[pid]].t + ' (' + NOMP[pid] + ')' : '' });
+    });
+  }
+
+  g.LABO_BILANS = { ref, calc, html, classe, resumeDiag, statutsDe, ERR, DOM, NOMP };
+})(typeof globalThis !== 'undefined' ? globalThis : window);
+
+;
 /* ====================================================================
    Tableau de bord du professeur (demande d'Augustin, 19/11/2026).
    Lit, pour une classe, l'état de chaque élève, son journal (une ligne par série, ceinture, test…)
@@ -1967,7 +2255,8 @@ ${L.map(({ e, a }) => { if (!a) return ''; const nbB = a.badges.filter(b => b.ok
 <div class="card"><h3>Points de vigilance</h3>${vigs.length ? `<ul class="tb-vlist">${vigs.sort((p, q) => q.v[0] - p.v[0]).map(({ e, v }) => `<li class="tb-v g${v[0]}"><span class="tb-vi">${ico(v[1], 16)}</span><span><a href="#" data-x="tdb-eleve" data-el="${esc(e.id)}"><b>${esc(e.prenom)}</b></a> · ${esc(v[2])}</span></li>`).join('')}</ul>` : '<p class="small muted">Rien à signaler.</p>'}</div>
 <div class="card"><h3>Lots les plus difficiles</h3><p class="small muted">Réussite moyenne de la dernière série de chaque élève (au moins deux élèves).</p>${durs.length ? `<div class="tw"><table><thead><tr><th>Lot</th><th>Élèves</th><th>Réussite</th></tr></thead><tbody>${durs.map(p => `<tr><td>${esc(p.nom)}</td><td class="n">${p.el}</td><td>${barre(p.moy, 70)}</td></tr>`).join('')}</tbody></table></div>` : '<p class="small muted">Pas encore assez de données.</p>'}
 ${Object.keys(domTest).length ? `<h3 style="margin-top:18px">Test de positionnement de la classe</h3><div class="tw"><table><thead><tr><th>Domaine</th><th>Solide</th><th>À consolider</th><th>À travailler</th></tr></thead><tbody>${Object.entries(domTest).map(([d, o]) => `<tr><td>${esc(NOMDOM[d] || d)}</td><td class="n">${o.solide}</td><td class="n">${o.consolider}</td><td class="n"><b>${o.travailler}</b></td></tr>`).join('')}</tbody></table></div>` : ''}</div>
-</div>`);
+</div>
+${erreursClasse(CACHE.data.eleves)}`);
     ctx.lierClasse();
   }
 
@@ -1985,6 +2274,19 @@ ${Object.keys(domTest).length ? `<h3 style="margin-top:18px">Test de positionnem
     if (e.t === 'code') return 'Code secret ' + esc(e.quoi || '');
     return esc(e.t);
   };
+  /* « Mes bilans » (lot 6) : la vue de l'élève (bilans.js, référentiel LABO_BILANS_REF écrit par build_ovh.py) */
+  const BCODE = { perso: 'choisi par l’élève', cahier: 'par défaut (date de naissance, envoyé par le Cahier de suivi)', '': 'pas encore de code par défaut (le Cahier ne l’a pas envoyé)' };
+  function bilansEleve(id) {
+    if (typeof LABO_BILANS === 'undefined' || !window.LABO_BILANS_REF) return '';
+    const x = ((CACHE.data || {}).eleves || []).find(y => y.el === id); if (!x) return '';
+    const L = (x.etat || {}).labo || {}, B = LABO_BILANS.calc(L.parcours, LABO_BILANS_REF, L.niveau);
+    return `<div class="card tb-bil-h"><h3>Mes bilans</h3><p class="small muted">La même vue que dans l’espace de l’élève (menu du prénom, page ouverte par un code à 4 chiffres). Code${NB}: ${BCODE[x.bcode || '']}.${x.bcode === 'perso' ? ` <button class="btn ghost small" type="button" data-x="tdb-reinit-bilans" data-el="${esc(id)}">Revenir au code par défaut</button>` : ''}</p></div>${LABO_BILANS.html(B, { prof: true })}`;
+  }
+  function erreursClasse(L) {
+    if (typeof LABO_BILANS === 'undefined' || !window.LABO_BILANS_REF) return '';
+    const E = LABO_BILANS.classe(L.map(x => (((x.etat || {}).labo || {}).parcours) || {}), LABO_BILANS_REF).slice(0, 10);
+    return `<div class="card"><h3>Erreurs récurrentes de la classe</h3><p class="small muted">Dans les parcours${NB}: types d’erreurs faits au moins deux fois par un élève, avec le dernier exemple et l’étape dont le mémo explique la règle.</p>${E.length ? `<div class="tw"><table><thead><tr><th>Erreur</th><th>Élèves concernés</th><th>Erreurs</th><th>Dernier exemple</th><th>Mémo</th></tr></thead><tbody>${E.map(e => `<tr><td><b>${e.lib}</b></td><td class="n">${e.rec}${e.eleves > e.rec ? ` <span class="small muted">(+${e.eleves - e.rec} une fois)</span>` : ''}</td><td class="n">${e.n}</td><td><i>${esc(e.ex)}</i></td><td>${e.memo}</td></tr>`).join('')}</tbody></table></div>` : '<p class="small muted">Pas encore d’erreur répétée.</p>'}</div>`;
+  }
   async function eleve(ctx, id) {
     const { A, c, noms } = await charger(ctx);
     const e = c.eleves.find(x => x.id === id), a = A[id]; if (!e || !a) return classe(ctx);
@@ -2003,6 +2305,7 @@ ${tuile('Badges', `${a.badges.filter(b => b.ok).length}${NNB}/${NNB}${a.badges.l
 ${tuile('Note proposée', k ? virgule(k.note) + NNB + '/' + NNB + '20' : '–', k ? 'barème des bilans' : '')}
 </div>
 ${a.V.length ? `<div class="card"><h3>Points de vigilance</h3><ul class="tb-vlist">${a.V.map(vig).join('')}</ul></div>` : ''}
+${bilansEleve(id)}
 <div class="card"><h3>Progression</h3><p class="small muted">Chaque point est une série (survol${NB}: lot et score)${NB}; la ligne suit la moyenne des trois dernières séries. Les séries faites trop vite ne sont pas tracées.</p>${courbe(a.valides)}</div>
 <div class="card"><h3>Temps de travail par semaine</h3><p class="small muted">Minutes, sur les douze dernières semaines.</p>${histo(minSem, S12.map(d => 'semaine du ' + frD(d)), 'min', 'Minutes de travail par semaine')}</div>
 <div class="card"><h3>Badges</h3><p class="small muted">Les mêmes que dans le Cahier de suivi (catégories « Laboratoire » et « Ceintures »), avec leur date.</p>
@@ -2194,7 +2497,7 @@ ${c ? `<div class="card p-classe">
   <div class="tw"><table><thead><tr><th>Prénom affiché</th><th>Compte</th><th>Dernière visite</th><th></th></tr></thead><tbody>
   ${c.eleves.map((e, i) => { const r = recDe(c.id, e.id); return `<tr><td><input class="p-in" data-i="${i}" value="${esc(e.prenom)}"></td>
     <td>${!r ? '<span class="muted">pas encore</span>' : r.bloque ? 'bloqué 10 min' : r.code ? 'actif, code secret créé' : 'actif'}</td><td>${r ? fr(r.vu) : ''}</td>
-    <td><div class="p-acts">${r && r.code ? `<button class="btn ghost" type="button" data-x="reinit" data-el="${esc(e.id)}">Code oublié</button>` : ''}${r ? `<button class="btn ghost danger" type="button" data-x="effacer" data-el="${esc(e.id)}">Effacer la progression</button>` : ''}<button class="btn ghost" type="button" data-x="retirer" data-i="${i}" title="Retirer de la liste">✕</button></div></td></tr>`; }).join('')}
+    <td><div class="p-acts">${r && r.code ? `<button class="btn ghost" type="button" data-x="reinit" data-el="${esc(e.id)}">Code oublié</button>` : ''}${r && r.bcode === 'perso' ? `<button class="btn ghost" type="button" data-x="reinit-bilans" data-el="${esc(e.id)}" title="Le code de « Mes bilans » redevient celui envoyé par le Cahier de suivi (date de naissance)">Code des bilans</button>` : ''}${r ? `<button class="btn ghost danger" type="button" data-x="effacer" data-el="${esc(e.id)}">Effacer la progression</button>` : ''}<button class="btn ghost" type="button" data-x="retirer" data-i="${i}" title="Retirer de la liste">✕</button></div></td></tr>`; }).join('')}
   </tbody></table></div>
   <div class="p-row"><label class="field">Ajouter des élèves (un prénom par ligne)<textarea id="c-ajout" rows="3"></textarea></label><button class="btn ghost" type="button" data-x="ajouter">Ajouter</button></div>
   <div class="row"><button class="btn" type="button" data-x="enregistrer">Enregistrer les classes</button>${c.eleves.length === 0 ? '<button class="btn ghost danger" type="button" data-x="suppr-classe">Supprimer la classe</button>' : ''}</div>
@@ -2322,6 +2625,8 @@ ${((x.bilan || {}).lots || []).length ? `<table><thead><tr><th>Lot</th><th>Score
       if (x === 'recharger') { await charger(); return flash('À jour.'); }
       if (x === 'tdb-eleve') return LABO_TDB.eleve(ctx, t.dataset.el);
       if (x === 'tdb-retour') return LABO_TDB.classe(ctx);
+      if (x === 'reinit-bilans' || x === 'tdb-reinit-bilans') { if (!confirm('Le code de « Mes bilans » de cet élève redeviendra le code par défaut (sa date de naissance, envoyée par le Cahier de suivi). Continuer ?')) return;
+        await appel('reinit-bilans', { cl: clSel, el: t.dataset.el }); if (x === 'tdb-reinit-bilans') { LABO_TDB.vider(); await LABO_TDB.eleve(ctx, t.dataset.el); } else await charger(); return flash('Code des bilans remis par défaut.'); }
       if (x === 'tdb-maj') { LABO_TDB.vider(); await charger(); return flash('À jour.'); }
       if (x === 'tdb-csv') { const l = LABO_TDB.lignesCSV(ctx); if (l) telecharger(`Laboratoire - tableau de bord ${c ? c.nom : ''} ${aujourdhui().replace(/\//g, '-')}.csv`, l); return; }
       if (x === 'sauvegarde') { flash('Préparation de la sauvegarde…'); const d = await appel('exporter');
