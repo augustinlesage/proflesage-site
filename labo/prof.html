@@ -1577,8 +1577,8 @@ const LABO_BILAN = (function () {
     if (y > BAS - 20) { doc.addPage(); y = suiteT(doc); }
     y = sectionTitre(doc, y, 'Lots travaillés', B.nbBilans > 1 ? 'tous tes bilans réunis : le résultat le plus récent de chaque lot' : '');
     if (k.lots.length || k.exclus.length) {
-      const L = k.lots.slice().sort((a, b) => b.pct - a.pct).map(l => [{ t: l.nom, gras: true }, niveaux(l.niv), MODES[l.mode] || '?', { barre: l.pct }, l.best != null ? l.best + NB + '%' : '', l.nb || '', dureeCourt(l.sec), dureeCourt(l.tot), l.date || '']);
-      for (const l of k.exclus) { const r = [{ t: l.nom, gras: true, danger: true }, niveaux(l.niv), MODES[l.mode] || '?', { barre: Math.max(0, Math.min(100, +l.pct || 0)) }, l.best != null ? l.best + NB + '%' : '', l.nb || '', dureeCourt(l.sec), dureeCourt(l.tot), l.date || '']; r.exclu = true; L.push(r); }
+      const L = k.lots.slice().sort((a, b) => b.pct - a.pct).map(l => [{ t: l.nom, gras: true }, niveaux(l.niv), MODES[l.mode] || 'non enregistrée', { barre: l.pct }, l.best != null ? l.best + NB + '%' : '', l.nb || '', dureeCourt(l.sec), dureeCourt(l.tot), l.date || '']);
+      for (const l of k.exclus) { const r = [{ t: l.nom, gras: true, danger: true }, niveaux(l.niv), MODES[l.mode] || 'non enregistrée', { barre: Math.max(0, Math.min(100, +l.pct || 0)) }, l.best != null ? l.best + NB + '%' : '', l.nb || '', dureeCourt(l.sec), dureeCourt(l.tot), l.date || '']; r.exclu = true; L.push(r); }
       y = tableau(doc, y + 1, [{ t: 'Lot', w: 45 }, { t: 'Niveau', w: 13 }, { t: 'Correction', w: 23 }, { t: 'Dernière série', w: 30 }, { t: 'Meilleur', w: 13, align: 'right' }, { t: 'Séries', w: 10, align: 'right' }, { t: 'Durée', w: 12, align: 'right' }, { t: 'Total', w: 14, align: 'right' }, { t: 'Le', w: X2 - M - 160, align: 'right' }],
         L, { suite: suiteT });
       for (const l of k.exclus) {
