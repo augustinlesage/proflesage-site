@@ -10302,6 +10302,15 @@ function choiceMark(root, c, d, picked) {
   if (/^[ABC]$/.test(good) && ge) { const t = (ge.textContent || '').replace(/\s+/g, ' ').trim().replace(new RegExp('^' + good + '\\s*|\\s*' + good + '$'), ''); if (t && t.length <= 40) good += ' · ' + t; }
   return { ...ch, good, els };
 }
+/* Cartes à deux choix : flèche gauche = choix de gauche (ou du haut), flèche droite = l’autre (23/11/2026, Augustin).
+   Renvoie le rang du choix, ou -1 si la touche n’est pas une flèche ou si la carte n’a pas exactement deux choix. */
+function choiceArrow(els, key) {
+  if (!els || els.length !== 2 || (key !== 'ArrowLeft' && key !== 'ArrowRight')) return -1;
+  const [r0, r1] = els.map(el => el.getBoundingClientRect());
+  const left = Math.abs(r0.left - r1.left) > 4 && r1.left < r0.left ? 1 : 0; /* côte à côte : selon la position ; l’un sous l’autre : le premier */
+  return key === 'ArrowLeft' ? left : 1 - left;
+}
+const choiceArrowHint = els => els && els.length === 2 && window.matchMedia && matchMedia('(hover: hover)').matches ? ' Ou utilise les flèches ← →.' : '';
 const verdictHTML = (ok, ch) => ok ? `<span class="fc-verdict ok">${window.FC_ICO ? FC_ICO('check', 20) : ''}Bravo\u202f!</span>`
   : `<span class="fc-verdict ko">À revoir</span><span class="fc-verdict-why">${ch && ch.lbl ? ch.lbl : 'La bonne réponse'}\u202f: <b>${esc(ch ? ch.good : '')}</b></span>`;
 
@@ -10501,7 +10510,7 @@ function study(d) {
     if (!flipped) cur = ch;
     v.className = 'study-verdict' + (p != null ? (p.ok ? ' ok' : ' ko') : '');
     v.innerHTML = p != null && p.r && !p.ok ? `<span class="fc-verdict ko">À revoir</span><span class="fc-verdict-why">${TY.detail(p.spec, p.r)}${p.spec.fields.length > 1 ? '' : `La bonne réponse\u202f: <b>${esc(p.good)}</b>`}</span>${p.spec.loose ? '<button class="btn ghost" id="st-jabon" title="Une réponse de même sens : la compter juste">J’avais bon</button>' : ''}`
-      : p != null ? verdictHTML(p.ok, p) : !flipped && ch ? `<span class="muted">Clique sur la bonne réponse.</span>` : '';
+      : p != null ? verdictHTML(p.ok, p) : !flipped && ch ? `<span class="muted">Clique sur la bonne réponse.${choiceArrowHint(ch.els)}</span>` : '';
     const jb = $('#st-jabon', v); if (jb) jb.onclick = () => { p.ok = true; missed.delete(c.id); draw(); };
     const ob = $('#st-one', m); if (ob) { ob.setAttribute('aria-pressed', oneOn ? 'true' : 'false'); ob.classList.toggle('primary', oneOn); ob.classList.toggle('ghost', !oneOn); }
     const wb = $('#st-write', m); if (wb) { wb.setAttribute('aria-pressed', writeOn ? 'true' : 'false'); wb.classList.toggle('primary', writeOn); wb.classList.toggle('ghost', !writeOn); }
@@ -10530,6 +10539,9 @@ function study(d) {
   /* « Revoir les ratées » : la série ne garde que les cartes ratées, réponses effacées pour un nouvel essai */
   $('#st-missed', m).onclick = () => { order = d.cards.map((c, i) => missed.has(c.id) ? i : -1).filter(i => i >= 0); order.forEach(i => delete picks[d.cards[i].id]); missed.clear(); pos = 0; flipped = false; draw(); toast(order.length + (order.length > 1 ? ' cartes' : ' carte') + ' à revoir'); };
   document.onkeydown = e => {
+    /* deux choix, pas encore répondu : les flèches choisissent ; ensuite elles changent de carte */
+    const ai = !flipped && cur && picks[d.cards[order[pos]].id] == null ? choiceArrow(cur.els, e.key) : -1;
+    if (ai >= 0) { e.preventDefault(); cur.els[ai].click(); return; }
     if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); flipped = !flipped; draw(); } else if (e.key === 'ArrowRight') go(1); else if (e.key === 'ArrowLeft') go(-1); else if (e.key === 'Escape') closeModal();
     else if (!flipped && /^[abc123]$/i.test(e.key)) { const el = $$('.fc-pick', $('#st-card', m))['abc123'.indexOf(e.key.toLowerCase()) % 3]; if (el) el.click(); }
   };
@@ -11496,7 +11508,7 @@ window.addEventListener('resize', () => { });
       $('#el-acts').classList.toggle('el-acts-multi', sess.typ.fields.length > 1);
       TY.wire($('#el-acts .ty-form'), typed); return; }
     $('#el-acts').classList.remove('el-acts-multi');
-    if (sess.ch && !sess.flipped) { $('#el-acts').innerHTML = `<div class="el-choose-hint">Touche la bonne réponse sur la carte.</div><button class="el-big" data-el="idk">Je ne sais pas</button>`; return; }
+    if (sess.ch && !sess.flipped) { $('#el-acts').innerHTML = `<div class="el-choose-hint">Touche la bonne réponse sur la carte.${choiceArrowHint(sess.ch.els)}</div><button class="el-big" data-el="idk">Je ne sais pas</button>`; return; }
     $('#el-acts').innerHTML = sess.flipped
       ? `<button class="el-big ko" data-el="ko">↻ À revoir</button><button class="el-big ok" data-el="ok">✓ Je savais</button>`
       : `<button class="el-big primary" data-el="flip">Retourner la carte</button>`;
@@ -11967,6 +11979,8 @@ window.addEventListener('resize', () => { });
     if (e.target && e.target.closest && e.target.closest('.ty-form')) return; /* saisie de la réponse : les raccourcis sont coupés */
     if (view !== 'review' || !sess) return;
     if (sess.ch && !sess.pick && !sess.flipped && /^[abc123]$/i.test(e.key)) { const i = 'abc123'.indexOf(e.key.toLowerCase()) % 3; if (sess.ch.els[i]) choose(i); return; }
+    /* deux choix (homophones, voix active/passive…) : flèche gauche = choix de gauche, flèche droite = choix de droite */
+    if (sess.ch && !sess.typ && !sess.pick && !sess.flipped) { const i = choiceArrow(sess.ch.els, e.key); if (i >= 0) { e.preventDefault(); choose(i); return; } }
     if (sess.pick && (e.key === 'Enter' || e.key === 'ArrowRight' || e.key === 'ArrowLeft')) { e.preventDefault(); answer(true); return; }
     if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); flip(); }
     else if (e.key === 'ArrowRight') { e.preventDefault(); answer(true); }
@@ -12016,13 +12030,26 @@ window.LABO_API='/labo/api';
     for (const [k, s] of Object.entries(obj(b))) { const v = r[k]; if (!v || plusRecent(s, v)) r[k] = s; }
     return r;
   }
+  /* « Mes bilans » (lot 6) : erreurs par type (on garde le compte le plus haut) et historique des diagnostics (réunion des deux) */
+  function errs(a, b) {
+    const r = Object.assign({}, obj(a));
+    for (const [t, e] of Object.entries(obj(b))) { const v = r[t]; if (!v || (+obj(e).n || 0) >= (+obj(v).n || 0)) r[t] = e; }
+    return r;
+  }
+  /* chronomètre des parcours : par clé, le plus grand des deux */
+  function maxi(a, b) { const r = Object.assign({}, obj(a)); for (const [k, v] of Object.entries(obj(b))) if (!(+r[k] >= +v)) r[k] = +v || 0; return r; }
+  function diagH(a, b) {
+    const L = [], vu = new Set();
+    (Array.isArray(a) ? a : []).concat(Array.isArray(b) ? b : []).forEach(h => { if (!h || typeof h !== 'object') return; const c = [h.pid, h.k, h.date, h.ok].join('|'); if (!vu.has(c)) { vu.add(c); L.push(h); } });
+    return L.sort((x, y) => jour(x.date) - jour(y.date)).slice(-30);
+  }
   function fusion(A, B) {
     A = obj(A); B = obj(B);
     const la = obj(A.labo), lb = obj(B.labo), fa = obj(A.fc), fb = obj(B.fc);
     const pa = obj(la.parcours), pb = obj(lb.parcours);
     const labo = Object.assign({}, la, lb, {
       ceintures: ceintures(la.ceintures, lb.ceintures),
-      parcours: Object.assign({}, pa, pb, { prog: prog(pa.prog, pb.prog), diag: Object.assign({}, obj(pa.diag), obj(pb.diag)), last: pb.last || pa.last || null })
+      parcours: Object.assign({}, pa, pb, { prog: prog(pa.prog, pb.prog), diag: Object.assign({}, obj(pa.diag), obj(pb.diag)), sortie: Object.assign({}, obj(pa.sortie), obj(pb.sortie)), err: errs(pa.err, pb.err), diagH: diagH(pa.diagH, pb.diagH), chrono: maxi(pa.chrono, pb.chrono), temps: maxi(pa.temps, pb.temps), last: pb.last || pa.last || null })
     });
     const fc = Object.assign({}, fa, fb, { res: res(fa.res, fb.res) });
     if (fa.test && (!fb.test || jour(fa.test.date) > jour(fb.test.date))) fc.test = fa.test; /* le test le plus récent */
@@ -12062,7 +12089,7 @@ const LABO_SYNC = (function () {
   function pastille(s) {
     statut = s || statut;
     const el = document.getElementById('compte-etat'); if (!el) return;
-    el.textContent = { ok: 'Sauvegardé', envoi: 'Sauvegarde…', horsligne: 'Hors ligne : sera sauvegardé plus tard', expire: 'Reconnecte-toi' }[statut] || '';
+    el.textContent = { ok: 'Sauvegardé', envoi: 'Sauvegarde…', horsligne: 'Hors ligne : sera sauvegardé plus tard', expire: 'Reconnecte-toi' }[statut] || '';
     el.dataset.s = statut;
   }
 
@@ -12093,7 +12120,7 @@ const LABO_SYNC = (function () {
     if (typeof LABO !== 'undefined' && LABO.S) {
       const S = LABO.S;
       Object.assign(S.ceintures, m.labo.ceintures || {});
-      if (m.labo.parcours) { Object.assign(S.parcours.prog, m.labo.parcours.prog || {}); Object.assign(S.parcours.diag, m.labo.parcours.diag || {}); }
+      if (m.labo.parcours) { const q = m.labo.parcours; Object.assign(S.parcours.prog, q.prog || {}); Object.assign(S.parcours.diag, q.diag || {}); S.parcours.sortie = q.sortie || {}; S.parcours.err = q.err || {}; S.parcours.diagH = q.diagH || []; S.parcours.chrono = Object.assign(S.parcours.chrono || {}, q.chrono || {}); S.parcours.temps = Object.assign(S.parcours.temps || {}, q.temps || {}); }
       ecrire(KL, S);
     } else ecrire(KL, m.labo);
     ecrire(KF, Object.assign(lire(KF) || {}, { res: m.fc.res, test: m.fc.test }));
@@ -12142,7 +12169,7 @@ const LABO_SYNC = (function () {
   function etapeCode(nouveau) {
     cadre(`<div class="page-h"><h2>Bonjour ${esc(eleve.prenom)}${NB}!</h2><p>${nouveau
       ? 'C’est ta première connexion. Choisis un <b>code secret de 4 chiffres</b> et retiens-le bien' + NB + ': il te servira à chaque connexion. Ne le dis à personne.'
-      : 'Tape ton code secret de 4 chiffres.'}</p></div>
+      : `Tape ton code secret de 4 chiffres. Au départ, c’est ton jour et ton mois de naissance (par exemple <b>0703</b> si tu es né ou née le 7 mars), sauf si tu l’as changé.`}</p></div>
 <form class="card arr-card"><label class="field">Code secret<input id="arr-pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off"></label>
 ${nouveau ? '<label class="field">Tape-le une deuxième fois<input id="arr-pin2" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off"></label>' : ''}
 <div class="row"><button class="btn" type="submit" data-a="${nouveau ? 'creer' : 'pin'}">${nouveau ? 'Créer mon code' : 'Entrer'}</button></div>
@@ -12203,7 +12230,7 @@ ${nouveau ? '<label class="field">Tape-le une deuxième fois<input id="arr-pin2"
     const r = document.querySelector('#labo .top-right'); if (!r || document.getElementById('compte')) return;
     const html = compte
       ? `<div class="compte" id="compte"><button type="button" class="compte-b" id="compte-b" aria-expanded="false"><span class="compte-n">${esc(compte.prenom)}</span><span class="compte-c">${esc(compte.classe)}</span></button>
-<div class="compte-menu" id="compte-menu" hidden><a class="btn ghost compte-badges" href="#badges">Mes badges</a><p class="small"><span id="compte-etat"></span></p><button type="button" class="btn" id="compte-out">Ce n’est pas moi / Se déconnecter</button></div></div>`
+<div class="compte-menu" id="compte-menu" hidden><a class="btn ghost compte-badges" href="#bilans">Mes bilans</a><a class="btn ghost compte-badges" href="#badges">Mes badges</a><p class="small"><span id="compte-etat"></span></p><button type="button" class="btn" id="compte-out">Ce n’est pas moi / Se déconnecter</button></div></div>`
       : `<div class="compte" id="compte"><button type="button" class="compte-b" id="compte-in"><span class="compte-n">Se connecter</span></button></div>`;
     r.insertAdjacentHTML('beforeend', html); /* au bout de la ligne des onglets, à droite (Augustin, 22/11/2026) */
     const m = document.getElementById('compte-menu');
@@ -12212,7 +12239,7 @@ ${nouveau ? '<label class="field">Tape-le une deuxième fois<input id="arr-pin2"
       document.getElementById('compte-out').addEventListener('click', () => { envoyer(); setTimeout(() => deconnexion(false), 400); });
       document.addEventListener('click', ev => { if (!m.hidden && !ev.target.closest('#compte')) m.hidden = true; });
       /* « Badges » sous le nom de l'élève (Augustin, 22/11/2026) : le menu se referme en ouvrant la page */
-      m.querySelector('.compte-badges').addEventListener('click', () => { m.hidden = true; document.getElementById('compte-b').setAttribute('aria-expanded', 'false'); });
+      m.querySelectorAll('.compte-badges').forEach(a => a.addEventListener('click', () => { m.hidden = true; document.getElementById('compte-b').setAttribute('aria-expanded', 'false'); }));
       pastille();
     } else document.getElementById('compte-in').addEventListener('click', () => { try { sessionStorage.removeItem('labo.invite'); } catch (x) { } location.reload(); });
   }
@@ -12255,12 +12282,63 @@ ${nouveau ? '<label class="field">Tape-le une deuxième fois<input id="arr-pin2"
       const cats = [...new Set(C.badges.map(b => b.cat || 'Badges'))];
       h += `<h3 class="bg-h pp-h">Badges du Cahier de suivi <span>${C.dif}${NB}différent${C.dif > 1 ? 's' : ''}${resume}</span></h3>`;
       h += grille(cats.flatMap(c => C.badges.filter(b => (b.cat || 'Badges') === c).map(b => it(b, true, b.date, b.n))).concat((C.trophees || []).map(b => it(b, true, '', 0))));
-    } else h += `<h3 class="bg-h pp-h">Badges du Cahier de suivi</h3><p class="small">Pas encore de badge du Cahier de suivi ici. Ils apparaîtront quand ton professeur t’en donnera.</p>`;
+    } else h += `<h3 class="bg-h pp-h">Badges du Cahier de suivi</h3><p class="small">Pas encore de badge du Cahier de suivi ici. Ils apparaitront quand ton professeur t’en donnera.</p>`;
     z.innerHTML = `<p class="small pp-leg">Les badges en couleur sont obtenus${NB}; les gris sont encore à gagner.</p>` + h;
+  }
+  /* ---------- « Mes bilans » (lot 6, 23/11/2026) ----------
+     Le code secret est demandé dès la connexion (23/11/2026) : la page s'affiche directement pour l'élève connecté, avec un lien
+     pour changer son code (ancien code + nouveau). Sans compte : résultats de cet ordinateur. Contenu calculé par bilans.js. */
+  function bilansAfficher(z, m) {
+    const prog = z.querySelector('#bl-prog');
+    z.innerHTML = (m ? `<p class="small bl-msg-ok" role="status">${esc(m)}</p>` : '') + LABO.bilansHTML()
+      + (compte ? `<p class="small bl-outils"><a href="#" data-bl="changer">Changer mon code secret</a></p>` : '');
+    const p = z.querySelector('.bl-plan'); if (prog && p) p.after(prog);
+  }
+  function bilansForm(z, m) {
+    const champ = (id, lib) => `<label class="field">${lib}<input id="${id}" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off"></label>`;
+    z.innerHTML = `<form class="card arr-card bl-code" data-bl-form="1"><p>Pour changer ton code secret, tape d’abord ton code actuel, puis le nouveau. Retiens-le bien${NB}: il te sera demandé à chaque connexion.</p>
+${champ('bl-old', 'Code actuel')}${champ('bl-pin', 'Nouveau code')}${champ('bl-pin2', 'Tape-le une deuxième fois')}
+<div class="row"><button class="btn" type="submit">Changer mon code</button><button type="button" class="btn ghost" data-bl="annuler">Annuler</button></div>
+<p class="small arr-msg" id="bl-msg" role="alert">${esc(m || '')}</p></form>`;
+    setTimeout(() => { const i = z.querySelector('#bl-old'); if (i) i.focus(); }, 0);
+  }
+  async function bilansEnvoi(z, f) {
+    const msg = t => { const e = z.querySelector('#bl-msg'); if (e) e.textContent = t; };
+    const a = f.querySelector('#bl-old').value.trim(), c = f.querySelector('#bl-pin').value.trim();
+    if (!/^\d{4}$/.test(a) || !/^\d{4}$/.test(c)) return msg('Le code, c’est 4 chiffres.');
+    if (f.querySelector('#bl-pin2').value.trim() !== c) return msg('Les deux nouveaux codes ne sont pas pareils. Recommence.');
+    msg('Vérification…');
+    try { await appel('changer-code', { jeton: compte.jeton, ancien: a, code: c }); bilansAfficher(z, 'Ton code secret est changé. Retiens-le bien.'); }
+    catch (err) { if (err.status === 401) return deconnexion(true); msg(err.status ? err.message : 'Pas de connexion à Internet. Réessaie.'); }
+  }
+  function remplirBilans() {
+    const z = document.getElementById('mes-bilans'); if (!z || z.dataset.pret) return;
+    z.dataset.pret = '1';
+    if (!compte) { z.innerHTML = '<p class="small muted">Tu n’es pas connecté' + NB + ': voici les résultats enregistrés sur cet ordinateur.</p>' + LABO.bilansHTML(); return; }
+    z.addEventListener('submit', ev => { const f = ev.target.closest('form[data-bl-form]'); if (!f) return; ev.preventDefault(); bilansEnvoi(z, f); });
+    z.addEventListener('click', ev => {
+      const a = ev.target.closest('[data-bl]'); if (!a) return; ev.preventDefault();
+      if (a.dataset.bl === 'changer') return bilansForm(z);
+      if (a.dataset.bl === 'annuler') return bilansAfficher(z);
+    });
+    bilansAfficher(z);
+    progressionEleve();
+  }
+  /* « Ma progression » et « Mon temps de travail » (Augustin, 23/11/2026) : calculés comme dans la fiche élève (tdb.js), à partir du journal */
+  async function progressionEleve() {
+    if (typeof LABO_TDB === 'undefined') return;
+    let d; try { d = await appel('journal', { jeton: compte.jeton }); } catch (err) { if (err.status === 401) deconnexion(true); return; }
+    const z = document.getElementById('mes-bilans'), p = z && z.querySelector('.bl-plan'); if (!p) return;
+    try {
+      const L = lire(KL) || {}, a = LABO_TDB.analyse({ journal: d.journal || [], etat: etatLocal(), bilans: [] }, { BAR: {}, niv: L.niveau || '6' }, {});
+      p.insertAdjacentHTML('afterend', `<div class="bl-prog" id="bl-prog">${LABO_TDB.vueEleve(a)}</div>`);
+    } catch (e) { }
   }
   /* ---------- démarrage ---------- */
   function demarrer() {
     LABO.start(); entete();
+    document.addEventListener('labo:vue', ev => { if (ev.detail === 'bilans') remplirBilans(); });
+    if (location.hash === '#bilans') remplirBilans();
     if (!compte) return;
     document.addEventListener('labo:vue', ev => { if (ev.detail === 'badges') remplirBadges(); });
     if (location.hash === '#badges') remplirBadges();
