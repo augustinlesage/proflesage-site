@@ -164,7 +164,9 @@ function fusion($A, $B): array {
   foreach (array_merge(is_array($pa['diagH'] ?? null) ? array_values($pa['diagH']) : [], is_array($pb['diagH'] ?? null) ? array_values($pb['diagH']) : []) as $h) {
     if (!is_array($h)) continue; $c = implode('|', [$h['pid'] ?? '', $h['k'] ?? '', $h['date'] ?? '', $h['ok'] ?? '']); if (isset($vu[$c])) continue; $vu[$c] = 1; $H[] = $h; }
   usort($H, fn($x, $y) => jourFr($x['date'] ?? '') <=> jourFr($y['date'] ?? ''));
-  $labo['parcours'] = array_merge($pa, $pb, ['prog' => $P ?: new stdClass(), 'diag' => (array_merge(objA($pa['diag'] ?? []), objA($pb['diag'] ?? [])) ?: new stdClass()), 'sortie' => (array_merge(objA($pa['sortie'] ?? []), objA($pb['sortie'] ?? [])) ?: new stdClass()), 'err' => $E ?: new stdClass(), 'diagH' => array_slice($H, -30), 'last' => $pb['last'] ?? ($pa['last'] ?? null)]);
+  /* chronomètre des parcours (23/11/2026) : secondes par étape et par jour, le plus grand des deux */
+  $maxi = function ($a, $b) { $r = objA($a); foreach (objA($b) as $k => $v) if (!isset($r[$k]) || (float) $r[$k] < (float) $v) $r[$k] = (float) $v; return $r ?: new stdClass(); };
+  $labo['parcours'] = array_merge($pa, $pb, ['prog' => $P ?: new stdClass(), 'diag' => (array_merge(objA($pa['diag'] ?? []), objA($pb['diag'] ?? [])) ?: new stdClass()), 'sortie' => (array_merge(objA($pa['sortie'] ?? []), objA($pb['sortie'] ?? [])) ?: new stdClass()), 'err' => $E ?: new stdClass(), 'diagH' => array_slice($H, -30), 'chrono' => $maxi($pa['chrono'] ?? [], $pb['chrono'] ?? []), 'temps' => $maxi($pa['temps'] ?? [], $pb['temps'] ?? []), 'last' => $pb['last'] ?? ($pa['last'] ?? null)]);
   foreach (['exercices', 'lecons'] as $k) if (isset($la[$k]) || isset($lb[$k])) $labo[$k] = array_merge(objA($la[$k] ?? []), objA($lb[$k] ?? [])) ?: new stdClass();
   $R = objA($fa['res'] ?? []);
   foreach (objA($fb['res'] ?? []) as $k => $s) { $v = $R[$k] ?? null; if (!$v || plusRecent($s, $v)) $R[$k] = $s; }
@@ -200,7 +202,8 @@ function differences(array $avant, array $apres, string $ts): array {
   }
   $pa = objA((($avant['labo'] ?? [])['parcours'] ?? [])['prog'] ?? []); $pb = objA((($apres['labo'] ?? [])['parcours'] ?? [])['prog'] ?? []);
   foreach ($pb as $k => $s) { if (!is_array($s) || json_encode($s) === json_encode($pa[$k] ?? null)) continue;
-    $ev[] = ['ts' => $ts, 't' => 'etape', 'id' => (string) $k, 'done' => !empty($s['done']), 'score' => $s['score'] ?? null, 'total' => $s['total'] ?? null]; }
+    $sec = objA((($apres['labo'] ?? [])['parcours'] ?? [])['chrono'] ?? [])[$k] ?? null;
+    $ev[] = ['ts' => $ts, 't' => 'etape', 'id' => (string) $k, 'done' => !empty($s['done']), 'score' => $s['score'] ?? null, 'total' => $s['total'] ?? null] + ($sec ? ['sec' => (int) $sec] : []); }
   $da = objA((($avant['labo'] ?? [])['parcours'] ?? [])['diag'] ?? []); $db = objA((($apres['labo'] ?? [])['parcours'] ?? [])['diag'] ?? []);
   foreach ($db as $k => $s) if (json_encode($s) !== json_encode($da[$k] ?? null)) $ev[] = ['ts' => $ts, 't' => 'diagnostic', 'id' => (string) $k, 'date' => is_array($s) ? ($s['date'] ?? '') : ''];
   /* exercices de grammaire et leçons à venir : { id: { date, ok, n, ... } } */
@@ -371,6 +374,7 @@ function prof(string $action, array $body): void {
           $P = $L['parcours'];
           foreach (['prog', 'diag', 'sortie'] as $k) if (isset($P[$k])) $P[$k] = $filtre($P[$k]);
           if (isset($P['err'])) $P['err'] = $filtre($P['err'], 'd');
+          if (isset($P['temps']) && is_array($P['temps']) && isset($P['temps'][$cle])) { unset($P['temps'][$cle]); $n++; if (!$P['temps']) $P['temps'] = new stdClass(); }
           if (isset($P['diagH']) && is_array($P['diagH'])) { $a = count($P['diagH']); $P['diagH'] = array_values(array_filter($P['diagH'], fn($h) => !$du($h))); $n += $a - count($P['diagH']); }
           $L['parcours'] = $P;
         }

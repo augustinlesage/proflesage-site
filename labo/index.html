@@ -11391,6 +11391,7 @@ const LABO = (function () {
      c = consolidation, d = défi ; route #serie-pid-i-c|d ; résultat dans P.prog['pid:id:c'] = { serie, score, total, date } (sans done).
    Erreurs : chaque réponse fausse est rangée par type (err) dans S.parcours.err pour « Mes bilans » (bilans.js, lot 6) ;
    chaque diagnostic fini s’ajoute à S.parcours.diagH = [{ pid, k: d|s, date, ok, n, a, f, t }].
+   Chronomètre : S.parcours.chrono[clé] (secondes par étape, série ou diagnostic) et S.parcours.temps['AAAA-MM-JJ'] (secondes par jour).
    ==================================================================== */
 (function () {
   const { S, save, esc, NB, vues, niv, today, shuffle } = LABO;
@@ -11891,6 +11892,30 @@ const LABO = (function () {
     if (ev.key === 'Enter' && ev.target.classList && ev.target.classList.contains('blank')) { const it = ev.target.closest('.item'); const btn = it && it.querySelector('[data-x="verif"]'); if (btn) { ev.preventDefault(); btn.click(); } }
   });
 
+  /* ---------- chronomètre (Augustin, 23/11/2026 : « chronomètre les étapes de parcours et exercices d’approfondissement ») ----------
+     Temps actif sur une étape, une série d’approfondissement ou un diagnostic : entre deux actions (clic, touche, défilement),
+     au plus 2 minutes comptées ; onglet caché = chronomètre arrêté. P.chrono[clé] = secondes (clé de P.prog, ou diag:pid / sortie:pid),
+     P.temps['AAAA-MM-JJ'] = secondes par jour, ajoutées au temps de travail (tableau de bord et Mes bilans). Enregistré toutes les 30 s au plus. */
+  P.chrono = P.chrono || {}; P.temps = P.temps || {};
+  const CH = { k: null, t: 0, acc: 0, sauve: 0 };
+  const jourCle = () => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
+  function chronoTic(fin) {
+    if (!CH.k) return;
+    const now = Date.now(); CH.acc += Math.max(0, Math.min(now - CH.t, fin ? 60000 : 120000)) / 1000; CH.t = now;
+    if (CH.acc >= 1 && (fin || now - CH.sauve > 30000)) {
+      const s = Math.round(CH.acc), j = jourCle(); CH.acc -= s; CH.sauve = now;
+      P.chrono[CH.k] = (+P.chrono[CH.k] || 0) + s; P.temps[j] = (+P.temps[j] || 0) + s; save();
+    }
+  }
+  function chronoDebut(k) { if (CH.k === k) return; chronoTic(true); CH.k = k; CH.t = Date.now(); CH.acc = 0; }
+  function chronoStop() { chronoTic(true); CH.k = null; }
+  ['click', 'keydown', 'input', 'pointerdown'].forEach(n => document.addEventListener(n, () => chronoTic(false), true));
+  window.addEventListener('scroll', () => chronoTic(false), { passive: true });
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') chronoTic(true); else if (CH.k) CH.t = Date.now(); });
+  window.addEventListener('pagehide', () => chronoTic(true));
+  document.addEventListener('labo:vue', ev => { if (!/^(etape|serie|diag|sortie)-/.test(ev.detail || '')) chronoStop(); });
+  const chronoDe = (pid, i, c) => { const f = flat(pid); return f[i] ? key(pid, f[i].s) + (c ? ':' + c : '') : null; };
+
   /* fond sable dans le parcours FLE */
   const fleFond = () => document.documentElement.classList.toggle('fle', /^#(parcours|diag|sortie|etape|serie)-nfle/.test(location.hash));
   window.addEventListener('hashchange', fleFond);
@@ -11898,12 +11923,13 @@ const LABO = (function () {
   window.PARC2 = { cartes, flat, progres, roles, statuts, ERR, DOM, NP, approPage, approConseils, approAccueil };
   vues.parcours2 = h => {
     fleFond();
-    const sm = h.match(/^serie-(n6|n5|n4|n3|nfle)-(\d+)-([cd])$/); if (sm && NP[sm[1]]) return serie(sm[1], Number(sm[2]), sm[3]);
+    const sm = h.match(/^serie-(n6|n5|n4|n3|nfle)-(\d+)-([cd])$/); if (sm && NP[sm[1]]) { const k = chronoDe(sm[1], Number(sm[2]), sm[3]); if (k) chronoDebut(k); return serie(sm[1], Number(sm[2]), sm[3]); }
     const m = h.match(/^(parcours|diag|sortie|etape)-(n6|n5|n4|n3|nfle)(?:-(\d+))?$/); if (!m || !NP[m[2]]) return null;
     if (m[1] === 'parcours') return plan(m[2]);
     if (NP[m[2]].enPreparation) return plan(m[2]);
-    if (m[1] === 'diag') return diag(m[2]);
-    if (m[1] === 'sortie') return NP[m[2]].sortie ? diag(m[2], true) : plan(m[2]);
+    if (m[1] === 'diag') { chronoDebut('diag:' + m[2]); return diag(m[2]); }
+    if (m[1] === 'sortie') { if (NP[m[2]].sortie) chronoDebut('sortie:' + m[2]); return NP[m[2]].sortie ? diag(m[2], true) : plan(m[2]); }
+    { const k = chronoDe(m[2], Number(m[3] || 0)); if (k) chronoDebut(k); }
     return etape(m[2], Number(m[3] || 0));
   };
 })();
@@ -12242,6 +12268,8 @@ window.LABO_API='/labo/api';
     for (const [t, e] of Object.entries(obj(b))) { const v = r[t]; if (!v || (+obj(e).n || 0) >= (+obj(v).n || 0)) r[t] = e; }
     return r;
   }
+  /* chronomètre des parcours : par clé, le plus grand des deux */
+  function maxi(a, b) { const r = Object.assign({}, obj(a)); for (const [k, v] of Object.entries(obj(b))) if (!(+r[k] >= +v)) r[k] = +v || 0; return r; }
   function diagH(a, b) {
     const L = [], vu = new Set();
     (Array.isArray(a) ? a : []).concat(Array.isArray(b) ? b : []).forEach(h => { if (!h || typeof h !== 'object') return; const c = [h.pid, h.k, h.date, h.ok].join('|'); if (!vu.has(c)) { vu.add(c); L.push(h); } });
@@ -12253,7 +12281,7 @@ window.LABO_API='/labo/api';
     const pa = obj(la.parcours), pb = obj(lb.parcours);
     const labo = Object.assign({}, la, lb, {
       ceintures: ceintures(la.ceintures, lb.ceintures),
-      parcours: Object.assign({}, pa, pb, { prog: prog(pa.prog, pb.prog), diag: Object.assign({}, obj(pa.diag), obj(pb.diag)), sortie: Object.assign({}, obj(pa.sortie), obj(pb.sortie)), err: errs(pa.err, pb.err), diagH: diagH(pa.diagH, pb.diagH), last: pb.last || pa.last || null })
+      parcours: Object.assign({}, pa, pb, { prog: prog(pa.prog, pb.prog), diag: Object.assign({}, obj(pa.diag), obj(pb.diag)), sortie: Object.assign({}, obj(pa.sortie), obj(pb.sortie)), err: errs(pa.err, pb.err), diagH: diagH(pa.diagH, pb.diagH), chrono: maxi(pa.chrono, pb.chrono), temps: maxi(pa.temps, pb.temps), last: pb.last || pa.last || null })
     });
     const fc = Object.assign({}, fa, fb, { res: res(fa.res, fb.res) });
     if (fa.test && (!fb.test || jour(fa.test.date) > jour(fb.test.date))) fc.test = fa.test; /* le test le plus récent */
@@ -12499,6 +12527,9 @@ const LABO_TDB = (function () {
         const s = new Date(d); s.setDate(s.getDate() - ((s.getDay() + 6) % 7)); semaines.add(cleJour(s));
       }
     }
+    /* temps chronométré dans les parcours et l’approfondissement (23/11/2026), par jour */
+    let tempsParcours = 0;
+    for (const [k, v] of Object.entries((((etat.labo || {}).parcours || {}).temps) || {})) { const s = +v || 0; if (!s || !/^\d{4}-\d\d-\d\d$/.test(k)) continue; tempsParcours += s; tempsTotal += s; tempsJour[k] = (tempsJour[k] || 0) + s; jours.add(k); }
     const valides = series.filter(s => !s.raison);
     const moyP = L => { const n = L.reduce((a, s) => a + s.n, 0); return n ? Math.round(L.reduce((a, s) => a + s.pct * s.n, 0) / n) : null; };
     const reussite = moyP(valides);
@@ -12566,7 +12597,7 @@ const LABO_TDB = (function () {
     const aValider = ceintures.filter(c => c.s.etat === 'reussie');
     if (aValider.length) V.push([0, 'award', `${aValider.length} ceinture${aValider.length > 1 ? 's' : ''} à valider`]);
     V.sort((a, b) => b[0] - a[0]);
-    return { chrono, x, J, series, valides, reussite, tendance, derniere, tempsTotal, temps7, series7, jours: jours.size, tempsJour, lots, doms, testDoms, tests, test,
+    return { chrono, x, J, series, valides, reussite, tendance, derniere, tempsTotal, tempsParcours, temps7, series7, jours: jours.size, tempsJour, lots, doms, testDoms, tests, test,
       ceintures, hautes, etapes, exercices, lecons, badges: B, k, V, aValider };
   }
 
@@ -12691,7 +12722,7 @@ ${erreursClasse(CACHE.data.eleves)}`);
     if (e.t === 'serie') return `Série «${NNB}${n(e.id)}${NNB}»${NB}: ${e.ok}/${e.n} (${Math.round(e.ok / e.n * 100)}${NNB}%)${e.sec ? ', ' + duree(e.sec) : ''}${e.mode ? ', ' + ({ clic: 'réponses cliquées', ecrit: 'réponses écrites', honneur: 'sur l’honneur' }[e.mode] || '') : ''}`;
     if (e.t === 'test') return `Test de positionnement${NB}: ${Object.entries(e.doms || {}).map(([d, s]) => `${NOMDOM[d] || d} ${STN[s] || s}`).join(', ')}`;
     if (e.t === 'ceinture') { const c = ceintureDe(e.id), ec = (ECH.find(z => z[0] === c.ech) || [, c.ech])[1]; return `Ceinture ${esc(ec)} ${esc(c.nom)} ${e.etat === 'validee' ? 'validée' : 'réussie'}${e.score != null ? ` (${e.score}/${e.total})` : ''}`; }
-    if (e.t === 'etape') return `Parcours${NB}: étape terminée${e.score != null ? ` (${e.score}/${e.total})` : ''}`;
+    if (e.t === 'etape') { const c = /:([cd])$/.exec(e.id || ''); return `${c ? `Approfondissement${NB}: série ${c[1] === 'c' ? 'de consolidation' : 'défi'}` : `Parcours${NB}: étape ${e.done ? 'terminée' : 'commencée'}`}${e.score != null ? ` (${e.score}/${e.total})` : ''}${e.sec ? ', ' + duree(e.sec) : ''}`; }
     if (e.t === 'diagnostic') return 'Parcours' + NB + ': diagnostic fait';
     if (e.t === 'exercice') return `Exercice «${NNB}${esc(e.id)}${NNB}»${e.ok != null ? `${NB}: ${e.ok}/${e.n}` : ''}`;
     if (e.t === 'lecon') return `Leçon «${NNB}${esc(e.id)}${NNB}»${e.done ? ' terminée' : ''}`;
@@ -12730,9 +12761,9 @@ ${erreursClasse(CACHE.data.eleves)}`);
   }
   function vueEleve(a) {
     const { S12, minSem } = semaines12(a);
-    return `<div class="tb-tuiles">${tuile('Temps de travail', a.tempsTotal ? duree(a.tempsTotal) : '–', `${duree(a.temps7)} ces 7 derniers jours`)}${tuile('Jours de travail', a.jours, `${a.valides.length} série${a.valides.length > 1 ? 's' : ''} comptée${a.valides.length > 1 ? 's' : ''}`)}${tuile('Réussite', a.reussite == null ? '–' : a.reussite + NNB + '%', a.tendance == null ? 'pas encore assez de séries pour la tendance' : `tendance ${a.tendance > 0 ? '+' : a.tendance < 0 ? '−' : ''}${Math.abs(a.tendance)} points`)}</div>
+    return `<div class="tb-tuiles">${tuile('Temps de travail', a.tempsTotal ? duree(a.tempsTotal) : '–', `${duree(a.temps7)} ces 7 derniers jours${a.tempsParcours ? ` · dont ${duree(a.tempsParcours)} dans les parcours` : ''}`)}${tuile('Jours de travail', a.jours, `${a.valides.length} série${a.valides.length > 1 ? 's' : ''} comptée${a.valides.length > 1 ? 's' : ''}`)}${tuile('Réussite', a.reussite == null ? '–' : a.reussite + NNB + '%', a.tendance == null ? 'pas encore assez de séries pour la tendance' : `tendance ${a.tendance > 0 ? '+' : a.tendance < 0 ? '−' : ''}${Math.abs(a.tendance)} points`)}</div>
 <section class="card bl-sec"><h3>Ma progression</h3><p class="small muted">Chaque point est une série de flashcards (survol${NB}: lot et score)${NB}; la ligne suit la moyenne de tes trois dernières séries. Les séries faites trop vite ne comptent pas.</p>${courbe(a.valides)}</section>
-<section class="card bl-sec"><h3>Mon temps de travail</h3><p class="small muted">Minutes de travail sur les flashcards, par semaine, sur les douze dernières semaines.</p>${histo(minSem, S12.map(d => 'semaine du ' + frD(d)), 'min', 'Minutes de travail par semaine')}</section>`;
+<section class="card bl-sec"><h3>Mon temps de travail</h3><p class="small muted">Minutes de travail par semaine (flashcards, étapes des parcours et approfondissement), sur les douze dernières semaines.</p>${histo(minSem, S12.map(d => 'semaine du ' + frD(d)), 'min', 'Minutes de travail par semaine')}</section>`;
   }
   async function eleve(ctx, id) {
     const { A, c, noms } = await charger(ctx);
@@ -12743,7 +12774,7 @@ ${erreursClasse(CACHE.data.eleves)}`);
     ctx.cadre(`<div class="tb-fh"><button class="btn ghost" type="button" data-x="tdb-retour">${ico('retour', 16)} Toute la classe</button>
 <div class="page-h"><h2>${esc(e.prenom)}</h2><p>${esc(c.nom)} · dernière activité${NB}: ${a.derniere ? frD(a.derniere) + ' (' + depuis(a.derniere) + ')' : 'jamais'}</p></div></div>
 <div class="tb-tuiles">
-${tuile('Temps de travail', a.tempsTotal ? duree(a.tempsTotal) : '–', `${duree(a.temps7)} ces 7 derniers jours`)}
+${tuile('Temps de travail', a.tempsTotal ? duree(a.tempsTotal) : '–', `${duree(a.temps7)} ces 7 derniers jours${a.tempsParcours ? ` · dont ${duree(a.tempsParcours)} dans les parcours` : ''}`)}
 ${tuile('Jours de travail', a.jours, `${a.valides.length} série${a.valides.length > 1 ? 's' : ''} comptée${a.valides.length > 1 ? 's' : ''}`)}
 ${tuile('Réussite', a.reussite == null ? '–' : a.reussite + NNB + '%', a.tendance == null ? 'tendance : pas assez de séries' : `tendance ${a.tendance > 0 ? '+' : a.tendance < 0 ? '−' : ''}${Math.abs(a.tendance)} points`)}
 ${tuile('Ceintures', a.ceintures.length, a.aValider.length ? `${a.aValider.length} à valider` : `${a.etapes} étape${a.etapes > 1 ? 's' : ''} de parcours`)}
@@ -12861,7 +12892,7 @@ const LABO_SYNC = (function () {
     if (typeof LABO !== 'undefined' && LABO.S) {
       const S = LABO.S;
       Object.assign(S.ceintures, m.labo.ceintures || {});
-      if (m.labo.parcours) { const q = m.labo.parcours; Object.assign(S.parcours.prog, q.prog || {}); Object.assign(S.parcours.diag, q.diag || {}); S.parcours.sortie = q.sortie || {}; S.parcours.err = q.err || {}; S.parcours.diagH = q.diagH || []; }
+      if (m.labo.parcours) { const q = m.labo.parcours; Object.assign(S.parcours.prog, q.prog || {}); Object.assign(S.parcours.diag, q.diag || {}); S.parcours.sortie = q.sortie || {}; S.parcours.err = q.err || {}; S.parcours.diagH = q.diagH || []; S.parcours.chrono = Object.assign(S.parcours.chrono || {}, q.chrono || {}); S.parcours.temps = Object.assign(S.parcours.temps || {}, q.temps || {}); }
       ecrire(KL, S);
     } else ecrire(KL, m.labo);
     ecrire(KF, Object.assign(lire(KF) || {}, { res: m.fc.res, test: m.fc.test }));
