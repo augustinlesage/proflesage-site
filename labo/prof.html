@@ -2275,12 +2275,12 @@ ${erreursClasse(CACHE.data.eleves)}`);
     return esc(e.t);
   };
   /* « Mes bilans » (lot 6) : la vue de l'élève (bilans.js, référentiel LABO_BILANS_REF écrit par build_ovh.py) */
-  const BCODE = { perso: 'choisi par l’élève', cahier: 'par défaut (date de naissance, envoyé par le Cahier de suivi)', '': 'pas encore de code par défaut (le Cahier ne l’a pas envoyé)' };
+  const BCODE = { perso: 'choisi par l’élève', cahier: 'par défaut (date de naissance, envoyée par le Cahier de suivi)', '': 'pas encore de code (le Cahier n’a pas envoyé la date de naissance : l’élève en choisira un à sa prochaine connexion)' };
   function bilansEleve(id) {
     if (typeof LABO_BILANS === 'undefined' || !window.LABO_BILANS_REF) return '';
     const x = ((CACHE.data || {}).eleves || []).find(y => y.el === id); if (!x) return '';
     const L = (x.etat || {}).labo || {}, B = LABO_BILANS.calc(L.parcours, LABO_BILANS_REF, L.niveau);
-    return `<div class="card tb-bil-h"><h3>Mes bilans</h3><p class="small muted">La même vue que dans l’espace de l’élève (menu du prénom, page ouverte par un code à 4 chiffres). Code${NB}: ${BCODE[x.bcode || '']}.${x.bcode === 'perso' ? ` <button class="btn ghost small" type="button" data-x="tdb-reinit-bilans" data-el="${esc(id)}">Revenir au code par défaut</button>` : ''}</p></div>${LABO_BILANS.html(B, { prof: true })}`;
+    return `<div class="card tb-bil-h"><h3>Mes bilans</h3><p class="small muted">La même vue que dans l’espace de l’élève (menu du prénom). Code secret${NB}: ${BCODE[x.bcode || '']}.${x.bcode === 'perso' ? ` <button class="btn ghost small" type="button" data-x="tdb-reinit-bilans" data-el="${esc(id)}">Code oublié</button>` : ''}</p></div>${LABO_BILANS.html(B, { prof: true })}`;
   }
   function erreursClasse(L) {
     if (typeof LABO_BILANS === 'undefined' || !window.LABO_BILANS_REF) return '';
@@ -2497,7 +2497,7 @@ ${c ? `<div class="card p-classe">
   <div class="tw"><table><thead><tr><th>Prénom affiché</th><th>Compte</th><th>Dernière visite</th><th></th></tr></thead><tbody>
   ${c.eleves.map((e, i) => { const r = recDe(c.id, e.id); return `<tr><td><input class="p-in" data-i="${i}" value="${esc(e.prenom)}"></td>
     <td>${!r ? '<span class="muted">pas encore</span>' : r.bloque ? 'bloqué 10 min' : r.code ? 'actif, code secret créé' : 'actif'}</td><td>${r ? fr(r.vu) : ''}</td>
-    <td><div class="p-acts">${r && r.code ? `<button class="btn ghost" type="button" data-x="reinit" data-el="${esc(e.id)}">Code oublié</button>` : ''}${r && r.bcode === 'perso' ? `<button class="btn ghost" type="button" data-x="reinit-bilans" data-el="${esc(e.id)}" title="Le code de « Mes bilans » redevient celui envoyé par le Cahier de suivi (date de naissance)">Code des bilans</button>` : ''}${r ? `<button class="btn ghost danger" type="button" data-x="effacer" data-el="${esc(e.id)}">Effacer la progression</button>` : ''}<button class="btn ghost" type="button" data-x="retirer" data-i="${i}" title="Retirer de la liste">✕</button></div></td></tr>`; }).join('')}
+    <td><div class="p-acts">${r && r.bcode === 'perso' ? `<button class="btn ghost" type="button" data-x="reinit" data-el="${esc(e.id)}" title="Le code secret redevient la date de naissance (JJMM) envoyée par le Cahier de suivi">Code oublié</button>` : ''}${r ? `<button class="btn ghost danger" type="button" data-x="effacer" data-el="${esc(e.id)}">Effacer la progression</button>` : ''}<button class="btn ghost" type="button" data-x="retirer" data-i="${i}" title="Retirer de la liste">✕</button></div></td></tr>`; }).join('')}
   </tbody></table></div>
   <div class="p-row"><label class="field">Ajouter des élèves (un prénom par ligne)<textarea id="c-ajout" rows="3"></textarea></label><button class="btn ghost" type="button" data-x="ajouter">Ajouter</button></div>
   <div class="row"><button class="btn" type="button" data-x="enregistrer">Enregistrer les classes</button>${c.eleves.length === 0 ? '<button class="btn ghost danger" type="button" data-x="suppr-classe">Supprimer la classe</button>' : ''}</div>
@@ -2625,8 +2625,8 @@ ${((x.bilan || {}).lots || []).length ? `<table><thead><tr><th>Lot</th><th>Score
       if (x === 'recharger') { await charger(); return flash('À jour.'); }
       if (x === 'tdb-eleve') return LABO_TDB.eleve(ctx, t.dataset.el);
       if (x === 'tdb-retour') return LABO_TDB.classe(ctx);
-      if (x === 'reinit-bilans' || x === 'tdb-reinit-bilans') { if (!confirm('Le code de « Mes bilans » de cet élève redeviendra le code par défaut (sa date de naissance, envoyée par le Cahier de suivi). Continuer ?')) return;
-        await appel('reinit-bilans', { cl: clSel, el: t.dataset.el }); if (x === 'tdb-reinit-bilans') { LABO_TDB.vider(); await LABO_TDB.eleve(ctx, t.dataset.el); } else await charger(); return flash('Code des bilans remis par défaut.'); }
+      if (x === 'reinit' || x === 'tdb-reinit-bilans') { if (!confirm('Code oublié : le code secret de cet élève redevient sa date de naissance (JJMM), si le Cahier de suivi l’a envoyée ; sinon il en choisira un nouveau à sa prochaine connexion. Continuer ?')) return;
+        await appel('reinit-code', { cl: clSel, el: t.dataset.el }); if (x === 'tdb-reinit-bilans') { LABO_TDB.vider(); await LABO_TDB.eleve(ctx, t.dataset.el); } else await charger(); return flash('Code secret remis par défaut.'); }
       if (x === 'tdb-maj') { LABO_TDB.vider(); await charger(); return flash('À jour.'); }
       if (x === 'tdb-csv') { const l = LABO_TDB.lignesCSV(ctx); if (l) telecharger(`Laboratoire - tableau de bord ${c ? c.nom : ''} ${aujourdhui().replace(/\//g, '-')}.csv`, l); return; }
       if (x === 'sauvegarde') { flash('Préparation de la sauvegarde…'); const d = await appel('exporter');
@@ -2649,7 +2649,7 @@ ${((x.bilan || {}).lots || []).length ? `<table><thead><tr><th>Lot</th><th>Score
       if (x === 'bilans-maj') { await bilans(true); return flash('À jour.'); }
       if (x === 'effacer-bilan') { if (!confirm('Supprimer ce bilan ?')) return; await appel('effacer-bilan', { cle: t.dataset.cle }); await bilans(true); return flash('Bilan supprimé.'); }
       if (x === 'valider') { await appel('valider', { cl: clSel, el: t.dataset.el, ceinture: t.dataset.b, date: aujourdhui() }); LABO_TDB.vider(); await charger(); return flash('Ceinture validée.'); }
-      if (x === 'reinit') { if (!confirm('Remettre à zéro le code secret de cet élève ? À sa prochaine connexion, il en choisira un nouveau.')) return; await appel('reinit-code', { cl: clSel, el: t.dataset.el }); await charger(); return flash('Code remis à zéro.'); }
+
       if (x === 'effacer') { if (!confirm('Effacer définitivement toute la progression de cet élève (ceintures, scores, code secret) ?')) return; await appel('effacer', { cl: clSel, el: t.dataset.el }); LABO_TDB.vider(); await charger(); return flash('Progression effacée.'); }
       lireForm();
       if (x === 'ajout-classe') { const nom = prompt('Nom de la classe (par exemple 5ᵉ 3)'); if (!nom) return; const id = rid(); CL.list.push({ id, nom: nom.trim(), code: codeAuto(nom), eleves: [] }); clSel = id; modif = true; return classes(); }
