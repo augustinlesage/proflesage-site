@@ -603,6 +603,11 @@ html.dys .bl-ncol,html.dys .bl-errs li{border-width:2px}
 #arrivee main{display:flex;flex-direction:column;gap:18px;padding-bottom:40px}
 .arr-card{display:flex;flex-direction:column;gap:12px;max-width:420px}
 .arr-card .field{max-width:none}
+.arr-card h3{margin:0;font-size:1.05rem}
+.arr-duo{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:16px;max-width:860px;align-items:start} /* élève + enseignant côte à côte (23/11/2026) */
+.arr-duo .arr-card{max-width:none}
+.arr-prof{background:var(--soft)}
+.arr-prof .field input{font-size:1rem;letter-spacing:normal}
 .arr-card .field input{font-size:1.15rem;letter-spacing:.04em}
 #arr-pin,#arr-pin2{letter-spacing:.5em;max-width:9em}
 .arr-msg{color:var(--brick);min-height:1.2em;margin:0}
@@ -10662,10 +10667,16 @@ const LABO_SYNC = (function () {
 
   function etapeClasse() {
     let exp = false; try { exp = sessionStorage.getItem('labo.expire'); sessionStorage.removeItem('labo.expire'); } catch (e) { }
+    /* connexion enseignant à côté de celle des élèves (Augustin, 23/11/2026) : même mot de passe que l'espace professeur */
     cadre(`<div class="page-h"><h2>Bienvenue${NB}!</h2><p>Connecte-toi pour retrouver ta progression, tes scores et tes ceintures sur n’importe quel ordinateur.</p></div>
-<form class="card arr-card"><label class="field">Code de ta classe<input id="arr-code" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Il est donné par ton professeur"></label>
+<div class="arr-duo">
+<form class="card arr-card"><h3>Élève</h3><label class="field">Code de ta classe<input id="arr-code" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Il est donné par ton professeur"></label>
 <div class="row"><button class="btn" type="submit" data-a="classe">Continuer</button></div>
 <p class="small arr-msg" id="arr-msg" role="alert">${exp ? 'Ta session a expiré' + NB + ': reconnecte-toi.' : ''}</p></form>
+<form class="card arr-card arr-prof"><h3>Enseignant</h3><label class="field">Mot de passe enseignant<input id="arr-mdp" type="password" autocomplete="current-password"></label>
+<div class="row"><button class="btn ghost" type="submit" data-a="prof">Entrer dans l’espace professeur</button></div>
+<p class="small arr-msg" id="arr-msg-prof" role="alert"></p></form>
+</div>
 <p class="small arr-invite"><a href="#" data-a="invite">Continuer sans me connecter</a> (ta progression restera seulement sur cet ordinateur).</p>`);
   }
   function etapePrenom() {
@@ -10715,6 +10726,16 @@ ${nouveau ? '<label class="field">Tape-le une deuxième fois<input id="arr-pin2"
       if (a === 'invite') { try { sessionStorage.setItem('labo.invite', '1'); } catch (x) { } document.getElementById('arrivee').remove(); ecran = null; return demarrer(); }
       if (a === 'retour') return etapeClasse();
       if (a === 'prenoms') return etapePrenom();
+      if (a === 'prof') {
+        const mdp = document.getElementById('arr-mdp').value, mp = t => { document.getElementById('arr-msg-prof').textContent = t; };
+        if (!mdp) return mp('Tape le mot de passe enseignant.');
+        mp('Vérification…');
+        const r = await fetch(API + '/prof/classes', { method: 'POST', headers: { 'content-type': 'application/json', 'x-prof': mdp }, body: '{}' }).catch(() => null);
+        if (!r) return mp('Pas de connexion à Internet. Réessaie.');
+        if (!r.ok) { const d = await r.json().catch(() => ({})); return mp(d.erreur || 'Erreur du serveur.'); }
+        try { sessionStorage.setItem('labo.prof', mdp); } catch (x) { }
+        location.href = 'prof.html'; return;
+      }
       if (a === 'classe') {
         codeClasse = document.getElementById('arr-code').value.trim(); if (!codeClasse) return;
         msg('Recherche…'); classe = await appel('classe', { code: codeClasse }); return etapePrenom();

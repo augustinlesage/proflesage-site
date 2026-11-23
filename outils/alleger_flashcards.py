@@ -14,6 +14,8 @@ Ce script prend ce fichier unique et produit, dans le dossier cible :
 
 Usage : python3 outils/alleger_flashcards.py "Flashcards - élèves.html" flashcards/
 (le fichier source doit déjà contenir le script FC_BILAN_API.)
+Option --prof : version professeur (Flashcards.html complet) pour /labo/flashcards-prof/ :
+pas de FC_BILAN_API, pas de service worker, pas de lots.json.
 """
 import base64, hashlib, io, json, os, re, subprocess, sys
 
@@ -28,9 +30,9 @@ EXT = {'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp', 'image/gif
        'font/woff': 'woff', 'font/woff2': 'woff2', 'application/pdf': 'pdf'}
 
 
-def main(src, dest):
+def main(src, dest, prof=False):
     s = open(src, encoding='utf-8').read()
-    if 'FC_BILAN_API' not in s:
+    if not prof and 'FC_BILAN_API' not in s:
         sys.exit('Le fichier source ne contient pas FC_BILAN_API : ajoute-le d’abord.')
     adir = os.path.join(dest, 'a')
     os.makedirs(adir, exist_ok=True)
@@ -92,7 +94,15 @@ def main(src, dest):
     if reste:
         print('ATTENTION : %d bloc(s) base64 restant(s), %d Ko' % (len(reste), sum(map(len, reste)) // 1000))
 
-    # 4. Service worker (hors ligne après la 1re visite)
+    # 4. Service worker (hors ligne après la 1re visite) ; pas pour la version professeur (page protégée)
+    if prof:
+        with open(os.path.join(dest, 'index.html'), 'w', encoding='utf-8') as f:
+            f.write(s)
+        for f in os.listdir(adir):
+            if f not in ecrits and f != '.htaccess':
+                os.remove(os.path.join(adir, f))
+        print('index.html (prof) : %.2f Mo ; a/ : %d fichiers, %.2f Mo' % (len(s.encode()) / 1e6, len(ecrits), sum(ecrits.values()) / 1e6))
+        return
     version = hashlib.sha256(s.encode()).hexdigest()[:10]
     fichiers = sorted(ecrits)
     sw = SW.replace('__VERSION__', version).replace('__ASSETS__', json.dumps(['a/' + f for f in fichiers]))
@@ -171,6 +181,7 @@ self.addEventListener('fetch', e => {
 """
 
 if __name__ == '__main__':
-    if len(sys.argv) != 3:
+    args = [a for a in sys.argv[1:] if a != '--prof']
+    if len(args) != 2:
         sys.exit(__doc__)
-    main(sys.argv[1], sys.argv[2])
+    main(args[0], args[1], prof='--prof' in sys.argv)

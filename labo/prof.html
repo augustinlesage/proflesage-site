@@ -542,10 +542,52 @@ html.dys .bl-ncol,html.dys .bl-errs li{border-width:2px}
 .memos .tw.hm td:first-of-type{white-space:nowrap}.memos .tw.hm td:nth-of-type(3){white-space:nowrap}
 @media (max-width:900px){.memos .tw.hm td:first-of-type,.memos .tw.hm td:nth-of-type(3){white-space:normal}}
 
+/* Sauvegarde en ligne : écran d'arrivée et pastille de l'élève (version Netlify) */
+#arrivee main{display:flex;flex-direction:column;gap:18px;padding-bottom:40px}
+.arr-card{display:flex;flex-direction:column;gap:12px;max-width:420px}
+.arr-card .field{max-width:none}
+.arr-card h3{margin:0;font-size:1.05rem}
+.arr-duo{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:16px;max-width:860px;align-items:start} /* élève + enseignant côte à côte (23/11/2026) */
+.arr-duo .arr-card{max-width:none}
+.arr-prof{background:var(--soft)}
+.arr-prof .field input{font-size:1rem;letter-spacing:normal}
+.arr-card .field input{font-size:1.15rem;letter-spacing:.04em}
+#arr-pin,#arr-pin2{letter-spacing:.5em;max-width:9em}
+.arr-msg{color:var(--brick);min-height:1.2em;margin:0}
+.arr-invite{color:var(--muted)}
+.arr-noms{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
+.arr-nom{font:inherit;font-weight:700;font-size:1rem;padding:14px 10px;border-radius:var(--r);border:1px solid var(--line);background:var(--sheet);color:var(--ink);cursor:pointer;text-align:center}
+.arr-nom:hover,.arr-nom:focus-visible{border-color:var(--brick);outline:none;box-shadow:0 0 0 3px var(--brick-soft)}
+.compte{position:relative;flex:none;margin-left:auto}
+.compte-b{font:inherit;display:inline-flex;flex-direction:column;align-items:flex-start;line-height:1.1;padding:5px 12px;border-radius:999px;border:1px solid var(--clay);background:var(--acc-soft);color:var(--ink);cursor:pointer;max-width:150px}
+.compte-b:hover,.compte-b[aria-expanded="true"]{border-color:var(--icon)} /* teinte bleutée : se distingue des onglets (Augustin, 22/11/2026) */
+.compte-n{font-weight:700;font-size:.85rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.compte-c{font-size:.7rem;color:var(--muted)}
+.compte-menu{position:absolute;right:0;top:calc(100% + 6px);z-index:30;background:var(--sheet);border:1px solid var(--line);border-radius:var(--r);padding:12px;display:flex;flex-direction:column;gap:8px;width:230px;box-shadow:0 8px 24px rgba(0,0,0,.12)}
+.compte-menu[hidden]{display:none}
+.compte-menu p{margin:0;color:var(--muted)}
+#compte-etat[data-s="ok"]::before{content:"✓ ";color:var(--sage,#5b8a6b)}
+#compte-etat[data-s="horsligne"],#compte-etat[data-s="expire"]{color:var(--brick)}
+html.dys .arr-nom,html.dys .compte-b,html.dys .compte-menu{border:2px solid var(--line);border-radius:10px}
+/* « Mon passeport » de l'élève (ceintures + badges) : mêmes médailles que le Cahier de suivi */
+.pp-leg{margin:18px 0 0;color:var(--muted)}
+.bg-svg{display:block;overflow:visible;flex:0 0 auto;filter:drop-shadow(0 4px 8px rgba(0,0,0,.18))}
+.bg-svg.verrou{opacity:.85;filter:none}
+.bg-h{margin:22px 0 10px;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.bg-h span{font-weight:400;letter-spacing:0;margin-left:4px;text-transform:none}
+.bg-h.bg-sous{margin:12px 0 8px;font-size:.72rem}
+.bg-grille{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:14px 8px}
+.bg-it{display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px}
+.bg-it b{font-size:.82rem;line-height:1.15}
+.bg-it small{font-size:.72rem;color:var(--muted);line-height:1.2}
+.bg-it.off b{color:var(--muted);font-weight:600}
+
 /* Espace professeur */
-.p-tabs{display:flex;gap:6px;flex-wrap:wrap}
-.p-tabs button{font:inherit;font-weight:600;font-size:.9rem;padding:6px 14px;border-radius:999px;border:1px solid var(--line);background:var(--sheet);color:var(--ink);cursor:pointer}
-.p-tabs button[aria-current="true"]{background:var(--ink);color:var(--sheet);border-color:var(--ink)}
+/* en-tête : même disposition que le Laboratoire (onglets en pastilles, menu du compte au bout de la ligne), 23/11/2026 */
+#p-tabs[hidden],#p-compte[hidden]{display:none}
+.p-fc{display:inline-flex;align-items:center;gap:6px}
+.p-fc .ico{vertical-align:0}
+@media (max-width:720px){#p-tabs .sep{display:none}}
 #p-vue{display:flex;flex-direction:column;gap:16px;padding-bottom:40px}
 .p-login{display:flex;flex-direction:column;gap:14px;max-width:440px}
 .p-row{display:flex;flex-wrap:wrap;gap:12px 16px;align-items:flex-end}
@@ -636,8 +678,16 @@ code{font-family:ui-monospace,Menlo,monospace;font-size:.9em}
 <body>
 <div class="wrap">
   <header class="top">
-    <a class="brand" href="/labo/" style="text-decoration:none"><div class="mark" aria-hidden="true">L<span>l</span></div><div><h1>Laboratoire de la langue</h1><small>Espace professeur</small></div></a>
-    <div class="top-right"><nav class="p-tabs" id="p-tabs" hidden><button type="button" data-o="tdb">Tableau de bord</button><button type="button" data-o="suivi">Suivi et notes</button><button type="button" data-o="bilans">Bilans reçus</button><button type="button" data-o="classes">Classes et élèves</button><button type="button" data-x="deconnexion">Se déconnecter</button></nav><button class="theme" id="plein" type="button" aria-label="Afficher en plein écran" title="Afficher en plein écran"></button><button class="theme" id="theme" type="button" aria-label="Changer de thème" title="Mode clair ou sombre"></button></div>
+    <a class="brand" href="/labo/" style="text-decoration:none"><div class="mark" aria-hidden="true">L<span>l</span></div><div><h1>Laboratoire de la langue</h1><small>Espace professeur · M. Lesage</small></div></a>
+    <div class="top-outils">
+      <button class="theme" id="plein" type="button" aria-label="Afficher en plein écran" title="Afficher en plein écran"></button>
+      <button class="theme" id="theme" type="button" aria-label="Changer de thème" title="Mode clair ou sombre"></button>
+    </div>
+    <div class="top-right">
+      <nav class="tabs" aria-label="Rubriques de l’espace professeur" id="p-tabs" hidden><a href="#" data-o="tdb">Tableau de bord</a><a href="#" data-o="suivi">Suivi et notes</a><a href="#" data-o="bilans">Bilans reçus</a><a href="#" data-o="classes">Classes et élèves</a><span class="sep" aria-hidden="true"></span><a href="/labo/flashcards-prof/" class="aux p-fc" data-x="flashcards" title="Ouvrir les flashcards version professeur dans un nouvel onglet">Flashcards (version prof)<svg class="ico" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></a></nav>
+      <div class="compte" id="p-compte" hidden><button type="button" class="compte-b" id="p-compte-b" aria-expanded="false"><span class="compte-n">Professeur</span><span class="compte-c">Espace enseignant</span></button>
+        <div class="compte-menu" id="p-compte-menu" hidden><a class="btn ghost" href="/labo/">Retour au Laboratoire</a><button type="button" class="btn" data-x="deconnexion">Se déconnecter</button></div></div>
+    </div>
   </header>
   <p class="p-msg" id="p-msg" role="status"></p>
   <main id="p-vue"></main>
@@ -2458,7 +2508,7 @@ ${effacerJours(a, id)}
   /* ---------- rendu ---------- */
   function cadre(html) { $('#p-vue').innerHTML = html; }
   function connexion() {
-    $('#p-tabs').hidden = true;
+    $('#p-tabs').hidden = true; $('#p-compte').hidden = true; $('#p-compte-menu').hidden = true;
     cadre(`<form class="card p-login"><div class="page-h"><h2>Espace professeur</h2><p>Classes, codes, suivi des élèves et export des notes.</p></div>
 <label class="field">Mot de passe enseignant<input id="p-mdp" type="password" autocomplete="current-password"></label>
 <div class="row"><button class="btn" type="submit">Entrer</button></div><p class="p-msg bad" id="p-msg"></p></form>`);
@@ -2474,10 +2524,10 @@ ${effacerJours(a, id)}
     for (const k in BIL) delete BIL[k];
     CL = c; SUIVI = s.eleves; modif = false;
     if (!clSel || !CL.list.find(x => x.id === clSel)) clSel = (CL.list[0] || {}).id || '';
-    $('#p-tabs').hidden = false; rendre();
+    $('#p-tabs').hidden = false; $('#p-compte').hidden = false; rendre();
   }
   function rendre() {
-    document.querySelectorAll('#p-tabs [data-o]').forEach(b => b.setAttribute('aria-current', String(b.dataset.o === onglet)));
+    document.querySelectorAll('#p-tabs [data-o]').forEach(b => { if (b.dataset.o === onglet) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current'); });
     if (onglet === 'classes') return classes();
     if (onglet === 'bilans') return bilans();
     if (onglet === 'tdb') return LABO_TDB.classe(ctx).catch(err => erreurAppel(err));
@@ -2654,14 +2704,31 @@ ${((x.bilan || {}).lots || []).length ? `<table><thead><tr><th>Lot</th><th>Score
     telecharger(`Laboratoire - ceintures ${c.nom}.csv`, t);
   }
 
+  /* ---------- flashcards version professeur (23/11/2026) : nouvel onglet, protégée par le mot de passe enseignant ----------
+     Le formulaire envoie le mot de passe à /labo/flashcards-prof/, qui pose un cookie de session puis affiche l'appli complète. */
+  function ouvrirFlashcards() {
+    const f = document.createElement('form');
+    f.method = 'post'; f.action = '/labo/flashcards-prof/'; f.target = '_blank'; f.hidden = true;
+    const i = document.createElement('input'); i.type = 'hidden'; i.name = 'mdp'; i.value = mdp; f.appendChild(i);
+    document.body.appendChild(f); f.submit(); f.remove();
+  }
+  /* menu du compte (comme la pastille de l'élève dans le Laboratoire) */
+  (function () {
+    const b = $('#p-compte-b'), m = $('#p-compte-menu');
+    const fermer = () => { m.hidden = true; b.setAttribute('aria-expanded', 'false'); };
+    b.addEventListener('click', () => { m.hidden = !m.hidden; b.setAttribute('aria-expanded', String(!m.hidden)); });
+    document.addEventListener('click', ev => { if (!m.hidden && (!ev.target.closest('#p-compte') || ev.target.closest('[data-x]'))) fermer(); });
+  })();
+
   /* ---------- actions ---------- */
   document.addEventListener('click', async ev => {
     const t = ev.target.closest('[data-o],[data-x]'); if (!t) return;
     if (t.tagName === 'A' && t.getAttribute('href') === '#') ev.preventDefault();
     if (t.dataset.o) { if (onglet === 'classes') lireForm(); onglet = t.dataset.o; return rendre(); }
     const x = t.dataset.x, c = CL.list.find(z => z.id === clSel);
+    if (x === 'flashcards') { ev.preventDefault(); return ouvrirFlashcards(); }
     try {
-      if (x === 'deconnexion') { mdp = ''; try { sessionStorage.removeItem('labo.prof'); } catch (e) { } return connexion(); }
+      if (x === 'deconnexion') { mdp = ''; try { sessionStorage.removeItem('labo.prof'); } catch (e) { } fetch('/labo/flashcards-prof/?sortir=1').catch(() => { }); return connexion(); }
       if (x === 'recharger') { await charger(); return flash('À jour.'); }
       if (x === 'tdb-eleve') return LABO_TDB.eleve(ctx, t.dataset.el);
       if (x === 'tdb-retour') return LABO_TDB.classe(ctx);
