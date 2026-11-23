@@ -345,6 +345,41 @@ function prof(string $action, array $body): void {
     $k = $body['cle'] ?? ''; if (!is_string($k) || !preg_match('/^b\/([a-z0-9_-]+)\/([a-z0-9_-]+)\/(\d+)$/i', $k, $m)) erreur('Bilan inconnu.');
     @unlink(chemin("bilans/{$m[1]}/{$m[2]}/{$m[3]}.json")); repondre(['ok' => true]);
   }
+  /* effacer une journée de travail d'un élève (Augustin, 23/11/2026 : « dans l'espace prof, permettre de supprimer des données ») :
+     événements du journal de ce jour (heure de Paris), résultats datés de ce jour (séries de flashcards, test, ceintures, étapes et séries
+     des parcours, diagnostics, erreurs), bilans reçus ce jour. L'élève est déconnecté (pv + 1) : sa copie locale est effacée à la reconnexion. */
+  if ($action === 'effacer-jour') {
+    $cl = $body['cl'] ?? ''; $el = $body['el'] ?? ''; $jour = (string) ($body['jour'] ?? '');
+    if (!okId($cl) || !okId($el) || !preg_match('/^(\d\d)\/(\d\d)\/(\d{4})$/', $jour, $m)) erreur('Demande incomplète.');
+    avecVerrou("$cl-$el", function () use ($cl, $el, $jour, $m) {
+      $n = 0; $cle = "{$m[3]}-{$m[2]}-{$m[1]}";
+      $J = lireJournal($cl, $el); $garde = [];
+      foreach ($J as $e) { $d = dateTs($e['ts'] ?? ''); if ($d && $d->format('d/m/Y') === $jour) { $n++; continue; } $garde[] = $e; }
+      $f = chemin("journal/$cl/$el.jsonl");
+      if (count($garde) !== count($J)) { $t = ''; foreach ($garde as $e) $t .= json_encode($e, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . "\n"; file_put_contents($f, $t, LOCK_EX); }
+      foreach (glob(chemin("bilans/$cl/$el/*.json")) ?: [] as $b) { $d = dateTs(gmdate('Y-m-d\TH:i:s\Z', (int) floor((int) basename($b, '.json') / 1000))); if ($d && $d->format('d/m/Y') === $jour) { @unlink($b); $n++; } }
+      $r = lireJ(recRel($cl, $el));
+      if ($r) {
+        $E = etatPropreA($r['etat'] ?? []); $L = $E['labo']; $F = $E['fc'];
+        $du = fn($x, string $k = 'date') => is_array($x) && (string) ($x[$k] ?? '') === $jour;
+        $filtre = function ($o, string $k = 'date') use ($du, &$n) { $o = objA($o); foreach ($o as $id => $x) if ($du($x, $k)) { unset($o[$id]); $n++; } return $o ?: new stdClass(); };
+        if (isset($F['res'])) $F['res'] = $filtre($F['res']);
+        if ($du($F['test'] ?? null)) { unset($F['test']); $n++; }
+        if (isset($L['ceintures'])) $L['ceintures'] = $filtre($L['ceintures']);
+        foreach (['exercices', 'lecons'] as $k) if (isset($L[$k])) $L[$k] = $filtre($L[$k]);
+        if (isset($L['parcours']) && is_array($L['parcours'])) {
+          $P = $L['parcours'];
+          foreach (['prog', 'diag', 'sortie'] as $k) if (isset($P[$k])) $P[$k] = $filtre($P[$k]);
+          if (isset($P['err'])) $P['err'] = $filtre($P['err'], 'd');
+          if (isset($P['diagH']) && is_array($P['diagH'])) { $a = count($P['diagH']); $P['diagH'] = array_values(array_filter($P['diagH'], fn($h) => !$du($h))); $n += $a - count($P['diagH']); }
+          $L['parcours'] = $P;
+        }
+        $r['etat'] = ['labo' => $L ?: new stdClass(), 'fc' => $F ?: new stdClass()];
+        $r['pv'] = ($r['pv'] ?? 0) + 1; ecrireJ(recRel($cl, $el), $r);
+      }
+      repondre(['ok' => true, 'n' => $n]);
+    });
+  }
   if (in_array($action, ['reinit-code', 'reinit-bilans', 'effacer', 'valider'], true)) {
     $cl = $body['cl'] ?? ''; $el = $body['el'] ?? ''; if (!okId($cl) || !okId($el)) erreur('Élève inconnu.');
     avecVerrou("$cl-$el", function () use ($action, $cl, $el, $body) {

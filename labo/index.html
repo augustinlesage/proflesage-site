@@ -512,6 +512,28 @@ html.dys .q i.phr{background:none;text-decoration:underline;text-decoration-thic
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .bl-barre .ok{background:#6fb27f}:root:not([data-theme="light"]) .bl-ncol.acquis{border-top-color:#6fb27f}:root:not([data-theme="light"]) .bl-msg-ok{color:#6fb27f}}
 :root[data-theme="dark"] .bl-barre .ok{background:#6fb27f}:root[data-theme="dark"] .bl-ncol.acquis{border-top-color:#6fb27f}:root[data-theme="dark"] .bl-msg-ok{color:#6fb27f}
 html.dys .bl-ncol,html.dys .bl-errs li{border-width:2px}
+/* tuiles et graphiques du tableau de bord (fiche élève, et « Ma progression » / « Mon temps de travail » dans Mes bilans) */
+:root{--tb-ok:#3f7d5c;--tb-moy:#b7832a;--tb-ko:#b25751;--tb-mark:#5d6890;--tb-ref:#3f7d5c;--tb-track:#e3e7f0}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--tb-ok:#7cc29b;--tb-moy:#e2b35c;--tb-ko:#ec8f85;--tb-mark:#aab6dc;--tb-ref:#7cc29b;--tb-track:#2c3344}}
+:root[data-theme="dark"]{--tb-ok:#7cc29b;--tb-moy:#e2b35c;--tb-ko:#ec8f85;--tb-mark:#aab6dc;--tb-ref:#7cc29b;--tb-track:#2c3344}
+.tb-tuiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.tb-tuile{background:var(--sheet);border:1px solid var(--line);border-radius:var(--r,14px);padding:12px 14px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.tb-tl{font-size:.78rem;color:var(--muted);font-weight:600}
+.tb-tv{font-size:1.6rem;line-height:1.2;font-variant-numeric:tabular-nums}
+.tb-ts{font-size:.78rem;color:var(--muted)}
+.tb-svg{width:100%;height:auto;display:block;margin-top:8px;overflow:visible}
+.tb-grid{stroke:var(--line);stroke-width:1}
+.tb-ax{fill:var(--muted);font-size:11px;font-family:inherit}
+.tb-mark{fill:var(--tb-mark)}
+.tb-bar:hover .tb-mark,.tb-bar:focus .tb-mark{fill:var(--ink)}
+.tb-hit{fill:transparent}
+.tb-bar:focus,.tb-pt:focus{outline:none}
+.tb-ref{stroke:var(--tb-ref);stroke-width:1.5;stroke-dasharray:5 4}
+.tb-ligne{fill:none;stroke:var(--tb-mark);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+.tb-dot{stroke:var(--sheet);stroke-width:2}
+.tb-dot.ok{fill:var(--tb-ok)}.tb-dot.moy{fill:var(--tb-moy)}.tb-dot.ko{fill:var(--tb-ko)}
+.tb-pt:hover .tb-dot,.tb-pt:focus .tb-dot{r:6}
+.bl-prog{display:grid;gap:14px}
 
 /* styles des pages de l'appli des flashcards (app.html) */
 .res-page{max-width:860px}
@@ -10672,7 +10694,7 @@ const LABO = (function () {
   /* « Mes bilans » (refonte des parcours, lot 6) : calcul et affichage dans bilans.js. Version en ligne : serveur/sync.js
      remplit #mes-bilans après le code à 4 chiffres (élève connecté) ; sans compte, la page montre directement les résultats de cet appareil. */
   const bilansHTML = () => window.LABO_BILANS ? LABO_BILANS.html(LABO_BILANS.calc(S.parcours, LABO_BILANS.ref(), S.niveau)) : '';
-  vues.bilans = h => h === 'bilans' ? `<div class="page-h"><h2>Mes bilans</h2><p>${S.prenom ? esc(S.prenom) + ' · ' : ''}Où tu en es dans les parcours${NB}: ta réussite par domaine, tes notions, tes erreurs récurrentes, tes diagnostics et un plan pour ton prochain entrainement.</p></div>
+  vues.bilans = h => h === 'bilans' ? `<div class="page-h"><h2>Mes bilans</h2><p>${S.prenom ? esc(S.prenom) + ' · ' : ''}Où tu en es${NB}: un plan pour ton prochain entrainement, ta progression et ton temps de travail, ta réussite par domaine, tes notions, tes erreurs récurrentes et tes diagnostics.</p></div>
     <div id="mes-bilans">${window.LABO_API ? '<p class="small muted">Chargement…</p>' : bilansHTML()}</div>` : null;
   vues.appro = h => h === 'approfondissement' && window.PARC2 ? window.PARC2.approPage() : null;
 
@@ -12378,6 +12400,407 @@ ${nb > 1 ? `<g transform="translate(38 40)"><circle r="14" fill="${(BG_COUL[b.co
 
 ;
 /* ====================================================================
+   Tableau de bord du professeur (demande d'Augustin, 19/11/2026).
+   Lit, pour une classe, l'état de chaque élève, son journal (une ligne par série, ceinture, test…)
+   et ses bilans reçus. Tout est calculé dans la page : statistiques, progression, points de vigilance,
+   ceintures, badges, note proposée (même barème que les bilans).
+   Utilisé par prof.js : LABO_TDB.classe(ctx) et LABO_TDB.eleve(ctx, id).
+   ==================================================================== */
+const LABO_TDB = (function () {
+  const NB = ' ', NNB = ' ';
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const p2 = n => String(n).padStart(2, '0');
+  const frD = d => p2(d.getDate()) + '/' + p2(d.getMonth() + 1) + '/' + d.getFullYear();
+  const cleJour = d => d.getFullYear() + '-' + p2(d.getMonth() + 1) + '-' + p2(d.getDate());
+  const deFr = s => { const m = /^(\d\d)\/(\d\d)\/(\d{4})/.exec(s || ''); return m ? new Date(+m[3], +m[2] - 1, +m[1], 12) : null; };
+  const JOUR = 864e5;
+  /* nom lisible d'un lot inconnu : « futur-conditionnel » → « Futur conditionnel » */
+  const joli = id => { const t = String(id || '').replace(/-(\d)e$/, ' ($1ᵉ)').replace(/-/g, ' '); return t.charAt(0).toUpperCase() + t.slice(1); };
+  const virgule = (x, d = 1) => String(Math.round(x * 10 ** d) / 10 ** d).replace('.', ',');
+  const duree = sec => { sec = Math.round(+sec || 0); if (sec < 60) return sec + NNB + 's'; const h = Math.floor(sec / 3600), m = Math.round(sec % 3600 / 60);
+    return h ? `${h}${NNB}h${NNB}${p2(m === 60 ? 59 : m)}` : `${Math.round(sec / 60)}${NNB}min`; };
+  const depuis = d => { if (!d) return 'jamais'; const j = Math.floor((Date.now() - d) / JOUR); return j <= 0 ? 'aujourd’hui' : j === 1 ? 'hier' : `il y a ${j}${NNB}jours`; };
+
+  /* ---------- icônes au trait (dessins Lucide, licence ISC) ---------- */
+  const ICO = {
+    check: '<circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>',
+    layers: '<path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/><path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/><path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/>',
+    calendar: '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
+    flame: '<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>',
+    clock: '<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',
+    star: '<path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"/>',
+    pencil: '<path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/>',
+    trend: '<path d="M22 7 13.5 15.5 8.5 10.5 2 17"/><path d="M16 7h6v6"/>',
+    compass: '<circle cx="12" cy="12" r="10"/><path d="m16.24 7.76-2.12 6.36-6.36 2.12 2.12-6.36z"/>',
+    award: '<circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/>',
+    shield: '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>',
+    crown: '<path d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z"/><path d="M5 21h14"/>',
+    alerte: '<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/>',
+    info: '<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>',
+    zap: '<path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/>',
+    haut: '<path d="m5 12 7-7 7 7"/><path d="M12 19V5"/>',
+    bas: '<path d="M12 5v14"/><path d="m19 12-7 7-7-7"/>',
+    egal: '<path d="M5 12h14"/>',
+    retour: '<path d="m12 19-7-7 7-7"/><path d="M19 12H5"/>'
+  };
+  const ico = (n, s = 16) => `<svg class="ico" viewBox="0 0 24 24" width="${s}" height="${s}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICO[n] || ''}</svg>`;
+
+  /* ---------- domaines (repris du test de positionnement des flashcards) ---------- */
+  const DOMAINES = [
+    ['homo', 'Homophones', /^homophones/],
+    ['ortho', 'Orthographe et accords', /^(accords|adjectifs-couleur|ecriture-des-nombres|lettres-muettes|ou-est-l-erreur|dictees|genre)/],
+    ['conj', 'Conjugaison', /^(conjugaison|futur-conditionnel|auxiliaire|passe-simple|temps-valeurs)/],
+    ['gram', 'Grammaire', /^(natures|fonctions|la-phrase|reprises|verbe-sujet|voix|propositions)/],
+    ['voc', 'Vocabulaire', /^(vocabulaire|expressions|formation-des-mots|mots-|sens-figure|niveaux-de-langue|etymologie|latin|argot|francais-ici)/],
+    ['texte', 'Lire et écrire', /^(connecteurs|figures|discours|choisir-la-suite|reecritures)/]
+  ];
+  const domaineDe = id => (DOMAINES.find(d => d[2].test(id)) || ['autre'])[0];
+  const NOMDOM = Object.fromEntries(DOMAINES.map(d => [d[0], d[1]]).concat([['autre', 'Autres lots']]));
+  const STN = { solide: 'solide', consolider: 'à consolider', travailler: 'à travailler' };
+  const ECH = [['grammaire', 'Grammaire'], ['conjugaison', 'Conjugaison'], ['orthographe', 'Orthographe'], ['homophones', 'Homophones'], ['vocabulaire', 'Vocabulaire']];
+  const COUL = ['blanche', 'jaune', 'orange', 'verte', 'bleue', 'marron', 'noire'];
+  const COULN = { blanche: 'Blanche', jaune: 'Jaune', orange: 'Orange', verte: 'Verte', bleue: 'Bleue', marron: 'Marron', noire: 'Noire', expert: 'Expert' };
+  function ceintureDe(id) {
+    let m = /^(\w+)-([3456])-(\w+)$/.exec(id);
+    if (m) return { ech: m[1], niv: m[2], coul: m[3], rang: +(7 - +m[2]) * 10 + COUL.indexOf(m[3]), nom: COULN[m[3]] + ' ' + m[2] + 'ᵉ' };
+    m = /^(\w+)-expert$/.exec(id);
+    if (m) return { ech: m[1], niv: '', coul: 'expert', rang: 99, nom: 'Expert' };
+    return { ech: '?', niv: '', coul: '', rang: 0, nom: id };
+  }
+
+  /* ---------- analyse d'un élève ---------- */
+  function analyse(x, ctx, noms) {
+    const R = ctx.BAR || {};
+    const vMin = +R.vMin || 2, cible = +R.cible || 45;
+    const J = (x.journal || []).slice().sort((a, b) => (a.ts || '').localeCompare(b.ts || ''));
+    const etat = x.etat || { labo: {}, fc: {} };
+    /* séries : un événement est une nouvelle série si le nombre de séries augmente (ou, sans ce nombre, si le résultat change) ;
+       sinon c'est du temps passé à revoir les cartes ratées */
+    const parLot = {}, series = [], chrono = [];
+    let tempsTotal = 0;
+    const jours = new Set(), semaines = new Set(), tempsJour = {};
+    for (const e of J) {
+      if (e.t !== 'serie' || !e.n) continue;
+      const d = new Date(e.ts), prev = parLot[e.id];
+      const nouvelle = !prev || (e.nb != null && prev.nb != null ? +e.nb > +prev.nb : (e.date !== prev.date || e.ok !== prev.ok || e.sec !== prev.sec));
+      let t = 0;
+      if (prev && e.tot != null && prev.tot != null) t = Math.max(0, +e.tot - +prev.tot);
+      else t = +e.sec || 0;
+      if (!prev && e.tot != null && e.nb > 1 && e.import) t = +e.tot; /* bilan importé : tout le temps passé sur le lot */
+      parLot[e.id] = e;
+      const pct = Math.round(+e.ok / +e.n * 100);
+      const ec = e.mode === 'ecrit' ? 2 : 1;
+      const raison = +e.ok > +e.n ? 'résultats impossibles' : (e.sec != null && +e.sec / +e.n < vMin * ec) ? `trop rapide (${virgule(+e.sec / +e.n)}${NNB}s par carte)` : '';
+      if (!raison) { tempsTotal += t; const k = cleJour(d); tempsJour[k] = (tempsJour[k] || 0) + t; }
+      chrono.push({ d, t: raison ? 0 : t, serie: nouvelle && !raison ? { id: e.id, pct, n: +e.n, mode: e.mode || null } : null });
+      if (nouvelle) {
+        series.push({ id: e.id, nom: e.nom || noms[e.id] || joli(e.id), niv: e.niv || null, pct, ok: +e.ok, n: +e.n, sec: +e.sec || 0, mode: e.mode || null, d, date: e.date || frD(d), raison, imp: !!e.import });
+        jours.add(cleJour(d));
+        const s = new Date(d); s.setDate(s.getDate() - ((s.getDay() + 6) % 7)); semaines.add(cleJour(s));
+      }
+    }
+    const valides = series.filter(s => !s.raison);
+    const moyP = L => { const n = L.reduce((a, s) => a + s.n, 0); return n ? Math.round(L.reduce((a, s) => a + s.pct * s.n, 0) / n) : null; };
+    const reussite = moyP(valides);
+    const recentes = valides.slice(-5), avant = valides.slice(-10, -5);
+    const tendance = recentes.length >= 3 && avant.length >= 3 ? moyP(recentes) - moyP(avant) : null;
+    const derniere = J.filter(e => !e.import).map(e => new Date(e.ts)).concat(x.vu ? [new Date(x.vu)] : []).concat(series.map(s => s.d)).sort((a, b) => b - a)[0] || null;
+    const ilya7 = Date.now() - 7 * JOUR, ilya30 = Date.now() - 30 * JOUR;
+    const temps7 = Object.entries(tempsJour).filter(([k]) => new Date(k + 'T12:00') >= ilya7).reduce((a, [, v]) => a + v, 0);
+    const series7 = valides.filter(s => s.d >= ilya7).length;
+    /* lots */
+    const lots = {};
+    for (const s of series) {
+      const l = lots[s.id] = lots[s.id] || { id: s.id, nom: s.nom, dom: domaineDe(s.id), series: [], best: 0 };
+      l.series.push(s); l.nom = s.nom || l.nom;
+    }
+    for (const l of Object.values(lots)) {
+      const v = l.series.filter(s => !s.raison); l.valides = v.length; l.premier = v[0] ? v[0].pct : null; l.dernier = v.length ? v[v.length - 1].pct : null;
+      l.best = v.reduce((a, s) => Math.max(a, s.pct), 0); l.suspects = l.series.length - v.length; l.date = l.series[l.series.length - 1].date;
+      l.temps = v.reduce((a, s) => a + s.sec, 0);
+    }
+    /* domaines */
+    const doms = {};
+    for (const l of Object.values(lots)) if (l.dernier != null) { const d = doms[l.dom] = doms[l.dom] || { n: 0, s: 0, lots: 0 }; d.lots++; d.s += l.dernier; d.n++; }
+    for (const d of Object.values(doms)) d.moy = Math.round(d.s / d.n);
+    /* test */
+    const tests = J.filter(e => e.t === 'test');
+    const test = (etat.fc || {}).test || null;
+    const testDoms = test && test.doms ? Object.fromEntries(Object.entries(test.doms).map(([k, v]) => [k, typeof v === 'string' ? v : v.status])) : tests.length ? tests[tests.length - 1].doms : null;
+    /* ceintures */
+    const C = (etat.labo || {}).ceintures || {};
+    const ceintures = Object.entries(C).filter(([, s]) => s && (s.etat === 'reussie' || s.etat === 'validee')).map(([id, s]) => Object.assign({ id, s }, ceintureDe(id)));
+    const hautes = {}; for (const c of ceintures) if (!hautes[c.ech] || c.rang > hautes[c.ech].rang) hautes[c.ech] = c;
+    const etapes = Object.values(((etat.labo || {}).parcours || {}).prog || {}).filter(p => p && p.done).length;
+    const exercices = J.filter(e => e.t === 'exercice').length, lecons = J.filter(e => e.t === 'lecon').length;
+    /* badges : même catalogue et mêmes médailles que le Cahier de suivi (badges.js), avec la date d'obtention */
+    const t1 = tests.length ? new Date(tests[0].ts) : (test && test.date ? deFr(test.date) : null);
+    const DBB = LABO_BADGES.dates(chrono, ceintures, ctx.niv, t1);
+    const B = LABO_BADGES.TOUS.map(b => Object.assign({}, b, { ok: !!DBB[b.id], date: DBB[b.id] || null, aide: b.desc, nom: b.lib }));
+    /* note proposée : même calcul que les bilans, à partir de la progression enregistrée et des bilans reçus */
+    let k = null;
+    if (typeof LABO_BILAN !== 'undefined') {
+      const res = (etat.fc || {}).res || {};
+      const synth = { date: frD(new Date()), niveau: (etat.fc || {}).lv || '', lots: Object.entries(res).filter(([, r]) => r && r.n).map(([id, r]) => ({ id, nom: r.nom || noms[id] || id, ok: r.ok, n: r.n, pct: Math.round(r.ok / r.n * 100), date: r.date || '', sec: r.sec, tot: r.tot, mode: r.mode || null, val: r.val, nb: r.nb, best: r.best, niv: r.niv || (noms.__niv || {})[id] || null })), test: test && test.doms && typeof Object.values(test.doms)[0] === 'object' ? test : null };
+      const liste = (x.bilans || []).slice().sort((a, b) => (b.recu || '').localeCompare(a.recu || ''));
+      if (synth.lots.length || synth.test) liste.unshift({ recu: x.maj || new Date().toISOString(), bilan: synth });
+      if (liste.length) k = LABO_BILAN.calcEleve(liste, ctx.niv, R);
+    }
+    /* points de vigilance : [gravité 3 critique / 2 important / 1 à surveiller / 0 info, icône, texte] */
+    const V = [];
+    const jSans = derniere ? Math.floor((Date.now() - derniere) / JOUR) : null;
+    if (!series.length && !ceintures.length) V.push([3, 'clock', x.etat || J.length ? 'Aucune série terminée' : 'Jamais connecté']);
+    else if (jSans >= 14) V.push([3, 'clock', `Inactif depuis ${jSans}${NNB}jours`]);
+    else if (jSans >= 7) V.push([2, 'clock', `Inactif depuis ${jSans}${NNB}jours`]);
+    const sus30 = series.filter(s => s.raison && s.d >= ilya30);
+    if (sus30.length) V.push([sus30.length >= 3 ? 3 : 2, 'zap', `${sus30.length} série${sus30.length > 1 ? 's' : ''} faite${sus30.length > 1 ? 's' : ''} trop vite (non comptée${sus30.length > 1 ? 's' : ''})`]);
+    if (tendance != null && tendance <= -15) V.push([2, 'bas', `Résultats en baisse (${tendance}${NNB}points sur les 5 dernières séries)`]);
+    for (const l of Object.values(lots)) { const v = l.series.filter(s => !s.raison); if (v.length >= 3 && v.slice(-3).every(s => s.pct < 50)) V.push([2, 'alerte', `Bloqué sur «${NNB}${l.nom}${NNB}» (3 séries sous 50${NNB}%)`]); }
+    if (testDoms) for (const [d, st] of Object.entries(testDoms)) if (st === 'travailler') {
+      const fait = Object.values(lots).some(l => l.dom === d && l.valides);
+      if (!fait) V.push([1, 'compass', `${NOMDOM[d] || d}${NNB}: à travailler d’après le test, aucun lot fait`]);
+    }
+    const hon = valides.filter(s => s.mode === 'honneur').length;
+    if (valides.length >= 5 && hon / valides.length >= 0.7) V.push([1, 'info', `Surtout «${NNB}sur l’honneur${NNB}» (${hon} séries sur ${valides.length})`]);
+    if (series.length && cible && temps7 < cible * 60 / 3 && jSans != null && jSans < 7) V.push([1, 'clock', `Peu de temps cette semaine (${duree(temps7)})`]);
+    const aValider = ceintures.filter(c => c.s.etat === 'reussie');
+    if (aValider.length) V.push([0, 'award', `${aValider.length} ceinture${aValider.length > 1 ? 's' : ''} à valider`]);
+    V.sort((a, b) => b[0] - a[0]);
+    return { chrono, x, J, series, valides, reussite, tendance, derniere, tempsTotal, temps7, series7, jours: jours.size, tempsJour, lots, doms, testDoms, tests, test,
+      ceintures, hautes, etapes, exercices, lecons, badges: B, k, V, aValider };
+  }
+
+  /* ---------- petits éléments graphiques ---------- */
+  const barre = (p, w = 90) => p == null ? '<span class="muted">–</span>' : `<span class="tb-barre" style="--w:${w}px"><span style="width:${Math.max(3, p)}%" class="${p >= 80 ? 'ok' : p >= 60 ? 'moy' : 'ko'}"></span></span><b class="tb-pct">${p}${NNB}%</b>`;
+  const tend = t => t == null ? '<span class="muted">–</span>' : `<span class="tb-tend ${t >= 5 ? 'ok' : t <= -5 ? 'ko' : ''}">${ico(t >= 5 ? 'haut' : t <= -5 ? 'bas' : 'egal', 14)}${t > 0 ? '+' : t < 0 ? '−' : ''}${Math.abs(t)}</span>`;
+  const GRAV = ['info', 'surveiller', 'important', 'critique'], GRAVN = ['Information', 'À surveiller', 'Important', 'Prioritaire'];
+  const vig = v => `<li class="tb-v g${v[0]}"><span class="tb-vi">${ico(v[2] && ICO[v[1]] ? v[1] : 'alerte', 16)}</span><span><b>${GRAVN[v[0]]}</b> · ${esc(v[2])}</span></li>`;
+  const tuile = (lbl, val, sous) => `<div class="tb-tuile"><span class="tb-tl">${lbl}</span><b class="tb-tv">${val}</b>${sous ? `<span class="tb-ts">${sous}</span>` : ''}</div>`;
+
+  /* histogramme : une barre par jour (minutes), survol = valeur */
+  function histo(valeurs, libelles, unite, titre) {
+    const W = 720, H = 150, g = 30, b = 18, n = valeurs.length, max = Math.max(1, ...valeurs);
+    const pas = (W - g - 6) / n, bw = Math.max(3, pas - 2);
+    const ech = [0, max / 2, max].map(v => Math.round(v));
+    let s = `<svg class="tb-svg" viewBox="0 0 ${W} ${H + b}" role="img" aria-label="${esc(titre)}">`;
+    for (const v of ech) { const y = H - v / max * (H - 10); s += `<line x1="${g}" x2="${W}" y1="${y}" y2="${y}" class="tb-grid"/><text x="${g - 4}" y="${y + 4}" class="tb-ax" text-anchor="end">${v}</text>`; }
+    valeurs.forEach((v, i) => {
+      const h = v / max * (H - 10), x = g + 2 + i * pas;
+      s += `<g class="tb-bar" tabindex="0"><rect x="${x}" y="0" width="${pas}" height="${H}" class="tb-hit"/>${v ? `<path d="M${x},${H} V${H - h + 3} q0,-3 3,-3 h${bw - 6} q3,0 3,3 V${H} Z" class="tb-mark"/>` : ''}<title>${esc(libelles[i])}${NB}: ${v} ${unite}</title></g>`;
+      if (i % 7 === 0 || i === n - 1) s += `<text x="${x + bw / 2}" y="${H + 14}" class="tb-ax" text-anchor="middle">${esc(libelles[i].replace(/^semaine du /, '').slice(0, 5))}</text>`;
+    });
+    return s + '</svg>';
+  }
+  /* courbe de réussite : un point par série, ligne de repère à 80 % */
+  function courbe(series) {
+    const W = 720, H = 170, g = 34, b = 18, n = series.length;
+    if (n < 2) return '<p class="small muted">Il faut au moins deux séries pour tracer la progression.</p>';
+    const X = i => g + 8 + i * (W - g - 16) / (n - 1), Y = p => 8 + (100 - p) / 100 * (H - 16);
+    let s = `<svg class="tb-svg" viewBox="0 0 ${W} ${H + b}" role="img" aria-label="Réussite de chaque série">`;
+    for (const v of [0, 50, 100]) s += `<line x1="${g}" x2="${W}" y1="${Y(v)}" y2="${Y(v)}" class="tb-grid"/><text x="${g - 4}" y="${Y(v) + 4}" class="tb-ax" text-anchor="end">${v}${NNB}%</text>`;
+    s += `<line x1="${g}" x2="${W}" y1="${Y(80)}" y2="${Y(80)}" class="tb-ref"/><text x="${W - 2}" y="${Y(80) - 4}" class="tb-ax" text-anchor="end">80${NNB}%</text>`;
+    const pts = series.map((x, i) => [X(i), Y(x.pct)]);
+    /* moyenne glissante sur 3 séries : la tendance, plus lisible que les points */
+    const lisse = series.map((x, i) => { const a = series.slice(Math.max(0, i - 2), i + 1); return [X(i), Y(a.reduce((p, q) => p + q.pct, 0) / a.length)]; });
+    s += `<path d="M${lisse.map(p => p.join(',')).join(' L')}" class="tb-ligne"/>`;
+    series.forEach((x, i) => {
+      s += `<g class="tb-pt" tabindex="0"><circle cx="${pts[i][0]}" cy="${pts[i][1]}" r="9" class="tb-hit"/><circle cx="${pts[i][0]}" cy="${pts[i][1]}" r="4" class="tb-dot ${x.pct >= 80 ? 'ok' : x.pct >= 60 ? 'moy' : 'ko'}"/><title>${esc(x.date)} · ${esc(x.nom)}${NB}: ${x.ok}/${x.n} (${x.pct}${NNB}%)</title></g>`;
+    });
+    const ticks = [0, Math.floor((n - 1) / 2), n - 1];
+    for (const i of [...new Set(ticks)]) s += `<text x="${X(i)}" y="${H + 14}" class="tb-ax" text-anchor="middle">${esc(series[i].date.slice(0, 5))}</text>`;
+    return s + '</svg>';
+  }
+  const derniersJours = (n) => { const L = []; for (let i = n - 1; i >= 0; i--) { const d = new Date(Date.now() - i * JOUR); L.push(d); } return L; };
+
+  /* ---------- noms des lots (bilans, journal, liste du Laboratoire) ---------- */
+  function nomsDesLots(E) {
+    const m = { __niv: {} };
+    if (typeof DECKS !== 'undefined') for (const d of DECKS) { m[d.id] = d.nom; m.__niv[d.id] = d.niv || []; }
+    for (const x of E) {
+      for (const b of x.bilans || []) for (const l of (b.bilan || {}).lots || []) { if (l.nom) m[l.id] = l.nom; if (l.niv) m.__niv[l.id] = l.niv; }
+      for (const e of x.journal || []) { if (e.nom) m[e.id] = e.nom; if (e.niv) m.__niv[e.id] = e.niv; }
+      for (const [id, r] of Object.entries(((x.etat || {}).fc || {}).res || {})) { if (r && r.nom) m[id] = r.nom; if (r && r.niv) m.__niv[id] = r.niv; }
+    }
+    return m;
+  }
+
+  /* ---------- vue classe ---------- */
+  let CACHE = { cl: '', data: null, A: null };
+  async function charger(ctx, force) {
+    if (!force && CACHE.cl === ctx.clSel && CACHE.data) return CACHE;
+    const data = await ctx.appel('tableau', { cl: ctx.clSel });
+    const c = ctx.classe(), noms = nomsDesLots(data.eleves);
+    const A = {};
+    for (const x of data.eleves) A[x.el] = analyse(x, ctx, noms);
+    CACHE = { cl: ctx.clSel, data, A, noms, c };
+    return CACHE;
+  }
+  async function classe(ctx, force) {
+    if (!ctx.clSel || !ctx.classe()) return ctx.cadre(`<div class="page-h"><h2>Tableau de bord</h2><p>Aucune classe pour l’instant. Importe une sauvegarde (par exemple les données de l’ancien serveur) ou crée une classe dans « Classes et élèves ».</p></div>
+<div class="card p-reg"><div class="row"><button class="btn" type="button" data-x="importer">Importer une sauvegarde</button><button class="btn ghost" type="button" data-o="classes">Créer une classe</button></div></div>`);
+    ctx.cadre('<p class="muted">Chargement du tableau de bord…</p>');
+    const { A, c } = await charger(ctx, force);
+    const L = c.eleves.map(e => ({ e, a: A[e.id] }));
+    const actifs7 = L.filter(x => x.a && x.a.derniere && x.a.derniere >= Date.now() - 7 * JOUR).length;
+    const t7 = L.reduce((s, x) => s + (x.a ? x.a.temps7 : 0), 0), s7 = L.reduce((s, x) => s + (x.a ? x.a.series7 : 0), 0);
+    const reus = L.filter(x => x.a && x.a.reussite != null), moyR = reus.length ? Math.round(reus.reduce((s, x) => s + x.a.reussite, 0) / reus.length) : null;
+    const nbC = L.reduce((s, x) => s + (x.a ? x.a.ceintures.length : 0), 0), nbAV = L.reduce((s, x) => s + (x.a ? x.a.aValider.length : 0), 0);
+    const vigs = L.flatMap(x => x.a ? x.a.V.filter(v => v[0] >= 1).map(v => ({ e: x.e, v })) : []);
+    /* activité de la classe sur 4 semaines */
+    const J28 = derniersJours(28), mins = J28.map(d => Math.round(L.reduce((s, x) => s + ((x.a && x.a.tempsJour[cleJour(d)]) || 0), 0) / 60));
+    /* lots difficiles : réussite moyenne de la dernière série de chaque élève */
+    const parLot = {};
+    for (const x of L) if (x.a) for (const l of Object.values(x.a.lots)) if (l.dernier != null) { const p = parLot[l.id] = parLot[l.id] || { nom: l.nom, el: 0, s: 0 }; p.el++; p.s += l.dernier; }
+    const durs = Object.values(parLot).filter(p => p.el >= 2).map(p => Object.assign(p, { moy: Math.round(p.s / p.el) })).sort((a, b) => a.moy - b.moy).slice(0, 8);
+    /* domaines : test de positionnement de la classe */
+    const domTest = {};
+    for (const x of L) if (x.a && x.a.testDoms) for (const [d, st] of Object.entries(x.a.testDoms)) { const o = domTest[d] = domTest[d] || { solide: 0, consolider: 0, travailler: 0 }; if (o[st] != null) o[st]++; }
+    ctx.cadre(`<div class="page-h"><h2>Tableau de bord</h2><p>Toute la progression enregistrée${NB}: séries de flashcards, test de positionnement, ceintures, parcours et bilans reçus. Clique sur un élève pour voir sa fiche.</p></div>
+<div class="card p-reg"><div class="p-row">${ctx.selClasse()}<span class="small muted">Mis à jour à ${new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</span></div>
+<div class="row"><button class="btn ghost" type="button" data-x="tdb-maj">Actualiser</button><button class="btn ghost" type="button" data-x="tdb-csv">Télécharger le tableau (CSV)</button><button class="btn ghost" type="button" data-x="sauvegarde">Sauvegarde complète (JSON)</button><button class="btn ghost" type="button" data-x="importer">Importer une sauvegarde</button><button class="btn ghost" type="button" data-x="export-cahier" title="Badges et ceintures de toutes les classes, à importer dans le Cahier de suivi">Badges pour le Cahier (JSON)</button><button class="btn ghost" type="button" data-x="mcp-adresse" title="Adresse à ajouter une fois dans claude.ai : le Cahier de suivi lit alors les badges tout seul">Connecteur du Cahier</button></div><div id="p-mcp"></div></div>
+<div class="tb-tuiles">
+${tuile('Élèves actifs', `${actifs7}${NNB}/${NNB}${c.eleves.length}`, '7 derniers jours')}
+${tuile('Temps de travail', duree(t7), '7 derniers jours, toute la classe')}
+${tuile('Séries terminées', s7, '7 derniers jours')}
+${tuile('Réussite moyenne', moyR == null ? '–' : moyR + NNB + '%', 'séries comptées')}
+${tuile('Ceintures réussies', nbC, nbAV ? `dont ${nbAV} à valider` : 'toutes validées')}
+${tuile('Points de vigilance', vigs.length, `${vigs.filter(v => v.v[0] >= 2).length} importants`)}
+</div>
+<div class="card"><h3>Activité de la classe</h3><p class="small muted">Minutes de travail par jour, sur les quatre dernières semaines.</p>${histo(mins, J28.map(frD), 'min', 'Minutes de travail par jour')}</div>
+<div class="card tw p-table tb-table"><table><thead><tr><th>Prénom</th><th>Dernière activité</th><th>Temps (7 j)</th><th>Temps total</th><th>Séries</th><th>Réussite</th><th>Tendance</th><th>Ceintures</th><th>Badges</th><th>Note proposée</th><th>Vigilance</th></tr></thead><tbody>
+${L.map(({ e, a }) => { if (!a) return ''; const nbB = a.badges.filter(b => b.ok).length;
+      return `<tr class="tb-ligne-el" data-x="tdb-eleve" data-el="${esc(e.id)}" tabindex="0"><th scope="row"><a href="#" data-x="tdb-eleve" data-el="${esc(e.id)}">${esc(e.prenom)}</a></th>
+<td>${a.derniere ? `${frD(a.derniere)}<br><span class="small muted">${depuis(a.derniere)}</span>` : '<span class="muted">jamais</span>'}</td>
+<td class="n">${a.temps7 ? duree(a.temps7) : '–'}</td><td class="n">${a.tempsTotal ? duree(a.tempsTotal) : '–'}</td><td class="n">${a.valides.length}${a.series.length > a.valides.length ? `<br><span class="p-exclu">${a.series.length - a.valides.length} exclue${a.series.length - a.valides.length > 1 ? 's' : ''}</span>` : ''}</td>
+<td>${barre(a.reussite)}</td><td>${tend(a.tendance)}</td><td class="n">${a.ceintures.length}${a.aValider.length ? `<br><span class="small muted">${a.aValider.length} à valider</span>` : ''}</td>
+<td class="n">${nbB}${NNB}/${NNB}${a.badges.length}</td><td class="n"><b>${a.k ? virgule(a.k.note) : '–'}</b></td>
+<td>${a.V.filter(v => v[0] >= 1).slice(0, 3).map(v => `<span class="tb-vchip g${v[0]}" title="${esc(v[2])}">${ico(v[1], 14)}</span>`).join('')}${a.V.filter(v => v[0] >= 1).length > 3 ? '<span class="small muted">…</span>' : ''}</td></tr>`; }).join('')}
+</tbody></table></div>
+<div class="tb-cols">
+<div class="card"><h3>Points de vigilance</h3>${vigs.length ? `<ul class="tb-vlist">${vigs.sort((p, q) => q.v[0] - p.v[0]).map(({ e, v }) => `<li class="tb-v g${v[0]}"><span class="tb-vi">${ico(v[1], 16)}</span><span><a href="#" data-x="tdb-eleve" data-el="${esc(e.id)}"><b>${esc(e.prenom)}</b></a> · ${esc(v[2])}</span></li>`).join('')}</ul>` : '<p class="small muted">Rien à signaler.</p>'}</div>
+<div class="card"><h3>Lots les plus difficiles</h3><p class="small muted">Réussite moyenne de la dernière série de chaque élève (au moins deux élèves).</p>${durs.length ? `<div class="tw"><table><thead><tr><th>Lot</th><th>Élèves</th><th>Réussite</th></tr></thead><tbody>${durs.map(p => `<tr><td>${esc(p.nom)}</td><td class="n">${p.el}</td><td>${barre(p.moy, 70)}</td></tr>`).join('')}</tbody></table></div>` : '<p class="small muted">Pas encore assez de données.</p>'}
+${Object.keys(domTest).length ? `<h3 style="margin-top:18px">Test de positionnement de la classe</h3><div class="tw"><table><thead><tr><th>Domaine</th><th>Solide</th><th>À consolider</th><th>À travailler</th></tr></thead><tbody>${Object.entries(domTest).map(([d, o]) => `<tr><td>${esc(NOMDOM[d] || d)}</td><td class="n">${o.solide}</td><td class="n">${o.consolider}</td><td class="n"><b>${o.travailler}</b></td></tr>`).join('')}</tbody></table></div>` : ''}</div>
+</div>
+${erreursClasse(CACHE.data.eleves)}`);
+    ctx.lierClasse();
+  }
+
+  /* ---------- fiche élève ---------- */
+  const JOURNAL_TXT = (e, noms) => {
+    const n = id => esc(e.nom || noms[id] || joli(id));
+    if (e.t === 'serie') return `Série «${NNB}${n(e.id)}${NNB}»${NB}: ${e.ok}/${e.n} (${Math.round(e.ok / e.n * 100)}${NNB}%)${e.sec ? ', ' + duree(e.sec) : ''}${e.mode ? ', ' + ({ clic: 'réponses cliquées', ecrit: 'réponses écrites', honneur: 'sur l’honneur' }[e.mode] || '') : ''}`;
+    if (e.t === 'test') return `Test de positionnement${NB}: ${Object.entries(e.doms || {}).map(([d, s]) => `${NOMDOM[d] || d} ${STN[s] || s}`).join(', ')}`;
+    if (e.t === 'ceinture') { const c = ceintureDe(e.id), ec = (ECH.find(z => z[0] === c.ech) || [, c.ech])[1]; return `Ceinture ${esc(ec)} ${esc(c.nom)} ${e.etat === 'validee' ? 'validée' : 'réussie'}${e.score != null ? ` (${e.score}/${e.total})` : ''}`; }
+    if (e.t === 'etape') return `Parcours${NB}: étape terminée${e.score != null ? ` (${e.score}/${e.total})` : ''}`;
+    if (e.t === 'diagnostic') return 'Parcours' + NB + ': diagnostic fait';
+    if (e.t === 'exercice') return `Exercice «${NNB}${esc(e.id)}${NNB}»${e.ok != null ? `${NB}: ${e.ok}/${e.n}` : ''}`;
+    if (e.t === 'lecon') return `Leçon «${NNB}${esc(e.id)}${NNB}»${e.done ? ' terminée' : ''}`;
+    if (e.t === 'bilan') return `Bilan envoyé (${e.lots} lot${e.lots > 1 ? 's' : ''})`;
+    if (e.t === 'code') return 'Code secret ' + esc(e.quoi || '');
+    return esc(e.t);
+  };
+  /* « Mes bilans » (lot 6) : la vue de l'élève (bilans.js, référentiel LABO_BILANS_REF écrit par build_ovh.py) */
+  const BCODE = { perso: 'choisi par l’élève', cahier: 'par défaut (date de naissance, envoyée par le Cahier de suivi)', '': 'pas encore de code (le Cahier n’a pas envoyé la date de naissance : l’élève en choisira un à sa prochaine connexion)' };
+  function bilansEleve(id) {
+    if (typeof LABO_BILANS === 'undefined' || !window.LABO_BILANS_REF) return '';
+    const x = ((CACHE.data || {}).eleves || []).find(y => y.el === id); if (!x) return '';
+    const L = (x.etat || {}).labo || {}, B = LABO_BILANS.calc(L.parcours, LABO_BILANS_REF, L.niveau);
+    return `<div class="card tb-bil-h"><h3>Mes bilans</h3><p class="small muted">La même vue que dans l’espace de l’élève (menu du prénom). Code secret${NB}: ${BCODE[x.bcode || '']}.${x.bcode === 'perso' ? ` <button class="btn ghost small" type="button" data-x="tdb-reinit-bilans" data-el="${esc(id)}">Code oublié</button>` : ''}</p></div>${LABO_BILANS.html(B, { prof: true })}`;
+  }
+  function erreursClasse(L) {
+    if (typeof LABO_BILANS === 'undefined' || !window.LABO_BILANS_REF) return '';
+    const E = LABO_BILANS.classe(L.map(x => (((x.etat || {}).labo || {}).parcours) || {}), LABO_BILANS_REF).slice(0, 10);
+    return `<div class="card"><h3>Erreurs récurrentes de la classe</h3><p class="small muted">Dans les parcours${NB}: types d’erreurs faits au moins deux fois par un élève, avec le dernier exemple et l’étape dont le mémo explique la règle.</p>${E.length ? `<div class="tw"><table><thead><tr><th>Erreur</th><th>Élèves concernés</th><th>Erreurs</th><th>Dernier exemple</th><th>Mémo</th></tr></thead><tbody>${E.map(e => `<tr><td><b>${e.lib}</b></td><td class="n">${e.rec}${e.eleves > e.rec ? ` <span class="small muted">(+${e.eleves - e.rec} une fois)</span>` : ''}</td><td class="n">${e.n}</td><td><i>${esc(e.ex)}</i></td><td>${e.memo}</td></tr>`).join('')}</tbody></table></div>` : '<p class="small muted">Pas encore d’erreur répétée.</p>'}</div>`;
+  }
+  /* supprimer les données d'une journée (Augustin, 23/11/2026) : une ligne par jour d'activité, du plus récent au plus ancien */
+  function effacerJours(a, id) {
+    const J = {}; a.J.filter(e => !e.import).forEach(e => { const d = frD(new Date(e.ts)); (J[d] = J[d] || []).push(e); });
+    const jours = Object.keys(J).sort((p, q) => deFr(q) - deFr(p));
+    if (!jours.length) return '';
+    return `<details class="card tb-eff"><summary><b>Supprimer des données</b> <span class="small muted">par exemple des essais faits avec le compte de l’élève</span></summary>
+<p class="small muted">Efface tout ce qui a été fait ce jour-là${NB}: séries de flashcards, test, ceintures, étapes et séries des parcours, diagnostics, bilans reçus. L’élève est déconnecté et retrouve sa progression sans cette journée. On ne peut pas revenir en arrière.</p>
+<div class="tw"><table><thead><tr><th>Jour</th><th>Activité</th><th></th></tr></thead><tbody>${jours.map(d => { const L = J[d], c = {}; L.forEach(e => { c[e.t] = (c[e.t] || 0) + 1; });
+      const T = { serie: 'série', etape: 'étape', diagnostic: 'diagnostic', ceinture: 'ceinture', test: 'test', exercice: 'exercice', lecon: 'leçon', bilan: 'bilan', code: 'code' };
+      return `<tr><td>${esc(d)}</td><td class="small">${Object.entries(c).map(([t, k]) => `${k}${NNB}${T[t] || t}${k > 1 && T[t] && !/s$/.test(T[t]) ? 's' : ''}`).join(', ')}</td><td><button class="btn ghost danger small" type="button" data-x="tdb-eff-jour" data-el="${esc(id)}" data-jour="${esc(d)}">Supprimer cette journée</button></td></tr>`; }).join('')}</tbody></table></div></details>`;
+  }
+  /* vue « Ma progression » et « Mon temps de travail » de l'espace élève (Mes bilans), mêmes calculs que la fiche élève */
+  function semaines12(a) {
+    const S12 = []; const d0 = new Date(); d0.setHours(12, 0, 0, 0); d0.setDate(d0.getDate() - ((d0.getDay() + 6) % 7)); for (let i = 11; i >= 0; i--) S12.push(new Date(d0 - i * 7 * JOUR));
+    return { S12, minSem: S12.map(d => { let t = 0; for (let i = 0; i < 7; i++) t += a.tempsJour[cleJour(new Date(+d + i * JOUR))] || 0; return Math.round(t / 60); }) };
+  }
+  function vueEleve(a) {
+    const { S12, minSem } = semaines12(a);
+    return `<div class="tb-tuiles">${tuile('Temps de travail', a.tempsTotal ? duree(a.tempsTotal) : '–', `${duree(a.temps7)} ces 7 derniers jours`)}${tuile('Jours de travail', a.jours, `${a.valides.length} série${a.valides.length > 1 ? 's' : ''} comptée${a.valides.length > 1 ? 's' : ''}`)}${tuile('Réussite', a.reussite == null ? '–' : a.reussite + NNB + '%', a.tendance == null ? 'pas encore assez de séries pour la tendance' : `tendance ${a.tendance > 0 ? '+' : a.tendance < 0 ? '−' : ''}${Math.abs(a.tendance)} points`)}</div>
+<section class="card bl-sec"><h3>Ma progression</h3><p class="small muted">Chaque point est une série de flashcards (survol${NB}: lot et score)${NB}; la ligne suit la moyenne de tes trois dernières séries. Les séries faites trop vite ne comptent pas.</p>${courbe(a.valides)}</section>
+<section class="card bl-sec"><h3>Mon temps de travail</h3><p class="small muted">Minutes de travail sur les flashcards, par semaine, sur les douze dernières semaines.</p>${histo(minSem, S12.map(d => 'semaine du ' + frD(d)), 'min', 'Minutes de travail par semaine')}</section>`;
+  }
+  async function eleve(ctx, id) {
+    const { A, c, noms } = await charger(ctx);
+    const e = c.eleves.find(x => x.id === id), a = A[id]; if (!e || !a) return classe(ctx);
+    const { S12, minSem } = semaines12(a);
+    const lots = Object.values(a.lots).sort((p, q) => (q.series[q.series.length - 1].d) - (p.series[p.series.length - 1].d));
+    const k = a.k;
+    ctx.cadre(`<div class="tb-fh"><button class="btn ghost" type="button" data-x="tdb-retour">${ico('retour', 16)} Toute la classe</button>
+<div class="page-h"><h2>${esc(e.prenom)}</h2><p>${esc(c.nom)} · dernière activité${NB}: ${a.derniere ? frD(a.derniere) + ' (' + depuis(a.derniere) + ')' : 'jamais'}</p></div></div>
+<div class="tb-tuiles">
+${tuile('Temps de travail', a.tempsTotal ? duree(a.tempsTotal) : '–', `${duree(a.temps7)} ces 7 derniers jours`)}
+${tuile('Jours de travail', a.jours, `${a.valides.length} série${a.valides.length > 1 ? 's' : ''} comptée${a.valides.length > 1 ? 's' : ''}`)}
+${tuile('Réussite', a.reussite == null ? '–' : a.reussite + NNB + '%', a.tendance == null ? 'tendance : pas assez de séries' : `tendance ${a.tendance > 0 ? '+' : a.tendance < 0 ? '−' : ''}${Math.abs(a.tendance)} points`)}
+${tuile('Ceintures', a.ceintures.length, a.aValider.length ? `${a.aValider.length} à valider` : `${a.etapes} étape${a.etapes > 1 ? 's' : ''} de parcours`)}
+${tuile('Badges', `${a.badges.filter(b => b.ok).length}${NNB}/${NNB}${a.badges.length}`, '')}
+${tuile('Note proposée', k ? virgule(k.note) + NNB + '/' + NNB + '20' : '–', k ? 'barème des bilans' : '')}
+</div>
+${a.V.length ? `<div class="card"><h3>Points de vigilance</h3><ul class="tb-vlist">${a.V.map(vig).join('')}</ul></div>` : ''}
+${bilansEleve(id)}
+<div class="card"><h3>Progression</h3><p class="small muted">Chaque point est une série (survol${NB}: lot et score)${NB}; la ligne suit la moyenne des trois dernières séries. Les séries faites trop vite ne sont pas tracées.</p>${courbe(a.valides)}</div>
+<div class="card"><h3>Temps de travail par semaine</h3><p class="small muted">Minutes, sur les douze dernières semaines.</p>${histo(minSem, S12.map(d => 'semaine du ' + frD(d)), 'min', 'Minutes de travail par semaine')}</div>
+<div class="card"><h3>Badges</h3><p class="small muted">Les mêmes que dans le Cahier de suivi (catégories « Laboratoire » et « Ceintures »), avec leur date.</p>
+${['Laboratoire', 'Ceintures'].map(cat => { const l = a.badges.filter(b => b.cat === cat); return `<h4 class="bg-h">${cat === 'Ceintures' ? 'Trophées des ceintures' : 'Laboratoire'} <span>${l.filter(b => b.ok).length}/${l.length}</span></h4><div class="bg-grille">${l.map(b => `<div class="bg-it${b.ok ? '' : ' off'}" title="${esc(b.lib + ' : ' + b.desc)}">${LABO_BADGES.svg(b, { taille: 72, verrou: !b.ok })}<b>${esc(b.lib)}</b><small>${b.ok ? 'le ' + frD(b.date) : esc(b.desc)}</small></div>`).join('')}</div>`; }).join('')}</div>
+<div class="tb-cols">
+<div class="card"><h3>Ceintures</h3>${a.ceintures.length ? `<div class="tw"><table><thead><tr><th>Échelle</th><th>Ceinture</th><th>Réussie le</th><th>Score</th><th>État</th></tr></thead><tbody>${a.ceintures.sort((p, q) => p.ech.localeCompare(q.ech) || q.rang - p.rang).map(x => `<tr><td>${esc((ECH.find(z => z[0] === x.ech) || [, x.ech])[1])}</td><td>${esc(x.nom)}</td><td>${esc(x.s.date || '')}</td><td class="n">${x.s.score != null ? `${x.s.score}/${x.s.total}` : ''}</td><td>${x.s.etat === 'validee' ? 'validée' + (x.s.valide ? ' le ' + esc(x.s.valide) : '') : '<b>à valider</b>'}</td></tr>`).join('')}</tbody></table></div>` : '<p class="small muted">Pas encore de ceinture.</p>'}</div>
+<div class="card"><h3>Test de positionnement</h3>${a.testDoms ? `<div class="tw"><table><thead><tr><th>Domaine</th><th>Résultat du test</th><th>Réussite dans les lots</th></tr></thead><tbody>${Object.entries(a.testDoms).map(([d, st]) => `<tr><td>${esc(NOMDOM[d] || d)}</td><td class="tb-st ${st}">${esc(STN[st] || st)}</td><td>${a.doms[d] ? barre(a.doms[d].moy, 60) + ` <span class="small muted">${a.doms[d].lots} lot${a.doms[d].lots > 1 ? 's' : ''}</span>` : '<span class="muted">aucun lot</span>'}</td></tr>`).join('')}</tbody></table></div>${a.tests.length > 1 ? `<p class="small muted">${a.tests.length} tests passés, le dernier le ${esc(a.tests[a.tests.length - 1].date || '')}.</p>` : ''}` : '<p class="small muted">Pas encore fait.</p>'}</div>
+</div>
+<div class="card tw"><h3>Lots travaillés</h3>${lots.length ? `<table><thead><tr><th>Lot</th><th>Domaine</th><th>Séries</th><th>Première</th><th>Dernière</th><th>Meilleure</th><th>Temps</th><th>Le</th></tr></thead><tbody>${lots.map(l => `<tr${l.valides ? '' : ' class="tb-exclu"'}><td>${l.suspects ? `<span class="tb-vchip g2" title="${l.suspects} série(s) trop rapide(s), non comptée(s)">${ico('zap', 13)}</span> ` : ''}${esc(l.nom)}</td><td>${esc(NOMDOM[l.dom])}</td><td class="n">${l.valides}${l.suspects ? ` <span class="p-exclu">+${l.suspects}</span>` : ''}</td><td class="n">${l.premier == null ? '–' : l.premier + NNB + '%'}</td><td>${barre(l.dernier, 60)}</td><td class="n">${l.valides ? l.best + NNB + '%' : '–'}</td><td class="n">${l.temps ? duree(l.temps) : '–'}</td><td>${esc(l.date)}</td></tr>`).join('')}</tbody></table>` : '<p class="small muted">Aucun lot terminé.</p>'}</div>
+${effacerJours(a, id)}
+<div class="card"><h3>Historique</h3><p class="small muted">Tout ce qui a été enregistré, du plus récent au plus ancien (${a.J.length} ligne${a.J.length > 1 ? 's' : ''}).</p>
+<ol class="tb-journal">${a.J.slice().reverse().slice(0, 300).map(ev => `<li><span class="tb-jd">${frD(new Date(ev.ts))}${ev.import ? '' : ' ' + new Date(ev.ts).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</span><span>${JOURNAL_TXT(ev, noms)}</span></li>`).join('')}</ol></div>`);
+    window.scrollTo(0, 0);
+  }
+
+  /* ---------- export CSV du tableau de bord ---------- */
+  function lignesCSV(ctx) {
+    const { A, c } = CACHE; if (!c) return null;
+    const t = [['Classe', 'Prénom', 'Dernière activité', 'Temps 7 derniers jours (min)', 'Temps total (min)', 'Jours de travail', 'Séries comptées', 'Séries exclues', 'Réussite (%)', 'Tendance (points)', 'Ceintures', 'Ceintures à valider', 'Badges', 'Note proposée', 'Points de vigilance']];
+    const mn = s => String(Math.round(s / 6) / 10).replace('.', ',');
+    for (const e of c.eleves) { const a = A[e.id]; if (!a) continue;
+      t.push([c.nom, e.prenom, a.derniere ? frD(a.derniere) : '', mn(a.temps7), mn(a.tempsTotal), a.jours, a.valides.length, a.series.length - a.valides.length, a.reussite ?? '', a.tendance ?? '', a.ceintures.length, a.aValider.length,
+        a.badges.filter(b => b.ok).map(b => b.nom).join(', '), a.k ? virgule(a.k.note) : '', a.V.filter(v => v[0] >= 1).map(v => v[2]).join(' · ')]); }
+    return t;
+  }
+  /* ---------- export pour le Cahier de suivi : badges datés, ceintures, quelques chiffres (toutes les classes) ---------- */
+  async function pourCahier(ctx, classes) {
+    const iso = d => d ? cleJour(d) : '';
+    const out = { format: 'labo-cahier-1', date: new Date().toISOString(), eleves: [] };
+    for (const c of classes) {
+      const data = await ctx.appel('tableau', { cl: c.id }), noms = nomsDesLots(data.eleves);
+      const cx = Object.assign({}, ctx, { niv: LABO_BILAN.nivClasse(c.nom) });
+      for (const x of data.eleves) {
+        const e = c.eleves.find(z => z.id === x.el); if (!e) continue;
+        const a = analyse(x, cx, noms);
+        const C = ((x.etat || {}).labo || {}).ceintures || {};
+        out.eleves.push({ cl: c.id, classe: c.nom, el: x.el, prenom: e.prenom,
+          badges: Object.fromEntries(a.badges.filter(b => b.ok).map(b => [b.id, iso(b.date)])),
+          ceintures: Object.fromEntries(Object.entries(C).filter(([, v]) => v && (v.etat === 'reussie' || v.etat === 'validee')).map(([k, v]) => [k, { etat: v.etat, score: v.score, total: v.total, date: v.date, code: v.code || '', valide: v.valide || '' }])),
+          stats: { temps: Math.round(a.tempsTotal / 60), series: a.valides.length, reussite: a.reussite, derniere: iso(a.derniere) } });
+      }
+    }
+    return out;
+  }
+  return { pourCahier, classe, eleve, lignesCSV, vider: () => { CACHE = { cl: '', data: null, A: null }; }, analyse, vueEleve, cache: () => CACHE };
+})();
+
+;
+/* ====================================================================
    Sauvegarde en ligne (version Netlify seulement : window.LABO_API).
    Page du Laboratoire : écran d'arrivée (code de classe → prénom → code secret),
    puis envoi de la progression à chaque enregistrement. Page des flashcards :
@@ -12607,8 +13030,10 @@ ${nouveau ? '<label class="field">Tape-le une deuxième fois<input id="arr-pin2"
      Le code secret est demandé dès la connexion (23/11/2026) : la page s'affiche directement pour l'élève connecté, avec un lien
      pour changer son code (ancien code + nouveau). Sans compte : résultats de cet ordinateur. Contenu calculé par bilans.js. */
   function bilansAfficher(z, m) {
+    const prog = z.querySelector('#bl-prog');
     z.innerHTML = (m ? `<p class="small bl-msg-ok" role="status">${esc(m)}</p>` : '') + LABO.bilansHTML()
       + (compte ? `<p class="small bl-outils"><a href="#" data-bl="changer">Changer mon code secret</a></p>` : '');
+    const p = z.querySelector('.bl-plan'); if (prog && p) p.after(prog);
   }
   function bilansForm(z, m) {
     const champ = (id, lib) => `<label class="field">${lib}<input id="${id}" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off"></label>`;
@@ -12638,6 +13063,17 @@ ${champ('bl-old', 'Code actuel')}${champ('bl-pin', 'Nouveau code')}${champ('bl-p
       if (a.dataset.bl === 'annuler') return bilansAfficher(z);
     });
     bilansAfficher(z);
+    progressionEleve();
+  }
+  /* « Ma progression » et « Mon temps de travail » (Augustin, 23/11/2026) : calculés comme dans la fiche élève (tdb.js), à partir du journal */
+  async function progressionEleve() {
+    if (typeof LABO_TDB === 'undefined') return;
+    let d; try { d = await appel('journal', { jeton: compte.jeton }); } catch (err) { if (err.status === 401) deconnexion(true); return; }
+    const z = document.getElementById('mes-bilans'), p = z && z.querySelector('.bl-plan'); if (!p) return;
+    try {
+      const L = lire(KL) || {}, a = LABO_TDB.analyse({ journal: d.journal || [], etat: etatLocal(), bilans: [] }, { BAR: {}, niv: L.niveau || '6' }, {});
+      p.insertAdjacentHTML('afterend', `<div class="bl-prog" id="bl-prog">${LABO_TDB.vueEleve(a)}</div>`);
+    } catch (e) { }
   }
   /* ---------- démarrage ---------- */
   function demarrer() {
