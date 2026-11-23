@@ -8517,15 +8517,27 @@ const LABO = (function () {
   /* À propos : celui de l'appli des flashcards (même code, recopié à la construction, fcpages.js), puis ce qui est propre au Laboratoire */
   vues.about = h => {
     if (h !== 'apropos') return null;
-    const fc = FCP.aboutHTML(true).replace(/Augustin Lesage, professeur de français/g, 'M. Lesage, enseignant de français').replace('citer l’auteur (Augustin Lesage)', 'citer l’auteur (M. Lesage)')
+    /* Sources du Laboratoire (Augustin, 23/11/2026 : « mettre les références dans les sources ») */
+    if (!FCP.ABOUT_SOURCES.some(l => l.labo)) FCP.ABOUT_SOURCES.unshift(
+      { labo: 1, t: 'Atelier de Grammaire (Grammatelier)', d: 'Christèle Proisy, Forge des communs numériques éducatifs : l’idée d’une grammaire par manipulations et le plan des mémos (aucun texte repris)', u: 'https://grammatelier.forge.apps.education.fr' },
+      { labo: 1, t: 'Grammatis et Multimots', d: 'Applis de Christophe Auclair : l’idée des séries rapides (aucun texte repris)', u: 'https://www.multimaths.net' });
+    /* Textes officiels : chaque titre devient un lien vers la ressource (Augustin, 23/11/2026) */
+    const OFF = {
+      'La grammaire du français. Terminologie grammaticale': 'https://eduscol.education.gouv.fr/sites/default/files/document/guide-la-grammaire-du-francais-terminologie-grammaticale-67998.pdf',
+      'La grammaire du français du CP à la 6ᵉ': 'https://eduscol.education.gouv.fr/sites/default/files/document/guide-la-grammaire-du-francais-du-cp-la-6e-97251.pdf',
+      'Repères annuels de progression et attendus de fin d’année (cycle 4, 4ᵉ, 3ᵉ)': 'https://eduscol.education.gouv.fr/6910/reperes-annuels-de-progression-et-attendus-de-fin-d-annee-du-cp-la-troisieme',
+      'Ressources d’accompagnement du programme (morphologie verbale, orthographe, dictées)': 'https://eduscol.education.gouv.fr/4800/ressources-d-accompagnement-du-programme-de-francais-au-cycle-3',
+      'Annales du diplôme national du brevet': 'https://eduscol.education.gouv.fr/5202/preparer-le-diplome-national-du-brevet-dnb-avec-les-sujets-des-annales'
+    };
+    const lienOff = html => html.replace(/<li><i>([^<]+)<\/i>/g, (m, t) => OFF[t] ? `<li><a href="${OFF[t]}" target="_blank" rel="noopener noreferrer"><i>${t}</i> ↗</a>` : m);
+    const fc = lienOff(FCP.aboutHTML(true)).replace(/Augustin Lesage, professeur de français/g, 'M. Lesage, enseignant de français').replace('citer l’auteur (Augustin Lesage)', 'citer l’auteur (M. Lesage)')
       .replace('<h1>Flashcards de révision</h1>', '<h1>Laboratoire de la langue</h1>')
       .replace('Cartes de révision de français pour le collège', 'Site de français pour le collège')
       .replace('Cartes conçues par', 'Site et cartes conçus par')
       .replace('Les cartes et leurs contenus sont mis', 'Le site, les parcours, les flashcards, les ceintures et leurs contenus sont mis')
-      .replace('copier, imprimer, distribuer et modifier les cartes', 'copier, imprimer, distribuer et modifier les contenus');
+      .replace('copier, imprimer, distribuer et modifier les cartes', 'copier, imprimer, distribuer et modifier les contenus')
+      .replace('Des sites et partages d’enseignants qui ont nourri les idées de lots et de cartes.', 'Des sites, des applis et des partages d’enseignants qui ont nourri les idées du Laboratoire et des cartes.');
     return `<div class="fcp">${fc}
-    <section class="res-group labo-about"><h2>Parcours, approfondissement et mémos</h2><p class="small">Les parcours (6ᵉ, 5ᵉ, 4ᵉ, 3ᵉ et FLE), leurs diagnostics, les séries d’approfondissement, les ceintures et les mémos sont écrits pour le Laboratoire par M. Lesage, enseignant de français, avec l’aide de l’IA Claude (Anthropic), sous la même licence CC BY-NC-SA 4.0. La terminologie suit le guide Éduscol <i>La grammaire du français</i>.</p>
-      <p class="small">Inspirations${NB}: <b>Atelier de Grammaire</b> (Grammatelier) de Christèle Proisy pour l’idée d’une grammaire par manipulations et le plan des mémos, Grammatis et Multimots (Christophe Auclair) pour l’idée des séries rapides. Aucun de leurs textes n’est repris.</p></section>
     <section class="res-group"><h2>Données</h2><p class="small">Connecté avec le code de ta classe, ta progression (parcours, flashcards, ceintures) est enregistrée sur le site pour que ton professeur la suive. Sans connexion, elle reste seulement dans ce navigateur.</p>
       <button class="btn ghost small" type="button" id="reset-ask">Effacer ma progression sur cet appareil</button>
       <span id="reset-zone" hidden><span class="small">Tout effacer sur cet appareil${NB}?</span> <button class="btn small" type="button" id="reset-do">Oui, effacer</button></span></section></div>`;
