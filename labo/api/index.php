@@ -8,7 +8,7 @@
    Données : fichiers JSON dans un dossier privé (hors du site si possible), jamais accessibles par le web.
    Élèves : classe + prénom (+ code secret haché si activé). Ni nom, ni e-mail, ni adresse IP.
    Configuration : config.php (créé à la publication à partir des secrets GitHub) :
-     return ['prof_mdp' => '…', 'code_eleve' => true];
+     return ['prof_mdp' => '…', 'code_connexion' => true];
    ===================================================================== */
 declare(strict_types=1);
 mb_internal_encoding('UTF-8');
@@ -50,7 +50,9 @@ function secret(): string {
   if (!is_file($f)) { file_put_contents($f, bin2hex(random_bytes(32)), LOCK_EX); @chmod($f, 0600); }
   return $s = trim((string) file_get_contents($f));
 }
-function avecCode(): bool { return !empty(config()['code_eleve']); }
+/* Code secret à la connexion : demandé à tous les élèves depuis le 23/11/2026 (Augustin : « mettre le mot de passe dès l’entrée dans le profil élève »).
+   L’ancien réglage code_eleve (false, 19/11) n’est plus lu ; seul code_connexion => false dans config.php le couperait. */
+function avecCode(): bool { return (config()['code_connexion'] ?? true) !== false; }
 
 /* ---------------------------- fichiers JSON ---------------------------- */
 function chemin(string $rel): string { return dossier() . '/' . $rel; }
@@ -108,22 +110,26 @@ function eleveDe(?array $c, $id): ?array { if (!$c) return null; foreach ($c['el
 function recRel(string $cl, string $el): string { return "eleves/$cl/$el.json"; }
 
 function jeton(string $cl, string $el, int $pv): string {
-  $exp = (int) round(microtime(true) * 1000) + JOURS_JETON * 86400000; $base = "$cl.$el.$pv.$exp";
+  $exp = (int) round(microtime(true) * 1000) + JOURS_JETON * 86400000; $base = "k1.$cl.$el.$pv.$exp";
   return $base . '.' . signe($base);
 }
-/* « Mes bilans » (lot 6) : code haché avec le secret du serveur, jeton d'ouverture valable 30 minutes */
+/* Code secret de l’élève (un seul, pour la connexion et « Mes bilans », 23/11/2026) : haché avec le secret du serveur.
+   Par défaut, le JJMM de la date de naissance envoyé par le Cahier de suivi (codes-bilans.json) ; l’élève peut le changer (bperso) ;
+   « Code oublié » (prof/reinit-code) revient au code par défaut. Ancien code (pin, password_hash) encore accepté s’il existe. */
 function hBilans(string $el, string $code): string { return hash_hmac('sha256', "bilans/$el/$code", secret()); }
-function jetonBilans(string $cl, string $el): string { $base = "b.$cl.$el." . ((int) round(microtime(true) * 1000) + 1800000); return $base . '.' . signe($base); }
-function jetonBilansOk($t, string $cl, string $el): bool {
-  $p = explode('.', (string) $t); if (count($p) !== 5 || $p[0] !== 'b' || $p[1] !== $cl || $p[2] !== $el) return false;
-  return hash_equals(signe(implode('.', array_slice($p, 0, 4))), $p[4]) && (float) $p[3] >= microtime(true) * 1000;
+function codeDefaut(string $el): string { return (string) (lireJ('codes-bilans.json', [])[$el] ?? ''); }
+function codeBilansDe(?array $rec, string $el): string { return ($rec && (!empty($rec['bperso']) || !empty($rec['pin']))) ? 'perso' : (codeDefaut($el) !== '' ? 'cahier' : ''); }
+function codeJuste(array $rec, string $cl, string $el, string $code): bool {
+  if (!empty($rec['bperso'])) return hash_equals((string) $rec['bperso'], hBilans($el, $code));
+  if (!empty($rec['pin'])) { $k = "$cl/$el"; return strpos((string) $rec['pin'], '$') === 0 ? password_verify(secret() . $k . $code, $rec['pin']) : hash_equals((string) $rec['pin'], hash('sha256', secret() . "e/$k" . $code)); }
+  $d = codeDefaut($el); return $d !== '' && hash_equals($d, hBilans($el, $code));
 }
-function codeBilansDe(array $rec, string $el): string { return !empty($rec['bperso']) ? 'perso' : (!empty(lireJ('codes-bilans.json', [])[$el]) ? 'cahier' : ''); }
 function lireJeton($t): ?array {
-  $p = explode('.', (string) $t); if (count($p) !== 5) return null;
-  $base = implode('.', array_slice($p, 0, 4));
-  if (!hash_equals(signe($base), $p[4]) || (float) $p[3] < microtime(true) * 1000) return null;
-  return ['cl' => $p[0], 'el' => $p[1], 'pv' => (int) $p[2]];
+  /* k1 : jetons donnés après le code secret (23/11/2026) ; les jetons plus anciens, donnés sans code, ne servent plus */
+  $p = explode('.', (string) $t); if (count($p) !== 6 || $p[0] !== 'k1') return null;
+  $base = implode('.', array_slice($p, 0, 5));
+  if (!hash_equals(signe($base), $p[5]) || (float) $p[4] < microtime(true) * 1000) return null;
+  return ['cl' => $p[1], 'el' => $p[2], 'pv' => (int) $p[3]];
 }
 function etatPropre($e): array {
   $e = is_array($e) ? $e : [];
@@ -158,7 +164,9 @@ function fusion($A, $B): array {
   foreach (array_merge(is_array($pa['diagH'] ?? null) ? array_values($pa['diagH']) : [], is_array($pb['diagH'] ?? null) ? array_values($pb['diagH']) : []) as $h) {
     if (!is_array($h)) continue; $c = implode('|', [$h['pid'] ?? '', $h['k'] ?? '', $h['date'] ?? '', $h['ok'] ?? '']); if (isset($vu[$c])) continue; $vu[$c] = 1; $H[] = $h; }
   usort($H, fn($x, $y) => jourFr($x['date'] ?? '') <=> jourFr($y['date'] ?? ''));
-  $labo['parcours'] = array_merge($pa, $pb, ['prog' => $P ?: new stdClass(), 'diag' => (array_merge(objA($pa['diag'] ?? []), objA($pb['diag'] ?? [])) ?: new stdClass()), 'sortie' => (array_merge(objA($pa['sortie'] ?? []), objA($pb['sortie'] ?? [])) ?: new stdClass()), 'err' => $E ?: new stdClass(), 'diagH' => array_slice($H, -30), 'last' => $pb['last'] ?? ($pa['last'] ?? null)]);
+  /* chronomètre des parcours (23/11/2026) : secondes par étape et par jour, le plus grand des deux */
+  $maxi = function ($a, $b) { $r = objA($a); foreach (objA($b) as $k => $v) if (!isset($r[$k]) || (float) $r[$k] < (float) $v) $r[$k] = (float) $v; return $r ?: new stdClass(); };
+  $labo['parcours'] = array_merge($pa, $pb, ['prog' => $P ?: new stdClass(), 'diag' => (array_merge(objA($pa['diag'] ?? []), objA($pb['diag'] ?? [])) ?: new stdClass()), 'sortie' => (array_merge(objA($pa['sortie'] ?? []), objA($pb['sortie'] ?? [])) ?: new stdClass()), 'err' => $E ?: new stdClass(), 'diagH' => array_slice($H, -30), 'chrono' => $maxi($pa['chrono'] ?? [], $pb['chrono'] ?? []), 'temps' => $maxi($pa['temps'] ?? [], $pb['temps'] ?? []), 'last' => $pb['last'] ?? ($pa['last'] ?? null)]);
   foreach (['exercices', 'lecons'] as $k) if (isset($la[$k]) || isset($lb[$k])) $labo[$k] = array_merge(objA($la[$k] ?? []), objA($lb[$k] ?? [])) ?: new stdClass();
   $R = objA($fa['res'] ?? []);
   foreach (objA($fb['res'] ?? []) as $k => $s) { $v = $R[$k] ?? null; if (!$v || plusRecent($s, $v)) $R[$k] = $s; }
@@ -194,7 +202,8 @@ function differences(array $avant, array $apres, string $ts): array {
   }
   $pa = objA((($avant['labo'] ?? [])['parcours'] ?? [])['prog'] ?? []); $pb = objA((($apres['labo'] ?? [])['parcours'] ?? [])['prog'] ?? []);
   foreach ($pb as $k => $s) { if (!is_array($s) || json_encode($s) === json_encode($pa[$k] ?? null)) continue;
-    $ev[] = ['ts' => $ts, 't' => 'etape', 'id' => (string) $k, 'done' => !empty($s['done']), 'score' => $s['score'] ?? null, 'total' => $s['total'] ?? null]; }
+    $sec = objA((($apres['labo'] ?? [])['parcours'] ?? [])['chrono'] ?? [])[$k] ?? null;
+    $ev[] = ['ts' => $ts, 't' => 'etape', 'id' => (string) $k, 'done' => !empty($s['done']), 'score' => $s['score'] ?? null, 'total' => $s['total'] ?? null] + ($sec ? ['sec' => (int) $sec] : []); }
   $da = objA((($avant['labo'] ?? [])['parcours'] ?? [])['diag'] ?? []); $db = objA((($apres['labo'] ?? [])['parcours'] ?? [])['diag'] ?? []);
   foreach ($db as $k => $s) if (json_encode($s) !== json_encode($da[$k] ?? null)) $ev[] = ['ts' => $ts, 't' => 'diagnostic', 'id' => (string) $k, 'date' => is_array($s) ? ($s['date'] ?? '') : ''];
   /* exercices de grammaire et leçons à venir : { id: { date, ok, n, ... } } */
@@ -210,8 +219,8 @@ function eleve(string $action, array $body): void {
   if ($action === 'classe') {
     $c = classeParCode($body['code'] ?? ''); if (!$c) erreur('Code de classe inconnu.', 404);
     $actifs = [];
-    foreach (glob(chemin("eleves/{$c['id']}/*.json")) ?: [] as $f) { $r = json_decode((string) file_get_contents($f), true); $actifs[basename($f, '.json')] = !empty($r['pin']); }
-    repondre(['id' => $c['id'], 'nom' => $c['nom'], 'code' => avecCode(), 'eleves' => array_map(fn($e) => ['id' => $e['id'], 'prenom' => $e['prenom'], 'actif' => avecCode() ? ($actifs[$e['id']] ?? false) : isset($actifs[$e['id']])], $c['eleves'])]);
+    foreach (glob(chemin("eleves/{$c['id']}/*.json")) ?: [] as $f) { $r = json_decode((string) file_get_contents($f), true); $actifs[basename($f, '.json')] = codeBilansDe(is_array($r) ? $r : null, basename($f, '.json')) !== ''; }
+    repondre(['id' => $c['id'], 'nom' => $c['nom'], 'code' => avecCode(), 'eleves' => array_map(fn($e) => ['id' => $e['id'], 'prenom' => $e['prenom'], 'actif' => avecCode() ? ($actifs[$e['id']] ?? (codeDefaut($e['id']) !== '')) : isset($actifs[$e['id']])], $c['eleves'])]);
   }
   if ($action === 'connexion') {
     $cl = $body['cl'] ?? ''; $el = $body['el'] ?? ''; $pin = (string) ($body['pin'] ?? '');
@@ -222,18 +231,19 @@ function eleve(string $action, array $body): void {
       $k = "$cl/$el"; $rec = lireJ(recRel($cl, $el)); $now = microtime(true) * 1000;
       if (!avecCode()) {
         $rec = $rec ?: ['etat' => ['labo' => new stdClass(), 'fc' => new stdClass()], 'cree' => maintenant(), 'pv' => 0];
-      } elseif (!$rec || empty($rec['pin'])) {
+      } elseif (codeBilansDe($rec, $el) === '') {
         if (empty($body['nouveau'])) repondre(['nouveau' => true]);
         $rec = $rec ?: ['etat' => ['labo' => new stdClass(), 'fc' => new stdClass()], 'cree' => maintenant()];
-        $rec = array_merge($rec, ['pin' => password_hash(secret() . $k . $pin, PASSWORD_DEFAULT), 'pv' => $rec['pv'] ?? 0, 'essais' => 0, 'bloque' => 0]);
-        ajouterJournal($cl, $el, [['ts' => maintenant(), 't' => 'code', 'quoi' => 'créé']]);
+        $rec = array_merge($rec, ['bperso' => hBilans($el, $pin), 'pv' => $rec['pv'] ?? 0, 'essais' => 0, 'bloque' => 0]);
+        ajouterJournal($cl, $el, [['ts' => maintenant(), 't' => 'code', 'quoi' => 'choisi par l’élève']]);
       } else {
+        $rec = $rec ?: ['etat' => ['labo' => new stdClass(), 'fc' => new stdClass()], 'cree' => maintenant(), 'pv' => 0];
         if (($rec['bloque'] ?? 0) > $now) erreur('Trop d’essais. Réessaie dans ' . ceil(($rec['bloque'] - $now) / 60000) . ' min ou demande à ton professeur.', 429);
-        $bon = strpos((string) $rec['pin'], '$') === 0 ? password_verify(secret() . $k . $pin, $rec['pin']) : hash_equals((string) $rec['pin'], hash('sha256', secret() . "e/$k" . $pin));
-        if (!$bon) {
+        if (!codeJuste($rec, $cl, $el, $pin)) {
           $rec['essais'] = ($rec['essais'] ?? 0) + 1;
           if ($rec['essais'] >= 5) { $rec['bloque'] = $now + 600000; $rec['essais'] = 0; }
-          ecrireJ(recRel($cl, $el), $rec); erreur('Code secret incorrect.', 403);
+          if (!empty($rec['etat']) || is_file(chemin(recRel($cl, $el)))) ecrireJ(recRel($cl, $el), $rec);
+          erreur('Code secret incorrect.', 403);
         }
         $rec['essais'] = 0; $rec['bloque'] = 0;
       }
@@ -258,34 +268,22 @@ function eleve(string $action, array $body): void {
       repondre(['ok' => true, 'etat' => etatPropre($apres)]);
     });
   }
-  /* « Mes bilans » (lot 6, 23/11/2026) : code à 4 chiffres propre à cette page. Par défaut, celui que le Cahier de suivi envoie
-     par le connecteur (JJMM de la date de naissance), gardé haché dans codes-bilans.json ; l'élève peut le changer (bperso) ;
-     le professeur peut revenir au code par défaut (prof/reinit-bilans). Sans code par défaut, l'élève en choisit un à la première ouverture. */
-  if ($action === 'bilans-code' || $action === 'bilans-changer') {
+  /* changer son code secret (lien dans « Mes bilans ») : ancien code + nouveau */
+  if ($action === 'changer-code') {
     $j = lireJeton($body['jeton'] ?? ''); if (!$j) erreur('Session expirée : reconnecte-toi.', 401);
-    $code = (string) ($body['code'] ?? ''); if (!preg_match('/^\d{4}$/', $code)) erreur('Le code, c’est 4 chiffres.');
-    avecVerrou("{$j['cl']}-{$j['el']}", function () use ($j, $action, $body, $code) {
+    $ancien = (string) ($body['ancien'] ?? ''); $code = (string) ($body['code'] ?? '');
+    if (!preg_match('/^\d{4}$/', $ancien) || !preg_match('/^\d{4}$/', $code)) erreur('Le code, c’est 4 chiffres.');
+    avecVerrou("{$j['cl']}-{$j['el']}", function () use ($j, $ancien, $code) {
       $cl = $j['cl']; $el = $j['el']; $rec = lireJ(recRel($cl, $el)); $now = microtime(true) * 1000;
       if (!$rec || (int) ($rec['pv'] ?? 0) !== $j['pv']) erreur('Session expirée : reconnecte-toi.', 401);
-      if ($action === 'bilans-changer') {
-        if (!jetonBilansOk($body['bjeton'] ?? '', $cl, $el)) erreur('Tes bilans se sont refermés : retape ton code.', 403);
-        $rec['bperso'] = hBilans($el, $code); ajouterJournal($cl, $el, [['ts' => maintenant(), 't' => 'code', 'quoi' => 'de « Mes bilans » changé par l’élève']]);
-        ecrireJ(recRel($cl, $el), $rec); repondre(['ok' => true, 'bjeton' => jetonBilans($cl, $el)]);
+      if (($rec['bloque'] ?? 0) > $now) erreur('Trop d’essais. Réessaie dans ' . ceil(($rec['bloque'] - $now) / 60000) . ' min ou demande à ton professeur.', 429);
+      if (codeBilansDe($rec, $el) !== '' && !codeJuste($rec, $cl, $el, $ancien)) {
+        $rec['essais'] = ($rec['essais'] ?? 0) + 1; if ($rec['essais'] >= 5) { $rec['bloque'] = $now + 600000; $rec['essais'] = 0; }
+        ecrireJ(recRel($cl, $el), $rec); erreur('Ton code actuel n’est pas le bon.', 403);
       }
-      $h = (string) (($rec['bperso'] ?? '') ?: (lireJ('codes-bilans.json', [])[$el] ?? ''));
-      if ($h === '') {
-        if (empty($body['nouveau'])) repondre(['nouveau' => true]);
-        $rec['bperso'] = hBilans($el, $code); ajouterJournal($cl, $el, [['ts' => maintenant(), 't' => 'code', 'quoi' => 'de « Mes bilans » choisi par l’élève']]);
-        ecrireJ(recRel($cl, $el), $rec); repondre(['bjeton' => jetonBilans($cl, $el)]);
-      }
-      if (($rec['bbloque'] ?? 0) > $now) erreur('Trop d’essais. Réessaie dans ' . ceil(($rec['bbloque'] - $now) / 60000) . ' min ou demande à ton professeur.', 429);
-      if (!hash_equals($h, hBilans($el, $code))) {
-        $rec['bessais'] = ($rec['bessais'] ?? 0) + 1;
-        if ($rec['bessais'] >= 5) { $rec['bbloque'] = $now + 600000; $rec['bessais'] = 0; }
-        ecrireJ(recRel($cl, $el), $rec); erreur('Ce n’est pas le bon code.', 403);
-      }
-      if (!empty($rec['bessais']) || !empty($rec['bbloque'])) { $rec['bessais'] = 0; $rec['bbloque'] = 0; ecrireJ(recRel($cl, $el), $rec); }
-      repondre(['bjeton' => jetonBilans($cl, $el)]);
+      $rec['bperso'] = hBilans($el, $code); unset($rec['pin']); $rec['essais'] = 0; $rec['bloque'] = 0;
+      ajouterJournal($cl, $el, [['ts' => maintenant(), 't' => 'code', 'quoi' => 'changé par l’élève']]);
+      ecrireJ(recRel($cl, $el), $rec); repondre(['ok' => true]);
     });
   }
   if ($action === 'bilan') {
@@ -326,7 +324,7 @@ function prof(string $action, array $body): void {
       $cl = basename(dirname($f)); $el = basename($f, '.json');
       if (!empty($body['cl']) && $body['cl'] !== $cl) continue;
       $r = json_decode((string) file_get_contents($f), true); if (!$r) continue;
-      $out[] = ['cl' => $cl, 'el' => $el, 'etat' => etatPropre($r['etat'] ?? []), 'cree' => $r['cree'] ?? null, 'maj' => $r['maj'] ?? null, 'vu' => $r['vu'] ?? null, 'code' => !empty($r['pin']), 'bcode' => codeBilansDe($r, $el), 'bloque' => ($r['bloque'] ?? 0) > microtime(true) * 1000];
+      $out[] = ['cl' => $cl, 'el' => $el, 'etat' => etatPropre($r['etat'] ?? []), 'cree' => $r['cree'] ?? null, 'maj' => $r['maj'] ?? null, 'vu' => $r['vu'] ?? null, 'code' => codeBilansDe($r, $el) !== '', 'bcode' => codeBilansDe($r, $el), 'bloque' => ($r['bloque'] ?? 0) > microtime(true) * 1000];
     }
     repondre(['eleves' => $out]);
   }
@@ -341,7 +339,7 @@ function prof(string $action, array $body): void {
     $c = classeParId($cl);
     foreach (($c['eleves'] ?? []) as $e) {
       $r = lireJ(recRel($cl, $e['id']));
-      $out[] = ['el' => $e['id'], 'etat' => $r ? etatPropre($r['etat'] ?? []) : null, 'cree' => $r['cree'] ?? null, 'vu' => $r['vu'] ?? null, 'maj' => $r['maj'] ?? null, 'code' => !empty($r['pin']), 'bcode' => $r ? codeBilansDe($r, $e['id']) : (!empty(lireJ('codes-bilans.json', [])[$e['id']]) ? 'cahier' : ''),
+      $out[] = ['el' => $e['id'], 'etat' => $r ? etatPropre($r['etat'] ?? []) : null, 'cree' => $r['cree'] ?? null, 'vu' => $r['vu'] ?? null, 'maj' => $r['maj'] ?? null, 'code' => codeBilansDe($r, $e['id']) !== '', 'bcode' => codeBilansDe($r, $e['id']),
         'journal' => lireJournal($cl, $e['id']), 'bilans' => listeBilans($cl, $e['id'])];
     }
     repondre(['eleves' => $out, 'maintenant' => maintenant()]);
@@ -349,6 +347,42 @@ function prof(string $action, array $body): void {
   if ($action === 'effacer-bilan') {
     $k = $body['cle'] ?? ''; if (!is_string($k) || !preg_match('/^b\/([a-z0-9_-]+)\/([a-z0-9_-]+)\/(\d+)$/i', $k, $m)) erreur('Bilan inconnu.');
     @unlink(chemin("bilans/{$m[1]}/{$m[2]}/{$m[3]}.json")); repondre(['ok' => true]);
+  }
+  /* effacer une journée de travail d'un élève (Augustin, 23/11/2026 : « dans l'espace prof, permettre de supprimer des données ») :
+     événements du journal de ce jour (heure de Paris), résultats datés de ce jour (séries de flashcards, test, ceintures, étapes et séries
+     des parcours, diagnostics, erreurs), bilans reçus ce jour. L'élève est déconnecté (pv + 1) : sa copie locale est effacée à la reconnexion. */
+  if ($action === 'effacer-jour') {
+    $cl = $body['cl'] ?? ''; $el = $body['el'] ?? ''; $jour = (string) ($body['jour'] ?? '');
+    if (!okId($cl) || !okId($el) || !preg_match('/^(\d\d)\/(\d\d)\/(\d{4})$/', $jour, $m)) erreur('Demande incomplète.');
+    avecVerrou("$cl-$el", function () use ($cl, $el, $jour, $m) {
+      $n = 0; $cle = "{$m[3]}-{$m[2]}-{$m[1]}";
+      $J = lireJournal($cl, $el); $garde = [];
+      foreach ($J as $e) { $d = dateTs($e['ts'] ?? ''); if ($d && $d->format('d/m/Y') === $jour) { $n++; continue; } $garde[] = $e; }
+      $f = chemin("journal/$cl/$el.jsonl");
+      if (count($garde) !== count($J)) { $t = ''; foreach ($garde as $e) $t .= json_encode($e, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . "\n"; file_put_contents($f, $t, LOCK_EX); }
+      foreach (glob(chemin("bilans/$cl/$el/*.json")) ?: [] as $b) { $d = dateTs(gmdate('Y-m-d\TH:i:s\Z', (int) floor((int) basename($b, '.json') / 1000))); if ($d && $d->format('d/m/Y') === $jour) { @unlink($b); $n++; } }
+      $r = lireJ(recRel($cl, $el));
+      if ($r) {
+        $E = etatPropreA($r['etat'] ?? []); $L = $E['labo']; $F = $E['fc'];
+        $du = fn($x, string $k = 'date') => is_array($x) && (string) ($x[$k] ?? '') === $jour;
+        $filtre = function ($o, string $k = 'date') use ($du, &$n) { $o = objA($o); foreach ($o as $id => $x) if ($du($x, $k)) { unset($o[$id]); $n++; } return $o ?: new stdClass(); };
+        if (isset($F['res'])) $F['res'] = $filtre($F['res']);
+        if ($du($F['test'] ?? null)) { unset($F['test']); $n++; }
+        if (isset($L['ceintures'])) $L['ceintures'] = $filtre($L['ceintures']);
+        foreach (['exercices', 'lecons'] as $k) if (isset($L[$k])) $L[$k] = $filtre($L[$k]);
+        if (isset($L['parcours']) && is_array($L['parcours'])) {
+          $P = $L['parcours'];
+          foreach (['prog', 'diag', 'sortie'] as $k) if (isset($P[$k])) $P[$k] = $filtre($P[$k]);
+          if (isset($P['err'])) $P['err'] = $filtre($P['err'], 'd');
+          if (isset($P['temps']) && is_array($P['temps']) && isset($P['temps'][$cle])) { unset($P['temps'][$cle]); $n++; if (!$P['temps']) $P['temps'] = new stdClass(); }
+          if (isset($P['diagH']) && is_array($P['diagH'])) { $a = count($P['diagH']); $P['diagH'] = array_values(array_filter($P['diagH'], fn($h) => !$du($h))); $n += $a - count($P['diagH']); }
+          $L['parcours'] = $P;
+        }
+        $r['etat'] = ['labo' => $L ?: new stdClass(), 'fc' => $F ?: new stdClass()];
+        $r['pv'] = ($r['pv'] ?? 0) + 1; ecrireJ(recRel($cl, $el), $r);
+      }
+      repondre(['ok' => true, 'n' => $n]);
+    });
   }
   if (in_array($action, ['reinit-code', 'reinit-bilans', 'effacer', 'valider'], true)) {
     $cl = $body['cl'] ?? ''; $el = $body['el'] ?? ''; if (!okId($cl) || !okId($el)) erreur('Élève inconnu.');
@@ -359,8 +393,8 @@ function prof(string $action, array $body): void {
         repondre(['ok' => true]);
       }
       $r = lireJ(recRel($cl, $el)); if (!$r) erreur('Élève sans progression.', 404);
-      if ($action === 'reinit-bilans') { unset($r['bperso'], $r['bessais'], $r['bbloque']); ajouterJournal($cl, $el, [['ts' => maintenant(), 't' => 'code', 'quoi' => 'de « Mes bilans » remis par défaut']]); }
-      else if ($action === 'reinit-code') { $r['pin'] = ''; $r['pv'] = ($r['pv'] ?? 0) + 1; $r['essais'] = 0; $r['bloque'] = 0; ajouterJournal($cl, $el, [['ts' => maintenant(), 't' => 'code', 'quoi' => 'remis à zéro']]); }
+      if ($action === 'reinit-code' || $action === 'reinit-bilans') { unset($r['pin'], $r['bperso']); $r['pv'] = ($r['pv'] ?? 0) + 1; $r['essais'] = 0; $r['bloque'] = 0;
+        ajouterJournal($cl, $el, [['ts' => maintenant(), 't' => 'code', 'quoi' => codeDefaut($el) !== '' ? 'remis par défaut (date de naissance)' : 'remis à zéro']]); }
       else {
         $avant = etatPropreA($r['etat'] ?? []);
         $s = $r['etat']['labo']['ceintures'][$body['ceinture'] ?? ''] ?? null;

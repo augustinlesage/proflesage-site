@@ -508,6 +508,28 @@ html.dys .q i.phr{background:none;text-decoration:underline;text-decoration-thic
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .bl-barre .ok{background:#6fb27f}:root:not([data-theme="light"]) .bl-ncol.acquis{border-top-color:#6fb27f}:root:not([data-theme="light"]) .bl-msg-ok{color:#6fb27f}}
 :root[data-theme="dark"] .bl-barre .ok{background:#6fb27f}:root[data-theme="dark"] .bl-ncol.acquis{border-top-color:#6fb27f}:root[data-theme="dark"] .bl-msg-ok{color:#6fb27f}
 html.dys .bl-ncol,html.dys .bl-errs li{border-width:2px}
+/* tuiles et graphiques du tableau de bord (fiche élève, et « Ma progression » / « Mon temps de travail » dans Mes bilans) */
+:root{--tb-ok:#3f7d5c;--tb-moy:#b7832a;--tb-ko:#b25751;--tb-mark:#5d6890;--tb-ref:#3f7d5c;--tb-track:#e3e7f0}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--tb-ok:#7cc29b;--tb-moy:#e2b35c;--tb-ko:#ec8f85;--tb-mark:#aab6dc;--tb-ref:#7cc29b;--tb-track:#2c3344}}
+:root[data-theme="dark"]{--tb-ok:#7cc29b;--tb-moy:#e2b35c;--tb-ko:#ec8f85;--tb-mark:#aab6dc;--tb-ref:#7cc29b;--tb-track:#2c3344}
+.tb-tuiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.tb-tuile{background:var(--sheet);border:1px solid var(--line);border-radius:var(--r,14px);padding:12px 14px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.tb-tl{font-size:.78rem;color:var(--muted);font-weight:600}
+.tb-tv{font-size:1.6rem;line-height:1.2;font-variant-numeric:tabular-nums}
+.tb-ts{font-size:.78rem;color:var(--muted)}
+.tb-svg{width:100%;height:auto;display:block;margin-top:8px;overflow:visible}
+.tb-grid{stroke:var(--line);stroke-width:1}
+.tb-ax{fill:var(--muted);font-size:11px;font-family:inherit}
+.tb-mark{fill:var(--tb-mark)}
+.tb-bar:hover .tb-mark,.tb-bar:focus .tb-mark{fill:var(--ink)}
+.tb-hit{fill:transparent}
+.tb-bar:focus,.tb-pt:focus{outline:none}
+.tb-ref{stroke:var(--tb-ref);stroke-width:1.5;stroke-dasharray:5 4}
+.tb-ligne{fill:none;stroke:var(--tb-mark);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+.tb-dot{stroke:var(--sheet);stroke-width:2}
+.tb-dot.ok{fill:var(--tb-ok)}.tb-dot.moy{fill:var(--tb-moy)}.tb-dot.ko{fill:var(--tb-ko)}
+.tb-pt:hover .tb-dot,.tb-pt:focus .tb-dot{r:6}
+.bl-prog{display:grid;gap:14px}
 
 /* Espace professeur */
 .p-tabs{display:flex;gap:6px;flex-wrap:wrap}
@@ -547,15 +569,7 @@ code{font-family:ui-monospace,Menlo,monospace;font-size:.9em}
 .p-bar input{width:5em}
 .p-exclu{color:#b24a44;font-size:.8rem;font-weight:600}
 /* ---------- Tableau de bord (tdb.js) ---------- */
-:root{--tb-ok:#3f7d5c;--tb-moy:#b7832a;--tb-ko:#b25751;--tb-mark:#5d6890;--tb-ref:#3f7d5c;--tb-track:#e3e7f0}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--tb-ok:#7cc29b;--tb-moy:#e2b35c;--tb-ko:#ec8f85;--tb-mark:#aab6dc;--tb-ref:#7cc29b;--tb-track:#2c3344}}
-:root[data-theme="dark"]{--tb-ok:#7cc29b;--tb-moy:#e2b35c;--tb-ko:#ec8f85;--tb-mark:#aab6dc;--tb-ref:#7cc29b;--tb-track:#2c3344}
 .ico{flex:none;vertical-align:-3px}
-.tb-tuiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
-.tb-tuile{background:var(--sheet);border:1px solid var(--line);border-radius:var(--r,14px);padding:12px 14px;display:flex;flex-direction:column;gap:2px;min-width:0}
-.tb-tl{font-size:.78rem;color:var(--muted);font-weight:600}
-.tb-tv{font-size:1.6rem;line-height:1.2;font-variant-numeric:tabular-nums}
-.tb-ts{font-size:.78rem;color:var(--muted)}
 .tb-barre{display:inline-block;width:var(--w,90px);height:8px;border-radius:4px;background:var(--tb-track);vertical-align:middle;overflow:hidden;margin-right:6px}
 .tb-barre span{display:block;height:100%;border-radius:4px}
 .tb-barre .ok{background:var(--tb-ok)}.tb-barre .moy{background:var(--tb-moy)}.tb-barre .ko{background:var(--tb-ko)}
@@ -577,18 +591,6 @@ code{font-family:ui-monospace,Menlo,monospace;font-size:.9em}
 .tb-v.g2 .tb-vi,.tb-v.g3 .tb-vi{color:var(--tb-ko);background:color-mix(in srgb,var(--tb-ko) 14%,transparent)}
 .tb-v.g3{border-color:var(--tb-ko)}
 .tb-cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;align-items:start}
-.tb-svg{width:100%;height:auto;display:block;margin-top:8px;overflow:visible}
-.tb-grid{stroke:var(--line);stroke-width:1}
-.tb-ax{fill:var(--muted);font-size:11px;font-family:inherit}
-.tb-mark{fill:var(--tb-mark)}
-.tb-bar:hover .tb-mark,.tb-bar:focus .tb-mark{fill:var(--ink)}
-.tb-hit{fill:transparent}
-.tb-bar:focus,.tb-pt:focus{outline:none}
-.tb-ref{stroke:var(--tb-ref);stroke-width:1.5;stroke-dasharray:5 4}
-.tb-ligne{fill:none;stroke:var(--tb-mark);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
-.tb-dot{stroke:var(--sheet);stroke-width:2}
-.tb-dot.ok{fill:var(--tb-ok)}.tb-dot.moy{fill:var(--tb-moy)}.tb-dot.ko{fill:var(--tb-ko)}
-.tb-pt:hover .tb-dot,.tb-pt:focus .tb-dot{r:6}
 .tb-badges{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:8px}
 .tb-badge{display:flex;flex-direction:column;align-items:flex-start;gap:3px;padding:10px 12px;border-radius:12px;border:1px dashed var(--line);color:var(--muted);opacity:.62}
 .tb-badge .small{font-size:.76rem}
@@ -1167,6 +1169,8 @@ const CONSEILS = {
     for (const [t, e] of Object.entries(obj(b))) { const v = r[t]; if (!v || (+obj(e).n || 0) >= (+obj(v).n || 0)) r[t] = e; }
     return r;
   }
+  /* chronomètre des parcours : par clé, le plus grand des deux */
+  function maxi(a, b) { const r = Object.assign({}, obj(a)); for (const [k, v] of Object.entries(obj(b))) if (!(+r[k] >= +v)) r[k] = +v || 0; return r; }
   function diagH(a, b) {
     const L = [], vu = new Set();
     (Array.isArray(a) ? a : []).concat(Array.isArray(b) ? b : []).forEach(h => { if (!h || typeof h !== 'object') return; const c = [h.pid, h.k, h.date, h.ok].join('|'); if (!vu.has(c)) { vu.add(c); L.push(h); } });
@@ -1178,7 +1182,7 @@ const CONSEILS = {
     const pa = obj(la.parcours), pb = obj(lb.parcours);
     const labo = Object.assign({}, la, lb, {
       ceintures: ceintures(la.ceintures, lb.ceintures),
-      parcours: Object.assign({}, pa, pb, { prog: prog(pa.prog, pb.prog), diag: Object.assign({}, obj(pa.diag), obj(pb.diag)), sortie: Object.assign({}, obj(pa.sortie), obj(pb.sortie)), err: errs(pa.err, pb.err), diagH: diagH(pa.diagH, pb.diagH), last: pb.last || pa.last || null })
+      parcours: Object.assign({}, pa, pb, { prog: prog(pa.prog, pb.prog), diag: Object.assign({}, obj(pa.diag), obj(pb.diag)), sortie: Object.assign({}, obj(pa.sortie), obj(pb.sortie)), err: errs(pa.err, pb.err), diagH: diagH(pa.diagH, pb.diagH), chrono: maxi(pa.chrono, pb.chrono), temps: maxi(pa.temps, pb.temps), last: pb.last || pa.last || null })
     });
     const fc = Object.assign({}, fa, fb, { res: res(fa.res, fb.res) });
     if (fa.test && (!fb.test || jour(fa.test.date) > jour(fb.test.date))) fc.test = fa.test; /* le test le plus récent */
@@ -2074,6 +2078,9 @@ const LABO_TDB = (function () {
         const s = new Date(d); s.setDate(s.getDate() - ((s.getDay() + 6) % 7)); semaines.add(cleJour(s));
       }
     }
+    /* temps chronométré dans les parcours et l’approfondissement (23/11/2026), par jour */
+    let tempsParcours = 0;
+    for (const [k, v] of Object.entries((((etat.labo || {}).parcours || {}).temps) || {})) { const s = +v || 0; if (!s || !/^\d{4}-\d\d-\d\d$/.test(k)) continue; tempsParcours += s; tempsTotal += s; tempsJour[k] = (tempsJour[k] || 0) + s; jours.add(k); }
     const valides = series.filter(s => !s.raison);
     const moyP = L => { const n = L.reduce((a, s) => a + s.n, 0); return n ? Math.round(L.reduce((a, s) => a + s.pct * s.n, 0) / n) : null; };
     const reussite = moyP(valides);
@@ -2141,7 +2148,7 @@ const LABO_TDB = (function () {
     const aValider = ceintures.filter(c => c.s.etat === 'reussie');
     if (aValider.length) V.push([0, 'award', `${aValider.length} ceinture${aValider.length > 1 ? 's' : ''} à valider`]);
     V.sort((a, b) => b[0] - a[0]);
-    return { chrono, x, J, series, valides, reussite, tendance, derniere, tempsTotal, temps7, series7, jours: jours.size, tempsJour, lots, doms, testDoms, tests, test,
+    return { chrono, x, J, series, valides, reussite, tendance, derniere, tempsTotal, tempsParcours, temps7, series7, jours: jours.size, tempsJour, lots, doms, testDoms, tests, test,
       ceintures, hautes, etapes, exercices, lecons, badges: B, k, V, aValider };
   }
 
@@ -2266,7 +2273,7 @@ ${erreursClasse(CACHE.data.eleves)}`);
     if (e.t === 'serie') return `Série «${NNB}${n(e.id)}${NNB}»${NB}: ${e.ok}/${e.n} (${Math.round(e.ok / e.n * 100)}${NNB}%)${e.sec ? ', ' + duree(e.sec) : ''}${e.mode ? ', ' + ({ clic: 'réponses cliquées', ecrit: 'réponses écrites', honneur: 'sur l’honneur' }[e.mode] || '') : ''}`;
     if (e.t === 'test') return `Test de positionnement${NB}: ${Object.entries(e.doms || {}).map(([d, s]) => `${NOMDOM[d] || d} ${STN[s] || s}`).join(', ')}`;
     if (e.t === 'ceinture') { const c = ceintureDe(e.id), ec = (ECH.find(z => z[0] === c.ech) || [, c.ech])[1]; return `Ceinture ${esc(ec)} ${esc(c.nom)} ${e.etat === 'validee' ? 'validée' : 'réussie'}${e.score != null ? ` (${e.score}/${e.total})` : ''}`; }
-    if (e.t === 'etape') return `Parcours${NB}: étape terminée${e.score != null ? ` (${e.score}/${e.total})` : ''}`;
+    if (e.t === 'etape') { const c = /:([cd])$/.exec(e.id || ''); return `${c ? `Approfondissement${NB}: série ${c[1] === 'c' ? 'de consolidation' : 'défi'}` : `Parcours${NB}: étape ${e.done ? 'terminée' : 'commencée'}`}${e.score != null ? ` (${e.score}/${e.total})` : ''}${e.sec ? ', ' + duree(e.sec) : ''}`; }
     if (e.t === 'diagnostic') return 'Parcours' + NB + ': diagnostic fait';
     if (e.t === 'exercice') return `Exercice «${NNB}${esc(e.id)}${NNB}»${e.ok != null ? `${NB}: ${e.ok}/${e.n}` : ''}`;
     if (e.t === 'lecon') return `Leçon «${NNB}${esc(e.id)}${NNB}»${e.done ? ' terminée' : ''}`;
@@ -2275,29 +2282,50 @@ ${erreursClasse(CACHE.data.eleves)}`);
     return esc(e.t);
   };
   /* « Mes bilans » (lot 6) : la vue de l'élève (bilans.js, référentiel LABO_BILANS_REF écrit par build_ovh.py) */
-  const BCODE = { perso: 'choisi par l’élève', cahier: 'par défaut (date de naissance, envoyé par le Cahier de suivi)', '': 'pas encore de code par défaut (le Cahier ne l’a pas envoyé)' };
+  const BCODE = { perso: 'choisi par l’élève', cahier: 'par défaut (date de naissance, envoyée par le Cahier de suivi)', '': 'pas encore de code (le Cahier n’a pas envoyé la date de naissance : l’élève en choisira un à sa prochaine connexion)' };
   function bilansEleve(id) {
     if (typeof LABO_BILANS === 'undefined' || !window.LABO_BILANS_REF) return '';
     const x = ((CACHE.data || {}).eleves || []).find(y => y.el === id); if (!x) return '';
     const L = (x.etat || {}).labo || {}, B = LABO_BILANS.calc(L.parcours, LABO_BILANS_REF, L.niveau);
-    return `<div class="card tb-bil-h"><h3>Mes bilans</h3><p class="small muted">La même vue que dans l’espace de l’élève (menu du prénom, page ouverte par un code à 4 chiffres). Code${NB}: ${BCODE[x.bcode || '']}.${x.bcode === 'perso' ? ` <button class="btn ghost small" type="button" data-x="tdb-reinit-bilans" data-el="${esc(id)}">Revenir au code par défaut</button>` : ''}</p></div>${LABO_BILANS.html(B, { prof: true })}`;
+    return `<div class="card tb-bil-h"><h3>Mes bilans</h3><p class="small muted">La même vue que dans l’espace de l’élève (menu du prénom). Code secret${NB}: ${BCODE[x.bcode || '']}.${x.bcode === 'perso' ? ` <button class="btn ghost small" type="button" data-x="tdb-reinit-bilans" data-el="${esc(id)}">Code oublié</button>` : ''}</p></div>${LABO_BILANS.html(B, { prof: true })}`;
   }
   function erreursClasse(L) {
     if (typeof LABO_BILANS === 'undefined' || !window.LABO_BILANS_REF) return '';
     const E = LABO_BILANS.classe(L.map(x => (((x.etat || {}).labo || {}).parcours) || {}), LABO_BILANS_REF).slice(0, 10);
     return `<div class="card"><h3>Erreurs récurrentes de la classe</h3><p class="small muted">Dans les parcours${NB}: types d’erreurs faits au moins deux fois par un élève, avec le dernier exemple et l’étape dont le mémo explique la règle.</p>${E.length ? `<div class="tw"><table><thead><tr><th>Erreur</th><th>Élèves concernés</th><th>Erreurs</th><th>Dernier exemple</th><th>Mémo</th></tr></thead><tbody>${E.map(e => `<tr><td><b>${e.lib}</b></td><td class="n">${e.rec}${e.eleves > e.rec ? ` <span class="small muted">(+${e.eleves - e.rec} une fois)</span>` : ''}</td><td class="n">${e.n}</td><td><i>${esc(e.ex)}</i></td><td>${e.memo}</td></tr>`).join('')}</tbody></table></div>` : '<p class="small muted">Pas encore d’erreur répétée.</p>'}</div>`;
   }
+  /* supprimer les données d'une journée (Augustin, 23/11/2026) : une ligne par jour d'activité, du plus récent au plus ancien */
+  function effacerJours(a, id) {
+    const J = {}; a.J.filter(e => !e.import).forEach(e => { const d = frD(new Date(e.ts)); (J[d] = J[d] || []).push(e); });
+    const jours = Object.keys(J).sort((p, q) => deFr(q) - deFr(p));
+    if (!jours.length) return '';
+    return `<details class="card tb-eff"><summary><b>Supprimer des données</b> <span class="small muted">par exemple des essais faits avec le compte de l’élève</span></summary>
+<p class="small muted">Efface tout ce qui a été fait ce jour-là${NB}: séries de flashcards, test, ceintures, étapes et séries des parcours, diagnostics, bilans reçus. L’élève est déconnecté et retrouve sa progression sans cette journée. On ne peut pas revenir en arrière.</p>
+<div class="tw"><table><thead><tr><th>Jour</th><th>Activité</th><th></th></tr></thead><tbody>${jours.map(d => { const L = J[d], c = {}; L.forEach(e => { c[e.t] = (c[e.t] || 0) + 1; });
+      const T = { serie: 'série', etape: 'étape', diagnostic: 'diagnostic', ceinture: 'ceinture', test: 'test', exercice: 'exercice', lecon: 'leçon', bilan: 'bilan', code: 'code' };
+      return `<tr><td>${esc(d)}</td><td class="small">${Object.entries(c).map(([t, k]) => `${k}${NNB}${T[t] || t}${k > 1 && T[t] && !/s$/.test(T[t]) ? 's' : ''}`).join(', ')}</td><td><button class="btn ghost danger small" type="button" data-x="tdb-eff-jour" data-el="${esc(id)}" data-jour="${esc(d)}">Supprimer cette journée</button></td></tr>`; }).join('')}</tbody></table></div></details>`;
+  }
+  /* vue « Ma progression » et « Mon temps de travail » de l'espace élève (Mes bilans), mêmes calculs que la fiche élève */
+  function semaines12(a) {
+    const S12 = []; const d0 = new Date(); d0.setHours(12, 0, 0, 0); d0.setDate(d0.getDate() - ((d0.getDay() + 6) % 7)); for (let i = 11; i >= 0; i--) S12.push(new Date(d0 - i * 7 * JOUR));
+    return { S12, minSem: S12.map(d => { let t = 0; for (let i = 0; i < 7; i++) t += a.tempsJour[cleJour(new Date(+d + i * JOUR))] || 0; return Math.round(t / 60); }) };
+  }
+  function vueEleve(a) {
+    const { S12, minSem } = semaines12(a);
+    return `<div class="tb-tuiles">${tuile('Temps de travail', a.tempsTotal ? duree(a.tempsTotal) : '–', `${duree(a.temps7)} ces 7 derniers jours${a.tempsParcours ? ` · dont ${duree(a.tempsParcours)} dans les parcours` : ''}`)}${tuile('Jours de travail', a.jours, `${a.valides.length} série${a.valides.length > 1 ? 's' : ''} comptée${a.valides.length > 1 ? 's' : ''}`)}${tuile('Réussite', a.reussite == null ? '–' : a.reussite + NNB + '%', a.tendance == null ? 'pas encore assez de séries pour la tendance' : `tendance ${a.tendance > 0 ? '+' : a.tendance < 0 ? '−' : ''}${Math.abs(a.tendance)} points`)}</div>
+<section class="card bl-sec"><h3>Ma progression</h3><p class="small muted">Chaque point est une série de flashcards (survol${NB}: lot et score)${NB}; la ligne suit la moyenne de tes trois dernières séries. Les séries faites trop vite ne comptent pas.</p>${courbe(a.valides)}</section>
+<section class="card bl-sec"><h3>Mon temps de travail</h3><p class="small muted">Minutes de travail par semaine (flashcards, étapes des parcours et approfondissement), sur les douze dernières semaines.</p>${histo(minSem, S12.map(d => 'semaine du ' + frD(d)), 'min', 'Minutes de travail par semaine')}</section>`;
+  }
   async function eleve(ctx, id) {
     const { A, c, noms } = await charger(ctx);
     const e = c.eleves.find(x => x.id === id), a = A[id]; if (!e || !a) return classe(ctx);
-    const S12 = (() => { const L = []; const d0 = new Date(); d0.setHours(12, 0, 0, 0); d0.setDate(d0.getDate() - ((d0.getDay() + 6) % 7)); for (let i = 11; i >= 0; i--) L.push(new Date(d0 - i * 7 * JOUR)); return L; })();
-    const minSem = S12.map(d => { let t = 0; for (let i = 0; i < 7; i++) t += a.tempsJour[cleJour(new Date(+d + i * JOUR))] || 0; return Math.round(t / 60); });
+    const { S12, minSem } = semaines12(a);
     const lots = Object.values(a.lots).sort((p, q) => (q.series[q.series.length - 1].d) - (p.series[p.series.length - 1].d));
     const k = a.k;
     ctx.cadre(`<div class="tb-fh"><button class="btn ghost" type="button" data-x="tdb-retour">${ico('retour', 16)} Toute la classe</button>
 <div class="page-h"><h2>${esc(e.prenom)}</h2><p>${esc(c.nom)} · dernière activité${NB}: ${a.derniere ? frD(a.derniere) + ' (' + depuis(a.derniere) + ')' : 'jamais'}</p></div></div>
 <div class="tb-tuiles">
-${tuile('Temps de travail', a.tempsTotal ? duree(a.tempsTotal) : '–', `${duree(a.temps7)} ces 7 derniers jours`)}
+${tuile('Temps de travail', a.tempsTotal ? duree(a.tempsTotal) : '–', `${duree(a.temps7)} ces 7 derniers jours${a.tempsParcours ? ` · dont ${duree(a.tempsParcours)} dans les parcours` : ''}`)}
 ${tuile('Jours de travail', a.jours, `${a.valides.length} série${a.valides.length > 1 ? 's' : ''} comptée${a.valides.length > 1 ? 's' : ''}`)}
 ${tuile('Réussite', a.reussite == null ? '–' : a.reussite + NNB + '%', a.tendance == null ? 'tendance : pas assez de séries' : `tendance ${a.tendance > 0 ? '+' : a.tendance < 0 ? '−' : ''}${Math.abs(a.tendance)} points`)}
 ${tuile('Ceintures', a.ceintures.length, a.aValider.length ? `${a.aValider.length} à valider` : `${a.etapes} étape${a.etapes > 1 ? 's' : ''} de parcours`)}
@@ -2315,6 +2343,7 @@ ${['Laboratoire', 'Ceintures'].map(cat => { const l = a.badges.filter(b => b.cat
 <div class="card"><h3>Test de positionnement</h3>${a.testDoms ? `<div class="tw"><table><thead><tr><th>Domaine</th><th>Résultat du test</th><th>Réussite dans les lots</th></tr></thead><tbody>${Object.entries(a.testDoms).map(([d, st]) => `<tr><td>${esc(NOMDOM[d] || d)}</td><td class="tb-st ${st}">${esc(STN[st] || st)}</td><td>${a.doms[d] ? barre(a.doms[d].moy, 60) + ` <span class="small muted">${a.doms[d].lots} lot${a.doms[d].lots > 1 ? 's' : ''}</span>` : '<span class="muted">aucun lot</span>'}</td></tr>`).join('')}</tbody></table></div>${a.tests.length > 1 ? `<p class="small muted">${a.tests.length} tests passés, le dernier le ${esc(a.tests[a.tests.length - 1].date || '')}.</p>` : ''}` : '<p class="small muted">Pas encore fait.</p>'}</div>
 </div>
 <div class="card tw"><h3>Lots travaillés</h3>${lots.length ? `<table><thead><tr><th>Lot</th><th>Domaine</th><th>Séries</th><th>Première</th><th>Dernière</th><th>Meilleure</th><th>Temps</th><th>Le</th></tr></thead><tbody>${lots.map(l => `<tr${l.valides ? '' : ' class="tb-exclu"'}><td>${l.suspects ? `<span class="tb-vchip g2" title="${l.suspects} série(s) trop rapide(s), non comptée(s)">${ico('zap', 13)}</span> ` : ''}${esc(l.nom)}</td><td>${esc(NOMDOM[l.dom])}</td><td class="n">${l.valides}${l.suspects ? ` <span class="p-exclu">+${l.suspects}</span>` : ''}</td><td class="n">${l.premier == null ? '–' : l.premier + NNB + '%'}</td><td>${barre(l.dernier, 60)}</td><td class="n">${l.valides ? l.best + NNB + '%' : '–'}</td><td class="n">${l.temps ? duree(l.temps) : '–'}</td><td>${esc(l.date)}</td></tr>`).join('')}</tbody></table>` : '<p class="small muted">Aucun lot terminé.</p>'}</div>
+${effacerJours(a, id)}
 <div class="card"><h3>Historique</h3><p class="small muted">Tout ce qui a été enregistré, du plus récent au plus ancien (${a.J.length} ligne${a.J.length > 1 ? 's' : ''}).</p>
 <ol class="tb-journal">${a.J.slice().reverse().slice(0, 300).map(ev => `<li><span class="tb-jd">${frD(new Date(ev.ts))}${ev.import ? '' : ' ' + new Date(ev.ts).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</span><span>${JOURNAL_TXT(ev, noms)}</span></li>`).join('')}</ol></div>`);
     window.scrollTo(0, 0);
@@ -2349,7 +2378,7 @@ ${['Laboratoire', 'Ceintures'].map(cat => { const l = a.badges.filter(b => b.cat
     }
     return out;
   }
-  return { pourCahier, classe, eleve, lignesCSV, vider: () => { CACHE = { cl: '', data: null, A: null }; }, analyse, cache: () => CACHE };
+  return { pourCahier, classe, eleve, lignesCSV, vider: () => { CACHE = { cl: '', data: null, A: null }; }, analyse, vueEleve, cache: () => CACHE };
 })();
 
 ;
@@ -2497,7 +2526,7 @@ ${c ? `<div class="card p-classe">
   <div class="tw"><table><thead><tr><th>Prénom affiché</th><th>Compte</th><th>Dernière visite</th><th></th></tr></thead><tbody>
   ${c.eleves.map((e, i) => { const r = recDe(c.id, e.id); return `<tr><td><input class="p-in" data-i="${i}" value="${esc(e.prenom)}"></td>
     <td>${!r ? '<span class="muted">pas encore</span>' : r.bloque ? 'bloqué 10 min' : r.code ? 'actif, code secret créé' : 'actif'}</td><td>${r ? fr(r.vu) : ''}</td>
-    <td><div class="p-acts">${r && r.code ? `<button class="btn ghost" type="button" data-x="reinit" data-el="${esc(e.id)}">Code oublié</button>` : ''}${r && r.bcode === 'perso' ? `<button class="btn ghost" type="button" data-x="reinit-bilans" data-el="${esc(e.id)}" title="Le code de « Mes bilans » redevient celui envoyé par le Cahier de suivi (date de naissance)">Code des bilans</button>` : ''}${r ? `<button class="btn ghost danger" type="button" data-x="effacer" data-el="${esc(e.id)}">Effacer la progression</button>` : ''}<button class="btn ghost" type="button" data-x="retirer" data-i="${i}" title="Retirer de la liste">✕</button></div></td></tr>`; }).join('')}
+    <td><div class="p-acts">${r && r.bcode === 'perso' ? `<button class="btn ghost" type="button" data-x="reinit" data-el="${esc(e.id)}" title="Le code secret redevient la date de naissance (JJMM) envoyée par le Cahier de suivi">Code oublié</button>` : ''}${r ? `<button class="btn ghost danger" type="button" data-x="effacer" data-el="${esc(e.id)}">Effacer la progression</button>` : ''}<button class="btn ghost" type="button" data-x="retirer" data-i="${i}" title="Retirer de la liste">✕</button></div></td></tr>`; }).join('')}
   </tbody></table></div>
   <div class="p-row"><label class="field">Ajouter des élèves (un prénom par ligne)<textarea id="c-ajout" rows="3"></textarea></label><button class="btn ghost" type="button" data-x="ajouter">Ajouter</button></div>
   <div class="row"><button class="btn" type="button" data-x="enregistrer">Enregistrer les classes</button>${c.eleves.length === 0 ? '<button class="btn ghost danger" type="button" data-x="suppr-classe">Supprimer la classe</button>' : ''}</div>
@@ -2625,8 +2654,10 @@ ${((x.bilan || {}).lots || []).length ? `<table><thead><tr><th>Lot</th><th>Score
       if (x === 'recharger') { await charger(); return flash('À jour.'); }
       if (x === 'tdb-eleve') return LABO_TDB.eleve(ctx, t.dataset.el);
       if (x === 'tdb-retour') return LABO_TDB.classe(ctx);
-      if (x === 'reinit-bilans' || x === 'tdb-reinit-bilans') { if (!confirm('Le code de « Mes bilans » de cet élève redeviendra le code par défaut (sa date de naissance, envoyée par le Cahier de suivi). Continuer ?')) return;
-        await appel('reinit-bilans', { cl: clSel, el: t.dataset.el }); if (x === 'tdb-reinit-bilans') { LABO_TDB.vider(); await LABO_TDB.eleve(ctx, t.dataset.el); } else await charger(); return flash('Code des bilans remis par défaut.'); }
+      if (x === 'tdb-eff-jour') { const j = t.dataset.jour; if (!confirm(`Supprimer tout ce que cet élève a fait le ${j} ? Cette suppression est définitive.`)) return;
+        const r = await appel('effacer-jour', { cl: clSel, el: t.dataset.el, jour: j }); LABO_TDB.vider(); await LABO_TDB.eleve(ctx, t.dataset.el); return flash(`Journée du ${j} supprimée (${r.n} élément${r.n > 1 ? 's' : ''}).`); }
+      if (x === 'reinit' || x === 'tdb-reinit-bilans') { if (!confirm('Code oublié : le code secret de cet élève redevient sa date de naissance (JJMM), si le Cahier de suivi l’a envoyée ; sinon il en choisira un nouveau à sa prochaine connexion. Continuer ?')) return;
+        await appel('reinit-code', { cl: clSel, el: t.dataset.el }); if (x === 'tdb-reinit-bilans') { LABO_TDB.vider(); await LABO_TDB.eleve(ctx, t.dataset.el); } else await charger(); return flash('Code secret remis par défaut.'); }
       if (x === 'tdb-maj') { LABO_TDB.vider(); await charger(); return flash('À jour.'); }
       if (x === 'tdb-csv') { const l = LABO_TDB.lignesCSV(ctx); if (l) telecharger(`Laboratoire - tableau de bord ${c ? c.nom : ''} ${aujourdhui().replace(/\//g, '-')}.csv`, l); return; }
       if (x === 'sauvegarde') { flash('Préparation de la sauvegarde…'); const d = await appel('exporter');
@@ -2649,7 +2680,7 @@ ${((x.bilan || {}).lots || []).length ? `<table><thead><tr><th>Lot</th><th>Score
       if (x === 'bilans-maj') { await bilans(true); return flash('À jour.'); }
       if (x === 'effacer-bilan') { if (!confirm('Supprimer ce bilan ?')) return; await appel('effacer-bilan', { cle: t.dataset.cle }); await bilans(true); return flash('Bilan supprimé.'); }
       if (x === 'valider') { await appel('valider', { cl: clSel, el: t.dataset.el, ceinture: t.dataset.b, date: aujourdhui() }); LABO_TDB.vider(); await charger(); return flash('Ceinture validée.'); }
-      if (x === 'reinit') { if (!confirm('Remettre à zéro le code secret de cet élève ? À sa prochaine connexion, il en choisira un nouveau.')) return; await appel('reinit-code', { cl: clSel, el: t.dataset.el }); await charger(); return flash('Code remis à zéro.'); }
+
       if (x === 'effacer') { if (!confirm('Effacer définitivement toute la progression de cet élève (ceintures, scores, code secret) ?')) return; await appel('effacer', { cl: clSel, el: t.dataset.el }); LABO_TDB.vider(); await charger(); return flash('Progression effacée.'); }
       lireForm();
       if (x === 'ajout-classe') { const nom = prompt('Nom de la classe (par exemple 5ᵉ 3)'); if (!nom) return; const id = rid(); CL.list.push({ id, nom: nom.trim(), code: codeAuto(nom), eleves: [] }); clSel = id; modif = true; return classes(); }
