@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<script>window.FC_BILAN_API="/labo/api";window.LABO_API="/labo/api";</script>
+<script>window.FC_BILAN_API="/labo/api";window.LABO_API="/labo/api";if(!/^#lot-./.test(location.hash)&&!/[?&]accueil\b/.test(location.search))location.replace("/labo/#entrainements");</script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Révisions flashcards</title>
 <style>@font-face{font-family:"Sniglet";font-style:normal;font-weight:400;font-display:swap;src:url(a/7c681c34d511.woff) format("woff");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
@@ -11395,8 +11395,14 @@ window.addEventListener('resize', () => { });
   const showTop = on => { const t = $('#el-top'); t.hidden = !on; if (outils.parentNode !== t) t.appendChild(outils); };
   let view = 'home', deck = null, sess = null;
 
+  /* Sur proflesage.fr (23/11/2026, Augustin) : l'accueil des flashcards est remplacé par les Entrainements du Laboratoire.
+     La page ne s'ouvre plus que sur un lot (#lot-<id>) ; « Tous les lots » ramène au Laboratoire. ?accueil garde l'ancien accueil
+     (vignettes de lots.json). Le test de positionnement, « Me connecter » et l'envoi du bilan sont masqués : le Laboratoire s'en charge.
+     Sans window.LABO_API (miroir Netlify), rien ne change. */
+  const AVEC_LABO = !!window.LABO_API, VERS_LABO = AVEC_LABO && !/[?&]accueil\b/.test(location.search);
   /* ---------- Accueil : liste des lots ---------- */
   function home() {
+    if (VERS_LABO) { location.href = '/labo/#entrainements'; return; }
     view = 'home'; deck = null; sess = null; pos = null; showTop(true);
     const lf = LEVELS.includes(prefs.lv) ? prefs.lv : '';
     const tw = Math.min(260, (main.clientWidth || window.innerWidth) / 2 - 30);
@@ -11833,6 +11839,7 @@ window.addEventListener('resize', () => { });
     window.scrollTo(0, 0);
   }
   function posBanner() {
+    if (AVEC_LABO) return '';
     const r = prefs.test;
     if (!r) return `<button class="ps-banner" data-el="ps-intro"><span class="ps-bicon">${FC_ICO('compass', 28)}</span><span><b>Test de positionnement</b><br><span class="ps-bsub">Entre 20 et 30 questions pour savoir quels lots réviser en priorité.</span></span><span class="ps-barrow">→</span></button>`;
     const ids = [...new Set(Object.values(r.doms).flatMap(x => x.decks))].filter(id => deckById(id));
@@ -11851,7 +11858,7 @@ window.addEventListener('resize', () => { });
   /* Compte de l'élève (connexion faite dans le Laboratoire, même site proflesage.fr) : la progression est sauvegardée toute seule */
   const compteLabo = () => { try { return window.LABO_API ? JSON.parse(localStorage.getItem('labo.compte')) : null; } catch (e) { return null; } };
   function biBanner() {
-    if (!BI_API()) return '';
+    if (!BI_API() || AVEC_LABO) return '';
     const m = prefs.bilan, c = compteLabo();
     if (c) return `<div class="ps-banner bi-banner bi-compte"><span class="ps-bicon">${FC_ICO('check', 24)}</span><span><b>${esc(c.prenom)} · ${esc(c.classe)}</b><br><span class="ps-bsub">Ta progression est sauvegardée automatiquement. <a href="/labo/">Ce n’est pas toi${NB}?</a></span></span></div>`;
     const lien = window.LABO_API ? `<a class="ps-banner bi-banner" href="/labo/?retour=${encodeURIComponent(location.pathname)}"><span class="ps-bicon">${FC_ICO('user', 24)}</span><span><b>Me connecter</b><br><span class="ps-bsub">Choisis ta classe et ton prénom${NB}: ta progression sera sauvegardée et ton professeur la verra.</span></span></a>` : '';

@@ -30,7 +30,7 @@ const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '
     const p = await b.newPage({ viewport: { width: 1200, height: 900 }, deviceScaleFactor: 2 });
     /* accueil élève sur « Toutes » les classes, sans mode Dys (vignettes visibles) */
     await p.addInitScript(() => { try { localStorage.setItem('flashcards.eleve', JSON.stringify({ lv: '', dys: false })); } catch (e) { } });
-    await p.goto('http://127.0.0.1:' + srv.address().port + '/' + PAGE);
+    await p.goto('http://127.0.0.1:' + srv.address().port + '/' + PAGE + '?accueil'); /* ?accueil : sinon la page renvoie au Laboratoire */
     await p.waitForFunction(() => typeof state !== 'undefined' && state.decks && state.decks.length, null, { timeout: 60000 });
     const r = await p.evaluate(() => {
       const lots = state.decks.filter(d => d.cards && d.cards.length).map(d => {
