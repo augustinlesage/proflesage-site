@@ -261,7 +261,7 @@ html.dys .lot-tile{border:2px solid var(--line);border-radius:10px}
 .role-t.fac{background:transparent;border:1px dashed var(--line);color:var(--muted);font-weight:500}
 .side-plan .role-t{flex:none;align-self:flex-start;line-height:1.5}
 
-/* Parcours : contenu des cours (classes des données reprises de Grammatelier) */
+/* Parcours : contenu des cours et des mémos */
 .cours{max-width:72ch;font-size:1rem;line-height:1.6}
 .cours h3{font-size:1.08rem;margin:22px 0 8px;display:flex;flex-wrap:wrap;align-items:center;gap:6px}
 .cours h3:first-child{margin-top:0}
@@ -1061,12 +1061,12 @@ const DECKS = [
   ['lettres-muettes','Lettres muettes','6','orthographe'],
   ['liaisons','Les liaisons','65','orthographe'],
   ['accords-participe-passe','Accords du participe passé','6543','orthographe'],
-  ['ou-est-l-erreur','Où est l’erreur ?','654','orthographe'],
+  ['ou-est-l-erreur','Où est l’erreur ?','654','orthographe'],
   ['accords-difficiles','Accords difficiles','543','orthographe'],
   ['conjugaisons','Conjugaisons','65','conjugaison'],
   ['passe-simple','Passé simple','65','conjugaison'],
   ['passe-simple-textes','Passé simple — Textes à trous','543','conjugaison'],
-  ['futur-conditionnel','Futur ou conditionnel ?','543','conjugaison'],
+  ['futur-conditionnel','Futur ou conditionnel ?','543','conjugaison'],
   ['conjugaison-modes','Conjugaison des modes','543','conjugaison'],
   ['temps-valeurs','Temps et valeurs','543','conjugaison'],
   ['verbe-sujet','Verbe conjugué et sujet','65','grammaire'],
@@ -1097,7 +1097,7 @@ const DECKS = [
   ['mots-ailleurs','Les mots venus d’ailleurs','6543','lexique'],
   ['mots-grec-latin','Les mots venus du grec et du latin','543','lexique'],
   ['genre-des-noms','Le genre des noms','6543','lexique'],
-  ['quelle-heure','Quelle heure est-il ?','6','lexique']
+  ['quelle-heure','Quelle heure est-il ?','6','lexique']
 ].map(([id, nom, niv, th]) => ({ id, nom, niv: niv.split(''), th, rub: th }));
 /* rubriques affichées par la page Entrainements (remplacées par celles des flashcards si lots.json est là) */
 let RUBRIQUES_FC = THEMES.map(t => ({ id: t.id, nom: t.nom }));
@@ -1323,21 +1323,21 @@ const LABO_BILAN = (function () {
     const deja = new Set();
     const ajoute = (titre, detail, min, id) => { if (id && deja.has(id)) return; if (id) deja.add(id); prog.push({ titre, detail, min }); };
     if (!B.test || !B.test.doms) ajoute('Fais le test de positionnement', 'Il te dit quels lots travailler en priorité.', 10, 'test');
-    for (const l of exclus) ajoute(`Refais ${guill(l.nom)} calmement`, 'Il n’a pas été compté : prends le temps de lire chaque carte avant de répondre.', minLot(l), l.id);
+    for (const l of exclus) ajoute(`Refais ${guill(l.nom)} calmement`, 'Il n’a pas été compté : prends le temps de lire chaque carte avant de répondre.', minLot(l), l.id);
     for (const l of lots.filter(l => l.pct < 60).sort((a, b) => a.pct - b.pct))
       ajoute(`Reprends ${guill(l.nom)}`, `${l.pct}${NB}% la dernière fois. Refais-le en entier, puis seulement les cartes ratées${l.mode === 'honneur' ? ', en choisissant la réponse ou en l’écrivant si le lot le propose' : ''}.`, minLot(l), l.id);
     for (const [id, nom] of k.reco) if (!k.faits.has(id)) ajoute(`Commence ${guill(nom)}`, 'Ce lot t’est conseillé par ton test de positionnement.', 8, id);
     for (const l of lots.filter(l => l.pct >= 60 && l.pct < 80).sort((a, b) => a.pct - b.pct))
-      ajoute(`Encore une série de ${guill(l.nom)}`, `${l.pct}${NB}% : il te manque peu pour atteindre 80${NB}%.`, minLot(l), l.id);
+      ajoute(`Encore une série de ${guill(l.nom)}`, `${l.pct}${NB}% : il te manque peu pour atteindre 80${NB}%.`, minLot(l), l.id);
     for (const l of lots.filter(l => valide(l) === false && l.pct >= 80))
-      ajoute(`Vérifie ${guill(l.nom)} sans retourner la carte`, 'Choisis la réponse ou écris-la (si le lot le propose) : ta réussite comptera davantage.', minLot(l), l.id);
+      ajoute(`Vérifie ${guill(l.nom)} sans retourner la carte`, 'Choisis la réponse ou écris-la (si le lot le propose) : ta réussite comptera davantage.', minLot(l), l.id);
     if (B.test && B.test.doms) {
       const aTravailler = Object.values(B.test.doms).some(d => d.status !== 'solide');
       const recoReussis = lots.filter(l => k.reco.has(l.id) && l.pct >= 80);
-      if (aTravailler && recoReussis.length && recoReussis.length >= Math.min(2, k.reco.size)) ajoute('Refais le test de positionnement', 'Tu as réussi des lots conseillés : le test mesurera tes progrès.', 10, 'test');
+      if (aTravailler && recoReussis.length && recoReussis.length >= Math.min(2, k.reco.size)) ajoute('Refais le test de positionnement', 'Tu as réussi des lots conseillés : le test mesurera tes progrès.', 10, 'test');
     }
     if (!prog.length) {
-      if (niv && lots.length) ajoute(`Essaie des lots plus difficiles`, `Tu réussis tes lots : choisis-en de nouveaux de la ${niv}ᵉ ou d’un niveau au-dessus.`, 15);
+      if (niv && lots.length) ajoute(`Essaie des lots plus difficiles`, `Tu réussis tes lots : choisis-en de nouveaux de la ${niv}ᵉ ou d’un niveau au-dessus.`, 15);
       ajoute('Passe une ceinture au Laboratoire', 'Elle validera ce que tu sais.', 15);
     }
     if (lots.length && niv) { const reste = Math.round(+R.cible - prog.reduce((a, p) => a + p.min, 0)); if (reste >= 10 && prog.length < 5) ajoute(`Découvre un nouveau lot de la ${niv}ᵉ`, 'Choisis un lot que tu n’as pas encore fait, de préférence avec des réponses à choisir ou à écrire.', Math.min(15, reste)); }
@@ -1345,17 +1345,17 @@ const LABO_BILAN = (function () {
     let tot = 0; const P = [];
     for (const p of prog) { if (P.length >= 5 || (P.length >= 2 && tot + p.min > +R.cible * 1.15)) break; P.push(p); tot += p.min; }
     /* points d'attention */
-    if (!lots.length && !exclus.length) att.push('Aucun lot terminé dans ce bilan : va jusqu’au bout d’une série avant d’envoyer ton bilan.');
+    if (!lots.length && !exclus.length) att.push('Aucun lot terminé dans ce bilan : va jusqu’au bout d’une série avant d’envoyer ton bilan.');
     if (exclus.length && !lots.length) att.push(`${exclus.length} lot${exclus.length > 1 ? 's n’ont' : ' n’a'} pas été compté${exclus.length > 1 ? 's' : ''}, car ${exclus.length > 1 ? 'ils ont été faits' : 'il a été fait'} trop vite ou ${exclus.length > 1 ? 'leurs' : 'ses'} chiffres sont impossibles.`);
     if (k.tempsMesure && lots.length && k.temps < 1) {
       const reste = Math.max(5, Math.round(+R.cible - k.T / 60));
-      att.push(`Tu as travaillé ${duree(k.T)} sur les ${R.cible}${NB}min attendues. Il te reste environ ${reste}${NB}min : mieux vaut plusieurs courtes séances (15${NB}min) qu’une longue.`);
+      att.push(`Tu as travaillé ${duree(k.T)} sur les ${R.cible}${NB}min attendues. Il te reste environ ${reste}${NB}min : mieux vaut plusieurs courtes séances (15${NB}min) qu’une longue.`);
     }
     if (k.parHonneur >= 2 && k.parHonneur >= lots.length / 2)
       att.push(`La plupart de tes lots sont faits « sur l’honneur » (tu retournes la carte). Ceux où tu choisis ou écris la réponse comptent ${virgule(+R.coef)} fois plus.`);
     if (niv) {
       const dessous = lots.filter(l => l.niv && l.niv.length && l.niv.every(n => rang(n) < rang(niv)) && !k.reco.has(l.id));
-      if (dessous.length >= Math.max(2, lots.length / 2)) att.push(`Beaucoup de tes lots sont d’un niveau inférieur : choisis surtout des lots de la ${niv}ᵉ.`);
+      if (dessous.length >= Math.max(2, lots.length / 2)) att.push(`Beaucoup de tes lots sont d’un niveau inférieur : choisis surtout des lots de la ${niv}ᵉ.`);
     }
     return { programme: P, minutes: tot, attention: att };
   }
@@ -1448,7 +1448,7 @@ const LABO_BILAN = (function () {
     for (const l of lignes) { if (y > 280) { doc.addPage(); y = opts.suite ? opts.suite(doc) : 20; st(); } doc.text(l, x0, y); y += (opts.taille || 9.3) * 0.44; }
     return y;
   }
-  const baremeTxt = R => `Barème : temps ${virgule(R.pTemps)}, performance ${virgule(R.pPerf)}, cohérence ${virgule(R.pCoh)}, test de positionnement ${virgule(R.pTest)} (ramené sur 20) · séance de référence ${R.cible}${NB}min · coefficient ${virgule(R.coef)} pour les lots à correction vérifiée · lots exclus sous ${virgule(R.vMin)}${NB}s par carte (le double en réponse écrite).`;
+  const baremeTxt = R => `Barème : temps ${virgule(R.pTemps)}, performance ${virgule(R.pPerf)}, cohérence ${virgule(R.pCoh)}, test de positionnement ${virgule(R.pTest)} (ramené sur 20) · séance de référence ${R.cible}${NB}min · coefficient ${virgule(R.coef)} pour les lots à correction vérifiée · lots exclus sous ${virgule(R.vMin)}${NB}s par carte (le double en réponse écrite).`;
 
   function pageEleve(doc, classe, e, k) {
     const B = k.B, titre = e.prenom, suiteT = d => entete(d, `${e.prenom} (suite)`, classe.nom);
@@ -1497,7 +1497,7 @@ const LABO_BILAN = (function () {
       if (v.progres.length) items.push(['En progrès', v.progres.map(x => `${x.l.nom} (${x.avant} → ${x.apres}${NB}%)`).join(', ')]);
       if (v.baisses.length) items.push(['En baisse', v.baisses.map(x => `${x.l.nom} (${x.avant} → ${x.apres}${NB}%)`).join(', ')]);
       if (!v.nouveaux.length && !v.progres.length && !v.baisses.length) items.push(['Lots', 'aucun nouveau résultat depuis ce bilan']);
-      y = sectionTitre(doc, y, `Depuis ton bilan du ${v.dateFr}`, `note : ${virgule(v.noteAvant)} → ${virgule(k.note)}`);
+      y = sectionTitre(doc, y, `Depuis ton bilan du ${v.dateFr}`, `note : ${virgule(v.noteAvant)} → ${virgule(k.note)}`);
       for (const [a, b] of items) {
         police(doc, 'bold', 8.8, C.muted); doc.text(a, M + 3.2, y);
         y = paragraphe(doc, y, b, { x: M + 45, taille: 8.8, suite: suiteT }) + 1;
@@ -1514,7 +1514,7 @@ const LABO_BILAN = (function () {
     y += 3;
     /* lots */
     if (y > BAS - 20) { doc.addPage(); y = suiteT(doc); }
-    y = sectionTitre(doc, y, 'Lots travaillés', B.nbBilans > 1 ? 'tous tes bilans réunis : le résultat le plus récent de chaque lot' : '');
+    y = sectionTitre(doc, y, 'Lots travaillés', B.nbBilans > 1 ? 'tous tes bilans réunis : le résultat le plus récent de chaque lot' : '');
     if (k.lots.length || k.exclus.length) {
       const L = k.lots.slice().sort((a, b) => b.pct - a.pct).map(l => [{ t: l.nom, gras: true }, niveaux(l.niv), MODES[l.mode] || '?', { barre: l.pct }, l.best != null ? l.best + NB + '%' : '', l.nb || '', dureeCourt(l.sec), dureeCourt(l.tot), l.date || '']);
       for (const l of k.exclus) { const r = [{ t: l.nom, gras: true, danger: true }, niveaux(l.niv), MODES[l.mode] || '?', { barre: Math.max(0, Math.min(100, +l.pct || 0)) }, l.best != null ? l.best + NB + '%' : '', l.nb || '', dureeCourt(l.sec), dureeCourt(l.tot), l.date || '']; r.exclu = true; L.push(r); }
@@ -1522,10 +1522,10 @@ const LABO_BILAN = (function () {
         L, { suite: suiteT });
       for (const l of k.exclus) {
         if (y > 280) { doc.addPage(); y = suiteT(doc); }
-        danger(doc, M, y + 0.4, 3); y = paragraphe(doc, y, `${l.nom} : non compté, ${l.raison}.`, { retrait: 4.4, taille: 8.4, coul: C.ko, suite: suiteT }) + 0.6;
+        danger(doc, M, y + 0.4, 3); y = paragraphe(doc, y, `${l.nom}${NB}: non compté, ${l.raison}.`, { retrait: 4.4, taille: 8.4, coul: C.ko, suite: suiteT }) + 0.6;
       }
       police(doc, 'italic', 7.3, C.muted);
-      y = paragraphe(doc, y + 0.6, `Dernière série : cartes sues du premier coup · vérifiée : l’appli a contrôlé ta réponse · sur l’honneur : tu as dit ${guill('Je savais')}.`, { style: 'italic', taille: 7.3, coul: C.muted, suite: suiteT }) + 5.5;
+      y = paragraphe(doc, y + 0.6, `Dernière série : cartes sues du premier coup · vérifiée : l’appli a contrôlé ta réponse · sur l’honneur : tu as dit ${guill('Je savais')}.`, { style: 'italic', taille: 7.3, coul: C.muted, suite: suiteT }) + 5.5;
     } else { y = paragraphe(doc, y, 'Aucun lot terminé.', { coul: C.muted }) + 3; }
     /* conseils */
     const cs = k.conseils;
@@ -1577,11 +1577,11 @@ const LABO_BILAN = (function () {
       const notes = avec.map(x => x.k.note), moy = notes.reduce((a, b) => a + b, 0) / notes.length, Ts = avec.filter(x => x.k.tempsMesure && x.k.T > 0).map(x => x.k.T).sort((a, b) => a - b), med = Ts.length ? Ts[Math.floor(Ts.length / 2)] : null;
       const nbEx = avec.filter(x => x.k.exclus.length).length;
       y += 2; police(doc, 'bold', 9.5);
-      doc.text(`Moyenne des notes : ${virgule(moy)} / 20 · de ${virgule(Math.min(...notes))} à ${virgule(Math.max(...notes))} ${med != null ? ' · temps de travail médian' + NB + ': ' + duree(med) : ''}`, M, y); y += 6;
-      if (nbEx) { danger(doc, M, y + 0.4, 3); y = paragraphe(doc, y, `${nbEx} élève${nbEx > 1 ? 's ont' : ' a'} des lots exclus (faits trop vite ou chiffres impossibles) : ils sont barrés sur leur fiche.`, { retrait: 4.4, taille: 8.8, coul: C.ko }) + 2; }
+      doc.text(`Moyenne des notes : ${virgule(moy)} / 20 · de ${virgule(Math.min(...notes))} à ${virgule(Math.max(...notes))} ${med != null ? ' · temps de travail médian' + NB + ': ' + duree(med) : ''}`, M, y); y += 6;
+      if (nbEx) { danger(doc, M, y + 0.4, 3); y = paragraphe(doc, y, `${nbEx} élève${nbEx > 1 ? 's ont' : ' a'} des lots exclus (faits trop vite ou chiffres impossibles) : ils sont barrés sur leur fiche.`, { retrait: 4.4, taille: 8.8, coul: C.ko }) + 2; }
     }
     y = paragraphe(doc, y + 1, baremeTxt(R), { taille: 8.3, coul: C.muted }) + 1.5;
-    paragraphe(doc, y, 'Ensuite, une fiche par élève, rédigée pour lui : sa note et son détail, son évolution depuis le bilan précédent, son test de positionnement, ses lots (tous ses bilans réunis : pour chaque lot, le résultat le plus récent) et un programme pour son prochain entrainement.', { taille: 8.3, coul: C.muted });
+    paragraphe(doc, y, 'Ensuite, une fiche par élève, rédigée pour lui : sa note et son détail, son évolution depuis le bilan précédent, son test de positionnement, ses lots (tous ses bilans réunis : pour chaque lot, le résultat le plus récent) et un programme pour son prochain entrainement.', { taille: 8.3, coul: C.muted });
     for (let p = 1; p <= doc.getNumberOfPages(); p++) { doc.setPage(p); pied(doc, `Laboratoire de la langue · ${classe.nom}`, p); }
     for (const x of avec) {
       doc.addPage(); const p0 = doc.getNumberOfPages(); pageEleve(doc, classe, x.e, x.k);
@@ -1806,7 +1806,7 @@ window.LABO_BILANS_REF={"p":{"n6":{"t":"Parcours 6ᵉ","s":[{"id":"6-P1","t":"Ve
     'pp-relatif': 'Participe passé et pronom relatif <i>que</i>',
     'accord-apposition': 'Accord de l’apposition',
     'reecriture': 'Réécriture',
-    'dictee': 'Dictée : consonnes doubles, accents, rectifications',
+    'dictee': 'Dictée : consonnes doubles, accents, rectifications',
     'sens-figure': 'Sens propre et sens figuré',
     'types-phrase': 'Types de phrases',
     'negation': 'La négation',
@@ -2239,7 +2239,7 @@ const LABO_TDB = (function () {
     for (const x of L) if (x.a && x.a.testDoms) for (const [d, st] of Object.entries(x.a.testDoms)) { const o = domTest[d] = domTest[d] || { solide: 0, consolider: 0, travailler: 0 }; if (o[st] != null) o[st]++; }
     ctx.cadre(`<div class="page-h"><h2>Tableau de bord</h2><p>Toute la progression enregistrée${NB}: séries de flashcards, test de positionnement, ceintures, parcours et bilans reçus. Clique sur un élève pour voir sa fiche.</p></div>
 <div class="card p-reg"><div class="p-row">${ctx.selClasse()}<span class="small muted">Mis à jour à ${new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</span></div>
-<div class="row"><button class="btn ghost" type="button" data-x="tdb-maj">Actualiser</button><button class="btn ghost" type="button" data-x="tdb-csv">Télécharger le tableau (CSV)</button><button class="btn ghost" type="button" data-x="sauvegarde">Sauvegarde complète (JSON)</button><button class="btn ghost" type="button" data-x="importer">Importer une sauvegarde</button><button class="btn ghost" type="button" data-x="export-cahier" title="Badges et ceintures de toutes les classes, à importer dans le Cahier de suivi">Badges pour le Cahier (JSON)</button><button class="btn ghost" type="button" data-x="mcp-adresse" title="Adresse à ajouter une fois dans claude.ai : le Cahier de suivi lit alors les badges tout seul">Connecteur du Cahier</button></div><div id="p-mcp"></div></div>
+<div class="row"><button class="btn ghost" type="button" data-x="tdb-maj">Actualiser</button><button class="btn ghost" type="button" data-x="tdb-csv">Télécharger le tableau (CSV)</button><button class="btn ghost" type="button" data-x="sauvegarde">Sauvegarde complète (JSON)</button><button class="btn ghost" type="button" data-x="importer">Importer une sauvegarde</button><button class="btn ghost" type="button" data-x="export-cahier" title="Badges et ceintures de toutes les classes, à importer dans le Cahier de suivi">Badges pour le Cahier (JSON)</button><button class="btn ghost" type="button" data-x="mcp-adresse" title="Adresse à ajouter une fois dans claude.ai : le Cahier de suivi lit alors les badges tout seul">Connecteur du Cahier</button></div><div id="p-mcp"></div></div>
 <div class="tb-tuiles">
 ${tuile('Élèves actifs', `${actifs7}${NNB}/${NNB}${c.eleves.length}`, '7 derniers jours')}
 ${tuile('Temps de travail', duree(t7), '7 derniers jours, toute la classe')}
@@ -2282,7 +2282,7 @@ ${erreursClasse(CACHE.data.eleves)}`);
     return esc(e.t);
   };
   /* « Mes bilans » (lot 6) : la vue de l'élève (bilans.js, référentiel LABO_BILANS_REF écrit par build_ovh.py) */
-  const BCODE = { perso: 'choisi par l’élève', cahier: 'par défaut (date de naissance, envoyée par le Cahier de suivi)', '': 'pas encore de code (le Cahier n’a pas envoyé la date de naissance : l’élève en choisira un à sa prochaine connexion)' };
+  const BCODE = { perso: 'choisi par l’élève', cahier: 'par défaut (date de naissance, envoyée par le Cahier de suivi)', '': 'pas encore de code (le Cahier n’a pas envoyé la date de naissance : l’élève en choisira un à sa prochaine connexion)' };
   function bilansEleve(id) {
     if (typeof LABO_BILANS === 'undefined' || !window.LABO_BILANS_REF) return '';
     const x = ((CACHE.data || {}).eleves || []).find(y => y.el === id); if (!x) return '';
@@ -2442,7 +2442,7 @@ ${effacerJours(a, id)}
   }
   const DOMN = { homo: 'Homophones', conj: 'Conjugaison', gram: 'Grammaire', voc: 'Vocabulaire' };
   const STN = { solide: 'solide', consolider: 'à consolider', travailler: 'à travailler' };
-  const testTxt = t => !t || !t.doms ? '' : (t.date ? t.date + ' : ' : '') + Object.entries(t.doms).map(([k, v]) => (DOMN[k] || k) + ' ' + (STN[v.status] || v.status)).join(', ');
+  const testTxt = t => !t || !t.doms ? '' : (t.date ? t.date + ' : ' : '') + Object.entries(t.doms).map(([k, v]) => (DOMN[k] || k) + ' ' + (STN[v.status] || v.status)).join(', ');
 
   /* ---------- rendu ---------- */
   function cadre(html) { $('#p-vue').innerHTML = html; }
@@ -2572,7 +2572,7 @@ ${c ? `<div class="card p-classe">
   const minutes = sec => sec == null || sec === '' ? '' : String(Math.round(+sec / 6) / 10).replace('.', ','); /* pour le tableur : minutes décimales */
   const totLots = b => { const l = ((b.bilan || {}).lots || []).filter(x => x.tot != null); return l.length ? l.reduce((a, x) => a + (+x.tot || 0), 0) : null; };
   const moyLots = b => { const l = (b.bilan || {}).lots || []; return l.length ? Math.round(l.reduce((a, x) => a + (+x.pct || 0), 0) / l.length) : null; };
-  const testBilan = b => { const t = (b.bilan || {}).test; return t && t.doms ? (t.date ? t.date + ' : ' : '') + Object.values(t.doms).map(d => d.label + ' ' + (STN[d.status] || d.status)).join(', ') : ''; };
+  const testBilan = b => { const t = (b.bilan || {}).test; return t && t.doms ? (t.date ? t.date + ' : ' : '') + Object.values(t.doms).map(d => d.label + ' ' + (STN[d.status] || d.status)).join(', ') : ''; };
   /* Barème de la note proposée (bilan-pdf.js), gardé sur cet ordinateur */
   let BAR = Object.assign({}, LABO_BILAN.DEF);
   try { const x = JSON.parse(localStorage.getItem('labo.prof.bareme')) || {}; if (x.vMin == null) delete x.coef; /* ancien barème : coefficient 2 remplacé par 1,5 (15/11/2026) */ Object.assign(BAR, x); } catch (e) { }
@@ -2597,7 +2597,7 @@ ${c ? `<div class="card p-classe">
 <label class="field">Test de positionnement fait<span class="p-inline"><input type="number" min="0" max="20" step="0.5" data-bar="pTest" value="${BAR.pTest}"> pts</span></label>
 <label class="field">Exclure les lots faits en moins de<span class="p-inline"><input type="number" min="0.5" max="10" step="0.5" data-bar="vMin" value="${BAR.vMin}"> s par carte</span></label>
 </div>
-<p class="small muted">Les points sont ramenés sur 20. Temps : plein quand l’élève a travaillé au moins la durée de la séance de référence. Performance : réussite moyenne, les lots à correction vérifiée (choix cliqué ou réponse écrite) comptant davantage que ceux « sur l’honneur ». Cohérence : lots du niveau de la classe ou conseillés par le test, et lots conseillés réellement faits. Les lots faits trop vite (seuil doublé en réponse écrite) ou aux chiffres impossibles sont exclus et barrés dans le PDF. Note arrondie au demi-point.</p>
+<p class="small muted">Les points sont ramenés sur 20. Temps : plein quand l’élève a travaillé au moins la durée de la séance de référence. Performance : réussite moyenne, les lots à correction vérifiée (choix cliqué ou réponse écrite) comptant davantage que ceux « sur l’honneur ». Cohérence : lots du niveau de la classe ou conseillés par le test, et lots conseillés réellement faits. Les lots faits trop vite (seuil doublé en réponse écrite) ou aux chiffres impossibles sont exclus et barrés dans le PDF. Note arrondie au demi-point.</p>
 <div class="row"><button class="btn ghost" type="button" data-x="bar-defaut">Barème par défaut</button></div>
 </details>
 <div class="row"><button class="btn" type="button" data-x="pdf-bilans">Télécharger les bilans (PDF)</button><button class="btn" type="button" data-x="notes-bilans">Télécharger les notes</button><button class="btn ghost" type="button" data-x="csv-bilans">Télécharger les bilans (CSV)</button><button class="btn ghost" type="button" data-x="csv-bilans-lots">Détail par lot (CSV)</button><button class="btn ghost" type="button" data-x="bilans-maj">Actualiser</button></div></div>
@@ -2623,7 +2623,7 @@ ${((x.bilan || {}).lots || []).length ? `<table><thead><tr><th>Lot</th><th>Score
         const B = l[0].bilan || {}, k = noteDe(clSel, l); t.push([c.nom, e.prenom, k ? LABO_BILAN.virgule(k.note) : '', fr(l[0].recu), k ? k.lots.length : '', k ? k.exclus.length : '', k && k.brut != null ? k.brut : '', k && k.tempsMesure ? minutes(k.T) : '', (B.solides || []).join(' · '), (B.enCours || []).join(' · '), (B.fragiles || []).join(' · '), testBilan(l[0]), l.length]); }
     } else {
       t.push(['Classe', 'Prénom', 'Bilan reçu le', 'Lot', 'Bonnes réponses', 'Cartes', 'Réussite (%)', 'Meilleure réussite (%)', 'Séries', 'Correction', 'Niveau du lot', 'Durée de la série (min)', 'Temps total sur le lot (min)', 'Lot fait le', 'Compté dans la note']);
-      for (const e of c.eleves) { const l = M[e.id]; if (!l) continue; const k = noteDe(clSel, l); if (!k) continue; for (const lo of k.lots.concat(k.exclus)) t.push([c.nom, e.prenom, fr(l[0].recu), lo.nom, lo.ok, lo.n, lo.pct, lo.best ?? '', lo.nb ?? '', ({ clic: 'vérifiée (clic)', ecrit: 'vérifiée (écrit)', honneur: 'sur l’honneur' })[lo.mode] || '', (lo.niv || []).map(n => n + 'ᵉ').join(' '), minutes(lo.sec), minutes(lo.tot), lo.date, lo.raison ? 'non : ' + lo.raison : 'oui']); }
+      for (const e of c.eleves) { const l = M[e.id]; if (!l) continue; const k = noteDe(clSel, l); if (!k) continue; for (const lo of k.lots.concat(k.exclus)) t.push([c.nom, e.prenom, fr(l[0].recu), lo.nom, lo.ok, lo.n, lo.pct, lo.best ?? '', lo.nb ?? '', ({ clic: 'vérifiée (clic)', ecrit: 'vérifiée (écrit)', honneur: 'sur l’honneur' })[lo.mode] || '', (lo.niv || []).map(n => n + 'ᵉ').join(' '), minutes(lo.sec), minutes(lo.tot), lo.date, lo.raison ? 'non : ' + lo.raison : 'oui']); }
     }
     telecharger(`Laboratoire - bilans flashcards ${c.nom}${lots ? ' (détail)' : ''}.csv`, t);
   }
@@ -2654,22 +2654,22 @@ ${((x.bilan || {}).lots || []).length ? `<table><thead><tr><th>Lot</th><th>Score
       if (x === 'recharger') { await charger(); return flash('À jour.'); }
       if (x === 'tdb-eleve') return LABO_TDB.eleve(ctx, t.dataset.el);
       if (x === 'tdb-retour') return LABO_TDB.classe(ctx);
-      if (x === 'tdb-eff-jour') { const j = t.dataset.jour; if (!confirm(`Supprimer tout ce que cet élève a fait le ${j} ? Cette suppression est définitive.`)) return;
+      if (x === 'tdb-eff-jour') { const j = t.dataset.jour; if (!confirm(`Supprimer tout ce que cet élève a fait le ${j}${NB}? Cette suppression est définitive.`)) return;
         const r = await appel('effacer-jour', { cl: clSel, el: t.dataset.el, jour: j }); LABO_TDB.vider(); await LABO_TDB.eleve(ctx, t.dataset.el); return flash(`Journée du ${j} supprimée (${r.n} élément${r.n > 1 ? 's' : ''}).`); }
-      if (x === 'reinit' || x === 'tdb-reinit-bilans') { if (!confirm('Code oublié : le code secret de cet élève redevient sa date de naissance (JJMM), si le Cahier de suivi l’a envoyée ; sinon il en choisira un nouveau à sa prochaine connexion. Continuer ?')) return;
+      if (x === 'reinit' || x === 'tdb-reinit-bilans') { if (!confirm('Code oublié : le code secret de cet élève redevient sa date de naissance (JJMM), si le Cahier de suivi l’a envoyée ; sinon il en choisira un nouveau à sa prochaine connexion. Continuer ?')) return;
         await appel('reinit-code', { cl: clSel, el: t.dataset.el }); if (x === 'tdb-reinit-bilans') { LABO_TDB.vider(); await LABO_TDB.eleve(ctx, t.dataset.el); } else await charger(); return flash('Code secret remis par défaut.'); }
       if (x === 'tdb-maj') { LABO_TDB.vider(); await charger(); return flash('À jour.'); }
       if (x === 'tdb-csv') { const l = LABO_TDB.lignesCSV(ctx); if (l) telecharger(`Laboratoire - tableau de bord ${c ? c.nom : ''} ${aujourdhui().replace(/\//g, '-')}.csv`, l); return; }
       if (x === 'sauvegarde') { flash('Préparation de la sauvegarde…'); const d = await appel('exporter');
         const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(d)], { type: 'application/json' })); a.download = `Laboratoire - sauvegarde ${aujourdhui().replace(/\//g, '-')}.json`;
-        document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500); return flash('Sauvegarde téléchargée : garde ce fichier en lieu sûr.'); }
+        document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500); return flash('Sauvegarde téléchargée : garde ce fichier en lieu sûr.'); }
       if (x === 'importer') return $('#p-import').click();
       if (x === 'mcp-adresse') { const { url } = await appel('mcp-adresse'); const z = $('#p-mcp'); if (!z) return;
-        z.innerHTML = `<div class="p-mcp"><p><b>Synchronisation automatique avec le Cahier de suivi</b> : dans claude.ai, Réglages › Connecteurs › Ajouter un connecteur personnalisé, nom <b>Laboratoire</b>, adresse :</p><p><code tabindex="0">${url}</code></p><p class="hint">Garde cette adresse pour toi : elle donne accès aux badges et aux ceintures (prénoms et classes) de tous les élèves. Le Cahier les relit à chaque ouverture.</p></div>`;
+        z.innerHTML = `<div class="p-mcp"><p><b>Synchronisation automatique avec le Cahier de suivi</b> : dans claude.ai, Réglages › Connecteurs › Ajouter un connecteur personnalisé, nom <b>Laboratoire</b>, adresse :</p><p><code tabindex="0">${url}</code></p><p class="hint">Garde cette adresse pour toi : elle donne accès aux badges et aux ceintures (prénoms et classes) de tous les élèves. Le Cahier les relit à chaque ouverture.</p></div>`;
         try { await navigator.clipboard.writeText(url); flash('Adresse copiée.'); } catch (e) { } return; }
       if (x === 'export-cahier') { flash('Préparation…'); const d = await LABO_TDB.pourCahier(ctx, CL.list);
         const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(d)], { type: 'application/json' })); a.download = `Laboratoire - badges pour le Cahier ${aujourdhui().replace(/\//g, '-')}.json`;
-        document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500); return flash(`Fichier prêt (${d.eleves.length} élèves) : importe-le dans le Cahier de suivi, Comportements › Badges.`); }
+        document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500); return flash(`Fichier prêt (${d.eleves.length} élèves) : importe-le dans le Cahier de suivi, Comportements › Badges.`); }
       if (x === 'csv-notes') return csvNotes();
       if (x === 'csv-ceintures') return csvCeintures();
       if (x === 'csv-bilans') return csvBilans(false);
@@ -2678,15 +2678,15 @@ ${((x.bilan || {}).lots || []).length ? `<table><thead><tr><th>Lot</th><th>Score
       if (x === 'csv-bilans-lots') return csvBilans(true);
       if (x === 'notes-bilans') return notesBilans();
       if (x === 'bilans-maj') { await bilans(true); return flash('À jour.'); }
-      if (x === 'effacer-bilan') { if (!confirm('Supprimer ce bilan ?')) return; await appel('effacer-bilan', { cle: t.dataset.cle }); await bilans(true); return flash('Bilan supprimé.'); }
+      if (x === 'effacer-bilan') { if (!confirm('Supprimer ce bilan ?')) return; await appel('effacer-bilan', { cle: t.dataset.cle }); await bilans(true); return flash('Bilan supprimé.'); }
       if (x === 'valider') { await appel('valider', { cl: clSel, el: t.dataset.el, ceinture: t.dataset.b, date: aujourdhui() }); LABO_TDB.vider(); await charger(); return flash('Ceinture validée.'); }
 
-      if (x === 'effacer') { if (!confirm('Effacer définitivement toute la progression de cet élève (ceintures, scores, code secret) ?')) return; await appel('effacer', { cl: clSel, el: t.dataset.el }); LABO_TDB.vider(); await charger(); return flash('Progression effacée.'); }
+      if (x === 'effacer') { if (!confirm('Effacer définitivement toute la progression de cet élève (ceintures, scores, code secret) ?')) return; await appel('effacer', { cl: clSel, el: t.dataset.el }); LABO_TDB.vider(); await charger(); return flash('Progression effacée.'); }
       lireForm();
       if (x === 'ajout-classe') { const nom = prompt('Nom de la classe (par exemple 5ᵉ 3)'); if (!nom) return; const id = rid(); CL.list.push({ id, nom: nom.trim(), code: codeAuto(nom), eleves: [] }); clSel = id; modif = true; return classes(); }
       if (x === 'code-auto' && c) { c.code = codeAuto(c.nom); modif = true; return classes(); }
       if (x === 'ajouter' && c) { $('#c-ajout').value.split('\n').map(s => s.trim()).filter(Boolean).forEach(p => c.eleves.push({ id: rid(), prenom: p })); modif = true; return classes(); }
-      if (x === 'retirer' && c) { const e = c.eleves[+t.dataset.i]; if (recDe(c.id, e.id) && !confirm(e.prenom + ' a déjà une progression. Le retirer de la liste ? (sa progression reste, tu peux l’effacer à part)')) return; c.eleves.splice(+t.dataset.i, 1); modif = true; return classes(); }
+      if (x === 'retirer' && c) { const e = c.eleves[+t.dataset.i]; if (recDe(c.id, e.id) && !confirm(e.prenom + ' a déjà une progression. Le retirer de la liste ? (sa progression reste, tu peux l’effacer à part)')) return; c.eleves.splice(+t.dataset.i, 1); modif = true; return classes(); }
       if (x === 'suppr-classe' && c) { CL.list = CL.list.filter(z => z !== c); clSel = (CL.list[0] || {}).id || ''; modif = true; return classes(); }
       if (x === 'enregistrer') {
         const codes = CL.list.map(z => z.code.toLowerCase()).filter(Boolean);
@@ -2704,11 +2704,11 @@ ${((x.bilan || {}).lots || []).length ? `<table><thead><tr><th>Lot</th><th>Score
     try {
       const D = JSON.parse(await f.text());
       if (!D || (!D.classes && !D.eleves && !D.bilans)) return flash('Ce fichier n’est pas une sauvegarde du Laboratoire.', true);
-      if (!confirm(`Importer « ${f.name} » ? Les données sont fusionnées : rien de plus récent n’est remplacé.`)) return;
+      if (!confirm(`Importer « ${f.name} » ? Les données sont fusionnées : rien de plus récent n’est remplacé.`)) return;
       flash('Import en cours…');
       const r = await appel('importer', D), n = r.importe || {};
       LABO_TDB.vider(); await charger();
-      flash(`Import terminé : ${n.classes || 0} classe(s), ${n.eleves || 0} élève(s), ${n.bilans || 0} bilan(s), ${n.journal || 0} ligne(s) d’historique.`);
+      flash(`Import terminé : ${n.classes || 0} classe(s), ${n.eleves || 0} élève(s), ${n.bilans || 0} bilan(s), ${n.journal || 0} ligne(s) d’historique.`);
     } catch (err) { if (err instanceof SyntaxError) return flash('Fichier illisible.', true); erreurAppel(err); }
   });
   window.addEventListener('beforeunload', e => { if (modif) { e.preventDefault(); e.returnValue = ''; } });
