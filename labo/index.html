@@ -8400,6 +8400,1670 @@ APPRO.n6 = {
 };
 
 ;
+/* Approfondissement 3ᵉ — écrit pour le Laboratoire de la langue (M. Lesage, enseignant de français), licence CC BY-NC-SA 4.0.
+   Lot 5 (23/11/2026) : deux séries par étape du parcours 3ᵉ (c : consolidation, d : défi), dans l’esprit des questions de langue du brevet. Format : voir parcours2.js. */
+window.APPRO = window.APPRO || {};
+APPRO.n3 = {
+  '3-P1': {
+    c: [
+      { kind: 'choice', titre: 'Attribut du sujet, attribut du COD ou COD ?', options: ['attribut du sujet', 'attribut du COD', 'COD'], err: 'attribut-cod',
+        items: [
+          ['<i>On l’a élu <b>délégué</b>.</i>', 'attribut du COD', '<i>délégué</i> qualifie <i>l’</i> (COD) par l’intermédiaire du verbe <i>élire</i>.'],
+          ['<i>Il est devenu <b>délégué</b>.</i>', 'attribut du sujet', 'Verbe d’état <i>devenir</i>.'],
+          ['<i>Je trouve ce film <b>ennuyeux</b>.</i>', 'attribut du COD', 'On peut dire : <i>je trouve que ce film est ennuyeux</i>.'],
+          ['<i>Je trouve <b>mes clés</b>.</i>', 'COD', '<i>Je les trouve</i> : COD.'],
+          ['<i>Ses amis le surnomment <b>le Roc</b>.</i>', 'attribut du COD', '<i>le Roc</i> qualifie <i>le</i> (COD).']
+        ] },
+      { kind: 'choice', titre: 'en ou y ?', consigne: '<i>en</i> remplace un complément introduit par <i>de</i> ; <i>y</i> un complément introduit par <i>à</i> (ou un lieu).', options: ['en', 'y'], err: 'pronom-en-y',
+        items: [
+          ['<i>Je pense <b>à mes vacances</b>.</i> → <i>J’___ pense.</i>', 'y', '<i>penser à</i> : <i>y</i>.'],
+          ['<i>Il parle <b>de son voyage</b>.</i> → <i>Il ___ parle.</i>', 'en', '<i>parler de</i> : <i>en</i>.'],
+          ['<i>Nous allons <b>à Marseille</b>.</i> → <i>Nous ___ allons.</i>', 'y', 'Un lieu : <i>y</i>.'],
+          ['<i>Elle revient <b>de Lyon</b>.</i> → <i>Elle ___ revient.</i>', 'en', 'Le lieu d’où l’on vient : <i>en</i>.']
+        ] }
+    ],
+    d: [
+      { kind: 'transformer', titre: 'Pronominaliser avec en et y', consigne: 'Remplace le groupe souligné par <i>en</i> ou <i>y</i>.', err: 'pronom-en-y',
+        items: [
+          { p: '<i>Je me souviens <u>de cette journée</u>.</i>', r: 'Je m’en souviens.', x: '<i>se souvenir de</i> : <i>en</i>.' },
+          { p: '<i>Tu t’intéresses <u>à la politique</u>.</i>', r: 'Tu t’y intéresses.', x: '<i>s’intéresser à</i> : <i>y</i>.' },
+          { p: '<i>Il a mangé <u>trois parts</u>.</i>', r: 'Il en a mangé trois.', x: 'Avec une quantité, <i>en</i> + le nombre.' },
+          { p: '<i>Ne pense plus <u>à cela</u>.</i>', r: 'N’y pense plus.', x: 'Impératif négatif : <i>y</i> devant le verbe.' }
+        ] },
+      { kind: 'etiqueter', titre: 'Analyser les fonctions', consigne: 'Glisse les étiquettes sur chaque groupe.', labels: ['sujet', 'verbe', 'COD', 'attribut du COD', 'attribut du sujet'], err: 'attribut-cod',
+        items: [
+          { g: ['Le jury', 'a déclaré', 'Lina', 'gagnante'], l: ['sujet', 'verbe', 'COD', 'attribut du COD'], x: '<i>Lina est gagnante</i> : <i>gagnante</i> qualifie le COD.' },
+          { g: ['Ce professeur', 'semble', 'sévère'], l: ['sujet', 'verbe', 'attribut du sujet'], x: 'Verbe d’état : attribut du sujet.' },
+          { g: ['On', 'appelle', 'ce chien', 'Rex'], l: ['sujet', 'verbe', 'COD', 'attribut du COD'], x: '<i>ce chien est Rex</i>.' },
+          { g: ['Tout le monde', 'juge', 'cette décision', 'injuste'], l: ['sujet', 'verbe', 'COD', 'attribut du COD'], x: '<i>la décision est injuste</i>, selon tout le monde.' }
+        ] }
+    ]
+  },
+  '3-P2': {
+    c: [
+      { kind: 'choice', titre: 'Le sens du complément', options: ['cause', 'conséquence', 'but', 'opposition', 'condition', 'comparaison'], err: 'cc-type',
+        items: [
+          ['<i><b>Malgré la pluie</b>, ils sont sortis.</i>', 'opposition', '<i>malgré</i> : opposition (ou concession).'],
+          ['<i><b>Si tu travailles</b>, tu réussiras.</i>', 'condition', '<i>si</i> : condition.'],
+          ['<i>Il parle <b>pour qu’on l’écoute</b>.</i>', 'but', '<i>pour que</i> : but.'],
+          ['<i>Il crie <b>comme un fou</b>.</i>', 'comparaison', '<i>comme</i> : comparaison.'],
+          ['<i>Il a tant ri <b>qu’il en a pleuré</b>.</i>', 'conséquence', '<i>tant… que</i> : conséquence.'],
+          ['<i><b>Comme il pleuvait</b>, nous sommes restés.</i>', 'cause', 'Ici, <i>comme</i> + verbe conjugué en tête : cause.']
+        ] },
+      { kind: 'choice', titre: 'Même sens, autre outil', err: 'cc-type',
+        items: [
+          ['<i>Bien qu’il soit malade, il travaille.</i> = ', 'Malgré sa maladie, il travaille.', 'Opposition : <i>bien que</i> + subordonnée, <i>malgré</i> + nom.', ['Malgré sa maladie, il travaille.', 'À cause de sa maladie, il travaille.']],
+          ['<i>Puisqu’il pleut, je reste.</i> = ', 'Il pleut, donc je reste.', 'Cause, ou conséquence vue de l’autre côté.', ['Il pleut, donc je reste.', 'Il pleut, pourtant je reste.']],
+          ['<i>En cas de pluie, le match sera annulé.</i> = ', 'S’il pleut, le match sera annulé.', 'Condition.', ['S’il pleut, le match sera annulé.', 'Parce qu’il pleut, le match est annulé.']]
+        ] }
+    ],
+    d: [
+      { kind: 'etiqueter', titre: 'Classer les compléments circonstanciels', consigne: 'Glisse sur chaque complément en gras son sens.', labels: ['cause', 'conséquence', 'but', 'opposition', 'condition', 'comparaison'], err: 'cc-type',
+        items: [
+          { g: ['<b>Faute d’argent</b>, il renonça.', '<b>Au lieu de</b> travailler, il dort.', 'Il se tait <b>de peur de</b> se tromper.'], l: ['cause', 'opposition', 'but'], x: '<i>de peur de</i> : but négatif (pour ne pas se tromper).' },
+          { g: ['Il court <b>plus vite qu’un lièvre</b>.', '<b>À condition de</b> partir tôt, on arrivera.', 'Il fait si froid <b>que le lac a gelé</b>.'], l: ['comparaison', 'condition', 'conséquence'], x: '<i>si… que</i> : conséquence.' }
+        ] },
+      { kind: 'transformer', titre: 'Transformer le complément en subordonnée', consigne: 'Remplace le groupe souligné par une subordonnée de même sens.', err: 'cc-type',
+        items: [
+          { p: '<i><u>Malgré sa fatigue</u>, elle a continué.</i>', r: 'Bien qu’elle soit fatiguée, elle a continué.|Bien qu’elle fût fatiguée, elle a continué.|Quoiqu’elle soit fatiguée, elle a continué.', x: '<i>bien que</i> + subjonctif.' },
+          { p: '<i><u>À cause du bruit</u>, il n’a pas dormi.</i>', r: 'Parce qu’il y avait du bruit, il n’a pas dormi.|Comme il y avait du bruit, il n’a pas dormi.', x: 'Cause : <i>parce que</i> ou <i>comme</i>.' },
+          { p: '<i>Il travaille <u>pour la réussite de son projet</u>.</i>', r: 'Il travaille pour que son projet réussisse.|Il travaille afin que son projet réussisse.', x: 'But : <i>pour que</i> + subjonctif.' },
+          { p: '<i><u>Sans ton aide</u>, je n’y serais pas arrivé.</i>', r: 'Si tu ne m’avais pas aidé, je n’y serais pas arrivé.', x: 'Condition : <i>si</i> + plus-que-parfait.' }
+        ] },
+      { kind: 'choice', titre: 'Concession ou opposition ?', options: ['concession', 'opposition'], err: 'cc-type',
+        items: [
+          ['<i>Bien qu’il soit riche, il vit simplement.</i>', 'concession', 'On s’attendrait à autre chose : concession.'],
+          ['<i>Il est riche, tandis que son frère est pauvre.</i>', 'opposition', 'Deux faits mis en parallèle : opposition.']
+        ] }
+    ]
+  },
+  '3-P3': {
+    c: [
+      { kind: 'choice', titre: 'La fonction de la subordonnée', options: ['COD', 'complément de l’antécédent', 'complément circonstanciel', 'sujet'], err: 'fonction-sub',
+        items: [
+          ['<i>Je sais <b>que tu viendras</b>.</i>', 'COD', 'Complétive COD : <i>je le sais</i>.'],
+          ['<i>Le chien <b>qui aboie</b> est affamé.</i>', 'complément de l’antécédent', 'Relative : elle complète <i>le chien</i>.'],
+          ['<i>Je partirai <b>quand tu arriveras</b>.</i>', 'complément circonstanciel', 'Subordonnée de temps.'],
+          ['<i><b>Qui dort</b> dine.</i> (proverbe)', 'sujet', 'Relative sans antécédent, sujet de <i>dine</i>.'],
+          ['<i>Elle se demande <b>s’il pleuvra</b>.</i>', 'COD', 'Interrogative indirecte COD.']
+        ] },
+      { kind: 'choice', titre: 'Infinitive ou participiale ?', options: ['infinitive', 'participiale'], err: 'infinitive-participiale',
+        items: [
+          ['<i>J’entends <b>les oiseaux chanter</b>.</i>', 'infinitive', 'Un sujet propre (<i>les oiseaux</i>) + un infinitif.'],
+          ['<i><b>La nuit tombée</b>, ils rentrèrent.</i>', 'participiale', 'Un sujet propre (<i>la nuit</i>) + un participe.'],
+          ['<i>Je regarde <b>la neige tomber</b>.</i>', 'infinitive', '<i>la neige</i> est sujet de <i>tomber</i>.'],
+          ['<i><b>Le travail terminé</b>, elle sortit.</i>', 'participiale', 'Participe <i>terminé</i>, sujet <i>le travail</i>.']
+        ] }
+    ],
+    d: [
+      { kind: 'etiqueter', titre: 'Nature et fonction', consigne: 'Glisse sur chaque subordonnée en gras sa nature.', labels: ['relative', 'complétive', 'interrogative indirecte', 'circonstancielle'], err: 'fonction-sub',
+        items: [
+          { g: ['Je crois <b>qu’il ment</b>.', 'Dis-moi <b>qui ment</b>.', 'L’élève <b>qui ment</b> sera puni.', 'Il rougit <b>dès qu’il ment</b>.'], l: ['complétive', 'interrogative indirecte', 'relative', 'circonstancielle'], x: 'Même verbe, quatre subordonnées différentes : observe le mot introducteur et ce que complète la proposition.' },
+          { g: ['Je ne sais pas <b>où il va</b>.', 'La ville <b>où il va</b> est loin.', '<b>Où qu’il aille</b>, il se perd.', 'J’espère <b>qu’il ira</b>.'], l: ['interrogative indirecte', 'relative', 'circonstancielle', 'complétive'], x: '<i>où qu’il aille</i> : concession (où que ce soit).' }
+        ] },
+      { kind: 'transformer', titre: 'Construire une participiale', consigne: 'Remplace la subordonnée soulignée par une proposition participiale.', err: 'infinitive-participiale',
+        items: [
+          { p: '<i><u>Quand le repas fut fini</u>, chacun partit.</i>', r: 'Le repas fini, chacun partit.', x: 'Sujet <i>le repas</i> + participe <i>fini</i>.' },
+          { p: '<i><u>Comme le soleil se couchait</u>, la ville s’illumina.</i>', r: 'Le soleil se couchant, la ville s’illumina.', x: 'Participe présent : <i>se couchant</i>.' },
+          { p: '<i><u>Une fois que la porte fut fermée</u>, il éteignit.</i>', r: 'La porte fermée, il éteignit.', x: '<i>la porte fermée</i>.' }
+        ] },
+      { kind: 'choice', titre: 'La fonction de la subordonnée', options: ['sujet', 'COD', 'complément de l’antécédent', 'complément circonstanciel'], err: 'fonction-sub',
+        items: [
+          ['<i>J’ignore <b>pourquoi il est parti</b>.</i>', 'COD', 'Interrogative indirecte, COD de <i>ignore</i>.'],
+          ['<i><b>Qu’il ait menti</b> me surprend.</i>', 'sujet', 'Complétive sujet : <i>cela me surprend</i>.'],
+          ['<i>Il partit <b>avant que l’orage éclate</b>.</i>', 'complément circonstanciel', 'Subordonnée circonstancielle de temps.']
+        ] }
+    ]
+  },
+  '3-P4': {
+    c: [
+      { kind: 'choice', titre: 'Quel discours ?', options: ['direct', 'indirect', 'indirect libre', 'narrativisé'], err: 'dil',
+        items: [
+          ['<i>Elle soupira : « Je n’en peux plus. »</i>', 'direct', 'Guillemets, paroles exactes.'],
+          ['<i>Elle soupira qu’elle n’en pouvait plus.</i>', 'indirect', 'Subordonnée complétive après le verbe de parole.'],
+          ['<i>Elle soupira. Elle n’en pouvait plus, vraiment !</i>', 'indirect libre', 'Les temps du récit, sans guillemets ni subordonnée, mais l’émotion du personnage.'],
+          ['<i>Elle exprima sa lassitude.</i>', 'narrativisé', 'Le narrateur résume les paroles.'],
+          ['<i>Il réfléchit. Pourquoi l’avait-on trahi ?</i>', 'indirect libre', 'La question est celle du personnage, au temps du récit.']
+        ] },
+      { kind: 'choice', titre: 'Certain ou incertain ?', options: ['certitude', 'doute'], err: 'modalisation',
+        items: [
+          ['<i>Il viendra sans aucun doute.</i>', 'certitude', '<i>sans aucun doute</i> renforce la certitude.'],
+          ['<i>Il viendrait peut-être.</i>', 'doute', 'Conditionnel et <i>peut-être</i>.'],
+          ['<i>Il semble que la situation s’améliore.</i>', 'doute', '<i>il semble</i> nuance l’affirmation.'],
+          ['<i>Il est évident que tu as raison.</i>', 'certitude', '<i>il est évident</i>.']
+        ] }
+    ],
+    d: [
+      { kind: 'etiqueter', titre: 'Les marques de modalisation', consigne: 'Glisse sur chaque phrase le type de marque qu’elle contient.', labels: ['adverbe', 'verbe', 'conditionnel', 'adjectif évaluatif'], err: 'modalisation',
+        items: [
+          { g: ['<i>Il est <b>probablement</b> parti.</i>', '<i>Je <b>crois</b> qu’il est parti.</i>', '<i>Il <b>serait</b> parti.</i>', '<i>Quel départ <b>lamentable</b> !</i>'], l: ['adverbe', 'verbe', 'conditionnel', 'adjectif évaluatif'], x: 'Quatre façons de nuancer ou de juger.' },
+          { g: ['<i>C’est une idée <b>géniale</b>.</i>', '<i>L’accusé <b>aurait</b> menti.</i>', '<i>Elle <b>doute</b> de sa sincérité.</i>', '<i><b>Sans doute</b> a-t-il raison.</i>'], l: ['adjectif évaluatif', 'conditionnel', 'verbe', 'adverbe'], x: '<i>sans doute</i> est une locution adverbiale qui, paradoxalement, exprime une probabilité.' }
+        ] },
+      { kind: 'transformer', titre: 'Passer au discours indirect libre', consigne: 'Récris les paroles au discours indirect libre (temps du récit, 3<sup>e</sup> personne, sans guillemets).', err: 'dil',
+        items: [
+          { p: '<i>Il pensa : « Je dois partir ce soir. »</i>', r: 'Il devait partir ce soir-là.|Il devait partir le soir même.', x: 'Présent → imparfait ; <i>je</i> → <i>il</i> ; <i>ce soir</i> → <i>ce soir-là</i>.' },
+          { p: '<i>Elle se dit : « Comme je suis bête ! »</i>', r: 'Comme elle était bête !', x: 'L’exclamation reste : c’est la voix du personnage.' }
+        ] },
+      { kind: 'choice', titre: 'Repérer le point de vue', err: 'dil',
+        items: [
+          ['<i>Elle regarda la lettre. Quelle honte ! Comment avait-il osé ?</i> Les deux dernières phrases sont…', 'les pensées du personnage', 'Exclamation et question au temps du récit : discours indirect libre.', ['les pensées du personnage', 'un commentaire du narrateur']],
+          ['Le discours indirect libre se reconnait…', 'aux temps du récit sans verbe introducteur', 'Pas de guillemets, pas de <i>que</i>, mais la voix du personnage.', ['aux temps du récit sans verbe introducteur', 'aux guillemets']],
+          ['<i>Selon certains témoins, le suspect aurait fui.</i> Le conditionnel signale…', 'une information non vérifiée', 'Modalisation : le journaliste prend ses distances.', ['une information non vérifiée', 'un souhait'], 'modalisation'],
+          ['<i>Hélas, il était trop tard.</i> <i>Hélas</i> exprime…', 'le regret du narrateur', 'Une interjection modalisatrice.', ['le regret du narrateur', 'une certitude'], 'modalisation']
+        ] }
+    ]
+  },
+  '3-V1': {
+    c: [
+      { kind: 'choice', titre: 'Reconnaitre le subjonctif imparfait', err: 'subj-imparfait',
+        items: [
+          ['<i>Il fallait qu’il <b>partît</b>.</i>', 'subjonctif imparfait', 'Accent circonflexe sur la 3<sup>e</sup> personne du singulier.', ['passé simple', 'subjonctif imparfait']],
+          ['<i>Il <b>partit</b> à l’aube.</i>', 'passé simple', 'Sans accent : passé simple.', ['passé simple', 'subjonctif imparfait']],
+          ['<i>Bien qu’il <b>eût</b> fini, il resta.</i>', 'subjonctif plus-que-parfait', '<i>eût</i>, avec accent, est le subjonctif imparfait de <i>avoir</i> : <i>eût fini</i> est donc un subjonctif plus-que-parfait.', ['subjonctif plus-que-parfait', 'passé antérieur']],
+          ['<i>Quand il <b>eut</b> fini, il sortit.</i>', 'passé antérieur', '<i>eut</i> sans accent : passé simple, donc passé antérieur.', ['subjonctif plus-que-parfait', 'passé antérieur']]
+        ] },
+      { kind: 'choice', titre: 'Quel mode ?', options: ['indicatif', 'subjonctif', 'conditionnel', 'impératif', 'infinitif', 'participe'], err: 'temps-forme',
+        items: [
+          ['<i>Qu’il <b>vienne</b> !</i>', 'subjonctif', '<i>que</i> + subjonctif exprime un ordre à la 3<sup>e</sup> personne.'],
+          ['<i><b>Venez</b> vite !</i>', 'impératif', 'Pas de sujet exprimé.'],
+          ['<i>Il <b>viendrait</b> s’il pouvait.</i>', 'conditionnel', 'Hypothèse.'],
+          ['<i>Il <b>viendra</b>.</i>', 'indicatif', 'Futur de l’indicatif.'],
+          ['<i>La pluie <b>tombant</b>, on rentra.</i>', 'participe', 'Participe présent.', null, 'modes-impersonnels']
+        ] }
+    ],
+    d: [
+      { kind: 'input', titre: 'Conjuguer au subjonctif imparfait', consigne: 'Écris le verbe au subjonctif imparfait (3<sup>e</sup> personne du singulier : accent circonflexe).', err: 'subj-imparfait',
+        items: [
+          ['<i>Il fallait qu’elle ___.</i> (chanter)', 'chantât', '<i>qu’elle chantât</i>.'],
+          ['<i>Je voulais qu’il ___.</i> (venir)', 'vînt', '<i>qu’il vînt</i>.'],
+          ['<i>Bien qu’il ___ riche, il vivait simplement.</i> (être)', 'fût', '<i>qu’il fût</i>.'],
+          ['<i>Il fallait qu’ils ___.</i> (partir)', 'partissent', '3<sup>e</sup> personne du pluriel : <i>qu’ils partissent</i>.']
+        ] },
+      { kind: 'etiqueter', titre: 'Décomposer la forme verbale', consigne: 'Glisse sur chaque morceau ce qu’il indique.', labels: ['radical', 'marque de temps ou de mode', 'marque de personne'], err: 'temps-forme',
+        items: [
+          { g: ['chant', 'ass', 'ions'], l: ['radical', 'marque de temps ou de mode', 'marque de personne'], x: '<i>que nous chantassions</i> : subjonctif imparfait.' },
+          { g: ['viend', 'r', 'aient'], l: ['radical', 'marque de temps ou de mode', 'marque de personne'], x: '<i>ils viendraient</i> : conditionnel.' }
+        ] },
+      { kind: 'choice', titre: 'Passé simple ou subjonctif imparfait ?', err: 'subj-imparfait',
+        items: [
+          ['<i>Il ___ sa leçon par cœur.</i> (savoir)', 'sut', 'Passé simple, sans accent.', ['sut', 'sût']]
+        ] },
+      { kind: 'choice', titre: 'Identifier le mode et le temps', err: 'temps-forme',
+        items: [
+          ['<i>Qu’il eût compris plus tôt…</i> : <i>eût compris</i> est au…', 'subjonctif plus-que-parfait', '<i>eût</i> avec accent + participe.', ['subjonctif plus-que-parfait', 'passé antérieur'], 'subj-imparfait']
+        ] }
+    ]
+  },
+  '3-V2': {
+    c: [
+      { kind: 'choice', titre: 'Subjonctif ou indicatif après la conjonction ?', err: 'emplois-modes',
+        items: [
+          ['<i>Avant qu’il ___, range ta chambre.</i> (venir)', 'vienne', '<i>avant que</i> + subjonctif.', ['vient', 'vienne']],
+          ['<i>Après qu’il ___ venu, nous avons diné.</i> (être)', 'est', '<i>après que</i> + indicatif.', ['est', 'soit']],
+          ['<i>Pourvu qu’il ___ beau !</i> (faire)', 'fasse', '<i>pourvu que</i> + subjonctif.', ['fait', 'fasse']],
+          ['<i>Parce qu’il ___ tard, je rentre.</i> (être)', 'est', '<i>parce que</i> + indicatif.', ['est', 'soit']],
+          ['<i>Sans que tu le ___, il est parti.</i> (savoir)', 'saches', '<i>sans que</i> + subjonctif.', ['sais', 'saches']]
+        ] },
+      { kind: 'choice', titre: 'L’aspect', options: ['accompli', 'inaccompli', 'itératif (répété)'], err: 'aspect',
+        items: [
+          ['<i>Chaque matin, il courait.</i>', 'itératif (répété)', 'Action répétée, à l’imparfait.'],
+          ['<i>Il a couru.</i>', 'accompli', 'Temps composé : action achevée.'],
+          ['<i>Il court.</i>', 'inaccompli', 'Action en cours.'],
+          ['<i>Il avait couru.</i>', 'accompli', 'Plus-que-parfait.']
+        ] }
+    ],
+    d: [
+      { kind: 'input', titre: 'Le bon mode', consigne: 'Écris le verbe au mode qui convient, au présent ou au passé selon le sens.', err: 'emplois-modes',
+        items: [
+          ['<i>Bien qu’il ___ tort, il insiste.</i> (avoir)', 'ait', '<i>bien que</i> + subjonctif.'],
+          ['<i>Je cherche quelqu’un qui ___ parler chinois.</i> (savoir)', 'sache', 'Relative au subjonctif : la personne n’est pas sûre d’exister.'],
+          ['<i>Je connais quelqu’un qui ___ parler chinois.</i> (savoir)', 'sait', 'La personne existe : indicatif.'],
+          ['<i>Il est le seul qui ___ me comprendre.</i> (pouvoir)', 'puisse', 'Après <i>le seul</i> : subjonctif souvent employé.'],
+          ['<i>Dès qu’il ___, appelle-moi.</i> (arriver, futur antérieur)', 'sera arrivé', '<i>dès que</i> + indicatif.']
+        ] },
+      { kind: 'etiqueter', titre: 'Classer les conjonctions', consigne: 'Glisse sur chaque conjonction le mode qui la suit.', labels: ['indicatif', 'subjonctif'], err: 'emplois-modes',
+        items: [
+          { g: ['afin que', 'lorsque', 'quoique', 'puisque'], l: ['subjonctif', 'indicatif', 'subjonctif', 'indicatif'], x: 'But et concession : subjonctif ; temps et cause : indicatif.' },
+          { g: ['de sorte que (but)', 'si bien que', 'à moins que', 'tandis que'], l: ['subjonctif', 'indicatif', 'subjonctif', 'indicatif'], x: '<i>si bien que</i> : conséquence réelle, indicatif.' }
+        ] },
+      { kind: 'choice', titre: 'Aspect et temps', err: 'aspect',
+        items: [
+          ['<i>Il venait de partir quand j’arrivai.</i> L’action de partir est…', 'tout juste achevée', '<i>venir de</i> + infinitif : passé récent.', ['tout juste achevée', 'sur le point de commencer']]
+        ] }
+    ]
+  },
+  '3-V3': {
+    c: [
+      { kind: 'choice', titre: 'Pourquoi le passif ?', err: 'voix-passive',
+        items: [
+          ['<i>Le vase a été cassé.</i> Le passif permet ici de…', 'taire l’auteur de l’action', 'Pas de complément d’agent : on ne dit pas qui l’a cassé.', ['taire l’auteur de l’action', 'insister sur l’auteur']],
+          ['<i>La ville fut détruite par un séisme.</i> Le sujet mis en valeur est…', 'la ville', 'Le passif place la victime en position de sujet.', ['la ville', 'un séisme']],
+          ['<i>On a volé mon vélo.</i> Au passif :', 'Mon vélo a été volé.', '<i>on</i> disparait au passif.', ['Mon vélo a été volé.', 'Mon vélo a volé.']],
+          ['<i>Les résultats seront publiés demain.</i> Temps du passif :', 'futur', '<i>seront</i> : <i>être</i> au futur.', ['futur', 'présent']]
+        ] },
+      { kind: 'choice', titre: 'Réécriture : ce qui change', consigne: 'Au brevet, une réécriture impose de modifier toutes les marques liées au changement demandé.', err: 'reecriture',
+        items: [
+          ['<i>Il marchait seul.</i> → avec <i>elles</i> :', 'Elles marchaient seules.', 'Verbe et adjectif s’accordent.', ['Elles marchaient seules.', 'Elles marchaient seul.']],
+          ['<i>Je suis parti.</i> → avec <i>nous</i> (des filles) :', 'Nous sommes parties.', 'Avec <i>être</i>, accord au féminin pluriel.', ['Nous sommes partis.', 'Nous sommes parties.']],
+          ['<i>Il dit qu’il viendra.</i> → <i>Il a dit…</i>', 'Il a dit qu’il viendrait.', 'Concordance : futur → conditionnel.', ['Il a dit qu’il viendra.', 'Il a dit qu’il viendrait.'], 'cond-futur'],
+          ['<i>Tu as pris ton sac.</i> → avec <i>vous</i> :', 'Vous avez pris votre sac.', 'Pronom, auxiliaire et déterminant changent.', ['Vous avez pris votre sac.', 'Vous avez pris ton sac.']]
+        ] }
+    ],
+    d: [
+      { kind: 'transformer', titre: 'Réécrire comme au brevet', consigne: 'Réécris en faisant toutes les modifications nécessaires.', err: 'reecriture',
+        items: [
+          { p: '<i>Le garçon s’arrêta, inquiet ; il avait entendu un bruit.</i> (Remplace <i>le garçon</i> par <i>les filles</i>.)', r: 'Les filles s’arrêtèrent, inquiètes ; elles avaient entendu un bruit.', x: 'Verbe, adjectif apposé et pronom changent.' },
+          { p: '<i>Je regarde la mer et je rêve.</i> (Au passé simple.)', r: 'Je regardai la mer et je rêvai.', x: '<i>regardai, rêvai</i> : <i>-ai</i> à la 1<sup>re</sup> personne.' },
+          { p: '<i>Ils ont été surpris par l’orage.</i> (Voix active.)', r: 'L’orage les a surpris.', x: 'Le COD <i>les</i> est placé avant <i>avoir</i> : <i>surpris</i> (masculin pluriel, forme identique).', err: 'voix-passive' }
+        ] },
+      { kind: 'choice', titre: 'Le piège de la réécriture', err: 'reecriture',
+        items: [
+          ['<i>Elle les a vus.</i> → avec <i>elle</i> remplacé par <i>ils</i> :', 'Ils les ont vus.', 'L’accord du participe dépend du COD <i>les</i>, qui ne change pas.', ['Ils les ont vus.', 'Ils les ont vu.']],
+          ['<i>Elle est venue me voir.</i> → avec <i>vous</i> (un garçon, vouvoyé) :', 'Vous êtes venu me voir.', 'Vouvoiement d’une personne : participe au singulier.', ['Vous êtes venu me voir.', 'Vous êtes venus me voir.']],
+          ['<i>Il espère que tu réussiras.</i> → <i>Il espérait…</i>', 'Il espérait que tu réussirais.', 'Futur dans le passé : conditionnel.', ['Il espérait que tu réussiras.', 'Il espérait que tu réussirais.'], 'cond-futur'],
+          ['<i>Je me suis levée tôt.</i> → avec <i>nous</i> (des garçons) :', 'Nous nous sommes levés tôt.', 'Pronom réfléchi et accord changent.', ['Nous nous sommes levés tôt.', 'Nous nous sommes levé tôt.']],
+          ['<i>Il marche.</i> → au passé composé :', 'Il a marché.', '<i>marcher</i> : auxiliaire <i>avoir</i>.', ['Il a marché.', 'Il est marché.']]
+        ] }
+    ]
+  },
+  '3-G1': {
+    c: [
+      { kind: 'choice', titre: 'Pronom indéfini ou interrogatif ?', options: ['indéfini', 'interrogatif'], err: 'pronoms-indef-inter',
+        items: [
+          ['<i><b>Quelqu’un</b> a appelé.</i>', 'indéfini', 'Personne non précisée.'],
+          ['<i><b>Qui</b> a appelé ?</i>', 'interrogatif', 'Question.'],
+          ['<i><b>Lequel</b> préfères-tu ?</i>', 'interrogatif', 'Question sur un élément d’un ensemble.'],
+          ['<i><b>Chacun</b> fait ce qu’il veut.</i>', 'indéfini', 'Quantité non précisée, au singulier.'],
+          ['<i><b>Rien</b> ne bouge.</i>', 'indéfini', 'Quantité nulle.']
+        ] },
+      { kind: 'choice', titre: 'Accord avec un pronom indéfini', err: 'accord-sv',
+        items: [
+          ['<i>Chacun ___ sa chance.</i>', 'tente', '<i>chacun</i> : singulier.', ['tente', 'tentent']],
+          ['<i>Personne n’___ venu.</i>', 'est', '<i>personne</i> : singulier.', ['est', 'sont']],
+          ['<i>Plusieurs ___ partis.</i>', 'sont', '<i>plusieurs</i> : pluriel.', ['est', 'sont']],
+          ['<i>Tout le monde ___ là.</i>', 'est', '<i>tout le monde</i> : singulier.', ['est', 'sont']]
+        ] }
+    ],
+    d: [
+      { kind: 'transformer', titre: 'Poser une question avec un pronom interrogatif', consigne: 'Écris la question qui porte sur le groupe souligné, avec <i>qui</i>, <i>que</i>, <i>quoi</i> ou <i>lequel</i>, et l’inversion du sujet.', err: 'pronoms-indef-inter',
+        items: [
+          { p: '<i>Tu attends <u>ta sœur</u>.</i>', r: 'Qui attends-tu ?', x: 'Une personne : <i>qui</i>.' },
+          { p: '<i>Tu cherches <u>tes clés</u>.</i>', r: 'Que cherches-tu ?', x: 'Une chose, COD : <i>que</i>.' },
+          { p: '<i>Tu penses <u>à ton examen</u>.</i>', r: 'À quoi penses-tu ?', x: 'Après une préposition : <i>quoi</i>.' },
+          { p: '<i>Tu veux <u>ce livre-ci</u>, parmi tous ces livres.</i>', r: 'Lequel veux-tu ?', x: 'Choix dans un ensemble : <i>lequel</i>.' }
+        ] },
+      { kind: 'etiqueter', titre: 'Classer les pronoms', consigne: 'Glisse sur chaque mot en gras sa classe.', labels: ['pronom indéfini', 'pronom interrogatif', 'déterminant'], err: 'pronoms-indef-inter',
+        items: [
+          { g: ['<b>Certains</b> sont venus.', '<b>Certains</b> élèves sont venus.', '<b>Qui</b> est venu ?', '<b>Aucun</b> n’est venu.'], l: ['pronom indéfini', 'déterminant', 'pronom interrogatif', 'pronom indéfini'], x: 'Devant un nom : déterminant ; seul : pronom.' },
+          { g: ['<b>Quel</b> livre ?', '<b>Lequel</b> ?', '<b>Quelques-uns</b> rient.', '<b>Nul</b> ne sait.'], l: ['déterminant', 'pronom interrogatif', 'pronom indéfini', 'pronom indéfini'], x: '<i>quel</i> est un déterminant interrogatif.' }
+        ] },
+      { kind: 'choice', titre: 'Accords avec les indéfinis', err: 'accord-sv',
+        items: [
+          ['<i>Aucun des élèves n’___ répondu.</i>', 'a', '<i>aucun</i> : singulier.', ['a', 'ont']],
+          ['<i>Certaines sont ___.</i> (parti)', 'parties', '<i>certaines</i> : féminin pluriel.', ['partis', 'parties']]
+        ] }
+    ]
+  },
+  '3-G2': {
+    c: [
+      { kind: 'choice', titre: 'que reprend quoi ?', consigne: 'Trouve l’antécédent de <i>que</i> : si <i>que</i> est COD, le participe s’accorde avec lui.', err: 'pp-relatif',
+        items: [
+          ['<i>La lettre que j’ai ___</i> (écrire)', 'écrite', '<i>que</i> = la lettre, COD placé avant.', ['écrit', 'écrite']],
+          ['<i>Les films que nous avons ___</i> (voir)', 'vus', '<i>que</i> = les films.', ['vu', 'vus']],
+          ['<i>Les heures qu’il a ___</i> (dormir)', 'dormi', '<i>dormir</i> n’a pas de COD : <i>qu’</i> est complément de durée.', ['dormi', 'dormies']],
+          ['<i>La chaleur qu’il a ___</i> (faire)', 'fait', '<i>il a fait</i> impersonnel : invariable.', ['fait', 'faite']],
+          ['<i>Les chansons qu’elle a ___ chanter</i> (entendre)', 'entendu', 'Infinitif après le participe : on accorde si le COD fait l’action. Les chansons ne chantent pas : <i>entendu</i>.', ['entendu', 'entendues']]
+        ] },
+      { kind: 'choice', titre: 'Accord ou pas ?', options: ['accord', 'pas d’accord'], err: 'pp-relatif',
+        items: [
+          ['<i>Les efforts qu’il a fallu…</i>', 'pas d’accord', '<i>il a fallu</i> est impersonnel.'],
+          ['<i>Les pommes que j’ai cueillies…</i>', 'accord', '<i>que</i> = les pommes, COD avant.'],
+          ['<i>Les années qu’il a vécu là-bas…</i>', 'pas d’accord', 'Ici <i>qu’</i> est complément de durée (pendant les années).']
+        ] }
+    ],
+    d: [
+      { kind: 'fleche', titre: 'Le relatif que et l’accord', consigne: 'Touche le mot qui commande l’accord, ou « Pas d’accord », puis choisis la forme.', err: 'pp-relatif',
+        items: [
+          { g: ['Les excuses', 'qu’', 'il', 'a', '…'], pp: 4, cible: 1, o: ['présenté', 'présentées'], r: 'présentées', x: '<i>qu’</i> = les excuses : féminin pluriel.' },
+          { g: ['Les kilomètres', 'qu’', 'il', 'a', '…'], pp: 4, cible: -1, o: ['couru', 'courus'], r: 'couru', x: '<i>courir</i> des kilomètres : complément de mesure, pas un COD. Pas d’accord.' },
+          { g: ['Les dangers', 'qu’', 'il', 'a', '…'], pp: 4, cible: 1, o: ['couru', 'courus'], r: 'courus', x: '<i>courir un danger</i> : COD. Accord au masculin pluriel.' },
+          { g: ['La neige', 'qu’', 'il', 'a', '…', 'tomber'], pp: 4, cible: -1, o: ['fait', 'faite'], r: 'fait', x: '<i>fait</i> suivi d’un infinitif : toujours invariable.' }
+        ] },
+      { kind: 'input', titre: 'Accorder dans la relative', consigne: 'Écris le participe passé, accordé si besoin.', err: 'pp-relatif',
+        items: [
+          ['<i>Les erreurs que tu as ___ sont légères.</i> (commettre)', 'commises', '<i>que</i> = les erreurs.'],
+          ['<i>Les vingt minutes qu’a ___ le trajet m’ont paru longues.</i> (durer)', 'duré', 'Complément de durée : pas d’accord.'],
+          ['<i>La maison qu’ils ont ___ construire est immense.</i> (faire)', 'fait', '<i>fait</i> + infinitif : invariable.'],
+          ['<i>Les amies que j’ai ___ hier m’ont écrit.</i> (rencontrer)', 'rencontrées', '<i>que</i> = les amies : féminin pluriel.']
+        ] }
+    ]
+  },
+  '3-G3': {
+    c: [
+      { kind: 'choice', titre: 'Accord du verbe dans la relative', consigne: 'Le verbe d’une relative introduite par <i>qui</i> s’accorde avec l’antécédent.', err: 'accord-sv',
+        items: [
+          ['<i>C’est moi qui ___ raison.</i>', 'ai', '<i>qui</i> = moi : 1<sup>re</sup> personne.', ['a', 'ai']],
+          ['<i>C’est nous qui ___ gagné.</i>', 'avons', '<i>qui</i> = nous.', ['ont', 'avons']],
+          ['<i>Les fleurs du jardin qui ___ ont été arrosées.</i> (fleurir)', 'fleurissent', '<i>qui</i> = les fleurs (le jardin ne fleurit pas).', ['fleurit', 'fleurissent']],
+          ['<i>Toi qui ___ tout, réponds.</i>', 'sais', '<i>qui</i> = toi : 2<sup>e</sup> personne.', ['sait', 'sais']]
+        ] },
+      { kind: 'choice', titre: 'Accorder l’apposition', err: 'accord-apposition',
+        items: [
+          ['<i>___, les coureuses franchirent la ligne.</i> (épuisé)', 'Épuisées', 'L’adjectif apposé s’accorde avec <i>les coureuses</i>.', ['Épuisé', 'Épuisées']],
+          ['<i>Ma grand-mère, ___ à la campagne, adore les fleurs.</i> (né)', 'née', 'Apposé à <i>ma grand-mère</i>.', ['né', 'née']],
+          ['<i>___ par le bruit, les enfants se réveillèrent.</i> (surpris)', 'Surpris', 'Masculin pluriel : <i>surpris</i> (forme identique).', ['Surpris', 'Surprises']],
+          ['<i>Sa sœur, ___ du concours, est partie à Paris.</i> (lauréat)', 'lauréate', 'Accord avec <i>sa sœur</i>.', ['lauréat', 'lauréate']],
+          ['<i>Assis sur le banc, ___ attendaient le bus.</i>', 'deux hommes', 'L’apposition <i>assis</i> doit se rapporter au sujet : ce sont des hommes qui sont assis.', ['le bus', 'deux hommes']]
+        ] }
+    ],
+    d: [
+      { kind: 'transformer', titre: 'Réécrire avec accords', consigne: 'Réécris en remplaçant le mot indiqué ; fais tous les accords.', err: 'accord-apposition',
+        items: [
+          { p: '<i>Fatigué, le soldat s’assit.</i> (<i>le soldat</i> → <i>les infirmières</i>)', r: 'Fatiguées, les infirmières s’assirent.', x: 'L’apposition et le verbe s’accordent.' },
+          { p: '<i>C’est lui qui a décidé.</i> (<i>lui</i> → <i>vous</i>)', r: 'C’est vous qui avez décidé.', x: '<i>qui</i> = vous : <i>avez</i>.', err: 'accord-sv' },
+          { p: '<i>Mon frère, inquiet, téléphona.</i> (<i>mon frère</i> → <i>mes sœurs</i>)', r: 'Mes sœurs, inquiètes, téléphonèrent.', x: 'Féminin pluriel : <i>inquiètes</i>.' }
+        ] },
+      { kind: 'input', titre: 'Accords experts', consigne: 'Écris le mot entre parenthèses correctement accordé.', err: 'accord-apposition',
+        items: [
+          ['<i>___ de joie, Lina et Jade dansaient.</i> (fou)', 'Folles', 'Apposé à <i>Lina et Jade</i> : féminin pluriel.'],
+          ['<i>Ce sont elles qui ___ raison.</i> (avoir)', 'ont', '<i>qui</i> = elles.', 'accord-sv'],
+          ['<i>Une troupe d’acteurs, ___ par le public, saluait.</i> (acclamé)', 'acclamée|acclamés', 'Accord avec <i>troupe</i> (ou avec <i>acteurs</i> selon le sens).'],
+          ['<i>Toi et moi, qui ___ amis, nous nous comprenons.</i> (être)', 'sommes', '<i>Toi et moi</i> = <i>nous</i>.', 'accord-sv'],
+          ['<i>Les poèmes de Hugo, ___ en exil, sont célèbres.</i> (écrit)', 'écrits', 'Accord avec <i>les poèmes</i>.']
+        ] }
+    ]
+  },
+  '3-H1': {
+    c: [
+      { kind: 'choice', titre: 'Homophones experts', err: 'homo-rares',
+        items: [
+          ['<i>___ que soient tes raisons…</i>', 'Quelles', 'Accord avec <i>raisons</i>.', ['Quelles', 'Quelques']],
+          ['<i>Il m’a parlé ___ fois.</i> (rarement)', 'quelquefois', 'En un mot : parfois.', ['quelquefois', 'quelques fois']],
+          ['<i>J’ai ___ envie de dormir.</i>', 'davantage', 'En un mot : plus.', ['davantage', 'd’avantage']],
+          ['<i>Il ___ ses notes.</i> (relire)', 'relit', 'Verbe au présent.', ['relie', 'relit']],
+          ['<i>C’est une ___ urgente.</i>', 'affaire', 'Nom : <i>une affaire</i>.', ['affaire', 'à faire']]
+        ] },
+      { kind: 'choice', titre: 'Accent ou pas ?', err: 'homo-rares',
+        items: [
+          ['<i>Le fruit est ___.</i>', 'mûr', '<i>mûr</i> (adjectif) garde l’accent.', ['mur', 'mûr']],
+          ['<i>Il a ___ partir.</i>', 'dû', '<i>dû</i> participe de <i>devoir</i>.', ['du', 'dû']],
+          ['<i>Il a ___ ce qu’on lui disait.</i>', 'cru', '<i>croire</i> : <i>cru</i> ; <i>crû</i> vient de <i>croitre</i>.', ['cru', 'crû']],
+          ['<i>La rivière a ___ après l’orage.</i>', 'crû', '<i>croitre</i> : <i>crû</i>, avec accent pour le distinguer de <i>cru</i>.', ['cru', 'crû']]
+        ] }
+    ],
+    d: [
+      { kind: 'essai', titre: 'Remplacer pour choisir', consigne: 'Essaie les remplacements, puis choisis.', err: 'homo-rares',
+        items: [
+          { p: 'Il n’y a pas ___ à partir si tôt.', o: ['davantage', 'd’avantage'], r: 'd’avantage', essais: ['plus', 'de bénéfice'], x: '<i>Il n’y a pas de bénéfice</i> : <i>de</i> + <i>avantage</i>, en deux mots.' },
+          { p: 'C’est une ___ de famille.', o: ['affaire', 'à faire'], r: 'affaire', essais: ['une histoire', 'à terminer'], x: '<i>une histoire de famille</i> : le nom <i>affaire</i>.' },
+          { p: 'Tu auras ___ de temps demain.', o: ['davantage', 'd’avantage'], r: 'davantage', essais: ['plus', 'de bénéfice'], x: '<i>Tu auras plus de temps</i> : <i>davantage</i> en un mot.' },
+          { p: 'J’ai encore du travail ___.', o: ['affaire', 'à faire'], r: 'à faire', essais: ['une histoire', 'à terminer'], x: '<i>du travail à terminer</i> : <i>à faire</i>, préposition + verbe.' }
+        ] },
+      { kind: 'input', titre: 'Écrire juste', consigne: 'Écris le mot qui convient.', err: 'homo-rares',
+        items: [
+          ['<i>___ que tu fasses, fais-le bien.</i> (quoi que / quoique)', 'Quoi que', 'Quelle que soit la chose que.'],
+          ['<i>Elle sort ___ il pleuve.</i> (quoi que / quoique)', 'quoiqu’', 'Bien qu’il pleuve.'],
+          ['<i>Je l’ai vu ___.</i> (quelquefois / quelques fois)', 'quelquefois', 'Parfois.'],
+          ['<i>___ que soient leurs efforts…</i> (quel que)', 'Quels', 'Accord avec <i>efforts</i>.'],
+          ['<i>Ce sont des pommes ___.</i> (mûr)', 'mûres', '<i>mûr</i> garde l’accent au féminin et au pluriel.']
+        ] }
+    ]
+  },
+  '3-H2': {
+    c: [
+      { kind: 'choice', titre: 'Consonnes doubles', err: 'dictee',
+        items: [
+          ['<i>un a___artement</i>', 'appartement', 'Après <i>a-</i>, on double souvent la consonne.', ['apartement', 'appartement']],
+          ['<i>a___ercevoir</i>', 'apercevoir', 'Exception : un seul <i>p</i>.', ['apercevoir', 'appercevoir']],
+          ['<i>une a___ivée</i>', 'arrivée', 'Deux <i>r</i>.', ['arivée', 'arrivée']],
+          ['<i>a___uler</i>', 'annuler', 'Deux <i>n</i> (de <i>nul</i>).', ['anuler', 'annuler']],
+          ['<i>un i___ot</i> (une petite ile)', 'ilot', 'Un seul <i>l</i>, et pas d’accent depuis 1990.', ['ilot', 'illot']]
+        ] },
+      { kind: 'choice', titre: 'Rectifications de 1990', consigne: 'Les deux graphies sont admises ; au Laboratoire, on applique les rectifications.', err: 'dictee',
+        items: [
+          ['Graphie rectifiée :', 'ognon', 'Le <i>i</i> qui ne se prononce pas disparait.', ['oignon', 'ognon']],
+          ['Graphie rectifiée :', 'nénufar', 'Le <i>ph</i>, qui ne vient pas du grec, devient <i>f</i>.', ['nénuphar', 'nénufar']],
+          ['Graphie rectifiée :', 'vingt-et-un', 'Traits d’union dans tous les numéraux composés.', ['vingt et un', 'vingt-et-un']],
+          ['Graphie rectifiée :', 'portemonnaie', 'Soudure.', ['porte-monnaie', 'portemonnaie']]
+        ] }
+    ],
+    d: [
+      { kind: 'input', titre: 'Mini-dictée', consigne: 'Écris le mot entier.', err: 'dictee',
+        items: [
+          ['<i>Elle a ___ la porte.</i> (refermer, participe)', 'refermé', 'Participe en <i>-é</i>.'],
+          ['<i>Un ___ de vin.</i> (récipient de verre, avec un <i>c</i>)', 'flacon', 'Un seul <i>c</i>.'],
+          ['<i>Une ___ de neige.</i> (masse amassée)', 'congère', 'Accent grave.'],
+          ['<i>Les ___ de la ville.</i> (bas-côtés, avec deux <i>t</i>)', 'trottoirs', 'Deux <i>t</i>.'],
+          ['<i>Il a ___ ses forces.</i> (rassembler, passé composé)', 'rassemblé', 'Deux <i>s</i>.']
+        ] },
+      { kind: 'etiqueter', titre: 'D’où vient la lettre ?', consigne: 'Glisse sur chaque mot l’explication de sa lettre difficile.', labels: ['famille de mots', 'origine grecque', 'origine latine'], err: 'ortho-etym',
+        items: [
+          { g: ['galop (galoper)', 'rhume', 'doigt'], l: ['famille de mots', 'origine grecque', 'origine latine'], x: '<i>rhume</i> : grec <i>rheuma</i> ; <i>doigt</i> : latin <i>digitus</i>.' },
+          { g: ['psychologie', 'temps', 'bavard (bavarder)'], l: ['origine grecque', 'origine latine', 'famille de mots'], x: '<i>psukhê</i> : l’âme ; <i>tempus</i> : le temps.' },
+          { g: ['sculpture', 'drapeau (draper)', 'chorale'], l: ['origine latine', 'famille de mots', 'origine grecque'], x: '<i>sculpere</i> : tailler ; <i>khoros</i> : la danse et le chant.' }
+        ] }
+    ]
+  },
+  '3-L1': {
+    c: [
+      { kind: 'choice', titre: 'Le sens de la racine', err: 'etymologie',
+        items: [
+          ['<i>misanthrope</i> : <i>mis-</i> veut dire…', 'qui déteste', 'Grec <i>misein</i>, haïr.', ['qui déteste', 'qui aime']],
+          ['<i>chronique, synchrone</i> : <i>chron</i> veut dire…', 'le temps', 'Grec <i>khronos</i>.', ['le temps', 'la couleur']],
+          ['<i>bénévole, bienveillant</i> : <i>bene</i> veut dire…', 'bien', 'Latin <i>bene</i>.', ['bien', 'mal']],
+          ['<i>homicide, insecticide</i> : <i>-cide</i> veut dire…', 'qui tue', 'Latin <i>caedere</i>, tuer.', ['qui tue', 'qui soigne']],
+          ['<i>démocratie</i> : <i>dêmos</i> veut dire…', 'le peuple', 'Le pouvoir du peuple.', ['le peuple', 'le roi']]
+        ] },
+      { kind: 'choice', titre: 'D’où vient ce mot ?', options: ['anglais', 'arabe', 'italien', 'espagnol'], err: 'emprunts',
+        items: [
+          ['<i>chiffre</i>', 'arabe', 'De l’arabe <i>sifr</i>, le zéro.'],
+          ['<i>balcon</i>', 'italien', 'De l’italien <i>balcone</i>.'],
+          ['<i>moustique</i>', 'espagnol', 'De l’espagnol <i>mosquito</i>.'],
+          ['<i>tunnel</i>', 'anglais', 'Emprunt à l’anglais (lui-même venu du français <i>tonnelle</i>).']
+        ] }
+    ],
+    d: [
+      { kind: 'etiqueter', titre: 'Mots savants', consigne: 'Glisse sur chaque mot son sens.', labels: ['qui aime', 'qui déteste', 'qui craint', 'qui mange'], err: 'etymologie',
+        items: [
+          { g: ['cinéphile', 'misogyne', 'claustrophobe', 'carnivore'], l: ['qui aime', 'qui déteste', 'qui craint', 'qui mange'], x: '<i>-phile</i>, <i>mis-</i>, <i>-phobe</i>, <i>-vore</i>.' },
+          { g: ['arachnophobe', 'insectivore', 'francophile', 'misanthrope'], l: ['qui craint', 'qui mange', 'qui aime', 'qui déteste'], x: '<i>arachnê</i> : l’araignée.' }
+        ] },
+      { kind: 'input', titre: 'Former le mot savant', consigne: 'Écris le mot formé avec les racines données.', err: 'etymologie',
+        items: [
+          ['<i>poly</i> (plusieurs) + <i>théisme</i> (croyance en des dieux) : ___', 'polythéisme', 'Croire en plusieurs dieux.'],
+          ['<i>mono</i> (un seul) + <i>logue</i> (parole) : ___', 'monologue', 'Un seul personnage parle.'],
+          ['<i>a</i> (sans) + <i>nonyme</i> (nom) : ___', 'anonyme', 'Sans nom.'],
+          ['<i>xéno</i> (étranger) + <i>phobie</i> (peur, rejet) : ___', 'xénophobie', 'Le rejet des étrangers.']
+        ] },
+      { kind: 'choice', titre: 'Emprunts', options: ['anglais', 'arabe', 'italien', 'espagnol'], err: 'emprunts',
+        items: [
+          ['<i>sucre</i>', 'arabe', 'De l’arabe <i>sukkar</i>.'],
+          ['<i>concert</i>', 'italien', 'De l’italien <i>concerto</i>.']
+        ] }
+    ]
+  },
+  '3-L2': {
+    c: [
+      { kind: 'choice', titre: 'Sens propre ou sens figuré ?', options: ['sens propre', 'sens figuré'], err: 'sens-figure',
+        items: [
+          ['<i>Il a un cœur de pierre.</i>', 'sens figuré', 'Il est insensible.'],
+          ['<i>Le cœur bat vite.</i>', 'sens propre', 'L’organe.'],
+          ['<i>Une vague de chaleur.</i>', 'sens figuré', 'Une arrivée massive de chaleur.'],
+          ['<i>Une vague se brise sur la plage.</i>', 'sens propre', 'La vague de la mer.'],
+          ['<i>Il dévore ce roman.</i>', 'sens figuré', 'Il le lit avec avidité.']
+        ] },
+      { kind: 'choice', titre: 'Que veut dire l’expression ?', err: 'expressions',
+        items: [
+          ['<i>Être sur la sellette</i>', 'être mis en cause', 'La sellette était le siège de l’accusé.', ['être mis en cause', 'être à cheval']],
+          ['<i>Tirer les marrons du feu</i>', 'profiter du travail d’un autre', 'D’après une fable de La Fontaine.', ['profiter du travail d’un autre', 'cuisiner']],
+          ['<i>Avoir maille à partir avec quelqu’un</i>', 'avoir un conflit avec lui', 'La maille était une petite monnaie difficile à partager.', ['avoir un conflit avec lui', 'tricoter ensemble']],
+          ['<i>Faire chou blanc</i>', 'échouer', 'Ne rien obtenir.', ['échouer', 'réussir']]
+        ] }
+    ],
+    d: [
+      { kind: 'etiqueter', titre: 'Classer les emplois', consigne: 'Glisse sur chaque phrase le sens du mot en gras.', labels: ['sens propre', 'sens figuré'], err: 'sens-figure',
+        items: [
+          { g: ['Il a <b>brulé</b> le papier.', 'Elle <b>brule</b> d’impatience.', 'Il a <b>glacé</b> l’assistance.', 'Le lac est <b>glacé</b>.'], l: ['sens propre', 'sens figuré', 'sens figuré', 'sens propre'], x: '<i>bruler d’impatience</i>, <i>glacer l’assistance</i> : sens figurés.' },
+          { g: ['Une <b>tempête</b> d’applaudissements.', 'La <b>tempête</b> a arraché le toit.', 'Il a <b>noyé</b> le poisson.', 'Le marin s’est <b>noyé</b>.'], l: ['sens figuré', 'sens propre', 'sens figuré', 'sens propre'], x: '<i>noyer le poisson</i> : embrouiller une affaire.' }
+        ] },
+      { kind: 'input', titre: 'Compléter l’expression', consigne: 'Écris le mot qui manque.', err: 'expressions',
+        items: [
+          ['<i>Se faire tirer l’___.</i> (se faire prier)', 'oreille', 'Hésiter avant d’accepter.'],
+          ['<i>Mettre de l’eau dans son ___.</i> (modérer ses exigences)', 'vin', 'Devenir plus conciliant.'],
+          ['<i>Avoir le ___ sur la main.</i> (être généreux)', 'cœur', 'Être généreux.'],
+          ['<i>Ne pas être dans son ___.</i> (ne pas se sentir bien)', 'assiette', 'Se sentir mal.'],
+          ['<i>Jeter l’éponge.</i> Cela veut dire : ___', 'abandonner', 'Image venue de la boxe.']
+        ] },
+      { kind: 'choice', titre: 'Sens figuré en contexte', err: 'sens-figure',
+        items: [
+          ['<i>Les prix ont flambé.</i> <i>flamber</i> veut dire ici…', 'augmenter brutalement', 'Sens figuré, image du feu qui prend.', ['augmenter brutalement', 'bruler']]
+        ] }
+    ]
+  },
+  '3-L3': {
+    c: [
+      { kind: 'choice', titre: 'Quelle figure ?', options: ['métaphore', 'oxymore', 'chiasme', 'euphémisme', 'hyperbole', 'anaphore'], err: 'figures',
+        items: [
+          ['<i>Il faut manger pour vivre et non pas vivre pour manger.</i> (Molière)', 'chiasme', 'Structure en miroir : manger / vivre / vivre / manger.'],
+          ['<i>Il nous a quittés.</i> (pour <i>il est mort</i>)', 'euphémisme', 'On adoucit une réalité pénible.'],
+          ['<i>Un merveilleux malheur</i>', 'oxymore', 'Deux termes contraires.'],
+          ['<i>Mon cœur est un violon.</i>', 'métaphore', 'Rapprochement sans outil.'],
+          ['<i>J’accuse… J’accuse… J’accuse…</i> (Zola)', 'anaphore', 'Répétition en début de phrase.']
+        ] },
+      { kind: 'choice', titre: 'Niveaux de langue et variation', err: 'niveaux-langue',
+        items: [
+          ['<i>Je me casse.</i> Niveau :', 'familier', 'Courant : <i>je m’en vais</i>.', ['familier', 'courant', 'soutenu']],
+          ['<i>Je prends congé.</i> Niveau :', 'soutenu', 'Courant : <i>je m’en vais</i>.', ['familier', 'courant', 'soutenu']],
+          ['<i>Une dépanneuse</i> se dit <i>une remorqueuse</i> au…', 'Québec', 'Variation géographique.', ['Québec', 'Cameroun'], 'variation'],
+          ['<i>Ambiancer</i> (mettre de l’ambiance) est un mot employé…', 'en Afrique francophone', 'Variation géographique.', ['en Afrique francophone', 'au Moyen Âge'], 'variation']
+        ] }
+    ],
+    d: [
+      { kind: 'transformer', titre: 'Changer de registre', consigne: 'Récris la phrase en langage soutenu.', err: 'niveaux-langue',
+        items: [
+          { p: '<i>Il a filé sans rien dire.</i>', r: 'Il est parti sans rien dire.|Il s’en est allé sans mot dire.|Il s’est éclipsé sans rien dire.', x: '<i>filer</i> est familier.' },
+          { p: '<i>C’est pas mes oignons.</i>', r: 'Cela ne me regarde pas.|Ce ne sont pas mes affaires.', x: 'Expression familière.' },
+          { p: '<i>Il a pigé.</i>', r: 'Il a compris.', x: '<i>piger</i> : familier.' }
+        ] },
+      { kind: 'choice', titre: 'Analyser l’effet', err: 'figures',
+        items: [
+          ['<i>Le silence assourdissant de la salle</i> : l’oxymore souligne…', 'la force du silence', 'Un silence si intense qu’il semble faire du bruit.', ['la force du silence', 'le bruit de la salle']],
+          ['<i>Il n’est pas bête.</i> (pour dire qu’il est intelligent) :', 'une litote', 'Dire moins pour suggérer plus.', ['une litote', 'un euphémisme']],
+          ['<i>Les non-voyants</i> (pour <i>les aveugles</i>) :', 'un euphémisme', 'On atténue un terme jugé dur.', ['une litote', 'un euphémisme']],
+          ['<i>Paris est une fête.</i> (Hemingway)', 'une métaphore', 'Paris est assimilé à une fête, sans outil.', ['une comparaison', 'une métaphore']],
+          ['<i>Le fleuve se tord dans la plaine.</i>', 'une personnification', 'Le fleuve agit comme un être vivant.', ['une personnification', 'une hyperbole']]
+        ] }
+    ]
+  }
+};
+
+;
+/* Approfondissement 4ᵉ — écrit pour le Laboratoire de la langue (M. Lesage, enseignant de français), licence CC BY-NC-SA 4.0.
+   Lot 5 (23/11/2026) : deux séries par étape du parcours 4ᵉ (c : consolidation, d : défi). Format : voir parcours2.js. */
+window.APPRO = window.APPRO || {};
+APPRO.n4 = {
+  '4-P1': {
+    c: [
+      { kind: 'choice', titre: 'Accorder avec le sujet éloigné', consigne: 'Retrouve le sujet avec <i>c’est… qui</i>, même s’il est loin du verbe.', err: 'sv-eloigne',
+        items: [
+          ['<i>Les joueurs de l’équipe, après une longue saison, ___ fatigués.</i>', 'sont', 'Sujet <i>les joueurs</i> : pluriel.', ['est', 'sont']],
+          ['<i>L’odeur des croissants chauds ___ toute la rue.</i>', 'envahit', 'C’est <i>l’odeur</i> qui envahit : singulier.', ['envahit', 'envahissent']],
+          ['<i>Dans la vitrine ___ des bijoux anciens.</i>', 'brillent', 'Sujet inversé <i>des bijoux</i>.', ['brille', 'brillent']],
+          ['<i>Les lettres que m’écrit ma grand-mère ___ très longues.</i>', 'sont', 'Sujet <i>les lettres</i> ; <i>ma grand-mère</i> est sujet de <i>écrit</i>.', ['est', 'sont']],
+          ['<i>Toi et moi ___ les meilleurs amis.</i>', 'sommes', '<i>Toi et moi</i> = <i>nous</i>.', ['sont', 'sommes'], 'accord-sv']
+        ] },
+      { kind: 'choice', titre: 'Sujet apparent, sujet réel', consigne: 'Dans une tournure impersonnelle, <i>il</i> ne représente rien : c’est le sujet apparent.', err: 'impersonnel',
+        items: [
+          ['<i>Il manque deux élèves.</i> Le sujet réel est…', 'deux élèves', 'On peut dire <i>deux élèves manquent</i>.', ['il', 'deux élèves']],
+          ['<i>Il pleut.</i> Ce verbe est…', 'toujours impersonnel', '<i>pleuvoir</i> ne se conjugue qu’avec <i>il</i> impersonnel.', ['toujours impersonnel', 'employé à la forme impersonnelle']],
+          ['<i>Il arrive un malheur.</i> Ce verbe est…', 'employé à la forme impersonnelle', '<i>arriver</i> peut aussi avoir un sujet : <i>un malheur arrive</i>.', ['toujours impersonnel', 'employé à la forme impersonnelle']],
+          ['<i>Il est arrivé hier, ton cousin.</i> Ici, <i>il</i> est…', 'un pronom personnel', '<i>il</i> représente <i>ton cousin</i> : ce n’est pas un <i>il</i> impersonnel.', ['un pronom personnel', 'un sujet apparent']]
+        ] }
+    ],
+    d: [
+      { kind: 'transformer', titre: 'Passer à la forme impersonnelle', consigne: 'Récris la phrase avec <i>il</i> impersonnel.', err: 'impersonnel',
+        items: [
+          { p: '<i>Un accident est arrivé.</i>', r: 'Il est arrivé un accident.', x: 'Sujet apparent <i>il</i> ; sujet réel <i>un accident</i>.' },
+          { p: '<i>Trois places restent.</i>', r: 'Il reste trois places.', x: 'Le verbe impersonnel reste au singulier.' },
+          { p: '<i>De drôles d’histoires se passent ici.</i>', r: 'Il se passe de drôles d’histoires ici.', x: '<i>il se passe</i> : singulier, même avec un sujet réel pluriel.' }
+        ] },
+      { kind: 'input', titre: 'Accords difficiles', consigne: 'Écris le verbe au présent.', err: 'sv-eloigne',
+        items: [
+          ['<i>Il ___ des orages.</i> (se préparer)', 'se prépare', 'Verbe impersonnel : singulier.', 'impersonnel'],
+          ['<i>Le groupe de touristes ___ le musée.</i> (visiter)', 'visite', 'Le noyau du sujet est <i>le groupe</i>.'],
+          ['<i>Ce sont eux qui ___ gagné.</i> (avoir)', 'ont', '<i>qui</i> reprend <i>eux</i> : pluriel.'],
+          ['<i>Les conseils que nous donne le professeur ___ utiles.</i> (être)', 'sont', 'Sujet <i>les conseils</i>.'],
+          ['<i>Ni la pluie ni le vent ne nous ___.</i> (arrêter)', 'arrêtent', '<i>ni… ni</i> : pluriel.', 'accord-sv']
+        ] }
+    ]
+  },
+  '4-P2': {
+    c: [
+      { kind: 'choice', titre: 'Cause ou conséquence ?', options: ['cause', 'conséquence'], err: 'cc-type',
+        items: [
+          ['<i>Il a tant couru <b>qu’il est épuisé</b>.</i>', 'conséquence', '<i>si bien que, tant… que</i> : conséquence.'],
+          ['<i>Il est épuisé <b>parce qu’il a couru</b>.</i>', 'cause', '<i>parce que</i> : cause.'],
+          ['<i>Il pleuvait, <b>si bien que</b> le match fut annulé.</i>', 'conséquence', '<i>si bien que</i> : conséquence.'],
+          ['<i><b>Faute de temps</b>, il n’a pas fini.</i>', 'cause', '<i>faute de</i> : cause (le manque de temps).'],
+          ['<i>Il fait trop froid <b>pour sortir</b>.</i>', 'conséquence', '<i>trop… pour</i> : la conséquence (on ne peut pas sortir).']
+        ] },
+      { kind: 'choice', titre: 'Quel connecteur ?', err: 'connecteurs',
+        items: [
+          ['<i>Il était malade ; ___, il est venu.</i>', 'pourtant', 'Opposition : il est venu malgré la maladie.', ['pourtant', 'donc']],
+          ['<i>Il pleut ; ___, prends ton parapluie.</i>', 'donc', 'Conséquence.', ['pourtant', 'donc']],
+          ['<i>___, lis la consigne ; ensuite, réponds.</i>', 'D’abord', 'Chronologie.', ['D’abord', 'Cependant']],
+          ['<i>J’aime le sport, ___ le tennis.</i>', 'notamment', 'Un exemple.', ['notamment', 'néanmoins']]
+        ] }
+    ],
+    d: [
+      { kind: 'transformer', titre: 'Exprimer la conséquence', consigne: 'Relie les deux phrases avec <i>si bien que</i>.', err: 'cc-type',
+        items: [
+          { p: '<i>La neige est tombée toute la nuit. Les routes sont bloquées.</i>', r: 'La neige est tombée toute la nuit, si bien que les routes sont bloquées.', x: 'La seconde action est la conséquence de la première.' },
+          { p: '<i>Il a révisé sérieusement. Il a réussi.</i>', r: 'Il a révisé sérieusement, si bien qu’il a réussi.', x: '<i>que</i> s’élide devant <i>il</i>.' },
+          { p: '<i>Le bus était en retard. Nous avons raté le film.</i>', r: 'Le bus était en retard, si bien que nous avons raté le film.', x: 'Conséquence.' }
+        ] },
+      { kind: 'etiqueter', titre: 'Le rôle des connecteurs', consigne: 'Glisse sur chaque connecteur le rapport logique qu’il exprime.', labels: ['cause', 'conséquence', 'opposition', 'addition'], err: 'connecteurs',
+        items: [
+          { g: ['car', 'c’est pourquoi', 'cependant', 'de plus'], l: ['cause', 'conséquence', 'opposition', 'addition'], x: '<i>car</i> explique ; <i>c’est pourquoi</i> tire la conséquence.' },
+          { g: ['en outre', 'puisque', 'or', 'par conséquent'], l: ['addition', 'cause', 'opposition', 'conséquence'], x: '<i>or</i> introduit un élément qui s’oppose ou relance le raisonnement.' }
+        ] },
+      { kind: 'choice', titre: 'Le connecteur juste', err: 'connecteurs',
+        items: [
+          ['<i>Les animaux sauvages sont menacés ; ___, il faut protéger leur habitat.</i>', 'c’est pourquoi', 'Conséquence.', ['c’est pourquoi', 'en effet']],
+          ['<i>Il faut protéger leur habitat ; ___, il disparait.</i>', 'en effet', '<i>en effet</i> introduit une explication.', ['c’est pourquoi', 'en effet']],
+          ['<i>Le film était long ; ___, personne ne s’est ennuyé.</i>', 'toutefois', 'Opposition : malgré la longueur.', ['toutefois', 'ainsi']]
+        ] }
+    ]
+  },
+  '4-P3': {
+    c: [
+      { kind: 'choice', titre: 'Relative ou complétive ?', consigne: 'La relative complète un nom (son antécédent) ; la complétive complète un verbe.', options: ['relative', 'complétive'], err: 'completive',
+        items: [
+          ['<i>Je sais <b>que tu mens</b>.</i>', 'complétive', 'Elle complète le verbe <i>sais</i> : <i>je le sais</i>.'],
+          ['<i>Le livre <b>que tu lis</b> est passionnant.</i>', 'relative', 'Elle complète le nom <i>livre</i>.', null, 'relative'],
+          ['<i>Il espère <b>que tu viendras</b>.</i>', 'complétive', 'COD du verbe <i>espère</i>.'],
+          ['<i>L’idée <b>que tu proposes</b> me plait.</i>', 'relative', '<i>que</i> remplace <i>l’idée</i> : tu proposes l’idée.', null, 'relative'],
+          ['<i>Je crois <b>qu’il fera beau</b>.</i>', 'complétive', 'Elle complète <i>crois</i>.']
+        ] },
+      { kind: 'choice', titre: 'L’interrogative indirecte', err: 'interro-indirecte',
+        items: [
+          ['<i>Dis-moi ___ tu pars.</i> (quand ?)', 'quand', 'Le mot interrogatif reste : <i>quand</i>.', ['quand', 'quand est-ce que']],
+          ['<i>Je me demande ___ il veut.</i> (Que veut-il ?)', 'ce qu’', '<i>que</i> devient <i>ce que</i>.', ['qu’est-ce qu’', 'ce qu’']],
+          ['<i>Il demande ___ tu viens.</i> (Viens-tu ?)', 'si', 'Une question fermée devient <i>si</i>.', ['si', 'est-ce que']],
+          ['Dans une interrogative indirecte, la phrase se termine par…', 'un point', 'Il n’y a plus de point d’interrogation.', ['un point', 'un point d’interrogation']]
+        ] }
+    ],
+    d: [
+      { kind: 'transformer', titre: 'Poser la question indirectement', consigne: 'Récris la question au discours indirect, après <i>Je me demande</i>.', err: 'interro-indirecte',
+        items: [
+          { p: '<i>Où est-il allé ?</i>', r: 'Je me demande où il est allé.', x: 'Pas d’inversion ni de point d’interrogation.' },
+          { p: '<i>Qu’est-ce qui se passe ?</i>', r: 'Je me demande ce qui se passe.', x: '<i>qu’est-ce qui</i> devient <i>ce qui</i>.' },
+          { p: '<i>Va-t-il pleuvoir ?</i>', r: 'Je me demande s’il va pleuvoir.', x: 'Question fermée : <i>si</i>, élidé en <i>s’</i> devant <i>il</i>.' },
+          { p: '<i>Pourquoi riez-vous ?</i>', r: 'Je me demande pourquoi vous riez.', x: 'Le sujet revient devant le verbe.' }
+        ] },
+      { kind: 'choice', titre: 'Quelle subordonnée ?', options: ['relative', 'complétive', 'interrogative indirecte'], err: 'completive',
+        items: [
+          ['<i>Je ne sais pas <b>qui a téléphoné</b>.</i>', 'interrogative indirecte', 'Question : <i>Qui a téléphoné ?</i>', null, 'interro-indirecte'],
+          ['<i>Le garçon <b>qui a téléphoné</b> est mon frère.</i>', 'relative', '<i>qui</i> a pour antécédent <i>le garçon</i>.', null, 'relative'],
+          ['<i>Elle affirme <b>qu’elle a raison</b>.</i>', 'complétive', 'Conjonction <i>que</i> sans antécédent.'],
+          ['<i>Explique-moi <b>comment tu as fait</b>.</i>', 'interrogative indirecte', 'Question : <i>Comment as-tu fait ?</i>', null, 'interro-indirecte']
+        ] }
+    ]
+  },
+  '4-P4': {
+    c: [
+      { kind: 'choice', titre: 'La concordance des temps', consigne: 'Si le verbe introducteur est au passé, le présent devient imparfait, le passé composé devient plus-que-parfait, le futur devient conditionnel.', err: 'discours-indirect',
+        items: [
+          ['<i>« Je suis prêt. »</i> → <i>Il a dit qu’il ___ prêt.</i>', 'était', 'Présent → imparfait.', ['est', 'était']],
+          ['<i>« J’ai fini. »</i> → <i>Elle a dit qu’elle ___ fini.</i>', 'avait', 'Passé composé → plus-que-parfait.', ['a', 'avait']],
+          ['<i>« Je viendrai. »</i> → <i>Il a promis qu’il ___.</i>', 'viendrait', 'Futur → conditionnel présent.', ['viendra', 'viendrait']],
+          ['<i>« Nous partons demain. »</i> → <i>Ils ont dit qu’ils partaient ___.</i>', 'le lendemain', '<i>demain</i> → <i>le lendemain</i>.', ['demain', 'le lendemain']],
+          ['<i>« Je suis prêt. »</i> → <i>Il dit qu’il ___ prêt.</i>', 'est', 'Verbe introducteur au présent : pas de changement de temps.', ['est', 'était']]
+        ] },
+      { kind: 'choice', titre: 'Direct ou indirect ?', options: ['discours direct', 'discours indirect'], err: 'discours-indirect',
+        items: [
+          ['<i>Il a déclaré : « Je refuse. »</i>', 'discours direct', 'Guillemets, paroles exactes.'],
+          ['<i>Il a déclaré qu’il refusait.</i>', 'discours indirect', 'Subordonnée complétive, pas de guillemets.'],
+          ['<i>Elle m’a demandé si j’avais faim.</i>', 'discours indirect', 'Interrogative indirecte.']
+        ] }
+    ],
+    d: [
+      { kind: 'transformer', titre: 'Rapporter au passé', consigne: 'Récris au discours indirect, en commençant par le verbe introducteur donné.', err: 'discours-indirect',
+        items: [
+          { p: '<i>« Je pars ce soir », a dit Léo.</i> → <i>Léo a dit…</i>', r: 'Léo a dit qu’il partait ce soir-là.', x: 'Présent → imparfait ; <i>ce soir</i> → <i>ce soir-là</i>.' },
+          { p: '<i>« J’ai perdu mes clés », a dit Inès.</i> → <i>Inès a dit…</i>', r: 'Inès a dit qu’elle avait perdu ses clés.', x: 'Passé composé → plus-que-parfait ; <i>mes</i> → <i>ses</i>.' },
+          { p: '<i>« Tu réussiras », m’a dit ma mère.</i> → <i>Ma mère m’a dit…</i>', r: 'Ma mère m’a dit que je réussirais.', x: 'Futur → conditionnel ; <i>tu</i> → <i>je</i>.' }
+        ] },
+      { kind: 'transformer', titre: 'Rapporter une question ou un ordre', consigne: 'Récris au discours indirect.', err: 'interro-indirecte',
+        items: [
+          { p: '<i>« As-tu faim ? » m’a-t-il demandé.</i> → <i>Il m’a demandé…</i>', r: 'Il m’a demandé si j’avais faim.', x: 'Question fermée : <i>si</i> ; présent → imparfait.' },
+          { p: '<i>« Que veux-tu ? » m’a-t-elle demandé.</i> → <i>Elle m’a demandé…</i>', r: 'Elle m’a demandé ce que je voulais.', x: '<i>que</i> → <i>ce que</i>.' },
+          { p: '<i>« Fermez la porte ! » a ordonné le directeur.</i> → <i>Le directeur a ordonné…</i>', r: 'Le directeur a ordonné de fermer la porte.|Le directeur a ordonné qu’on ferme la porte.', x: 'L’impératif devient <i>de</i> + infinitif.', err: 'discours-indirect' }
+        ] },
+      { kind: 'choice', titre: 'Le bon indicateur de temps', err: 'discours-indirect',
+        items: [
+          ['<i>« Je suis venu hier. »</i> → <i>Il a dit qu’il était venu ___.</i>', 'la veille', '<i>hier</i> → <i>la veille</i>.', ['hier', 'la veille']],
+          ['<i>« Je reste ici. »</i> → <i>Il a dit qu’il restait ___.</i>', 'là', '<i>ici</i> → <i>là</i>.', ['ici', 'là']]
+        ] }
+    ]
+  },
+  '4-V1': {
+    c: [
+      { kind: 'choice', titre: 'Conditionnel passé ou subjonctif passé ?', options: ['conditionnel passé', 'subjonctif passé'], err: 'cond-passe',
+        items: [
+          ['<i>J’aurais aimé venir.</i>', 'conditionnel passé', 'Auxiliaire au conditionnel : <i>aurais</i>.'],
+          ['<i>Il faut que tu aies fini à midi.</i>', 'subjonctif passé', 'Auxiliaire au subjonctif : <i>aies</i>.'],
+          ['<i>Nous serions partis plus tôt.</i>', 'conditionnel passé', '<i>serions</i> : conditionnel.'],
+          ['<i>Je doute qu’elle soit arrivée.</i>', 'subjonctif passé', '<i>soit</i> : subjonctif.']
+        ] },
+      { kind: 'choice', titre: 'Infinitif, participe ou gérondif ?', options: ['infinitif', 'participe présent', 'gérondif'], err: 'modes-impersonnels',
+        items: [
+          ['<i>Il travaille <b>en chantant</b>.</i>', 'gérondif', '<i>en</i> + participe présent.'],
+          ['<i><b>Voyant</b> la pluie, il resta chez lui.</i>', 'participe présent', 'Sans <i>en</i> : participe présent.'],
+          ['<i>Il veut <b>partir</b>.</i>', 'infinitif', 'Forme en <i>-ir</i>, non conjuguée.'],
+          ['<i>Les enfants, <b>riant</b> aux éclats, sortirent.</i>', 'participe présent', 'Participe présent, invariable.'],
+          ['<i><b>En arrivant</b>, salue tout le monde.</i>', 'gérondif', '<i>en arrivant</i> : gérondif.']
+        ] }
+    ],
+    d: [
+      { kind: 'input', titre: 'Conjuguer aux temps composés', consigne: 'Écris l’auxiliaire et le participe passé.', err: 'cond-passe',
+        items: [
+          ['<i>Si j’avais su, je ___ plus tôt.</i> (venir, conditionnel passé)', 'serais venu|serais venue', 'Auxiliaire <i>être</i> au conditionnel.'],
+          ['<i>Vous ___ ce film.</i> (aimer, conditionnel passé)', 'auriez aimé', '<i>auriez</i> + <i>aimé</i>.'],
+          ['<i>Je suis content qu’il ___.</i> (réussir, subjonctif passé)', 'ait réussi', '<i>ait</i> + <i>réussi</i>.', 'subj-forme'],
+          ['<i>Il faut que nous ___ avant la nuit.</i> (rentrer, subjonctif passé)', 'soyons rentrés|soyons rentrées', '<i>soyons</i> + participe accordé.', 'pp-etre']
+        ] },
+      { kind: 'transformer', titre: 'Remplacer par un gérondif', consigne: 'Récris la phrase en remplaçant la subordonnée soulignée par un gérondif.', err: 'modes-impersonnels',
+        items: [
+          { p: '<i><u>Pendant qu’il marchait</u>, il sifflait.</i>', r: 'En marchant, il sifflait.|Il sifflait en marchant.', x: 'Même sujet : le gérondif exprime la simultanéité.' },
+          { p: '<i>Tu progresseras <u>si tu t’entraines</u>.</i>', r: 'Tu progresseras en t’entrainant.', x: 'Le gérondif peut exprimer une condition.' },
+          { p: '<i><u>Quand elle a ouvert la porte</u>, elle a vu le chat.</i>', r: 'En ouvrant la porte, elle a vu le chat.', x: 'Gérondif : <i>en ouvrant</i>.' },
+          { p: '<i>Il s’est blessé <u>parce qu’il est tombé</u>.</i>', r: 'Il s’est blessé en tombant.', x: 'Ici, le gérondif exprime la cause.' }
+        ] },
+      { kind: 'choice', titre: 'Participe présent ou adjectif verbal ?', err: 'modes-impersonnels',
+        items: [
+          ['<i>des enfants ___ à leurs parents</i> (obéir)', 'obéissant', 'Suivi d’un complément : participe présent, invariable.', ['obéissant', 'obéissants']]
+        ] }
+    ]
+  },
+  '4-V2': {
+    c: [
+      { kind: 'choice', titre: 'Que dit le conditionnel ?', options: ['politesse', 'souhait', 'hypothèse', 'information incertaine'], err: 'emplois-modes',
+        items: [
+          ['<i>Pourriez-vous m’aider ?</i>', 'politesse', 'Le conditionnel adoucit la demande.'],
+          ['<i>J’aimerais voyager.</i>', 'souhait', 'Un désir.'],
+          ['<i>Si j’étais riche, j’achèterais une ile.</i>', 'hypothèse', 'Une condition imaginée.'],
+          ['<i>Selon la radio, l’accident aurait fait trois blessés.</i>', 'information incertaine', 'Le journaliste ne confirme pas.'],
+          ['<i>Je voudrais un croissant, s’il vous plait.</i>', 'politesse', 'Demande polie.']
+        ] },
+      { kind: 'choice', titre: 'Indicatif ou subjonctif ?', err: 'emplois-modes',
+        items: [
+          ['<i>Je suis sûr qu’il ___.</i> (venir)', 'viendra', 'Certitude : indicatif.', ['viendra', 'vienne']],
+          ['<i>Je doute qu’il ___.</i> (venir)', 'vienne', 'Doute : subjonctif.', ['viendra', 'vienne']],
+          ['<i>Bien qu’il ___ tard, il travaille.</i> (être)', 'soit', '<i>bien que</i> : subjonctif.', ['est', 'soit']],
+          ['<i>Après qu’il ___ parti, on a ri.</i> (être)', 'est', '<i>après que</i> : indicatif (l’action est réelle).', ['soit', 'est']]
+        ] }
+    ],
+    d: [
+      { kind: 'essai', titre: 'Futur ou conditionnel ?', consigne: 'Remplace <i>je</i> par <i>nous</i> : la phrase qui sonne juste te donne le temps.', err: 'cond-futur',
+        items: [
+          { p: 'Je savais que je ___ à temps.', o: ['finirai', 'finirais'], r: 'finirais', nous: 'Nous savions que nous ___ à temps.', on: ['finirons', 'finirions'], x: 'Futur dans le passé : conditionnel.' },
+          { p: 'Je sais que je ___ à temps.', o: ['finirai', 'finirais'], r: 'finirai', nous: 'Nous savons que nous ___ à temps.', on: ['finirons', 'finirions'], x: 'Avec <i>je sais</i> au présent : futur.' },
+          { p: 'Je ___ volontiers un café.', o: ['prendrai', 'prendrais'], r: 'prendrais', nous: 'Nous ___ volontiers un café.', on: ['prendrons', 'prendrions'], x: 'Politesse : conditionnel.' }
+        ] },
+      { kind: 'input', titre: 'Le mode qui convient', consigne: 'Écris le verbe au mode qui convient, au présent.', err: 'emplois-modes',
+        items: [
+          ['<i>Pour que tu ___, je parle lentement.</i> (comprendre)', 'comprennes', '<i>pour que</i> : subjonctif.'],
+          ['<i>Il pense que tu ___ raison.</i> (avoir)', 'as', 'Opinion affirmée : indicatif.'],
+          ['<i>Je veux que vous ___ attention.</i> (faire)', 'fassiez', 'Volonté : subjonctif.'],
+          ['<i>À ta place, je ___ prudent.</i> (être)', 'serais', 'Hypothèse : conditionnel.'],
+          ['<i>Il est possible qu’il ___.</i> (pleuvoir)', 'pleuve', 'Possibilité : subjonctif.']
+        ] }
+    ]
+  },
+  '4-V3': {
+    c: [
+      { kind: 'choice', titre: 'Action accomplie ou en cours ?', options: ['accomplie', 'en cours'], err: 'aspect',
+        items: [
+          ['<i>Il a terminé son travail.</i>', 'accomplie', 'Temps composé : l’action est achevée.'],
+          ['<i>Il est en train de travailler.</i>', 'en cours', '<i>être en train de</i> : l’action se déroule.'],
+          ['<i>Elle lisait quand le téléphone sonna.</i>', 'en cours', 'L’imparfait montre l’action en train de se dérouler.'],
+          ['<i>Quand il eut fini, il sortit.</i>', 'accomplie', 'Passé antérieur : action achevée.']
+        ] },
+      { kind: 'choice', titre: 'Le passif au bon temps', err: 'voix-passive',
+        items: [
+          ['<i>La lettre ___ par le facteur.</i> (passif, présent)', 'est apportée', 'Présent du passif : <i>est</i> + participe.', ['est apportée', 'a apporté']],
+          ['<i>La lettre ___ par le facteur.</i> (passif, passé composé)', 'a été apportée', 'Passé composé du passif : <i>a été</i> + participe.', ['a été apportée', 'était apportée']],
+          ['<i>La lettre ___ par le facteur.</i> (passif, futur)', 'sera apportée', 'Futur : <i>sera</i>.', ['sera apportée', 'a été apportée']],
+          ['<i>La lettre ___ par le facteur.</i> (passif, imparfait)', 'était apportée', 'Imparfait : <i>était</i>.', ['était apportée', 'fut apportée']],
+          ['<i>Le gâteau a été ___.</i> (manger)', 'mangé', 'Accord avec <i>le gâteau</i>.', ['mangé', 'mangée'], 'pp-etre']
+        ] }
+    ],
+    d: [
+      { kind: 'transformer', titre: 'Changer de voix', consigne: 'Récris à la voix active.', err: 'voix-passive',
+        items: [
+          { p: '<i>Le voleur a été arrêté par la police.</i>', r: 'La police a arrêté le voleur.', x: 'Le complément d’agent devient sujet ; même temps (passé composé).' },
+          { p: '<i>Les copies seront corrigées par le professeur.</i>', r: 'Le professeur corrigera les copies.', x: 'Futur.' },
+          { p: '<i>Ce tableau était admiré par tous.</i>', r: 'Tous admiraient ce tableau.', x: 'Imparfait.' }
+        ] },
+      { kind: 'etiqueter', titre: 'Les marques de l’aspect', consigne: 'Glisse sur chaque tournure l’aspect qu’elle exprime.', labels: ['action sur le point de commencer', 'action en cours', 'action qui vient de finir'], err: 'aspect',
+        items: [
+          { g: ['Il va partir.', 'Il est en train de partir.', 'Il vient de partir.'], l: ['action sur le point de commencer', 'action en cours', 'action qui vient de finir'], x: 'Les semi-auxiliaires <i>aller</i>, <i>être en train de</i>, <i>venir de</i> marquent l’aspect.' },
+          { g: ['Elle vient de lire la lettre.', 'Elle est sur le point de lire la lettre.', 'Elle est en train de lire la lettre.'], l: ['action qui vient de finir', 'action sur le point de commencer', 'action en cours'], x: '<i>être sur le point de</i> : l’action va commencer.' }
+        ] },
+      { kind: 'choice', titre: 'Passif ou passé composé avec être ?', options: ['voix passive', 'voix active'], err: 'voix-passive',
+        items: [
+          ['<i>Elle est tombée.</i>', 'voix active', '<i>tomber</i> se conjugue avec <i>être</i> : passé composé actif.'],
+          ['<i>Elle est soignée par un médecin.</i>', 'voix passive', 'Complément d’agent possible : passif.'],
+          ['<i>Ils sont sortis.</i>', 'voix active', 'Passé composé de <i>sortir</i>.']
+        ] }
+    ]
+  },
+  '4-G1': {
+    c: [
+      { kind: 'choice', titre: 'Repérer l’apposition', consigne: 'L’apposition est détachée par des virgules et désigne la même réalité que le nom.', err: 'apposition',
+        items: [
+          ['<i>Paris, capitale de la France, attire les touristes.</i> L’apposition est…', 'capitale de la France', 'Elle est détachée par des virgules et désigne Paris.', ['Paris', 'capitale de la France']],
+          ['<i>Fatigués, les randonneurs s’arrêtèrent.</i> L’apposition est…', 'fatigués', 'Adjectif détaché, il se rapporte à <i>les randonneurs</i>.', ['fatigués', 'les randonneurs']],
+          ['<i>Mon voisin, un ancien marin, raconte des histoires.</i> Elle se rapporte à…', 'mon voisin', 'Le voisin est un ancien marin.', ['mon voisin', 'des histoires']],
+          ['<i>La ville de Lyon est belle.</i> <i>de Lyon</i> est…', 'complément du nom', 'Pas de virgule : complément du nom, pas d’apposition.', ['une apposition', 'complément du nom']]
+        ] },
+      { kind: 'choice', titre: 'Comparatif ou superlatif ?', options: ['comparatif', 'superlatif'], err: 'degres-adj',
+        items: [
+          ['<i>Léa est plus grande que sa sœur.</i>', 'comparatif', 'On compare deux éléments.'],
+          ['<i>C’est le plus haut sommet d’Europe.</i>', 'superlatif', 'Le plus haut de tous.'],
+          ['<i>Ce film est aussi drôle que l’autre.</i>', 'comparatif', 'Comparatif d’égalité.'],
+          ['<i>Elle est très gentille.</i>', 'superlatif', 'Superlatif absolu : sans comparaison.'],
+          ['<i>Il est moins rapide que toi.</i>', 'comparatif', 'Comparatif d’infériorité.']
+        ] }
+    ],
+    d: [
+      { kind: 'transformer', titre: 'Ajouter une apposition', consigne: 'Fusionne les deux phrases : la seconde devient une apposition au sujet.', err: 'apposition',
+        items: [
+          { p: '<i>Victor Hugo a écrit <i>Les Misérables</i>. Victor Hugo est un grand poète.</i>', r: 'Victor Hugo, un grand poète, a écrit Les Misérables.|Victor Hugo, grand poète, a écrit Les Misérables.', x: 'L’apposition est détachée par deux virgules.' },
+          { p: '<i>Ma tante habite à Lille. Ma tante est infirmière.</i>', r: 'Ma tante, infirmière, habite à Lille.', x: 'Nom en apposition, sans déterminant.' },
+          { p: '<i>Le chien aboyait. Le chien était inquiet.</i>', r: 'Inquiet, le chien aboyait.|Le chien, inquiet, aboyait.', x: 'L’adjectif apposé peut être placé en tête.' }
+        ] },
+      { kind: 'input', titre: 'Formes particulières', consigne: 'Écris la forme correcte du comparatif ou du superlatif.', err: 'degres-adj',
+        items: [
+          ['<i>Ce gâteau est ___ que l’autre.</i> (bon, supériorité)', 'meilleur', 'On ne dit pas <i>plus bon</i>.'],
+          ['<i>C’est la ___ note de la classe.</i> (bon, superlatif)', 'meilleure', '<i>la meilleure</i>, accordée au féminin.'],
+          ['<i>Son état est ___ qu’hier.</i> (mauvais, supériorité)', 'pire|plus mauvais', '<i>pire</i> ou <i>plus mauvais</i>.'],
+          ['<i>Elles sont ___ rapides que nous.</i> (égalité)', 'aussi', 'Égalité : <i>aussi… que</i>.'],
+          ['<i>C’est le ___ grand des trois.</i> (infériorité, superlatif)', 'moins', '<i>le moins grand</i>.']
+        ] }
+    ]
+  },
+  '4-G2': {
+    c: [
+      { kind: 'choice', titre: 'Le bon pronom', err: 'pronoms-demo-poss',
+        items: [
+          ['<i>Mon vélo est rouge, ___ est bleu.</i> (à toi)', 'le tien', 'Pronom possessif, masculin singulier.', ['le tien', 'le tient']],
+          ['<i>Ces chaussures sont à moi ; ___ sont à Léa.</i>', 'celles-là', 'Pronom démonstratif, féminin pluriel.', ['celles-là', 'celle-là']],
+          ['<i>Nos parents et ___ se connaissent.</i> (à vous)', 'les vôtres', '<i>vôtre</i> pronom prend l’accent circonflexe.', ['les vôtres', 'les votres']],
+          ['<i>Prends ___ que tu veux.</i>', 'celui', 'Démonstratif + relative.', ['celui', 'celui-ci']],
+          ['<i>Leur maison est plus grande que ___.</i> (à nous)', 'la nôtre', '<i>la nôtre</i>, avec accent.', ['la notre', 'la nôtre']]
+        ] },
+      { kind: 'choice', titre: 'Préposition ou conjonction ?', options: ['préposition', 'conjonction de coordination', 'conjonction de subordination'], err: 'prep-conj',
+        items: [
+          ['<i>Il part <b>avant</b> l’aube.</i>', 'préposition', 'Suivi d’un nom.'],
+          ['<i>Il part <b>avant que</b> le jour se lève.</i>', 'conjonction de subordination', 'Suivi d’une proposition.'],
+          ['<i>Il est fatigué <b>mais</b> content.</i>', 'conjonction de coordination', '<i>mais</i> relie deux éléments de même fonction.'],
+          ['<i>Je viendrai <b>si</b> tu veux.</i>', 'conjonction de subordination', '<i>si</i> introduit une subordonnée.']
+        ] }
+    ],
+    d: [
+      { kind: 'transformer', titre: 'Éviter la répétition', consigne: 'Remplace le groupe souligné par un pronom possessif ou démonstratif.', err: 'pronoms-demo-poss',
+        items: [
+          { p: '<i>Ton dessin est plus réussi que <u>mon dessin</u>.</i>', r: 'Ton dessin est plus réussi que le mien.', x: 'Pronom possessif : <i>le mien</i>.' },
+          { p: '<i>J’aime cette chanson et <u>la chanson</u> que tu chantes.</i>', r: 'J’aime cette chanson et celle que tu chantes.', x: 'Pronom démonstratif : <i>celle</i>.' },
+          { p: '<i>Nos résultats sont meilleurs que <u>leurs résultats</u>.</i>', r: 'Nos résultats sont meilleurs que les leurs.', x: 'Pronom possessif pluriel : <i>les leurs</i>.' },
+          { p: '<i>Prends ce livre-ci ou <u>ce livre-là</u>.</i>', r: 'Prends ce livre-ci ou celui-là.', x: '<i>celui-là</i>.' }
+        ] },
+      { kind: 'etiqueter', titre: 'Classer les mots invariables', consigne: 'Glisse les étiquettes sur chaque mot en gras.', labels: ['préposition', 'conjonction de coordination', 'conjonction de subordination'], err: 'prep-conj',
+        items: [
+          { g: ['<b>malgré</b> la pluie', '<b>bien que</b> il pleuve', '<b>or</b> il pleuvait'], l: ['préposition', 'conjonction de subordination', 'conjonction de coordination'], x: '<i>malgré</i> + nom ; <i>bien que</i> + proposition ; <i>or</i> coordonne.' },
+          { g: ['<b>donc</b> il reste', '<b>pendant</b> le film', '<b>lorsque</b> tu viendras'], l: ['conjonction de coordination', 'préposition', 'conjonction de subordination'], x: '<i>lorsque</i> introduit une subordonnée de temps.' }
+        ] },
+      { kind: 'choice', titre: 'Pronoms pièges', err: 'pronoms-demo-poss',
+        items: [
+          ['<i>Ce stylo est à toi ? Non, c’est ___ de Paul.</i>', 'celui', 'Démonstratif suivi d’un complément : <i>celui de</i>.', ['celui', 'celui-ci']],
+          ['<i>Ce sont nos affaires, pas ___.</i> (à eux)', 'les leurs', 'Possessif pluriel : <i>les leurs</i>.', ['les leurs', 'leurs']]
+        ] }
+    ]
+  },
+  '4-G3': {
+    c: [
+      { kind: 'choice', titre: 'Le participe passé avec avoir', err: 'pp-avoir-cod',
+        items: [
+          ['<i>Les fleurs que tu m’as ___ sont fanées.</i> (offrir)', 'offertes', '<i>que</i> = les fleurs, COD placé avant.', ['offert', 'offertes']],
+          ['<i>Elles ont ___ le train de 8 heures.</i> (prendre)', 'pris', 'COD après.', ['pris', 'prises'], 'pp-avoir-sujet'],
+          ['<i>Quelle histoire as-tu ___ ?</i> (choisir)', 'choisie', 'COD <i>quelle histoire</i> placé avant.', ['choisi', 'choisie']],
+          ['<i>Ces émissions, je ne les ai jamais ___.</i> (regarder)', 'regardées', '<i>les</i> = ces émissions.', ['regardé', 'regardées']],
+          ['<i>Nous avons ___ longtemps.</i> (marcher)', 'marché', 'Pas de COD.', ['marché', 'marchés'], 'pp-avoir-sujet']
+        ] },
+      { kind: 'choice', titre: 'Accords dans le GN complexe', err: 'gn-accord',
+        items: [
+          ['<i>des robes et des chapeaux ___</i> (élégant)', 'élégants', 'Noms féminin et masculin : masculin pluriel.', ['élégantes', 'élégants']],
+          ['<i>une foule ___</i> (pressé)', 'pressée', 'Accord avec <i>foule</i>, féminin singulier.', ['pressé', 'pressée']],
+          ['<i>des chemises ___</i> (bleu clair)', 'bleu clair', 'Adjectif de couleur composé : invariable.', ['bleu clair', 'bleues claires'], 'pluriel-fem'],
+          ['<i>des yeux ___</i> (marron)', 'marron', 'Nom employé comme adjectif de couleur : invariable.', ['marron', 'marrons'], 'pluriel-fem']
+        ] }
+    ],
+    d: [
+      { kind: 'fleche', titre: 'Accorder le participe', consigne: 'Touche le COD placé avant qui commande l’accord, ou « Pas d’accord », puis choisis la forme.',
+        items: [
+          { g: ['Les décisions', 'qu’', 'il', 'a', '…'], pp: 4, cible: 1, o: ['pris', 'prises'], r: 'prises', x: '<i>qu’</i> = les décisions : féminin pluriel.', err: 'pp-avoir-cod' },
+          { g: ['La pièce', 'que', 'j’', 'ai', '…', 'voir'], pp: 4, cible: -1, o: ['voulu', 'voulue'], r: 'voulu', x: '<i>que</i> est COD de <i>voir</i>, pas de <i>voulu</i> : pas d’accord.', err: 'pp-avoir-cod' },
+          { g: ['Mes cousines', 'ont', '…', 'des cadeaux'], pp: 2, cible: -1, o: ['reçu', 'reçues'], r: 'reçu', x: 'COD après : pas d’accord.', err: 'pp-avoir-sujet' },
+          { g: ['Ses promesses,', 'il', 'les', 'a', '…'], pp: 4, cible: 2, o: ['tenu', 'tenues'], r: 'tenues', x: '<i>les</i> = ses promesses.', err: 'pp-avoir-cod' }
+        ] },
+      { kind: 'transformer', titre: 'Mettre au pluriel', consigne: 'Récris le groupe nominal au pluriel.', err: 'gn-accord',
+        items: [
+          { p: '<i>un vitrail ancien et précieux</i>', r: 'des vitraux anciens et précieux', x: '<i>vitrail</i> fait <i>vitraux</i> ; <i>précieux</i> ne change pas.' },
+          { p: '<i>un festival international</i>', r: 'des festivals internationaux', x: '<i>festival</i> fait <i>festivals</i> ; <i>international</i> fait <i>internationaux</i>.' },
+          { p: '<i>un grand-père attentionné</i>', r: 'des grands-pères attentionnés', x: 'Dans <i>grand-père</i>, les deux éléments prennent la marque du pluriel.' },
+          { p: '<i>une voiture vert foncé</i>', r: 'des voitures vert foncé', x: 'Adjectif de couleur composé : invariable.' }
+        ] }
+    ]
+  },
+  '4-H1': {
+    c: [
+      { kind: 'choice', titre: 'Homophones rares', err: 'homo-rares',
+        items: [
+          ['<i>___ soient tes efforts, continue.</i>', 'Quels que', '<i>quel que</i> + <i>être</i> : en deux mots, accordé avec le sujet.', ['Quelques', 'Quels que']],
+          ['<i>Il a lu ___ pages.</i>', 'quelques', 'Déterminant : plusieurs pages.', ['quelques', 'quel que']],
+          ['<i>___ il fasse froid, il sort.</i>', 'Quoiqu’', '<i>quoique</i> = bien que.', ['Quoiqu’', 'Quoi qu’']],
+          ['<i>___ tu dises, je reste.</i>', 'Quoi que', '<i>quoi que</i> = quelle que soit la chose que.', ['Quoique', 'Quoi que']],
+          ['<i>Viens ___ ce soir.</i>', 'plutôt', 'Plus tard ou plus tôt ? Ici : de préférence, <i>plutôt</i>.', ['plutôt', 'plus tôt']]
+        ] },
+      { kind: 'choice', titre: 'Avec ou sans accent ?', err: 'homo-rares',
+        items: [
+          ['<i>Le travail ___ au patron.</i>', 'dû', '<i>dû</i> participe de <i>devoir</i> garde l’accent au masculin singulier.', ['du', 'dû']],
+          ['<i>Il mange ___ pain.</i>', 'du', 'Article partitif.', ['du', 'dû']],
+          ['<i>Ce retard est ___ à la neige.</i>', 'dû', 'Masculin singulier : <i>dû</i> garde l’accent.', ['du', 'dû']],
+          ['<i>Je suis ___ de moi.</i>', 'sûr', '<i>sûr</i> = certain, avec accent.', ['sur', 'sûr']]
+        ] }
+    ],
+    d: [
+      { kind: 'essai', titre: 'Décomposer pour choisir', consigne: 'Essaie les remplacements proposés, puis choisis.', err: 'homo-rares',
+        items: [
+          { p: '___ il soit tard, il travaille.', o: ['Quoiqu’', 'Quoi qu’'], r: 'Quoiqu’', essais: ['Bien qu’', 'Quelle que soit la chose qu’'], x: '<i>Bien qu’il soit tard</i> fonctionne : <i>quoique</i> en un mot.' },
+          { p: '___ il arrive, reste calme.', o: ['Quoiqu’', 'Quoi qu’'], r: 'Quoi qu’', essais: ['Bien qu’', 'Quelle que soit la chose qu’'], x: '<i>Quelle que soit la chose qu’il arrive</i> : <i>quoi que</i> en deux mots.' },
+          { p: 'Il est parti ___ que prévu.', o: ['plutôt', 'plus tôt'], r: 'plus tôt', essais: ['plus tard', 'de préférence'], x: '<i>plus tard que prévu</i> fonctionne : contraire de <i>plus tard</i>.' },
+          { p: 'Prends ___ le train.', o: ['plutôt', 'plus tôt'], r: 'plutôt', essais: ['plus tard', 'de préférence'], x: '<i>de préférence</i> : <i>plutôt</i>.' }
+        ] },
+      { kind: 'input', titre: 'Écrire l’homophone', consigne: 'Écris le mot qui convient.', err: 'homo-rares',
+        items: [
+          ['<i>___ que soit la réponse, dis-la.</i> (quel que)', 'Quelle', 'Accord avec <i>la réponse</i>.'],
+          ['<i>Il est arrivé ___ que les autres.</i> (plus tôt ou plutôt ?)', 'plus tôt', 'Contraire de <i>plus tard</i>.'],
+          ['<i>Choisis ___ le rouge.</i> (plus tôt ou plutôt ?)', 'plutôt', '<i>de préférence</i> : <i>plutôt</i>.'],
+          ['<i>Les sommes ___ à l’État.</i> (participe de devoir)', 'dues', 'Pas d’accent au féminin pluriel.']
+        ] }
+    ]
+  },
+  '4-H2': {
+    c: [
+      { kind: 'choice', titre: 'Retrouver la lettre par la famille', err: 'ortho-etym',
+        items: [
+          ['<i>un for___</i> (fortifier)', 'fort', '<i>fortifier</i> : le <i>t</i>.', ['for', 'fort']],
+          ['<i>l’instin___</i> (instinctif)', 'instinct', '<i>instinctif</i> : <i>-ct</i>.', ['instin', 'instinct']],
+          ['<i>le respe___</i> (respectueux)', 'respect', '<i>respectueux</i> : <i>-ct</i>.', ['respet', 'respect']],
+          ['<i>un hiv___</i> (hivernal)', 'hiver', 'Le <i>r</i> s’entend déjà.', ['hiver', 'hivert']],
+          ['<i>un parfu___</i> (parfumer)', 'parfum', '<i>parfumer</i> : le <i>m</i>.', ['parfun', 'parfum']]
+        ] },
+      { kind: 'choice', titre: 'Les lettres grecques', err: 'ortho-etym',
+        items: [
+          ['<i>une ___ographie</i> (une image par la lumière)', 'photographie', 'Grec <i>phôs</i> : <i>ph</i>.', ['fotographie', 'photographie']],
+          ['<i>un r___me</i> (cadence)', 'rythme', 'Grec <i>rhuthmos</i> : <i>y</i> et <i>th</i>.', ['rythme', 'rithme']],
+          ['<i>la ___imie</i> (science des substances)', 'chimie', '<i>ch</i> prononcé [ʃ] ici.', ['chimie', 'kimie']],
+          ['<i>un ___ème</i> (sujet)', 'thème', 'Grec <i>thema</i>.', ['tème', 'thème']]
+        ] }
+    ],
+    d: [
+      { kind: 'etiqueter', titre: 'Classer selon l’origine de la graphie', consigne: 'Glisse sur chaque mot l’origine de sa lettre difficile.', labels: ['lettre grecque (ph, th, y, ch)', 'lettre muette latine'], err: 'ortho-etym',
+        items: [
+          { g: ['théâtre', 'corps', 'symbole', 'doigt'], l: ['lettre grecque (ph, th, y, ch)', 'lettre muette latine', 'lettre grecque (ph, th, y, ch)', 'lettre muette latine'], x: '<i>corps</i> (corpus), <i>doigt</i> (digitus) ; <i>théâtre, symbole</i> viennent du grec.' },
+          { g: ['temps', 'orchestre', 'vingt', 'pharmacie'], l: ['lettre muette latine', 'lettre grecque (ph, th, y, ch)', 'lettre muette latine', 'lettre grecque (ph, th, y, ch)'], x: '<i>orchestre</i> : <i>ch</i> prononcé [k], d’origine grecque.' }
+        ] },
+      { kind: 'input', titre: 'Écrire le mot savant', consigne: 'Écris le mot complet.', err: 'ortho-etym',
+        items: [
+          ['<i>un ___ographe</i> (qui étudie la terre)', 'géographe', 'Grec <i>gê</i>.'],
+          ['<i>une ___se</i> (thèse, sujet défendu)', 'thèse', 'Grec <i>thesis</i>.'],
+          ['<i>la ___sique</i> (science de la matière)', 'physique', 'Grec <i>phusis</i> : <i>ph</i> et <i>y</i>.'],
+          ['<i>un ___nosaure</i>', 'dinosaure', 'Grec <i>deinos</i> (terrible) : <i>i</i>.']
+        ] },
+      { kind: 'choice', titre: 'La graphie savante', err: 'ortho-etym',
+        items: [
+          ['<i>un ___ycle</i> (deux roues… ou trois)', 'tricycle', 'Grec <i>kuklos</i> (cercle, roue) : <i>cy</i>.', ['tricycle', 'tricicle']],
+          ['<i>l’___pothèse</i> (supposition)', 'hypothèse', 'Grec <i>hupothesis</i> : <i>hy</i> et <i>th</i>.', ['hipotèse', 'hypothèse']]
+        ] }
+    ]
+  },
+  '4-L1': {
+    c: [
+      { kind: 'choice', titre: 'Changer de classe', consigne: 'Un suffixe peut faire passer d’une classe grammaticale à une autre.', err: 'formation',
+        items: [
+          ['<i>rapide</i> → <i>rapidement</i> : on passe d’un adjectif à…', 'un adverbe', 'Suffixe <i>-ment</i>.', ['un nom', 'un adverbe']],
+          ['<i>laver</i> → <i>lavage</i> : on passe d’un verbe à…', 'un nom', 'Suffixe <i>-age</i>.', ['un nom', 'un adjectif']],
+          ['<i>lire</i> → <i>lisible</i> : on passe d’un verbe à…', 'un adjectif', 'Suffixe <i>-ible</i>.', ['un adjectif', 'un adverbe']],
+          ['<i>beau</i> → <i>beauté</i> : on passe d’un adjectif à…', 'un nom', 'Suffixe <i>-té</i>.', ['un nom', 'un verbe']],
+          ['<i>diner</i> (verbe) → <i>le diner</i>', 'conversion', 'Le mot change de classe sans suffixe : conversion.', ['conversion', 'dérivation']]
+        ] },
+      { kind: 'choice', titre: 'D’où vient le mot ?', options: ['anglais', 'arabe', 'italien', 'néologisme'], err: 'emprunts',
+        items: [
+          ['<i>week-end</i>', 'anglais', 'Emprunt à l’anglais.'],
+          ['<i>algèbre</i>', 'arabe', 'De l’arabe <i>al-jabr</i>.'],
+          ['<i>piano</i>', 'italien', 'Emprunt à l’italien.'],
+          ['<i>courriel</i>', 'néologisme', 'Mot créé au Québec (courrier + électronique).']
+        ] }
+    ],
+    d: [
+      { kind: 'input', titre: 'Dériver', consigne: 'Écris le mot dérivé demandé.', err: 'formation',
+        items: [
+          ['Nom formé sur <i>blanc</i> : la ___', 'blancheur', 'Suffixe <i>-eur</i>.'],
+          ['Adverbe formé sur <i>évident</i> : ___', 'évidemment', '<i>-ent</i> → <i>-emment</i>.'],
+          ['Verbe formé sur <i>rouge</i> : ___', 'rougir', 'Suffixe verbal <i>-ir</i>.'],
+          ['Adjectif formé sur <i>nation</i> : ___', 'national', 'Suffixe <i>-al</i>.'],
+          ['Nom formé sur <i>patient</i> : la ___', 'patience', '<i>-ent</i> → <i>-ence</i>.']
+        ] },
+      { kind: 'etiqueter', titre: 'Mode de formation', consigne: 'Glisse sur chaque mot sa formation.', labels: ['dérivation', 'composition', 'troncation', 'mot-valise'], err: 'formation',
+        items: [
+          { g: ['prof', 'chou-fleur', 'impoli', 'franglais'], l: ['troncation', 'composition', 'dérivation', 'mot-valise'], x: '<i>prof</i> : mot raccourci ; <i>franglais</i> : <i>français</i> + <i>anglais</i>.' },
+          { g: ['ciné', 'redire', 'pomme de terre', 'courriel'], l: ['troncation', 'dérivation', 'composition', 'mot-valise'], x: '<i>courriel</i> : <i>courrier</i> + <i>électronique</i>.' }
+        ] },
+      { kind: 'choice', titre: 'Emprunts et néologismes', err: 'emprunts',
+        items: [
+          ['Le mot <i>kayak</i> vient…', 'de l’inuktitut', 'Langue des Inuits.', ['de l’inuktitut', 'du japonais']]
+        ] }
+    ]
+  },
+  '4-L2': {
+    c: [
+      { kind: 'choice', titre: 'Paronymes', consigne: 'Des paronymes se ressemblent mais n’ont pas le même sens.', err: 'paronymes',
+        items: [
+          ['<i>Il a fait ___ de courage.</i>', 'preuve', '<i>faire preuve de</i> = montrer.', ['preuve', 'épreuve']],
+          ['<i>L’___ d’une ville</i> (le fait d’y entrer)', 'accès', '<i>accès</i> = entrée ; <i>excès</i> = trop.', ['accès', 'excès']],
+          ['<i>Il a ___ ses camarades à venir.</i>', 'incité', '<i>inciter</i> = pousser à.', ['incité', 'insisté']],
+          ['<i>un savant ___</i> (remarquable)', 'éminent', '<i>éminent</i> = remarquable ; <i>imminent</i> = tout proche.', ['éminent', 'imminent']],
+          ['<i>Un danger ___</i> (qui va arriver très bientôt)', 'imminent', '<i>imminent</i> = tout proche.', ['éminent', 'imminent']]
+        ] },
+      { kind: 'choice', titre: 'Du plus faible au plus fort', err: 'intensite',
+        items: [
+          ['Le mot le plus fort :', 'terrifié', 'inquiet < effrayé < terrifié.', ['inquiet', 'effrayé', 'terrifié']],
+          ['Le mot le plus faible :', 'tiède', 'tiède < chaud < brulant.', ['tiède', 'chaud', 'brulant']],
+          ['Le mot le plus général :', 'aliment', '<i>aliment</i> englobe <i>fruit</i> et <i>pomme</i>.', ['aliment', 'fruit', 'pomme']],
+          ['Le mot le plus fort :', 'adorer', 'apprécier < aimer < adorer.', ['apprécier', 'aimer', 'adorer']]
+        ] }
+    ],
+    d: [
+      { kind: 'etiqueter', titre: 'Classer par intensité', consigne: 'Glisse sur chaque mot son degré d’intensité.', labels: ['faible', 'moyen', 'fort'], err: 'intensite',
+        items: [
+          { g: ['colère', 'agacement', 'fureur'], l: ['moyen', 'faible', 'fort'], x: 'agacement < colère < fureur.' },
+          { g: ['énorme', 'grand', 'gigantesque'], l: ['moyen', 'faible', 'fort'], x: 'grand < énorme < gigantesque.' },
+          { g: ['fatigué', 'épuisé', 'las'], l: ['moyen', 'fort', 'faible'], x: 'las < fatigué < épuisé.' }
+        ] },
+      { kind: 'input', titre: 'Le bon paronyme', consigne: 'Écris le mot qui convient.', err: 'paronymes',
+        items: [
+          ['<i>Le juge a ___ une peine.</i> (infliger ou affliger ?)', 'infligé', '<i>infliger</i> = imposer une peine.'],
+          ['<i>Cette nouvelle m’a ___.</i> (infliger ou affliger ?)', 'affligé', '<i>affliger</i> = rendre triste.'],
+          ['<i>Les oiseaux ___ vers le sud.</i> (émigrer ou immigrer ?)', 'émigrent', '<i>émigrer</i> = quitter son pays.'],
+          ['<i>Le volcan est entré en ___.</i> (éruption ou irruption ?)', 'éruption', '<i>éruption</i> = sortie brutale de lave.'],
+          ['<i>La police a fait ___ dans la salle.</i> (éruption ou irruption ?)', 'irruption', '<i>faire irruption</i> = entrer brusquement.']
+        ] }
+    ]
+  },
+  '4-L3': {
+    c: [
+      { kind: 'choice', titre: 'Niveau de langue et situation', err: 'niveaux-langue',
+        items: [
+          ['Pour écrire au principal, on emploie le niveau…', 'soutenu', 'Situation officielle.', ['familier', 'courant', 'soutenu']],
+          ['Pour parler à un camarade dans la cour, on peut employer le niveau…', 'familier', 'Situation entre proches.', ['familier', 'soutenu']],
+          ['<i>Il s’est fait virer.</i> En langage courant :', 'Il a été renvoyé.', '<i>virer</i> est familier.', ['Il a été renvoyé.', 'Il a viré.']],
+          ['<i>Veuillez agréer mes salutations distinguées.</i> Niveau :', 'soutenu', 'Formule de lettre officielle.', ['courant', 'soutenu']]
+        ] },
+      { kind: 'choice', titre: 'Quelle figure ?', options: ['antithèse', 'oxymore', 'litote', 'gradation', 'anaphore'], err: 'figures',
+        items: [
+          ['<i>Cette obscure clarté qui tombe des étoiles</i> (Corneille)', 'oxymore', 'Deux mots contraires réunis : <i>obscure clarté</i>.'],
+          ['<i>Va, je ne te hais point.</i> (Corneille)', 'litote', 'Dire moins pour suggérer plus : je t’aime.'],
+          ['<i>Je me meurs, je suis mort, je suis enterré.</i> (Molière)', 'gradation', 'Une progression de plus en plus forte.'],
+          ['<i>Rome, l’unique objet de mon ressentiment ! Rome, à qui vient ton bras d’immoler mon amant !</i> (Corneille)', 'anaphore', 'Répétition de <i>Rome</i> en début de vers.'],
+          ['<i>Il est petit mais son courage est immense.</i>', 'antithèse', 'Deux idées opposées dans la phrase.']
+        ] }
+    ],
+    d: [
+      { kind: 'transformer', titre: 'Changer de niveau de langue', consigne: 'Récris en langage soutenu.', err: 'niveaux-langue',
+        items: [
+          { p: '<i>T’es où ?</i>', r: 'Où êtes-vous ?|Où es-tu ?', x: 'Inversion du sujet ; pas d’élision familière.' },
+          { p: '<i>Il a pas compris.</i>', r: 'Il n’a pas compris.', x: 'On rétablit le <i>ne</i>.' },
+          { p: '<i>Ça me saoule.</i>', r: 'Cela m’ennuie.|Cela m’agace.', x: '<i>ça</i> → <i>cela</i> ; <i>saouler</i> est familier.' }
+        ] },
+      { kind: 'choice', titre: 'La variation de la langue', err: 'variation',
+        items: [
+          ['<i>Septante</i> (soixante-dix) s’emploie…', 'en Belgique et en Suisse', 'Variation géographique.', ['en Belgique et en Suisse', 'au Moyen Âge']],
+          ['<i>Une chaussette</i> se dit <i>un bas</i> au…', 'Québec', 'Variation géographique.', ['Québec', 'Sénégal']],
+          ['<i>Moult</i> (beaucoup) est un mot…', 'ancien', 'Variation dans le temps.', ['ancien', 'récent']],
+          ['<i>Wesh</i> appartient au langage…', 'des jeunes', 'Variation selon le groupe social et l’âge.', ['des jeunes', 'administratif']],
+          ['<i>Antithèse ou oxymore ?</i> <i>un silence assourdissant</i>', 'oxymore', 'Deux termes opposés dans un même groupe.', ['antithèse', 'oxymore'], 'figures']
+        ] }
+    ]
+  }
+};
+
+;
+/* Approfondissement 5ᵉ — écrit pour le Laboratoire de la langue (M. Lesage, enseignant de français), licence CC BY-NC-SA 4.0.
+   Lot 5 (23/11/2026) : deux séries par étape du parcours 5ᵉ (c : consolidation, d : défi). Format : voir parcours2.js. */
+window.APPRO = window.APPRO || {};
+APPRO.n5 = {
+  '5-P1': {
+    c: [
+      { kind: 'cadre', cadre: ['C’est', 'qui'], titre: 'Retrouver le sujet séparé du verbe', consigne: 'Touche le groupe qu’on peut encadrer par <i>c’est… qui</i> ou <i>ce sont… qui</i>.', err: 'sv-eloigne',
+        items: [
+          { p: 'Les élèves, / fatigués par la sortie, / dorment / dans le car.', r: 0, t: 'Ce sont les élèves qui, fatigués par la sortie, dorment dans le car.', x: 'Le sujet <i>les élèves</i> est séparé du verbe par une apposition.' },
+          { p: 'Mon frère / leur / prête / ses jeux.', r: 0, t: 'C’est mon frère qui leur prête ses jeux.', x: '<i>leur</i> est un pronom COI ; le sujet est <i>mon frère</i>.' },
+          { p: 'Le directeur / de l’école / nous / reçoit.', r: 0, t: 'C’est le directeur de l’école qui nous reçoit.', x: 'Le sujet est <i>le directeur de l’école</i> ; <i>nous</i> est COD.' }
+        ] },
+      { kind: 'choice', titre: 'Quel pronom pour le complément ?', consigne: '<i>le, la, les</i> remplacent un COD ; <i>lui, leur</i> un COI introduit par <i>à</i>.', err: 'pronom-compl',
+        items: [
+          ['<i>J’appelle <b>mes cousins</b>.</i> → <i>Je ___ appelle.</i>', 'les', 'COD : <i>les</i>.', ['les', 'leur']],
+          ['<i>Je téléphone <b>à mes cousins</b>.</i> → <i>Je ___ téléphone.</i>', 'leur', 'COI introduit par <i>à</i> : <i>leur</i>.', ['les', 'leur']],
+          ['<i>Elle aide <b>sa voisine</b>.</i> → <i>Elle ___ aide.</i>', 'l’', 'COD : <i>la</i>, élidé en <i>l’</i> devant une voyelle.', ['l’', 'lui']],
+          ['<i>Il répond <b>au professeur</b>.</i> → <i>Il ___ répond.</i>', 'lui', 'COI : <i>lui</i>.', ['le', 'lui']],
+          ['<i>Nous écoutons <b>la radio</b>.</i> → <i>Nous ___ écoutons.</i>', 'l’', 'COD : <i>l’</i>.', ['l’', 'lui']],
+          ['<i>Tu ressembles <b>à ta mère</b>.</i> → <i>Tu ___ ressembles.</i>', 'lui', '<i>ressembler à</i> : COI, <i>lui</i>.', ['la', 'lui']]
+        ] }
+    ],
+    d: [
+      { kind: 'transformer', titre: 'Pronominaliser deux compléments', consigne: 'Remplace les deux groupes soulignés par des pronoms.', err: 'pronom-compl',
+        items: [
+          { p: '<i>Je prête <u>mon vélo</u> <u>à Karim</u>.</i>', r: 'Je le lui prête.', x: '<i>le</i> (COD) avant <i>lui</i> (COI).' },
+          { p: '<i>Elle a expliqué <u>la règle</u> <u>aux élèves</u>.</i>', r: 'Elle la leur a expliquée.', x: '<i>la</i> (COD) placé avant <i>avoir</i> : le participe s’accorde, <i>expliquée</i>.' },
+          { p: '<i>Ne dis pas <u>ce secret</u> <u>à tes amis</u>.</i>', r: 'Ne le leur dis pas.', x: 'À l’impératif négatif, les pronoms restent devant le verbe.' }
+        ] },
+      { kind: 'input', titre: 'Accorder avec un sujet éloigné', consigne: 'Écris le verbe au présent.', err: 'sv-eloigne',
+        items: [
+          ['<i>Les enfants du quartier, chaque mercredi, ___ au stade.</i> (aller)', 'vont', 'Sujet <i>les enfants</i>, séparé par un complément.'],
+          ['<i>Ces livres, je te les ___ demain.</i> (rendre)', 'rends', 'Le sujet est <i>je</i>, pas <i>les livres</i>.', 'sujet-repere'],
+          ['<i>La liste des fournitures ___ sur le site.</i> (être)', 'est', 'C’est <i>la liste</i> qui est sur le site.'],
+          ['<i>Mes parents, que tu connais bien, te ___.</i> (saluer)', 'saluent', 'Sujet <i>mes parents</i> ; <i>te</i> est COD.'],
+          ['<i>Où ___ tes affaires ?</i> (être)', 'sont', 'Sujet inversé <i>tes affaires</i> : pluriel.']
+        ] }
+    ]
+  },
+  '5-P2': {
+    c: [
+      { kind: 'choice', titre: 'Moyen, manière ou but ?', consigne: 'Moyen : <i>avec quoi ?</i> Manière : <i>comment ?</i> But : <i>dans quel but ?</i>', options: ['moyen', 'manière', 'but'], err: 'cc-type',
+        items: [
+          ['<i>Il ouvre la porte <b>avec une clé</b>.</i>', 'moyen', '<i>Avec quoi ?</i> Avec une clé.'],
+          ['<i>Elle parle <b>doucement</b>.</i>', 'manière', '<i>Comment ?</i> Doucement.'],
+          ['<i>Il s’entraine <b>pour gagner le match</b>.</i>', 'but', '<i>Dans quel but ?</i> Pour gagner.'],
+          ['<i>Nous voyagerons <b>en train</b>.</i>', 'moyen', '<i>Par quel moyen ?</i> En train.'],
+          ['<i>Il a répondu <b>avec politesse</b>.</i>', 'manière', '<i>Comment ?</i> Avec politesse : on peut dire <i>poliment</i>.'],
+          ['<i>Parle plus fort <b>afin qu’on t’entende</b>.</i>', 'but', '<i>afin que</i> introduit un but.']
+        ] },
+      { kind: 'choice', titre: 'Complément circonstanciel ou non ?', options: ['complément circonstanciel', 'COD'], err: 'cc-repere',
+        items: [
+          ['<i>Elle coupe le pain <b>avec un couteau</b>.</i>', 'complément circonstanciel', '<i>Avec un couteau, elle coupe le pain</i> : déplaçable. CC de moyen.'],
+          ['<i>Elle coupe <b>le pain</b> avec un couteau.</i>', 'COD', '<i>Elle le coupe</i> : COD, non déplaçable.'],
+          ['<i>Il range sa chambre <b>pour faire plaisir à sa mère</b>.</i>', 'complément circonstanciel', 'Supprimable et déplaçable : CC de but.']
+        ] }
+    ],
+    d: [
+      { kind: 'etiqueter', titre: 'Le sens des compléments', consigne: 'Glisse sur chaque complément en gras son sens.', labels: ['temps', 'lieu', 'cause', 'moyen', 'manière', 'but'], err: 'cc-type',
+        items: [
+          { g: ['<b>Grâce à son vélo</b>, il arrive vite.', 'Il travaille <b>pour réussir</b>.', 'Il pleut <b>depuis ce matin</b>.'], l: ['moyen', 'but', 'temps'], x: '<i>grâce à son vélo</i> : avec quoi ? Ici, le vélo est un moyen.' },
+          { g: ['Elle chante <b>avec émotion</b>.', 'Il a abandonné <b>par fatigue</b>.', 'On se retrouve <b>devant le cinéma</b>.'], l: ['manière', 'cause', 'lieu'], x: '<i>par fatigue</i> : pourquoi ? Cause.' },
+          { g: ['Il tape <b>sur le clavier</b>.', 'Il tape <b>avec deux doigts</b>.', 'Il tape <b>rapidement</b>.'], l: ['lieu', 'moyen', 'manière'], x: 'Même verbe, trois compléments différents : où ? avec quoi ? comment ?' }
+        ] },
+      { kind: 'transformer', titre: 'Remplacer par un adverbe de manière', consigne: 'Remplace le complément souligné par un adverbe en <i>-ment</i>.', err: 'cc-type',
+        items: [
+          { p: '<i>Il parle <u>avec calme</u>.</i>', r: 'Il parle calmement.', x: '<i>avec calme</i> = <i>calmement</i>.' },
+          { p: '<i>Elle conduit <u>avec prudence</u>.</i>', r: 'Elle conduit prudemment.', x: '<i>prudent</i> → <i>prudemment</i>.' },
+          { p: '<i>Ils travaillent <u>avec sérieux</u>.</i>', r: 'Ils travaillent sérieusement.', x: '<i>sérieux</i> → <i>sérieuse</i> → <i>sérieusement</i>.' }
+        ] },
+      { kind: 'choice', titre: 'Une même préposition, des sens différents', options: ['moyen', 'manière', 'but', 'cause'], err: 'cc-type',
+        items: [
+          ['<i>Il est venu <b>par le train</b>.</i>', 'moyen', '<i>Par quel moyen ?</i> Le train.'],
+          ['<i>Il est venu <b>par curiosité</b>.</i>', 'cause', '<i>Pourquoi ?</i> Par curiosité.']
+        ] }
+    ]
+  },
+  '5-P3': {
+    c: [
+      { kind: 'choice', titre: 'Trouver l’antécédent', consigne: 'L’antécédent est le nom que le pronom relatif remplace.', err: 'relative',
+        items: [
+          ['<i>J’ai lu le livre que tu m’as prêté.</i> L’antécédent de <i>que</i> est…', 'le livre', '<i>que</i> remplace <i>le livre</i>.', ['le livre', 'tu']],
+          ['<i>La ville où je suis né est au bord de la mer.</i> L’antécédent de <i>où</i> est…', 'la ville', '<i>où</i> remplace <i>la ville</i>.', ['la ville', 'la mer']],
+          ['<i>C’est un ami dont je te parle souvent.</i> L’antécédent de <i>dont</i> est…', 'un ami', '<i>je te parle souvent de cet ami</i>.', ['je', 'un ami']],
+          ['<i>Le chien qui aboie est à mon voisin.</i> L’antécédent de <i>qui</i> est…', 'le chien', '<i>qui</i> remplace <i>le chien</i>.', ['le chien', 'mon voisin']]
+        ] },
+      { kind: 'choice', titre: 'Quel pronom relatif ?', consigne: '<i>qui</i> : sujet. <i>que</i> : COD. <i>dont</i> : complément introduit par <i>de</i>. <i>où</i> : lieu ou temps.', err: 'relative',
+        items: [
+          ['<i>Le film ___ j’ai vu était drôle.</i>', 'que', 'J’ai vu le film : COD, <i>que</i>.', ['qui', 'que', 'dont', 'où']],
+          ['<i>La fille ___ chante est ma sœur.</i>', 'qui', 'La fille chante : sujet, <i>qui</i>.', ['qui', 'que', 'dont', 'où']],
+          ['<i>Le jour ___ il est arrivé, il neigeait.</i>', 'où', 'Indication de temps : <i>où</i>.', ['qui', 'que', 'dont', 'où']],
+          ['<i>Voici l’outil ___ j’ai besoin.</i>', 'dont', 'J’ai besoin <i>de</i> l’outil : <i>dont</i>.', ['qui', 'que', 'dont', 'où']],
+          ['<i>La maison ___ nous habitons est ancienne.</i>', 'où', 'Nous habitons dans la maison : lieu, <i>où</i>.', ['qui', 'que', 'dont', 'où']]
+        ] }
+    ],
+    d: [
+      { kind: 'transformer', titre: 'Fusionner avec une relative', consigne: 'Fais une seule phrase avec <i>qui</i>, <i>que</i>, <i>dont</i> ou <i>où</i>.', err: 'relative',
+        items: [
+          { p: '<i>J’ai un chat. Ce chat dort toute la journée.</i>', r: 'J’ai un chat qui dort toute la journée.', x: '<i>Ce chat</i> est sujet : <i>qui</i>.' },
+          { p: '<i>Je lis un roman. Ma tante m’a offert ce roman.</i>', r: 'Je lis un roman que ma tante m’a offert.', x: '<i>ce roman</i> est COD : <i>que</i>.' },
+          { p: '<i>Voici le parc. Je joue dans ce parc.</i>', r: 'Voici le parc où je joue.', x: 'Lieu : <i>où</i>.' },
+          { p: '<i>C’est un acteur. On parle beaucoup de cet acteur.</i>', r: 'C’est un acteur dont on parle beaucoup.', x: '<i>parler de</i> : <i>dont</i>.' }
+        ] },
+      { kind: 'input', titre: 'Le participe après que', consigne: 'Écris le participe passé : accorde-le si le COD <i>que</i> est placé avant.', err: 'pp-avoir-cod',
+        items: [
+          ['<i>Les photos que j’ai ___ sont floues.</i> (prendre)', 'prises', '<i>que</i> = les photos, COD placé avant : féminin pluriel.'],
+          ['<i>La chanson qu’elle a ___ était belle.</i> (chanter)', 'chantée', '<i>qu’</i> = la chanson : féminin singulier.'],
+          ['<i>Les élèves qui ont ___ sont rentrés.</i> (gagner)', 'gagné', '<i>qui</i> est sujet : pas de COD placé avant, pas d’accord.', 'pp-avoir-sujet'],
+          ['<i>Les gâteaux que nous avons ___ étaient bons.</i> (faire)', 'faits', '<i>que</i> = les gâteaux : masculin pluriel.']
+        ] }
+    ]
+  },
+  '5-P4': {
+    c: [
+      { kind: 'choice', titre: 'Qui parle, à qui, quand ?', consigne: 'Les indices d’énonciation : pronoms <i>je, tu</i>, mots comme <i>ici, demain, aujourd’hui</i>.', err: 'enonciation',
+        items: [
+          ['<i>« Je t’attends ici demain. »</i> Cet énoncé est…', 'ancré dans la situation', '<i>je, t’, ici, demain</i> renvoient à la situation de celui qui parle.', ['ancré dans la situation', 'coupé de la situation']],
+          ['<i>Napoléon mourut en 1821 à Sainte-Hélène.</i> Cet énoncé est…', 'coupé de la situation', 'Pas de <i>je</i>, dates précises, passé simple : récit coupé de la situation.', ['ancré dans la situation', 'coupé de la situation']],
+          ['<i>« Viens, nous partons tout de suite ! »</i> Cet énoncé est…', 'ancré dans la situation', 'Impératif, <i>nous</i>, <i>tout de suite</i>.', ['ancré dans la situation', 'coupé de la situation']],
+          ['Dans un énoncé coupé de la situation, <i>demain</i> devient…', 'le lendemain', 'On ne dépend plus du moment où l’on parle.', ['le lendemain', 'aujourd’hui']]
+        ] },
+      { kind: 'choice', titre: 'La ponctuation du dialogue', err: 'ponctuation',
+        items: [
+          ['Pour ouvrir un dialogue, on utilise…', 'les guillemets', 'Les guillemets « » ouvrent et ferment le dialogue.', ['les guillemets', 'les parenthèses']],
+          ['À chaque changement de personnage qui parle, on met…', 'un tiret', 'Le tiret signale un nouveau locuteur.', ['un tiret', 'un point-virgule']],
+          ['<i>« Où vas-tu ? » ___ Lucas.</i>', 'demanda', 'Le verbe de parole s’accorde avec le sens : une question, <i>demanda</i>.', ['demanda', 'répondit']],
+          ['<i>« Je viens », dit-elle.</i> <i>dit-elle</i> est…', 'une incise', 'L’incise indique qui parle ; sujet inversé.', ['une incise', 'une question']],
+          ['Après un deux-points qui annonce des paroles, on met…', 'des guillemets', '<i>Il déclara : « Je pars. »</i>', ['des guillemets', 'une virgule']]
+        ] }
+    ],
+    d: [
+      { kind: 'etiqueter', titre: 'Indices de la situation d’énonciation', consigne: 'Glisse sur chaque mot l’information qu’il donne.', labels: ['qui parle', 'à qui', 'où', 'quand'], err: 'enonciation',
+        items: [
+          { g: ['je', 'vous', 'ici', 'maintenant'], l: ['qui parle', 'à qui', 'où', 'quand'], x: '<i>je</i> : l’énonciateur ; <i>vous</i> : le destinataire.' },
+          { g: ['hier', 'te', 'là-bas', 'nous'], l: ['quand', 'à qui', 'où', 'qui parle'], x: '<i>nous</i> inclut celui qui parle.' }
+        ] },
+      { kind: 'choice', titre: 'Le dialogue bien ponctué', consigne: 'Choisis la version au discours direct correctement ponctuée.', err: 'ponctuation',
+        items: [
+          ['Léa dit qu’elle a faim. Au discours direct :', '« J’ai faim », dit Léa.', 'Guillemets, puis une virgule avant l’incise.', ['« J’ai faim », dit Léa.', '« J’ai faim, dit Léa. »', 'J’ai faim dit Léa.']],
+          ['Tom demande s’il peut sortir. Au discours direct :', '« Est-ce que je peux sortir ? » demande Tom.', 'Le point d’interrogation reste dans les guillemets, sans virgule après.', ['« Est-ce que je peux sortir ? » demande Tom.', '« Est-ce que je peux sortir », demande Tom ?']],
+          ['Le maitre ordonne aux élèves de se taire. Au discours direct :', '« Taisez-vous ! » ordonne le maitre.', 'Un ordre : l’impératif et le point d’exclamation.', ['« Taisez-vous ! » ordonne le maitre.', '« Taisez-vous. » ordonne le maitre ?']]
+        ] },
+      { kind: 'choice', titre: 'Transposer les indices', err: 'enonciation',
+        items: [
+          ['Au discours indirect au passé, <i>hier</i> devient…', 'la veille', '<i>Il dit qu’il était venu la veille.</i>', ['la veille', 'demain']],
+          ['Au discours indirect au passé, <i>ici</i> devient…', 'là', '<i>Elle dit qu’elle était bien là.</i>', ['là', 'ici']],
+          ['<i>« Je t’aime », lui dit-il.</i> Au discours indirect :', 'Il lui dit qu’il l’aime.', '<i>je</i> devient <i>il</i>, <i>t’</i> devient <i>l’</i>.', ['Il lui dit qu’il l’aime.', 'Il lui dit que je t’aime.']]
+        ] }
+    ]
+  },
+  '5-V1': {
+    c: [
+      { kind: 'choice', titre: 'Radical, marque de temps, marque de personne', consigne: 'Une forme verbale se découpe : <i>chant-ai-s</i> = radical + temps + personne.', err: 'temps-forme',
+        items: [
+          ['Dans <i>nous chant<b>er</b>ons</i>, la partie en gras marque…', 'le futur', '<i>-er-</i> (ou <i>-r-</i>) est la marque du futur.', ['le futur', 'la personne']],
+          ['Dans <i>vous parl<b>i</b>ez</i>, la partie en gras marque…', 'l’imparfait', '<i>-i-</i> est la marque de l’imparfait avec <i>nous</i> et <i>vous</i>.', ['l’imparfait', 'la personne']],
+          ['Dans <i>ils jou<b>ent</b></i>, la partie en gras marque…', 'la personne', '<i>-ent</i> : 3<sup>e</sup> personne du pluriel.', ['le temps', 'la personne']],
+          ['Dans <i>je finir<b>ais</b></i>, <i>-ais</i> indique…', 'l’imparfait et la personne', 'Le conditionnel associe la marque du futur (<i>-r-</i>) et les terminaisons de l’imparfait.', ['l’imparfait et la personne', 'le futur seul']]
+        ] },
+      { kind: 'choice', titre: 'Futur antérieur ou passé antérieur ?', consigne: 'Futur antérieur : auxiliaire au futur. Passé antérieur : auxiliaire au passé simple.', options: ['futur antérieur', 'passé antérieur', 'plus-que-parfait'], err: 'temps-compose',
+        items: [
+          ['<i>Quand tu auras fini, tu pourras sortir.</i>', 'futur antérieur', '<i>auras</i> : auxiliaire au futur.'],
+          ['<i>Dès qu’il eut mangé, il partit.</i>', 'passé antérieur', '<i>eut</i> : auxiliaire au passé simple.'],
+          ['<i>Elle avait déjà compris.</i>', 'plus-que-parfait', '<i>avait</i> : auxiliaire à l’imparfait.'],
+          ['<i>Lorsqu’ils furent arrivés, la fête commença.</i>', 'passé antérieur', '<i>furent</i> : <i>être</i> au passé simple.'],
+          ['<i>Nous serons partis avant midi.</i>', 'futur antérieur', '<i>serons</i> : <i>être</i> au futur.']
+        ] }
+    ],
+    d: [
+      { kind: 'input', titre: 'Conjuguer aux temps composés', consigne: 'Écris l’auxiliaire et le participe passé.', err: 'temps-compose',
+        items: [
+          ['<i>Dès que tu ___ ta lettre, envoie-la.</i> (écrire, futur antérieur)', 'auras écrit', 'Futur de <i>avoir</i> + <i>écrit</i>.'],
+          ['<i>Quand elle ___, ils se mirent à table.</i> (arriver, passé antérieur)', 'fut arrivée', 'Passé simple de <i>être</i> + participe accordé.', 'aux-choix'],
+          ['<i>Nous ___ avant la nuit.</i> (rentrer, futur antérieur)', 'serons rentrés|serons rentrées', 'Futur de <i>être</i> + participe accordé avec <i>nous</i>.'],
+          ['<i>Après qu’ils ___ le repas, ils dormirent.</i> (prendre, passé antérieur)', 'eurent pris', 'Passé simple de <i>avoir</i> + <i>pris</i>.']
+        ] },
+      { kind: 'etiqueter', titre: 'Décomposer la forme verbale', consigne: 'Glisse sur chaque morceau ce qu’il indique.', labels: ['radical', 'marque de temps', 'marque de personne'], err: 'temps-forme',
+        items: [
+          { g: ['jou', 'er', 'ons'], l: ['radical', 'marque de temps', 'marque de personne'], x: '<i>nous jouerons</i> : futur, 1<sup>re</sup> personne du pluriel.' },
+          { g: ['finiss', 'i', 'ez'], l: ['radical', 'marque de temps', 'marque de personne'], x: '<i>vous finissiez</i> : imparfait.' },
+          { g: ['prend', 'r', 'aient'], l: ['radical', 'marque de temps', 'marque de personne'], x: '<i>ils prendraient</i> : <i>-r-</i> du futur, <i>-aient</i> de l’imparfait.' }
+        ] },
+      { kind: 'choice', titre: 'L’antériorité', err: 'temps-compose',
+        items: [
+          ['<i>Quand il ___ ses devoirs, il jouera.</i>', 'aura fini', 'L’action terminée avant une action future : futur antérieur.', ['finira', 'aura fini']]
+        ] }
+    ]
+  },
+  '5-V2': {
+    c: [
+      { kind: 'choice', titre: 'Former le subjonctif présent', consigne: 'Après <i>il faut que</i>, <i>je veux que</i>, on emploie le subjonctif.', err: 'subj-forme',
+        items: [
+          ['<i>Il faut que tu ___ tes devoirs.</i> (faire)', 'fasses', '<i>faire</i> : <i>que tu fasses</i>.', ['fais', 'fasses']],
+          ['<i>Je veux qu’il ___ à l’heure.</i> (venir)', 'vienne', '<i>venir</i> : <i>qu’il vienne</i>.', ['vient', 'vienne']],
+          ['<i>Il faut que nous ___ prêts.</i> (être)', 'soyons', '<i>être</i> : <i>que nous soyons</i>.', ['sommes', 'soyons']],
+          ['<i>Bien qu’elle ___ raison, il refuse.</i> (avoir)', 'ait', '<i>avoir</i> : <i>qu’elle ait</i>.', ['a', 'ait']],
+          ['<i>Il faut que vous ___ ce livre.</i> (lire)', 'lisiez', '<i>que vous lisiez</i>.', ['lisez', 'lisiez']]
+        ] },
+      { kind: 'essai', titre: 'Futur ou conditionnel ?', consigne: 'Remplace <i>je</i> par <i>nous</i> : la phrase qui sonne juste te donne le temps.', err: 'cond-futur',
+        items: [
+          { p: 'Si tu venais, je ___ content.', o: ['serai', 'serais'], r: 'serais', nous: 'Si tu venais, nous ___ contents.', on: ['serons', 'serions'], x: 'On dit <i>nous serions</i> : conditionnel.' },
+          { p: 'Je ___ demain si tu veux.', o: ['viendrai', 'viendrais'], r: 'viendrai', nous: 'Nous ___ demain si tu veux.', on: ['viendrons', 'viendrions'], x: 'On dit <i>nous viendrons</i> : futur.' },
+          { p: 'J’___ aimé te voir.', o: ['aurai', 'aurais'], r: 'aurais', nous: 'Nous ___ aimé te voir.', on: ['aurons', 'aurions'], x: 'On dit <i>nous aurions aimé</i> : conditionnel passé, un regret.' },
+          { p: 'Quand j’aurai fini, je te ___.', o: ['rejoindrai', 'rejoindrais'], r: 'rejoindrai', nous: 'Quand nous aurons fini, nous te ___.', on: ['rejoindrons', 'rejoindrions'], x: 'On dit <i>nous rejoindrons</i> : futur.' }
+        ] }
+    ],
+    d: [
+      { kind: 'transformer', titre: 'Exprimer une obligation', consigne: 'Récris la phrase en commençant par <i>Il faut que</i>.', err: 'subj-forme',
+        items: [
+          { p: '<i>Tu prends ton parapluie.</i>', r: 'Il faut que tu prennes ton parapluie.', x: '<i>prendre</i> : <i>que tu prennes</i>.' },
+          { p: '<i>Nous allons à la poste.</i>', r: 'Il faut que nous allions à la poste.', x: '<i>aller</i> : <i>que nous allions</i>.' },
+          { p: '<i>Ils savent leur leçon.</i>', r: 'Il faut qu’ils sachent leur leçon.', x: '<i>savoir</i> : <i>qu’ils sachent</i>.' },
+          { p: '<i>Vous pouvez venir.</i>', r: 'Il faut que vous puissiez venir.', x: '<i>pouvoir</i> : <i>que vous puissiez</i>.' }
+        ] },
+      { kind: 'choice', titre: 'Indicatif, subjonctif ou conditionnel ?', options: ['indicatif', 'subjonctif', 'conditionnel'], err: 'subj-forme',
+        items: [
+          ['<i>Je pense qu’il viendra.</i>', 'indicatif', 'Après <i>je pense que</i> : indicatif (un fait certain pour moi).'],
+          ['<i>Je souhaite qu’il vienne.</i>', 'subjonctif', 'Après un souhait : subjonctif.'],
+          ['<i>Il viendrait s’il pouvait.</i>', 'conditionnel', 'Une action soumise à une condition : conditionnel.', null, 'cond-futur'],
+          ['<i>Avant que tu partes, ferme la fenêtre.</i>', 'subjonctif', '<i>avant que</i> est suivi du subjonctif.']
+        ] }
+    ]
+  },
+  '5-V3': {
+    c: [
+      { kind: 'choice', titre: 'La valeur du présent', options: ['actualité', 'habitude', 'vérité générale', 'narration'], err: 'valeur-present',
+        items: [
+          ['<i>En ce moment, il pleut.</i>', 'actualité', 'L’action a lieu au moment où l’on parle.'],
+          ['<i>Chaque soir, je lis un peu.</i>', 'habitude', '<i>chaque soir</i> : action répétée.'],
+          ['<i>L’eau bout à 100 degrés.</i>', 'vérité générale', 'Toujours vrai.'],
+          ['<i>En 1492, Colomb atteint l’Amérique.</i>', 'narration', 'Présent de narration : un fait passé raconté au présent.'],
+          ['<i>Qui vole un œuf vole un bœuf.</i>', 'vérité générale', 'Un proverbe : vérité générale.']
+        ] },
+      { kind: 'choice', titre: 'Premier plan ou arrière-plan ?', options: ['premier plan', 'arrière-plan'], err: 'ps-imparfait',
+        items: [
+          ['<i>La foule <b>attendait</b> en silence.</i>', 'arrière-plan', 'Imparfait : description, arrière-plan.'],
+          ['<i>Soudain, le rideau <b>se leva</b>.</i>', 'premier plan', 'Passé simple : action qui fait avancer le récit.'],
+          ['<i>Il <b>faisait</b> chaud.</i>', 'arrière-plan', 'Imparfait : décor.'],
+          ['<i>Le héros <b>dégaina</b> son épée.</i>', 'premier plan', 'Passé simple : action.']
+        ] }
+    ],
+    d: [
+      { kind: 'transformer', titre: 'Passer au présent de narration', consigne: 'Récris la phrase au présent de narration.', err: 'valeur-present',
+        items: [
+          { p: '<i>Le loup entra et dévora la grand-mère.</i>', r: 'Le loup entre et dévore la grand-mère.', x: 'Le présent de narration rend le récit plus vivant.' },
+          { p: '<i>La porte s’ouvrit lentement.</i>', r: 'La porte s’ouvre lentement.', x: '<i>s’ouvrit</i> → <i>s’ouvre</i>.' },
+          { p: '<i>Ils coururent vers la sortie.</i>', r: 'Ils courent vers la sortie.', x: '<i>coururent</i> → <i>courent</i>.' }
+        ] },
+      { kind: 'input', titre: 'Passé simple ou imparfait ?', consigne: 'Écris le verbe au temps qui convient.', err: 'ps-imparfait',
+        items: [
+          ['<i>Il ___ minuit quand le téléphone sonna.</i> (être)', 'était', 'Cadre de l’action : imparfait.'],
+          ['<i>Tous les jours, elle ___ son chien.</i> (promener)', 'promenait', 'Habitude : imparfait.'],
+          ['<i>Un matin, le chien ___.</i> (disparaitre)', 'disparut', 'Évènement ponctuel : passé simple.'],
+          ['<i>Le vent ___ et les volets claquaient.</i> (souffler)', 'soufflait', 'Description : imparfait, comme <i>claquaient</i>.'],
+          ['<i>Elle ___ la lettre et sourit.</i> (lire)', 'lut', 'Suite d’actions : passé simple.']
+        ] }
+    ]
+  },
+  '5-G1': {
+    c: [
+      { kind: 'choice', titre: 'Quelle sorte de déterminant ?', options: ['article', 'possessif', 'démonstratif', 'indéfini', 'numéral'], err: 'determinant',
+        items: [
+          ['<i><b>ces</b> enfants</i>', 'démonstratif', 'On montre : <i>ces enfants-là</i>.'],
+          ['<i><b>notre</b> maison</i>', 'possessif', 'Il indique à qui : la maison de nous.'],
+          ['<i><b>trois</b> pommes</i>', 'numéral', 'Il indique un nombre précis.'],
+          ['<i><b>chaque</b> jour</i>', 'indéfini', '<i>chaque</i> : quantité non précise.'],
+          ['<i><b>le</b> soleil</i>', 'article', 'Article défini.'],
+          ['<i><b>plusieurs</b> fois</i>', 'indéfini', '<i>plusieurs</i> : nombre non précisé.']
+        ] },
+      { kind: 'choice', titre: 'Article défini, indéfini ou partitif ?', options: ['défini', 'indéfini', 'partitif'], err: 'determinant',
+        items: [
+          ['<i>Je voudrais <b>du</b> pain.</i>', 'partitif', 'Une quantité de quelque chose qu’on ne compte pas.'],
+          ['<i>J’ai vu <b>un</b> renard.</i>', 'indéfini', 'Un renard quelconque.'],
+          ['<i>Le chat de <b>la</b> voisine.</i>', 'défini', 'Une voisine précise.']
+        ] }
+    ],
+    d: [
+      { kind: 'etiqueter', titre: 'Déterminant ou pronom ?', consigne: 'Un déterminant est devant un nom ; un pronom remplace un nom.', labels: ['déterminant', 'pronom'], err: 'determinant',
+        items: [
+          { g: ['<b>le</b> livre', 'je <b>le</b> lis', '<b>leur</b> chien', 'je <b>leur</b> parle'], l: ['déterminant', 'pronom', 'déterminant', 'pronom'], x: 'Devant un nom : déterminant. Devant un verbe : pronom.' },
+          { g: ['<b>certains</b> élèves', '<b>certains</b> sont partis', '<b>la</b> porte', 'ouvre-<b>la</b>'], l: ['déterminant', 'pronom', 'déterminant', 'pronom'], x: '<i>certains sont partis</i> : pas de nom, c’est un pronom.' }
+        ] },
+      { kind: 'input', titre: 'Le bon déterminant', consigne: 'Écris le déterminant demandé.', err: 'determinant',
+        items: [
+          ['<i>J’ai bu ___ eau.</i> (partitif)', 'de l’', 'Devant une voyelle : <i>de l’</i>.'],
+          ['<i>___ arbre est très vieux.</i> (démonstratif)', 'Cet', 'Devant un nom masculin commençant par une voyelle : <i>cet</i>.'],
+          ['<i>Elle a perdu ___ écharpe.</i> (possessif, à elle)', 'son', 'Devant une voyelle, on emploie <i>son</i> même au féminin.'],
+          ['<i>Il n’a pas ___ amis ici.</i> (indéfini après la négation)', 'd’', 'Après la négation, <i>des</i> devient <i>de</i> (<i>d’</i>).'],
+          ['<i>Nous avons ___ chance !</i> (partitif)', 'de la', 'Nom féminin : <i>de la</i>.'],
+          ['<i>___ hôtel est complet.</i> (démonstratif)', 'Cet', '<i>h</i> muet : <i>cet hôtel</i>.']
+        ] }
+    ]
+  },
+  '5-G2': {
+    c: [
+      { kind: 'choice', titre: 'Voix active ou voix passive ?', options: ['active', 'passive'], err: 'voix-passive',
+        items: [
+          ['<i>Le chat mange la souris.</i>', 'active', 'Le sujet fait l’action.'],
+          ['<i>La souris est mangée par le chat.</i>', 'passive', 'Le sujet subit l’action ; <i>par le chat</i> est le complément d’agent.'],
+          ['<i>Le gâteau a été préparé par ma tante.</i>', 'passive', '<i>a été préparé</i> : passif au passé composé.'],
+          ['<i>Elle est partie tôt.</i>', 'active', '<i>partir</i> se conjugue avec <i>être</i>, mais il n’y a pas de complément d’agent possible : voix active.'],
+          ['<i>Les arbres seront coupés.</i>', 'passive', 'Le sujet subit l’action ; le complément d’agent n’est pas exprimé.']
+        ] },
+      { kind: 'choice', titre: 'Accorder le participe au passif', err: 'pp-etre',
+        items: [
+          ['<i>Les fenêtres sont ___ chaque matin.</i> (ouvrir)', 'ouvertes', 'Avec <i>être</i> : accord avec le sujet.', ['ouvert', 'ouvertes']],
+          ['<i>La lettre a été ___ hier.</i> (envoyer)', 'envoyée', 'Le participe après <i>été</i> s’accorde avec le sujet.', ['envoyé', 'envoyée']],
+          ['<i>Les joueurs furent ___.</i> (applaudir)', 'applaudis', 'Masculin pluriel.', ['applaudi', 'applaudis']],
+          ['<i>Cette maison sera ___.</i> (vendre)', 'vendue', 'Féminin singulier.', ['vendu', 'vendue']]
+        ] }
+    ],
+    d: [
+      { kind: 'transformer', titre: 'Passer à la voix passive', consigne: 'Récris la phrase à la voix passive, au même temps, avec le complément d’agent.', err: 'voix-passive',
+        items: [
+          { p: '<i>Le jardinier arrose les fleurs.</i>', r: 'Les fleurs sont arrosées par le jardinier.', x: 'Le COD devient sujet ; <i>être</i> au présent + participe accordé.' },
+          { p: '<i>Les pompiers ont éteint l’incendie.</i>', r: 'L’incendie a été éteint par les pompiers.', x: 'Passé composé : <i>a été éteint</i>.' },
+          { p: '<i>Le public applaudira les musiciennes.</i>', r: 'Les musiciennes seront applaudies par le public.', x: 'Futur : <i>seront applaudies</i>.' }
+        ] },
+      { kind: 'fleche', titre: 'Accord au passif', consigne: 'Touche le mot qui commande l’accord du participe, puis choisis la forme.', pasAccord: false, err: 'pp-etre',
+        items: [
+          { g: ['Les copies', 'seront', '…', 'demain'], pp: 2, cible: 0, o: ['corrigé', 'corrigées'], r: 'corrigées', x: 'Accord avec <i>les copies</i>.' },
+          { g: ['Mes sœurs', 'ont été', '…', 'par le jury'], pp: 2, cible: 0, o: ['choisi', 'choisies'], r: 'choisies', x: 'Accord avec <i>mes sœurs</i>, même après <i>ont été</i>.' },
+          { g: ['Le pont', 'a été', '…', 'en 1900'], pp: 2, cible: 0, o: ['construit', 'construits'], r: 'construit', x: 'Masculin singulier.' }
+        ] },
+      { kind: 'choice', titre: 'Le complément d’agent', err: 'voix-passive',
+        items: [
+          ['<i>Cette chanteuse est aimée de tous.</i> Le complément d’agent est…', 'de tous', 'Le complément d’agent peut être introduit par <i>de</i> : <i>tous l’aiment</i>.', ['cette chanteuse', 'de tous']],
+          ['<i>La route a été fermée.</i> À la voix active, on écrit…', 'On a fermé la route.', 'Sans complément d’agent, le sujet actif devient <i>on</i>.', ['On a fermé la route.', 'La route a fermé.']]
+        ] }
+    ]
+  },
+  '5-G3': {
+    c: [
+      { kind: 'choice', titre: 'Avoir : où est le COD ?', consigne: 'Avec <i>avoir</i>, on accorde seulement si le COD est placé avant le verbe.', err: 'pp-avoir-cod',
+        items: [
+          ['<i>J’ai ___ des pommes.</i> (cueillir)', 'cueilli', 'COD placé après : pas d’accord.', ['cueilli', 'cueillies'], 'pp-avoir-sujet'],
+          ['<i>Ces pommes, je les ai ___.</i> (cueillir)', 'cueillies', '<i>les</i> = ces pommes, placé avant : accord.', ['cueilli', 'cueillies']],
+          ['<i>Elles ont ___ toute la journée.</i> (rire)', 'ri', 'Pas de COD : pas d’accord.', ['ri', 'ries'], 'pp-avoir-sujet'],
+          ['<i>La robe qu’elle a ___ est rouge.</i> (choisir)', 'choisie', '<i>qu’</i> = la robe, placé avant : accord.', ['choisi', 'choisie']],
+          ['<i>Quels films as-tu ___ ?</i> (voir)', 'vus', '<i>quels films</i> est COD placé avant : accord.', ['vu', 'vus']]
+        ] },
+      { kind: 'choice', titre: 'Accord sujet-verbe', err: 'accord-sv',
+        items: [
+          ['<i>La plupart des élèves ___ venus.</i>', 'sont', 'Avec <i>la plupart</i>, le verbe se met au pluriel.', ['est', 'sont']],
+          ['<i>C’est toi qui ___ raison.</i>', 'as', '<i>qui</i> reprend <i>toi</i> : 2<sup>e</sup> personne.', ['a', 'as']],
+          ['<i>Ni Paul ni Léa ne ___ venir.</i>', 'peuvent', 'Deux sujets reliés par <i>ni… ni</i> : pluriel.', ['peut', 'peuvent']],
+          ['<i>Les rires des enfants ___ la maison.</i>', 'remplissent', 'Sujet <i>les rires</i> : pluriel.', ['remplit', 'remplissent'], 'sv-eloigne']
+        ] }
+    ],
+    d: [
+      { kind: 'fleche', titre: 'Participe passé avec avoir', consigne: 'Touche le COD placé avant qui commande l’accord, ou « Pas d’accord ».',
+        items: [
+          { g: ['Les fautes', 'que', 'tu', 'as', '…'], pp: 4, cible: 1, o: ['fait', 'faites'], r: 'faites', x: '<i>que</i> = les fautes, COD placé avant : féminin pluriel.', err: 'pp-avoir-cod' },
+          { g: ['Mes amies', 'ont', '…', 'une surprise'], pp: 2, cible: -1, o: ['préparé', 'préparées'], r: 'préparé', x: 'COD placé après : pas d’accord.', err: 'pp-avoir-sujet' },
+          { g: ['Cette émission,', 'je', 'l’', 'ai', '…'], pp: 4, cible: 2, o: ['regardé', 'regardée'], r: 'regardée', x: '<i>l’</i> = cette émission : féminin singulier.', err: 'pp-avoir-cod' },
+          { g: ['Combien de livres', 'as-tu', '…', '?'], pp: 2, cible: 0, o: ['lu', 'lus'], r: 'lus', x: 'COD <i>combien de livres</i> placé avant : masculin pluriel.', err: 'pp-avoir-cod' }
+        ] },
+      { kind: 'input', titre: 'Écrire le participe', consigne: 'Écris le participe passé, accordé si besoin.', err: 'pp-avoir-cod',
+        items: [
+          ['<i>Les chansons que nous avons ___ étaient anciennes.</i> (apprendre)', 'apprises', '<i>que</i> = les chansons : féminin pluriel.'],
+          ['<i>Elles ont ___ leurs valises.</i> (porter)', 'porté', 'COD après : pas d’accord.', 'pp-avoir-sujet'],
+          ['<i>Tes lunettes ? Je ne les ai pas ___.</i> (voir)', 'vues', '<i>les</i> = tes lunettes : féminin pluriel.'],
+          ['<i>Les efforts qu’il a ___ ont payé.</i> (faire)', 'faits', '<i>qu’</i> = les efforts : masculin pluriel.']
+        ] }
+    ]
+  },
+  '5-H1': {
+    c: [
+      { kind: 'essai', titre: 'Décomposer pour choisir', consigne: 'Essaie le remplacement proposé : s’il donne une phrase correcte, c’est le mot simple ; sinon, c’est la forme décomposée.', err: 'homo-decomp',
+        items: [
+          { p: 'Il est parti ___ son sac.', o: ['sans', 's’en'], r: 'sans', essai: 'avec', x: '<i>Il est parti avec son sac</i> : la préposition <i>sans</i> est le contraire de <i>avec</i>.' },
+          { p: 'Il ___ moque.', o: ['sans', 's’en'], r: 's’en', essai: 'avec', x: '<i>Il avec moque</i> est impossible : <i>se</i> + <i>en</i> (<i>je m’en moque</i>).' },
+          { p: 'Je reviens ___ cinq minutes.', o: ['dans', 'd’en'], r: 'dans', essai: 'd’ici', x: '<i>Je reviens d’ici cinq minutes</i> : préposition <i>dans</i>.' },
+          { p: 'Il vient ___ parler.', o: ['dans', 'd’en'], r: 'd’en', essai: 'd’ici', x: '<i>Il vient d’ici parler</i> est impossible : <i>de</i> + <i>en</i> (il vient de parler de cela).' },
+          { p: '___ penses-tu ?', o: ['Quand', 'Qu’en'], r: 'Qu’en', essai: 'Lorsque', x: '<i>Lorsque penses-tu</i> est impossible : <i>que</i> + <i>en</i> (que penses-tu de cela ?).' }
+        ] },
+      { kind: 'choice', titre: 'Le bon mot', err: 'homo-decomp',
+        items: [
+          ['<i>___ tu seras grand, tu comprendras.</i>', 'Quand', '<i>Lorsque tu seras grand</i> : <i>quand</i>.', ['Quand', 'Quant', 'Qu’en']],
+          ['<i>___ à moi, je reste.</i>', 'Quant', '<i>quant à</i> = en ce qui concerne.', ['Quand', 'Quant', 'Qu’en']],
+          ['<i>Il ___ souvient.</i>', 's’en', 'Changement de personne : <i>je m’en souviens</i>.', ['sans', 's’en', 'c’en']],
+          ['<i>___ est trop !</i>', 'C’en', '<i>Cela en est trop</i> : <i>c’en</i>.', ['Sans', 'S’en', 'C’en']]
+        ] }
+    ],
+    d: [
+      { kind: 'essai', titre: 'Deux trous dans la phrase', consigne: 'Pour chaque trou, essaie le remplacement, puis choisis.',
+        items: [
+          { p: '___ il est rentré, il ___ est allé aussitôt.', trous: [{ o: ['Quand', 'Qu’en'], r: 'Quand', essai: 'Lorsque' }, { o: ['s’en', 'sans'], r: 's’en', essai: 'avec' }], x: '<i>Lorsqu’il est rentré</i> ; <i>il s’en est allé</i> (<i>je m’en vais</i>).', err: 'homo-decomp' },
+          { p: 'Il a fini ___ aide et vient ___ parler.', trous: [{ o: ['sans', 's’en'], r: 'sans', essai: 'avec' }, { o: ['dans', 'd’en'], r: 'd’en', essai: 'd’ici' }], x: '<i>sans aide</i> (contraire de <i>avec</i>) ; <i>vient d’en parler</i> (de + en).', err: 'homo-decomp' }
+        ] },
+      { kind: 'input', titre: 'Écrire l’homophone', consigne: 'Écris le mot qui convient : <i>sans, s’en, c’en, dans, d’en, quand, quant, qu’en</i>.', err: 'homo-decomp',
+        items: [
+          ['<i>Il s’est trompé, mais il ne ___ est pas rendu compte.</i>', 's’en', '<i>se</i> + <i>en</i> : <i>je ne m’en suis pas rendu compte</i>.'],
+          ['<i>___ aux autres, ils attendront.</i>', 'Quant', '<i>quant aux</i> = en ce qui concerne.'],
+          ['<i>Ces bonbons ? Il vient ___ manger trois.</i>', 'd’en', '<i>de</i> + <i>en</i> (en = des bonbons).'],
+          ['<i>Il marche ___ faire de bruit.</i>', 'sans', 'Contraire de <i>avec</i>.'],
+          ['<i>___ est fini de rire !</i>', 'C’en', '<i>Cela en est fini</i>.'],
+          ['<i>___ dit ton père ?</i>', 'Qu’en', '<i>Que dit ton père de cela ?</i>']
+        ] }
+    ]
+  },
+  '5-H2': {
+    c: [
+      { kind: 'choice', titre: 'Masculin ou féminin ?', options: ['un', 'une'], err: 'genre-nom',
+        items: [
+          ['___ autoroute', 'une', '<i>autoroute</i> est féminin : <i>une autoroute rapide</i>.'],
+          ['___ légume', 'un', '<i>légume</i> est masculin : <i>un légume frais</i>.'],
+          ['___ espèce', 'une', '<i>espèce</i> est féminin : <i>une espèce rare</i>.'],
+          ['___ pétale', 'un', '<i>pétale</i> est masculin : <i>un pétale blanc</i>.'],
+          ['___ astérisque', 'un', '<i>astérisque</i> est masculin.']
+        ] },
+      { kind: 'choice', titre: 'La lettre que l’étymologie explique', err: 'ortho-etym',
+        items: [
+          ['<i>un ___</i> (on pense à <i>temporel</i>)', 'temps', 'Le <i>p</i> de <i>temps</i> vient du latin <i>tempus</i>.', ['tan', 'temps']],
+          ['<i>le cor___</i> (on pense à <i>corporel</i>)', 'corps', '<i>corps</i> vient de <i>corpus</i> : <i>-ps</i>.', ['cor', 'corps']],
+          ['<i>le doi___</i> (on pense à <i>digital</i>)', 'doigt', '<i>doigt</i> vient du latin <i>digitus</i> : le <i>g</i> et le <i>t</i>.', ['doit', 'doigt']],
+          ['<i>vin___</i> (le nombre 20)', 'vingt', '<i>vingt</i> vient du latin <i>viginti</i> : le <i>g</i> et le <i>t</i>.', ['vain', 'vingt']]
+        ] }
+    ],
+    d: [
+      { kind: 'etiqueter', titre: 'Classer par genre', consigne: 'Glisse les étiquettes : masculin ou féminin.', labels: ['masculin', 'féminin'], err: 'genre-nom',
+        items: [
+          { g: ['orage', 'oasis', 'éclair', 'atmosphère'], l: ['masculin', 'féminin', 'masculin', 'féminin'], x: '<i>un orage</i>, <i>une oasis</i>, <i>un éclair</i>, <i>une atmosphère</i>.' },
+          { g: ['incendie', 'équerre', 'tentacule', 'oreiller'], l: ['masculin', 'féminin', 'masculin', 'masculin'], x: '<i>un incendie</i>, <i>une équerre</i>, <i>un tentacule</i>, <i>un oreiller</i>.' }
+        ] },
+      { kind: 'choice', titre: 'Genres pièges', options: ['un', 'une'], err: 'genre-nom',
+        items: [
+          ['___ armistice', 'un', '<i>armistice</i> est masculin : <i>un armistice signé</i>.'],
+          ['___ éphéméride', 'une', '<i>éphéméride</i> est féminin.']
+        ] },
+      { kind: 'input', titre: 'La lettre muette', consigne: 'Écris le mot complet ; pense à un mot de la même famille.', err: 'ortho-etym',
+        items: [
+          ['<i>un regar___</i> (regarder)', 'regard', '<i>regarder</i> : le <i>d</i> s’entend.'],
+          ['<i>un clima___</i> (climatique)', 'climat', '<i>climatique</i> : le <i>t</i>.'],
+          ['<i>un galo___</i> (galoper)', 'galop', '<i>galoper</i> : le <i>p</i> s’entend.'],
+          ['<i>un ban___</i> (banquette)', 'banc', '<i>banquette</i> : le <i>c</i> (prononcé [k]).']
+        ] }
+    ]
+  },
+  '5-L1': {
+    c: [
+      { kind: 'choice', titre: 'Le sens de la racine', err: 'etymologie',
+        items: [
+          ['<i>chronologie, chronomètre</i> : <i>chrono</i> veut dire…', 'le temps', 'Grec <i>khronos</i>.', ['le temps', 'la couleur']],
+          ['<i>géographie, géologie</i> : <i>géo</i> veut dire…', 'la terre', 'Grec <i>gê</i>.', ['la terre', 'la mer']],
+          ['<i>biologie, biographie</i> : <i>bio</i> veut dire…', 'la vie', 'Grec <i>bios</i>.', ['la vie', 'deux']],
+          ['<i>carnivore, carnaval</i> : <i>carn</i> veut dire…', 'la chair, la viande', 'Latin <i>caro, carnis</i>.', ['la chair, la viande', 'le cœur']],
+          ['<i>omnivore, omniprésent</i> : <i>omni</i> veut dire…', 'tout', 'Latin <i>omnis</i>.', ['tout', 'rien']]
+        ] },
+      { kind: 'choice', titre: 'Quel mot correspond ?', err: 'etymologie',
+        items: [
+          ['Qui mange des herbes (<i>herba</i> + <i>vorare</i>) :', 'herbivore', '<i>vorare</i> : dévorer.', ['herbivore', 'herboriste']],
+          ['Peur de l’eau (<i>hydro</i> + <i>phobie</i>) :', 'hydrophobie', '<i>phobos</i> : la peur.', ['hydrophobie', 'hydravion']],
+          ['Qui parle plusieurs langues (<i>poly</i> + <i>glotte</i>) :', 'polyglotte', '<i>poly</i> : plusieurs ; <i>glôtta</i> : la langue.', ['polyglotte', 'polygone']],
+          ['Étude des animaux (<i>zoo</i> + <i>logie</i>) :', 'zoologie', '<i>zôon</i> : l’animal ; <i>logos</i> : l’étude.', ['zoologie', 'écologie']]
+        ] }
+    ],
+    d: [
+      { kind: 'etiqueter', titre: 'Classer par racine', consigne: 'Glisse sur chaque mot le sens de la racine commune.', labels: ['eau', 'son', 'lumière', 'écrire'], err: 'etymologie',
+        items: [
+          { g: ['hydravion', 'phonétique', 'photographie', 'graphologue'], l: ['eau', 'son', 'lumière', 'écrire'], x: '<i>hydro</i> l’eau ; <i>phônê</i> le son ; <i>phôs</i> la lumière ; <i>graphein</i> écrire.' },
+          { g: ['microphone', 'autographe', 'déshydraté', 'photophobie'], l: ['son', 'écrire', 'eau', 'lumière'], x: '<i>photophobie</i> : la peur (ou la gêne) de la lumière.' }
+        ] },
+      { kind: 'input', titre: 'Trouver le mot savant', consigne: 'Écris le mot formé avec les racines données.', err: 'etymologie',
+        items: [
+          ['<i>auto</i> (soi-même) + <i>biographie</i> : ___', 'autobiographie', 'Le récit de sa propre vie.'],
+          ['<i>thermo</i> (chaleur) + <i>mètre</i> (mesure) : ___', 'thermomètre', 'Instrument qui mesure la chaleur.'],
+          ['<i>télé</i> (loin) + <i>scope</i> (observer) : ___', 'télescope', 'Pour observer ce qui est loin.'],
+          ['<i>philo</i> (qui aime) + <i>sophie</i> (sagesse) : ___', 'philosophie', 'L’amour de la sagesse.']
+        ] },
+      { kind: 'choice', titre: 'Déduire le sens', err: 'etymologie',
+        items: [
+          ['Un <i>bibliophile</i> est quelqu’un qui…', 'aime les livres', '<i>biblion</i> : le livre ; <i>philos</i> : qui aime.', ['aime les livres', 'vend des bibles']],
+          ['<i>Anthropophage</i> veut dire…', 'qui mange des êtres humains', '<i>anthrôpos</i> : l’être humain ; <i>phagein</i> : manger.', ['qui mange des êtres humains', 'qui étudie les êtres humains']]
+        ] }
+    ]
+  },
+  '5-L2': {
+    c: [
+      { kind: 'choice', titre: 'Le champ lexical', err: 'champ-lexical',
+        items: [
+          ['<i>vagues, écume, marée, rivage</i> : champ lexical de…', 'la mer', 'Tous ces mots renvoient à la mer.', ['la mer', 'la montagne']],
+          ['<i>trembler, frisson, effroi, pâlir</i> : champ lexical de…', 'la peur', 'Tous ces mots disent la peur.', ['la joie', 'la peur']],
+          ['Quel mot n’appartient pas au champ lexical de l’école ?', 'tribunal', 'Le tribunal relève de la justice.', ['cartable', 'récréation', 'tribunal']],
+          ['<i>sabre, bouclier, armure, assaut</i> : champ lexical de…', 'la guerre', 'Armes et combat.', ['la guerre', 'la cuisine']]
+        ] },
+      { kind: 'choice', titre: 'Quelle figure ?', options: ['comparaison', 'métaphore', 'personnification', 'hyperbole'], err: 'figures',
+        items: [
+          ['<i>Ses yeux brillent comme des étoiles.</i>', 'comparaison', 'Outil de comparaison <i>comme</i>.'],
+          ['<i>Ses yeux sont des étoiles.</i>', 'métaphore', 'Rapprochement sans outil de comparaison.'],
+          ['<i>Le vent hurle dans la nuit.</i>', 'personnification', 'Le vent agit comme une personne.'],
+          ['<i>Je te l’ai dit mille fois !</i>', 'hyperbole', 'Exagération.'],
+          ['<i>La lune nous sourit.</i>', 'personnification', 'La lune a une action humaine.']
+        ] }
+    ],
+    d: [
+      { kind: 'etiqueter', titre: 'Comparé, outil, comparant', consigne: 'Glisse les étiquettes sur chaque partie de la comparaison.', labels: ['comparé', 'outil de comparaison', 'comparant'], err: 'figures',
+        items: [
+          { g: ['La neige', 'est pareille à', 'un drap blanc'], l: ['comparé', 'outil de comparaison', 'comparant'], x: 'On compare la neige (le comparé) à un drap (le comparant).' },
+          { g: ['Cet élève', 'est aussi rusé qu’', 'un renard'], l: ['comparé', 'outil de comparaison', 'comparant'], x: '<i>aussi… que</i> est un outil de comparaison.' },
+          { g: ['Le lac', 'ressemble à', 'un miroir'], l: ['comparé', 'outil de comparaison', 'comparant'], x: '<i>ressembler à</i> peut servir d’outil.' }
+        ] },
+      { kind: 'choice', titre: 'Figures plus fines', err: 'figures',
+        items: [
+          ['<i>Je meurs de faim.</i>', 'hyperbole', 'Exagération : on ne meurt pas vraiment.', ['hyperbole', 'métaphore']],
+          ['<i>La forêt respire doucement.</i>', 'personnification', 'La forêt agit comme un être vivant.', ['comparaison', 'personnification']],
+          ['<i>Cet homme est un lion au combat.</i>', 'métaphore', 'Pas d’outil de comparaison.', ['comparaison', 'métaphore']],
+          ['<i>vent, souffle, tempête, bourrasque</i> forment…', 'un champ lexical', 'Des mots qui renvoient au même thème.', ['un champ lexical', 'une famille de mots'], 'champ-lexical'],
+          ['<i>Il est fort comme un bœuf.</i>', 'comparaison', 'Outil <i>comme</i>.', ['comparaison', 'métaphore']]
+        ] }
+    ]
+  },
+  '5-L3': {
+    c: [
+      { kind: 'choice', titre: 'Quel niveau de langue ?', options: ['familier', 'courant', 'soutenu'], err: 'niveaux-langue',
+        items: [
+          ['<i>T’as vu ma bagnole ?</i>', 'familier', '<i>t’as</i>, <i>bagnole</i> : familier.'],
+          ['<i>As-tu vu ma voiture ?</i>', 'courant', 'Correct et usuel.'],
+          ['<i>Auriez-vous aperçu mon véhicule ?</i>', 'soutenu', 'Vouvoiement, conditionnel, vocabulaire recherché.'],
+          ['<i>J’ai la flemme.</i>', 'familier', 'Courant : <i>je n’ai pas envie</i>.'],
+          ['<i>Je suis las.</i>', 'soutenu', 'Courant : <i>je suis fatigué</i>.']
+        ] },
+      { kind: 'choice', titre: 'Liaison ou élision ?', err: 'liaison-elision',
+        items: [
+          ['<i>le arbre</i> s’écrit…', 'l’arbre', 'Élision : <i>le</i> devant une voyelle devient <i>l’</i>.', ['le arbre', 'l’arbre']],
+          ['<i>le haricot</i> s’écrit…', 'le haricot', '<i>h</i> aspiré : pas d’élision.', ['l’haricot', 'le haricot']],
+          ['Dans <i>les_enfants</i>, on fait…', 'une liaison', 'On entend [z] : <i>les-z-enfants</i>.', ['une liaison', 'une élision']],
+          ['Dans <i>et_alors</i>, on fait…', 'pas de liaison', 'Jamais de liaison après <i>et</i>.', ['une liaison', 'pas de liaison']]
+        ] }
+    ],
+    d: [
+      { kind: 'transformer', titre: 'Passer au niveau courant', consigne: 'Récris la phrase en langage courant.', err: 'niveaux-langue',
+        items: [
+          { p: '<i>J’ai pas de thune.</i>', r: 'Je n’ai pas d’argent.', x: 'On rétablit le <i>ne</i> et on remplace <i>thune</i>.' },
+          { p: '<i>Il se marre.</i>', r: 'Il rit.|Il s’amuse.', x: '<i>se marrer</i> : familier.' },
+          { p: '<i>C’est trop chelou.</i>', r: 'C’est très bizarre.|C’est très étrange.', x: '<i>chelou</i> est du verlan pour <i>louche</i>.' }
+        ] },
+      { kind: 'etiqueter', titre: 'Trois niveaux pour une même idée', consigne: 'Glisse les étiquettes sur chaque mot.', labels: ['familier', 'courant', 'soutenu'], err: 'niveaux-langue',
+        items: [
+          { g: ['un bouquin', 'un livre', 'un ouvrage'], l: ['familier', 'courant', 'soutenu'], x: 'Trois mots pour la même chose, trois registres.' },
+          { g: ['la demeure', 'la baraque', 'la maison'], l: ['soutenu', 'familier', 'courant'], x: '<i>demeure</i> est soutenu ; <i>baraque</i>, familier.' }
+        ] },
+      { kind: 'choice', titre: 'Liaisons interdites', err: 'liaison-elision',
+        items: [
+          ['<i>les héros</i> : on dit…', 'les / héros', '<i>h</i> aspiré : pas de liaison.', ['les-z-héros', 'les / héros']],
+          ['<i>un ami</i> : on dit…', 'un-n-ami', 'Liaison obligatoire après le déterminant.', ['un-n-ami', 'un / ami']],
+          ['<i>ils ont</i> : on dit…', 'ils-z-ont', 'Liaison obligatoire entre le pronom et le verbe : elle distingue <i>ils ont</i> de <i>ils sont</i>.', ['ils-z-ont', 'ils / ont']]
+        ] }
+    ]
+  }
+};
+
+;
 /* Lots de flashcards de la rubrique Entrainements (version élève, fichier flashcards.html).
    id = id du lot dans l'appli des flashcards ; niv = niveaux du lot ; th = thème du Laboratoire (ceintures) ;
    rub = rubrique de l'appli des flashcards (Homophones, Orthographe…), utilisée par la page Entrainements.
