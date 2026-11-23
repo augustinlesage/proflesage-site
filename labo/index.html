@@ -541,6 +541,11 @@ html.dys .bl-ncol,html.dys .bl-errs li{border-width:2px}
 .tb-pt:hover .tb-dot,.tb-pt:focus .tb-dot{r:6}
 .bl-prog{display:grid;gap:14px}
 
+/* onglet « Homophones » de l'Aide (23/11/2026) : étapes de la méthode, colonnes du tableau */
+.memos .hm-etapes{margin:4px 0 8px;padding-left:1.4em}.memos .hm-etapes li{margin:2px 0}
+.memos .tw.hm td:first-of-type{white-space:nowrap}.memos .tw.hm td:nth-of-type(3){white-space:nowrap}
+@media (max-width:900px){.memos .tw.hm td:first-of-type,.memos .tw.hm td:nth-of-type(3){white-space:normal}}
+
 /* styles des pages de l'appli des flashcards (app.html) */
 .res-page{max-width:860px}
 .res-kicker{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--brand);font-weight:700;margin-bottom:2px}
@@ -847,6 +852,180 @@ const MEMOS = `
 <tr><td>L’âge, la faim : <b>avoir</b></td><td><i class="ct">J’<em class="fx">ai</em> douze ans. J’<em class="fx">ai</em> faim.</i></td></tr>
 <tr><td>Passé composé avec <b>être</b> : <i class="ct">aller, venir, partir, arriver…</i></td><td><i class="ct">Elle <em class="fx">est</em> partie.</i></td></tr>
 <tr><td>Les lieux : <b>à</b> + ville, <b>en</b> ou <b>au</b> + pays</td><td><i class="ct">J’habite <em class="fx">à</em> Paris, <em class="fx">en</em> France, <em class="fx">au</em> Maroc.</i></td></tr>
+</table></div></section>
+`;
+
+;
+/* Onglet « Homophones » de l’Aide du Laboratoire (Augustin, 23/11/2026) : tous les homophones des lots de flashcards
+   (Homophones séries 1 à 7, Leur ou leurs, Futur ou conditionnel), le test pour les distinguer et un exemple.
+   Généré par gen_homo.py (fil « Créer l’onglet Homophones ») ; même mise en page que les mémos. */
+const HOMOPHONES = `
+<section><h2>La méthode</h2>
+<p class="memo-lead">Les homophones <b>se prononcent pareil</b> mais <b>ne s’écrivent pas pareil</b>. Pour choisir, on fait un test.</p>
+<ol class="hm-etapes">
+<li>Je repère le mot qui hésite.</li>
+<li>Je le <b>remplace</b> par le mot du test. Le signe ⇔ veut dire « je remplace par ».</li>
+<li>Si la phrase <b>garde son sens</b>, c’est la bonne écriture. Si elle ne veut plus rien dire, je prends l’autre mot.</li>
+</ol>
+<p class="memo-note">Exemple : <i class="ct">Il <em class="fx">a</em> faim</i> ⇔ <i class="ct">Il <em class="fx">avait</em> faim</i> : ça marche, donc c’est le verbe <b>avoir</b>. Une phrase en rouge est impossible.</p></section>
+
+<section><h2>Les bases</h2>
+<p class="memo-lead">À connaitre en premier, dès la 6<sup>e</sup>. Le plus souvent, on remplace par <b>le même verbe à l’imparfait</b>.</p>
+<div class="tw hm"><table>
+<tr><th>Mot</th><th>Comment le reconnaitre</th><th>Le test</th><th>Exemple</th></tr>
+<tr><td>a</td><td>verbe <b>avoir</b></td><td>⇔ <i class="ct"><em class="fx">avait</em></i></td><td><i class="ct">Il <em class="fx">a</em> faim.</i> → <i class="ct">Il <em class="fx">avait</em> faim.</i></td></tr>
+<tr><td>à</td><td><b>préposition</b> : avait est impossible</td><td>⇔ <i class="ct"><em class="fx">avait</em></i> : impossible</td><td><i class="ct">Je vais <em class="fx">à</em> Paris.</i> → <span class="err">Je vais avait Paris.</span></td></tr>
+<tr class="lgrp-debut"><td>est</td><td>verbe <b>être</b></td><td>⇔ <i class="ct"><em class="fx">était</em></i></td><td><i class="ct">Le ciel <em class="fx">est</em> gris.</i> → <i class="ct">Le ciel <em class="fx">était</em> gris.</i></td></tr>
+<tr><td>et</td><td><b>conjonction de coordination</b> : relie deux mots ou deux groupes</td><td>⇔ <i class="ct"><em class="fx">et puis</em></i></td><td><i class="ct">Léo <em class="fx">et</em> Léa</i> → <i class="ct">Léo <em class="fx">et puis</em> Léa</i></td></tr>
+<tr class="lgrp-debut"><td>ont</td><td>verbe <b>avoir</b></td><td>⇔ <i class="ct"><em class="fx">avaient</em></i></td><td><i class="ct">Ils <em class="fx">ont</em> un chien.</i> → <i class="ct">Ils <em class="fx">avaient</em> un chien.</i></td></tr>
+<tr><td>on</td><td><b>pronom personnel</b> sujet</td><td>⇔ <i class="ct"><em class="fx">il</em></i></td><td><i class="ct"><em class="fx">On</em> joue dehors.</i> → <i class="ct"><em class="fx">Il</em> joue dehors.</i></td></tr>
+<tr class="lgrp-debut"><td>sont</td><td>verbe <b>être</b></td><td>⇔ <i class="ct"><em class="fx">étaient</em></i></td><td><i class="ct">Ils <em class="fx">sont</em> partis.</i> → <i class="ct">Ils <em class="fx">étaient</em> partis.</i></td></tr>
+<tr><td>son</td><td><b>déterminant possessif</b> : suivi d’un nom</td><td>⇔ <i class="ct"><em class="fx">mon</em></i></td><td><i class="ct">Paul range <em class="fx">son</em> vélo.</i> → <i class="ct">Paul range <em class="fx">mon</em> vélo.</i></td></tr>
+<tr class="lgrp-debut"><td>sa</td><td><b>déterminant possessif</b> : suivi d’un nom</td><td>⇔ <i class="ct"><em class="fx">ma</em></i></td><td><i class="ct">Chloé a oublié <em class="fx">sa</em> trousse.</i> → <i class="ct">Chloé a oublié <em class="fx">ma</em> trousse.</i></td></tr>
+<tr><td>ça</td><td><b>pronom démonstratif</b></td><td>⇔ <i class="ct"><em class="fx">cela</em></i></td><td><i class="ct"><em class="fx">Ça</em> brille.</i> → <i class="ct"><em class="fx">Cela</em> brille.</i></td></tr>
+<tr class="lgrp-debut"><td>ses</td><td><b>déterminant possessif</b> : les choses sont à lui, à elle</td><td>⇔ <i class="ct"><em class="fx">son</em></i>, <i class="ct"><em class="fx">sa</em></i> (au singulier)</td><td><i class="ct">Max prête <em class="fx">ses</em> feutres.</i> → <i class="ct">Max prête <em class="fx">son</em> feutre.</i></td></tr>
+<tr><td>ces</td><td><b>déterminant démonstratif</b> : on montre</td><td>⇔ <i class="ct"><em class="fx">ce</em></i>, <i class="ct"><em class="fx">cet</em></i>, <i class="ct"><em class="fx">cette</em></i> (au singulier)</td><td><i class="ct"><em class="fx">Ces</em> arbres sont hauts.</i> → <i class="ct"><em class="fx">Cet</em> arbre est haut.</i></td></tr>
+<tr><td>c’est</td><td>c’ (<b>cela</b>) + verbe <b>être</b></td><td>⇔ <i class="ct"><em class="fx">cela est</em></i></td><td><i class="ct"><em class="fx">C’est</em> mon ami.</i> → <i class="ct"><em class="fx">Cela est</em> mon ami.</i></td></tr>
+<tr><td>s’est</td><td>s’ (<b>pronom</b>) + verbe <b>être</b>, devant un participe passé</td><td>⇔ <i class="ct"><em class="fx">je me suis</em></i></td><td><i class="ct">Il <em class="fx">s’est</em> levé.</i> → <i class="ct">Je <em class="fx">me suis</em> levé.</i></td></tr>
+<tr><td>sait</td><td>verbe <b>savoir</b></td><td>⇔ <i class="ct"><em class="fx">savait</em></i></td><td><i class="ct">Elle <em class="fx">sait</em> nager.</i> → <i class="ct">Elle <em class="fx">savait</em> nager.</i></td></tr>
+<tr class="lgrp-debut"><td>mes</td><td><b>déterminant possessif</b> : suivi d’un nom au pluriel</td><td>⇔ <i class="ct"><em class="fx">mon</em></i></td><td><i class="ct">J’ai rangé <em class="fx">mes</em> jouets.</i> → <i class="ct">J’ai rangé <em class="fx">mon</em> jouet.</i></td></tr>
+<tr><td>mais</td><td><b>conjonction de coordination</b> : marque une opposition</td><td>⇔ <i class="ct"><em class="fx">pourtant</em></i></td><td><i class="ct">Il pleut, <em class="fx">mais</em> je sors.</i> → <i class="ct">Il pleut, <em class="fx">pourtant</em> je sors.</i></td></tr>
+<tr class="lgrp-debut"><td>ou</td><td><b>conjonction de coordination</b> : marque un choix</td><td>⇔ <i class="ct"><em class="fx">ou bien</em></i></td><td><i class="ct">Du thé <em class="fx">ou</em> du café ?</i> → <i class="ct">Du thé <em class="fx">ou bien</em> du café ?</i></td></tr>
+<tr><td>où</td><td>indique <b>le lieu</b> ou <b>le moment</b> : ou bien est impossible</td><td>⇔ <i class="ct"><em class="fx">ou bien</em></i> : impossible</td><td><i class="ct"><em class="fx">Où</em> vas-tu ?</i> → <span class="err">Ou bien vas-tu ?</span></td></tr>
+<tr class="lgrp-debut"><td>la</td><td><b>déterminant</b> devant un nom (ou <b>pronom</b> devant un verbe)</td><td>⇔ <i class="ct"><em class="fx">une</em></i></td><td><i class="ct">Ferme <em class="fx">la</em> fenêtre.</i> → <i class="ct">Ferme <em class="fx">une</em> fenêtre.</i></td></tr>
+<tr><td>l’a</td><td>l’ (<b>pronom</b>) + verbe <b>avoir</b></td><td>⇔ <i class="ct"><em class="fx">l’avait</em></i></td><td><i class="ct">Ce livre, elle <em class="fx">l’a</em> rangé.</i> → <i class="ct">Ce livre, elle <em class="fx">l’avait</em> rangé.</i></td></tr>
+<tr><td>là</td><td><b>adverbe</b> de lieu</td><td>⇔ <i class="ct"><em class="fx">ici</em></i></td><td><i class="ct">Pose ton sac <em class="fx">là</em>.</i> → <i class="ct">Pose ton sac <em class="fx">ici</em>.</i></td></tr>
+<tr class="lgrp-debut"><td>ce</td><td><b>déterminant démonstratif</b> : suivi d’un nom</td><td>⇔ <i class="ct"><em class="fx">ce … -là</em></i></td><td><i class="ct">J’adore <em class="fx">ce</em> film.</i> → <i class="ct">J’adore <em class="fx">ce</em> film<em class="fx">-là</em>.</i></td></tr>
+<tr><td>se</td><td><b>pronom réfléchi</b> : devant un verbe</td><td>⇔ <i class="ct"><em class="fx">me</em></i></td><td><i class="ct">Le chat <em class="fx">se</em> cache.</i> → <i class="ct">Je <em class="fx">me</em> cache.</i></td></tr>
+<tr><td>ceux</td><td><b>pronom démonstratif</b> pluriel</td><td>⇔ <i class="ct"><em class="fx">celui</em></i></td><td><i class="ct"><em class="fx">Ceux</em> qui ont fini sortent.</i> → <i class="ct"><em class="fx">Celui</em> qui a fini sort.</i></td></tr>
+<tr class="lgrp-debut"><td>ma, ta</td><td><b>déterminants possessifs</b> : suivis d’un nom</td><td>⇔ <i class="ct"><em class="fx">ta</em></i>, <i class="ct"><em class="fx">ma</em></i></td><td><i class="ct"><em class="fx">Ma</em> sœur joue du violon.</i> → <i class="ct"><em class="fx">Ta</em> sœur joue du violon.</i></td></tr>
+<tr><td>m’a, t’a</td><td>m’, t’ (<b>pronoms</b>) + verbe <b>avoir</b></td><td>⇔ <i class="ct"><em class="fx">m’avait</em></i>, <i class="ct"><em class="fx">t’avait</em></i></td><td><i class="ct">Il <em class="fx">t’a</em> appelé.</i> → <i class="ct">Il <em class="fx">t’avait</em> appelé.</i></td></tr>
+<tr class="lgrp-debut"><td>mon, ton</td><td><b>déterminants possessifs</b> : suivis d’un nom</td><td>⇔ <i class="ct"><em class="fx">ton</em></i>, <i class="ct"><em class="fx">mon</em></i></td><td><i class="ct"><em class="fx">Mon</em> frère joue au foot.</i> → <i class="ct"><em class="fx">Ton</em> frère joue au foot.</i></td></tr>
+<tr><td>m’ont, t’ont</td><td>m’, t’ (<b>pronoms</b>) + verbe <b>avoir</b></td><td>⇔ <i class="ct"><em class="fx">m’avaient</em></i>, <i class="ct"><em class="fx">t’avaient</em></i></td><td><i class="ct">Ils <em class="fx">m’ont</em> aidé.</i> → <i class="ct">Ils <em class="fx">m’avaient</em> aidé.</i></td></tr>
+<tr class="lgrp-debut"><td>leur</td><td>devant un <b>verbe</b> : <b>pronom personnel</b>, toujours <b>invariable</b></td><td>⇔ <i class="ct"><em class="fx">lui</em></i></td><td><i class="ct">Je <em class="fx">leur</em> parle.</i> → <i class="ct">Je <em class="fx">lui</em> parle.</i></td></tr>
+<tr><td>leur</td><td>devant un <b>nom au singulier</b> : <b>déterminant possessif</b></td><td>⇔ <i class="ct"><em class="fx">son</em></i>, <i class="ct"><em class="fx">sa</em></i></td><td><i class="ct">Ils ont repeint <em class="fx">leur</em> maison.</i> → <i class="ct">Il a repeint <em class="fx">sa</em> maison.</i></td></tr>
+<tr><td>leurs</td><td>devant un <b>nom au pluriel</b> : <b>déterminant possessif</b></td><td>⇔ <i class="ct"><em class="fx">ses</em></i></td><td><i class="ct">Ils rangent <em class="fx">leurs</em> affaires.</i> → <i class="ct">Il range <em class="fx">ses</em> affaires.</i></td></tr>
+</table></div></section>
+
+<section><h2>-é, -er, -ez</h2>
+<p class="memo-lead">Le son [e] à la fin d’un verbe. On remplace par <b>un verbe du 3<sup>e</sup> groupe</b> : on entend la différence.</p>
+<div class="tw hm"><table>
+<tr><th>Mot</th><th>Comment le reconnaitre</th><th>Le test</th><th>Exemple</th></tr>
+<tr><td>-er</td><td>verbe à <b>l’infinitif</b> (après un verbe conjugué, une préposition)</td><td>⇔ <i class="ct"><em class="fx">prendre</em></i></td><td><i class="ct">Elle sait <em class="fx">dessiner</em>.</i> → <i class="ct">Elle sait <em class="fx">prendre</em>.</i></td></tr>
+<tr><td>-é</td><td><b>participe passé</b> (après avoir ou être)</td><td>⇔ <i class="ct"><em class="fx">pris</em></i></td><td><i class="ct">Il a <em class="fx">dessiné</em>.</i> → <i class="ct">Il a <em class="fx">pris</em>.</i></td></tr>
+<tr><td>-ez</td><td>verbe conjugué avec le sujet <b>vous</b></td><td>⇔ <i class="ct"><em class="fx">prenez</em></i></td><td><i class="ct">Vous <em class="fx">chantez</em> bien.</i> → <i class="ct">Vous <em class="fx">prenez</em> bien.</i></td></tr>
+<tr class="lgrp-debut"><td>-é, -és, -ée, -ées</td><td>participe passé : avec <b>être</b>, il s’accorde avec <b>le sujet</b></td><td>⇔ <i class="ct"><em class="fx">pris</em></i>, <i class="ct"><em class="fx">prise</em></i></td><td><i class="ct">Ma tante est <em class="fx">restée</em>.</i> → <i class="ct">Ma tante est <em class="fx">prise</em>.</i></td></tr>
+<tr class="lgrp-debut"><td>était</td><td>verbe <b>être</b> à l’imparfait, sujet au <b>singulier</b></td><td>⇔ <i class="ct"><em class="fx">est</em></i></td><td><i class="ct">Il <em class="fx">était</em> en retard.</i> → <i class="ct">Il <em class="fx">est</em> en retard.</i></td></tr>
+<tr><td>étaient</td><td>verbe <b>être</b> à l’imparfait, sujet au <b>pluriel</b></td><td>⇔ <i class="ct"><em class="fx">sont</em></i></td><td><i class="ct">Ils <em class="fx">étaient</em> fatigués.</i> → <i class="ct">Ils <em class="fx">sont</em> fatigués.</i></td></tr>
+<tr><td>été</td><td><b>participe passé</b> de être, après avoir</td><td>⇔ <i class="ct"><em class="fx">pris</em></i></td><td><i class="ct">Elle a <em class="fx">été</em> malade.</i> → <i class="ct">Elle a <em class="fx">pris</em> froid.</i></td></tr>
+<tr class="lgrp-debut"><td>-ons</td><td>futur : sujet <b>nous</b></td><td>⇔ <i class="ct"><em class="fx">nous avons</em></i></td><td><i class="ct">Nous <em class="fx">partirons</em>. (nous <em class="fx">avons</em>)</i></td></tr>
+<tr><td>-ont</td><td>futur : sujet <b>ils</b>, <b>elles</b></td><td>⇔ <i class="ct"><em class="fx">ils ont</em></i></td><td><i class="ct">Ils <em class="fx">partiront</em>. (ils <em class="fx">ont</em>)</i></td></tr>
+</table></div></section>
+
+<section><h2>Pour aller plus loin</h2>
+<p class="memo-lead">6<sup>e</sup> et 5<sup>e</sup>. Beaucoup de ces mots sont formés d’un <b>pronom élidé</b> (m’, t’, s’, l’, n’, qu’) et d’un autre mot.</p>
+<div class="tw hm"><table>
+<tr><th>Mot</th><th>Comment le reconnaitre</th><th>Le test</th><th>Exemple</th></tr>
+<tr><td>on n’</td><td>on + <b>négation</b> : cherche le pas, rien, jamais…</td><td>⇔ <i class="ct"><em class="fx">il n’</em></i></td><td><i class="ct"><em class="fx">On n’</em>a rien vu.</i> → <i class="ct"><em class="fx">Il n’</em>a rien vu.</i></td></tr>
+<tr class="lgrp-debut"><td>sur</td><td><b>préposition</b> : une position</td><td>⇔ <i class="ct"><em class="fx">sous</em></i></td><td><i class="ct">Le chat dort <em class="fx">sur</em> le canapé.</i> → <i class="ct">Le chat dort <em class="fx">sous</em> le canapé.</i></td></tr>
+<tr><td>sûr</td><td><b>adjectif</b> : certain</td><td>⇔ <i class="ct"><em class="fx">certain</em></i></td><td><i class="ct">Il est <em class="fx">sûr</em> de lui.</i> → <i class="ct">Il est <em class="fx">certain</em> de lui.</i></td></tr>
+<tr class="lgrp-debut"><td>près</td><td><b>adverbe</b> : proche, souvent suivi de de</td><td>⇔ <i class="ct"><em class="fx">loin</em></i></td><td><i class="ct">J’habite <em class="fx">près</em> du collège.</i> → <i class="ct">J’habite <em class="fx">loin</em> du collège.</i></td></tr>
+<tr><td>prêt</td><td><b>adjectif</b> : préparé, il s’accorde</td><td>⇔ <i class="ct"><em class="fx">préparé</em></i></td><td><i class="ct">Le diner est <em class="fx">prêt</em>.</i> → <i class="ct">Le diner est <em class="fx">préparé</em>.</i></td></tr>
+<tr class="lgrp-debut"><td>l’ai</td><td>l’ + <b>avoir</b>, sujet je</td><td>⇔ <i class="ct"><em class="fx">l’avais</em></i></td><td><i class="ct">Je <em class="fx">l’ai</em> fait.</i> → <i class="ct">Je <em class="fx">l’avais</em> fait.</i></td></tr>
+<tr><td>l’est</td><td>l’ + <b>être</b></td><td>⇔ <i class="ct"><em class="fx">l’était</em></i></td><td><i class="ct">Courageuse ? Elle <em class="fx">l’est</em>.</i> → <i class="ct">Elle <em class="fx">l’était</em>.</i></td></tr>
+<tr><td>les</td><td><b>déterminant</b> pluriel</td><td>⇔ <i class="ct"><em class="fx">le</em></i></td><td><i class="ct">Range <em class="fx">les</em> livres.</i> → <i class="ct">Range <em class="fx">le</em> livre.</i></td></tr>
+<tr class="lgrp-debut"><td>tout, tous, toute, toutes</td><td><b>déterminant</b> : s’accorde avec le nom qui suit</td><td>je regarde <b>le nom</b></td><td><i class="ct"><em class="fx">tout</em> le gâteau</i> · <i class="ct"><em class="fx">tous</em> les élèves</i> · <i class="ct"><em class="fx">toutes</em> les filles</i></td></tr>
+<tr class="lgrp-debut"><td>plus tôt</td><td>deux mots : le contraire de <b>plus tard</b></td><td>⇔ <i class="ct"><em class="fx">plus tard</em></i></td><td><i class="ct">Je me lève <em class="fx">plus tôt</em>.</i> → <i class="ct">Je me lève <em class="fx">plus tard</em>.</i></td></tr>
+<tr><td>plutôt</td><td><b>adverbe</b> : de préférence</td><td>⇔ <i class="ct"><em class="fx">de préférence</em></i></td><td><i class="ct">Je prendrai <em class="fx">plutôt</em> une glace.</i> → <i class="ct">Je prendrai <em class="fx">de préférence</em> une glace.</i></td></tr>
+<tr class="lgrp-debut"><td>temps</td><td><b>nom</b> : la météo, la durée</td><td>⇔ <i class="ct"><em class="fx">météo</em></i></td><td><i class="ct">Quel <em class="fx">temps</em> fait-il ?</i> → <i class="ct">Quelle <em class="fx">météo</em> fait-il ?</i></td></tr>
+<tr><td>tant</td><td><b>adverbe</b> : tellement</td><td>⇔ <i class="ct"><em class="fx">tellement</em></i></td><td><i class="ct">Il a <em class="fx">tant</em> couru !</i> → <i class="ct">Il a <em class="fx">tellement</em> couru !</i></td></tr>
+<tr><td>tend</td><td>verbe <b>tendre</b></td><td>⇔ <i class="ct"><em class="fx">tendait</em></i></td><td><i class="ct">Il <em class="fx">tend</em> la main.</i> → <i class="ct">Il <em class="fx">tendait</em> la main.</i></td></tr>
+<tr><td>t’en</td><td>t’ + en (<b>pronoms</b>)</td><td>⇔ <i class="ct"><em class="fx">vous en</em></i></td><td><i class="ct">Ne <em class="fx">t’en</em> fais pas.</i> → <i class="ct">Ne <em class="fx">vous en</em> faites pas.</i></td></tr>
+<tr class="lgrp-debut"><td>met</td><td>verbe <b>mettre</b></td><td>⇔ <i class="ct"><em class="fx">mettait</em></i></td><td><i class="ct">Il <em class="fx">met</em> la table.</i> → <i class="ct">Il <em class="fx">mettait</em> la table.</i></td></tr>
+<tr><td>m’est</td><td>m’ + verbe <b>être</b></td><td>⇔ <i class="ct"><em class="fx">m’était</em></i></td><td><i class="ct">Ce nom <em class="fx">m’est</em> connu.</i> → <i class="ct">Ce nom <em class="fx">m’était</em> connu.</i></td></tr>
+<tr class="lgrp-debut"><td>des</td><td><b>déterminant</b> pluriel</td><td>⇔ <i class="ct"><em class="fx">une</em></i></td><td><i class="ct">J’ai acheté <em class="fx">des</em> pommes.</i> → <i class="ct">J’ai acheté <em class="fx">une</em> pomme.</i></td></tr>
+<tr><td>dès</td><td><b>préposition</b> : à partir de</td><td>⇔ <i class="ct"><em class="fx">à partir de</em></i></td><td><i class="ct">Il part <em class="fx">dès</em> l’aube.</i> → <i class="ct">Il part <em class="fx">à partir de</em> l’aube.</i></td></tr>
+<tr class="lgrp-debut"><td>ni</td><td><b>conjonction</b> dans une phrase négative</td><td>⇔ <i class="ct"><em class="fx">et</em></i> (phrase affirmative)</td><td><i class="ct">Je n’aime <em class="fx">ni</em> les épinards <em class="fx">ni</em> les choux.</i> → <i class="ct">J’aime les épinards <em class="fx">et</em> les choux.</i></td></tr>
+<tr><td>n’y</td><td>n’ (<b>négation</b>) + y</td><td>⇔ <i class="ct"><em class="fx">y</em></i> (sans la négation)</td><td><i class="ct">Tu <em class="fx">n’y</em> penses pas.</i> → <i class="ct">Tu <em class="fx">y</em> penses.</i></td></tr>
+<tr class="lgrp-debut"><td>si</td><td><b>conjonction</b> : une condition (ou adverbe : tellement)</td><td>⇔ <i class="ct"><em class="fx">m’y</em></i> : impossible</td><td><i class="ct"><em class="fx">Si</em> tu veux, on sort.</i> → <span class="err">M’y tu veux…</span></td></tr>
+<tr><td>s’y</td><td>s’ + y (<b>pronoms</b>)</td><td>⇔ <i class="ct"><em class="fx">m’y</em></i></td><td><i class="ct">Il <em class="fx">s’y</em> rend le samedi.</i> → <i class="ct">Je <em class="fx">m’y</em> rends le samedi.</i></td></tr>
+<tr class="lgrp-debut"><td>quand</td><td><b>le moment</b> : lorsque</td><td>⇔ <i class="ct"><em class="fx">lorsque</em></i></td><td><i class="ct"><em class="fx">Quand</em> il pleut, je lis.</i> → <i class="ct"><em class="fx">Lorsqu’</em>il pleut, je lis.</i></td></tr>
+<tr><td>quant</td><td>toujours suivi de <b>à, au, aux</b></td><td>⇔ <i class="ct"><em class="fx">en ce qui concerne</em></i></td><td><i class="ct"><em class="fx">Quant à</em> moi, je reste.</i> → <i class="ct"><em class="fx">En ce qui me concerne</em>, je reste.</i></td></tr>
+<tr><td>qu’en</td><td>qu’ + en (<b>pronom</b>)</td><td>⇔ <i class="ct"><em class="fx">que… de cela</em></i></td><td><i class="ct"><em class="fx">Qu’en</em> penses-tu ?</i> → <i class="ct"><em class="fx">Que</em> penses-tu <em class="fx">de cela</em> ?</i></td></tr>
+<tr class="lgrp-debut"><td>sans</td><td><b>préposition</b> : le contraire de avec</td><td>⇔ <i class="ct"><em class="fx">avec</em></i></td><td><i class="ct">Il sort <em class="fx">sans</em> manteau.</i> → <i class="ct">Il sort <em class="fx">avec</em> un manteau.</i></td></tr>
+<tr><td>s’en</td><td>s’ + en (<b>pronoms</b>)</td><td>⇔ <i class="ct"><em class="fx">m’en</em></i></td><td><i class="ct">Il <em class="fx">s’en</em> va.</i> → <i class="ct">Je <em class="fx">m’en</em> vais.</i></td></tr>
+<tr><td>c’en</td><td>c’ + en : <b>c’en est trop</b></td><td>⇔ <i class="ct"><em class="fx">cela en</em></i></td><td><i class="ct"><em class="fx">C’en</em> est trop !</i> → <i class="ct"><em class="fx">Cela en</em> est trop !</i></td></tr>
+<tr><td>cent</td><td><b>déterminant numéral</b> : 100</td><td>⇔ <i class="ct"><em class="fx">mille</em></i></td><td><i class="ct"><em class="fx">cent</em> personnes</i> → <i class="ct"><em class="fx">mille</em> personnes</i></td></tr>
+<tr class="lgrp-debut"><td>dans</td><td><b>préposition</b> : un lieu, un moment</td><td>⇔ <i class="ct"><em class="fx">à l’intérieur de</em></i></td><td><i class="ct">Les clés sont <em class="fx">dans</em> mon sac.</i> → <i class="ct">Les clés sont <em class="fx">à l’intérieur de</em> mon sac.</i></td></tr>
+<tr><td>d’en</td><td>d’ (de) + en (<b>pronom</b>)</td><td>en ⇔ <i class="ct"><em class="fx">des cerises</em></i></td><td><i class="ct">Je viens <em class="fx">d’en</em> manger.</i> → <i class="ct">Je viens de manger <em class="fx">des cerises</em>.</i></td></tr>
+<tr><td>dent</td><td><b>nom</b></td><td>⇔ <i class="ct"><em class="fx">des dents</em></i></td><td><i class="ct">J’ai mal à une <em class="fx">dent</em>.</i> → <i class="ct">J’ai mal aux <em class="fx">dents</em>.</i></td></tr>
+<tr class="lgrp-debut"><td>quel, quelle</td><td><b>déterminant</b> : s’accorde avec le nom qui suit</td><td>⇔ <i class="ct"><em class="fx">qu’il</em></i> : impossible</td><td><i class="ct"><em class="fx">Quelle</em> belle journée !</i> → <span class="err">Qu’il belle journée !</span></td></tr>
+<tr><td>qu’elle</td><td>qu’ + elle (<b>pronom</b>)</td><td>⇔ <i class="ct"><em class="fx">qu’il</em></i></td><td><i class="ct">Je crois <em class="fx">qu’elle</em> a raison.</i> → <i class="ct">Je crois <em class="fx">qu’il</em> a raison.</i></td></tr>
+</table></div></section>
+
+<section><h2>Des noms et des adjectifs</h2>
+<p class="memo-lead">6<sup>e</sup> et 5<sup>e</sup>. Ici, c’est <b>le sens</b> qui décide : on remplace par un mot qui veut dire la même chose.</p>
+<div class="tw hm"><table>
+<tr><th>Mot</th><th>Comment le reconnaitre</th><th>Le test</th><th>Exemple</th></tr>
+<tr><td>voir</td><td><b>verbe</b> à l’infinitif</td><td>⇔ <i class="ct"><em class="fx">regarder</em></i></td><td><i class="ct">Viens <em class="fx">voir</em> mon vélo.</i> → <i class="ct">Viens <em class="fx">regarder</em> mon vélo.</i></td></tr>
+<tr><td>voire</td><td><b>adverbe</b> : et même</td><td>⇔ <i class="ct"><em class="fx">et même</em></i></td><td><i class="ct">C’est difficile, <em class="fx">voire</em> impossible.</i> → <i class="ct">C’est difficile, <em class="fx">et même</em> impossible.</i></td></tr>
+<tr class="lgrp-debut"><td>censé</td><td><b>adjectif</b> : supposé, suivi d’un infinitif</td><td>⇔ <i class="ct"><em class="fx">supposé</em></i></td><td><i class="ct">Tu es <em class="fx">censé</em> venir.</i> → <i class="ct">Tu es <em class="fx">supposé</em> venir.</i></td></tr>
+<tr><td>sensé</td><td><b>adjectif</b> : qui a du bon sens</td><td>⇔ <i class="ct"><em class="fx">raisonnable</em></i></td><td><i class="ct">Une idée <em class="fx">sensée</em></i> → <i class="ct">Une idée <em class="fx">raisonnable</em></i></td></tr>
+<tr class="lgrp-debut"><td>fois</td><td><b>nom</b> : sert à compter, toujours un s</td><td>⇔ <i class="ct"><em class="fx">quatre fois</em></i></td><td><i class="ct">Je l’ai dit trois <em class="fx">fois</em>.</i> → <i class="ct">Je l’ai dit <em class="fx">quatre fois</em>.</i></td></tr>
+<tr><td>foi</td><td><b>nom</b> : la croyance, la confiance</td><td>⇔ <i class="ct"><em class="fx">confiance</em></i></td><td><i class="ct">Il a <em class="fx">foi</em> en toi.</i> → <i class="ct">Il a <em class="fx">confiance</em> en toi.</i></td></tr>
+<tr><td>foie</td><td><b>nom</b> : un organe</td><td>⇔ <i class="ct"><em class="fx">estomac</em></i></td><td><i class="ct">J’ai mal au <em class="fx">foie</em>.</i> → <i class="ct">J’ai mal à l’<em class="fx">estomac</em>.</i></td></tr>
+<tr class="lgrp-debut"><td>conte</td><td><b>nom</b> : une histoire (raconter)</td><td>⇔ <i class="ct"><em class="fx">une histoire</em></i></td><td><i class="ct">Un <em class="fx">conte</em> de fées</i> → <i class="ct"><em class="fx">Une histoire</em> de fées</i></td></tr>
+<tr><td>compte</td><td><b>nom</b> ou verbe : les nombres (compter)</td><td>⇔ <i class="ct"><em class="fx">calcul</em></i></td><td><i class="ct">Le <em class="fx">compte</em> est bon.</i> → <i class="ct">Le <em class="fx">calcul</em> est bon.</i></td></tr>
+<tr><td>comte</td><td><b>nom</b> : un noble (comtesse)</td><td>⇔ <i class="ct"><em class="fx">duc</em></i></td><td><i class="ct">Le <em class="fx">comte</em> arrive.</i> → <i class="ct">Le <em class="fx">duc</em> arrive.</i></td></tr>
+<tr class="lgrp-debut"><td>tache</td><td><b>nom</b> : une marque de saleté</td><td>⇔ <i class="ct"><em class="fx">une marque</em></i></td><td><i class="ct">Une <em class="fx">tache</em> de chocolat</i> → <i class="ct"><em class="fx">Une marque</em> de chocolat</i></td></tr>
+<tr><td>tâche</td><td><b>nom</b> : un travail à faire</td><td>⇔ <i class="ct"><em class="fx">un travail</em></i></td><td><i class="ct">Une <em class="fx">tâche</em> difficile</i> → <i class="ct"><em class="fx">Un travail</em> difficile</i></td></tr>
+<tr class="lgrp-debut"><td>mur</td><td><b>nom</b> : une paroi</td><td>⇔ <i class="ct"><em class="fx">une paroi</em></i></td><td><i class="ct">Le <em class="fx">mur</em> est blanc.</i> → <i class="ct"><em class="fx">La paroi</em> est blanche.</i></td></tr>
+<tr><td>mûr</td><td><b>adjectif</b> : prêt à être mangé</td><td>⇔ <i class="ct"><em class="fx">prêt à être mangé</em></i></td><td><i class="ct">Ce melon est <em class="fx">mûr</em>.</i> → <i class="ct">Ce melon est <em class="fx">prêt à être mangé</em>.</i></td></tr>
+<tr class="lgrp-debut"><td>cour</td><td><b>nom</b> féminin : un espace, l’entourage d’un roi</td><td>⇔ <i class="ct"><em class="fx">le préau</em></i></td><td><i class="ct">Ils jouent dans la <em class="fx">cour</em>.</i> → <i class="ct">Ils jouent dans <em class="fx">le préau</em>.</i></td></tr>
+<tr><td>cours</td><td><b>nom</b> : une leçon, une rivière qui coule</td><td>⇔ <i class="ct"><em class="fx">leçon</em></i></td><td><i class="ct">Le <em class="fx">cours</em> de maths</i> → <i class="ct">La <em class="fx">leçon</em> de maths</i></td></tr>
+<tr><td>court</td><td><b>adjectif</b> (contraire de long) ou verbe <b>courir</b></td><td>⇔ <i class="ct"><em class="fx">long</em></i> / <i class="ct"><em class="fx">courait</em></i></td><td><i class="ct">Il <em class="fx">court</em> vite.</i> → <i class="ct">Il <em class="fx">courait</em> vite.</i></td></tr>
+<tr class="lgrp-debut"><td>verre</td><td><b>nom</b> : la matière, le récipient</td><td>⇔ <i class="ct"><em class="fx">une tasse</em></i></td><td><i class="ct">Un <em class="fx">verre</em> d’eau</i> → <i class="ct"><em class="fx">Une tasse</em> d’eau</i></td></tr>
+<tr><td>vert</td><td><b>adjectif</b> de couleur</td><td>⇔ <i class="ct"><em class="fx">rouge</em></i></td><td><i class="ct">Un pull <em class="fx">vert</em></i> → <i class="ct">Un pull <em class="fx">rouge</em></i></td></tr>
+<tr><td>vers</td><td><b>préposition</b> : en direction de (ou nom : une ligne de poème)</td><td>⇔ <i class="ct"><em class="fx">en direction de</em></i></td><td><i class="ct">Il va <em class="fx">vers</em> la gare.</i> → <i class="ct">Il va <em class="fx">en direction de</em> la gare.</i></td></tr>
+<tr><td>ver</td><td><b>nom</b> : un petit animal</td><td>⇔ <i class="ct"><em class="fx">une chenille</em></i></td><td><i class="ct">Un <em class="fx">ver</em> de terre</i> → <i class="ct"><em class="fx">Une chenille</em></i></td></tr>
+<tr class="lgrp-debut"><td>peu</td><td><b>adverbe</b> : pas beaucoup</td><td>⇔ <i class="ct"><em class="fx">pas beaucoup</em></i></td><td><i class="ct">Il a <em class="fx">peu</em> dormi.</i> → <i class="ct">Il n’a <em class="fx">pas beaucoup</em> dormi.</i></td></tr>
+<tr><td>peut</td><td>verbe <b>pouvoir</b> : il, elle, on</td><td>⇔ <i class="ct"><em class="fx">pouvait</em></i></td><td><i class="ct">Elle <em class="fx">peut</em> venir.</i> → <i class="ct">Elle <em class="fx">pouvait</em> venir.</i></td></tr>
+<tr><td>peux</td><td>verbe <b>pouvoir</b> : je, tu</td><td>⇔ <i class="ct"><em class="fx">pouvais</em></i></td><td><i class="ct">Je <em class="fx">peux</em> sortir ?</i> → <i class="ct">Je <em class="fx">pouvais</em> sortir ?</i></td></tr>
+</table></div></section>
+
+<section><h2>Nom ou verbe ?</h2>
+<p class="memo-lead">6<sup>e</sup> et 5<sup>e</sup>. Je regarde <b>le mot devant</b> : un déterminant, c’est un nom ; un sujet, c’est un verbe.</p>
+<div class="tw hm"><table>
+<tr><th>Mot</th><th>Comment le reconnaitre</th><th>Le test</th><th>Exemple</th></tr>
+<tr><td>travail, réveil, accueil, conseil, détail, appareil, sommeil, éveil, recueil</td><td><b>nom</b> masculin, après un <b>déterminant</b> : pas de e final</td><td>⇔ un autre <b>nom</b></td><td><i class="ct">Mon <em class="fx">réveil</em> sonne.</i> → <i class="ct">Mon <em class="fx">téléphone</em> sonne.</i></td></tr>
+<tr><td>travaille, réveille, accueille, conseille…</td><td><b>verbe</b> conjugué, après un <b>sujet</b> : il garde le e</td><td>⇔ <i class="ct"><em class="fx">l’imparfait</em></i></td><td><i class="ct">Mon père <em class="fx">travaille</em>.</i> → <i class="ct">Mon père <em class="fx">travaillait</em>.</i></td></tr>
+<tr class="lgrp-debut"><td>appel, rappel</td><td><b>nom</b>, après un <b>déterminant</b> : un seul l</td><td>⇔ un autre <b>nom</b></td><td><i class="ct">Fais l’<em class="fx">appel</em>.</i> → <i class="ct">Fais la <em class="fx">liste</em>.</i></td></tr>
+<tr><td>appelle, rappelle</td><td><b>verbe</b> : deux l devant un e muet (mais nous appelons)</td><td>⇔ <i class="ct"><em class="fx">l’imparfait</em></i></td><td><i class="ct">J’<em class="fx">appelle</em> mon chien.</i> → <i class="ct">J’<em class="fx">appelais</em> mon chien.</i></td></tr>
+</table></div></section>
+
+<section><h2>Défi</h2>
+<p class="memo-lead">4<sup>e</sup> et 3<sup>e</sup>, ou pour ceux qui veulent aller plus loin.</p>
+<div class="tw hm"><table>
+<tr><th>Mot</th><th>Comment le reconnaitre</th><th>Le test</th><th>Exemple</th></tr>
+<tr><td>du</td><td><b>déterminant</b> (article partitif)</td><td>⇔ <i class="ct"><em class="fx">un peu de</em></i></td><td><i class="ct">Je veux <em class="fx">du</em> pain.</i> → <i class="ct">Je veux <em class="fx">un peu de</em> pain.</i></td></tr>
+<tr><td>dû, dus, due</td><td><b>participe passé</b> de devoir : accent seulement au masculin singulier</td><td>⇔ <i class="ct"><em class="fx">pu</em></i></td><td><i class="ct">Il a <em class="fx">dû</em> partir.</i> → <i class="ct">Il a <em class="fx">pu</em> partir.</i></td></tr>
+<tr><td>dut, dût</td><td>devoir au <b>passé simple</b> (dut) ou au <b>subjonctif imparfait</b> (dût)</td><td>⇔ <i class="ct"><em class="fx">a dû</em></i>, <i class="ct"><em class="fx">doive</em></i></td><td><i class="ct">Il <em class="fx">dut</em> rentrer à pied.</i> → <i class="ct">Il <em class="fx">a dû</em> rentrer à pied.</i></td></tr>
+<tr class="lgrp-debut"><td>cru, crus</td><td>participe passé de <b>croire</b>, ou adjectif (pas cuit)</td><td>⇔ <i class="ct"><em class="fx">pensé</em></i> / <i class="ct"><em class="fx">cuit</em></i></td><td><i class="ct">J’ai <em class="fx">cru</em> entendre un bruit.</i> → <i class="ct">J’ai <em class="fx">pensé</em> entendre un bruit.</i></td></tr>
+<tr><td>crû</td><td>participe passé de <b>croitre</b> (grandir)</td><td>⇔ <i class="ct"><em class="fx">grandi</em></i></td><td><i class="ct">Ce chêne a <em class="fx">crû</em> vite.</i> → <i class="ct">Ce chêne a <em class="fx">grandi</em> vite.</i></td></tr>
+<tr><td>crut, crût</td><td>croire au <b>passé simple</b> (crut) ou au <b>subjonctif imparfait</b> (crût)</td><td>⇔ <i class="ct"><em class="fx">a cru</em></i>, <i class="ct"><em class="fx">croie</em></i></td><td><i class="ct">Il <em class="fx">crut</em> voir une ombre.</i> → <i class="ct">Il <em class="fx">a cru</em> voir une ombre.</i></td></tr>
+<tr class="lgrp-debut"><td>quoique</td><td>un mot : <b>bien que</b></td><td>⇔ <i class="ct"><em class="fx">bien que</em></i></td><td><i class="ct"><em class="fx">Quoiqu’</em>il pleuve, on sort.</i> → <i class="ct"><em class="fx">Bien qu’</em>il pleuve, on sort.</i></td></tr>
+<tr><td>quoi que</td><td>deux mots : <b>quelle que soit la chose que</b></td><td>⇔ <i class="ct"><em class="fx">quelle que soit la chose que</em></i></td><td><i class="ct"><em class="fx">Quoi que</em> tu fasses, fais-le bien.</i> → <i class="ct"><em class="fx">Quelle que soit la chose que</em> tu fasses…</i></td></tr>
+<tr class="lgrp-debut"><td>quelque(s)</td><td><b>déterminant</b> : quelques = plusieurs</td><td>⇔ <i class="ct"><em class="fx">plusieurs</em></i></td><td><i class="ct">J’ai lu <em class="fx">quelques</em> pages.</i> → <i class="ct">J’ai lu <em class="fx">plusieurs</em> pages.</i></td></tr>
+<tr><td>quel(le)(s) que</td><td>deux mots, devant <b>être au subjonctif</b> (soit, soient) : quel s’accorde avec le sujet</td><td>je cherche <b>soit, soient</b></td><td><i class="ct"><em class="fx">Quelle que</em> soit ta réponse…</i> · <i class="ct"><em class="fx">Quels que</em> soient tes choix…</i></td></tr>
+<tr class="lgrp-debut"><td>quelquefois</td><td>un mot : <b>parfois</b></td><td>⇔ <i class="ct"><em class="fx">parfois</em></i></td><td><i class="ct">Je vais <em class="fx">quelquefois</em> au cinéma.</i> → <i class="ct">Je vais <em class="fx">parfois</em> au cinéma.</i></td></tr>
+<tr><td>quelques fois</td><td>deux mots : <b>plusieurs fois</b></td><td>⇔ <i class="ct"><em class="fx">trois fois</em></i></td><td><i class="ct">Il a sonné <em class="fx">quelques fois</em>.</i> → <i class="ct">Il a sonné <em class="fx">trois fois</em>.</i></td></tr>
+<tr class="lgrp-debut"><td>à faire</td><td>à + <b>verbe</b> à l’infinitif</td><td>⇔ <i class="ct"><em class="fx">à terminer</em></i></td><td><i class="ct">Des devoirs <em class="fx">à faire</em></i> → <i class="ct">Des devoirs <em class="fx">à terminer</em></i></td></tr>
+<tr><td>affaire(s)</td><td><b>nom</b></td><td>⇔ <i class="ct"><em class="fx">cahiers</em></i>, <i class="ct"><em class="fx">achat</em></i></td><td><i class="ct">Range tes <em class="fx">affaires</em>.</i> → <i class="ct">Range tes <em class="fx">cahiers</em>.</i></td></tr>
+<tr class="lgrp-debut"><td>davantage</td><td>un mot : <b>plus</b></td><td>⇔ <i class="ct"><em class="fx">plus</em></i></td><td><i class="ct">Lis <em class="fx">davantage</em>.</i> → <i class="ct">Lis <em class="fx">plus</em>.</i></td></tr>
+<tr><td>d’avantage</td><td>de + le nom <b>avantage</b></td><td>⇔ <i class="ct"><em class="fx">d’intérêt</em></i></td><td><i class="ct">Je ne vois pas <em class="fx">d’avantage</em>.</i> → <i class="ct">Je ne vois pas <em class="fx">d’intérêt</em>.</i></td></tr>
+<tr class="lgrp-debut"><td>-rai</td><td><b>futur</b> (je)</td><td>⇔ <i class="ct"><em class="fx">nous</em></i> : -rons</td><td><i class="ct">Demain, je <em class="fx">chanterai</em>.</i> → <i class="ct">Demain, nous <em class="fx">chanterons</em>.</i></td></tr>
+<tr><td>-rais</td><td><b>conditionnel</b> (je, tu)</td><td>⇔ <i class="ct"><em class="fx">nous</em></i> : -rions</td><td><i class="ct">Si je pouvais, je <em class="fx">chanterais</em>.</i> → <i class="ct">Si nous pouvions, nous <em class="fx">chanterions</em>.</i></td></tr>
+<tr class="lgrp-debut"><td>le leur, les leurs</td><td><b>pronom possessif</b> : remplace un nom</td><td>⇔ <i class="ct"><em class="fx">le sien</em></i>, <i class="ct"><em class="fx">les siens</em></i></td><td><i class="ct">Nos vélos sont neufs, <em class="fx">les leurs</em> sont rouillés.</i> → <i class="ct"><em class="fx">les siens</em> sont rouillés.</i></td></tr>
 </table></div></section>
 `;
 
@@ -8295,7 +8474,7 @@ const LABO = (function () {
   ];
   function rubriqueDe(h) {
     if (!h || h === 'accueil') return 'accueil';
-    if (h === 'memos' || h === 'notions') return 'memos'; /* « Notions par niveau » : avec les Mémos (Augustin, 22/11/2026) */
+    if (h === 'memos' || h === 'notions' || h === 'homophones') return 'memos'; /* « Notions par niveau » : avec les Mémos (Augustin, 22/11/2026) */
     if (/^(parcours|diag|etape)/.test(h)) return 'parcours';
     if (h === 'badges') return 'badges'; /* onglet « Badges » (Augustin, 22/11/2026) */
     if (h === 'bilans') return 'bilans'; /* « Mes bilans » (lot 6) */
@@ -8548,7 +8727,7 @@ const LABO = (function () {
       <span id="reset-zone" hidden><span class="small">Tout effacer sur cet appareil${NB}?</span> <button class="btn small" type="button" id="reset-do">Oui, effacer</button></span></section></div>`;
   };
   /* Notions par niveau : la page de l'appli des flashcards ; les lots s'ouvrent dans les flashcards */
-  const fcpBar = h => `<nav class="fcp-bar" aria-label="Aide"><a href="#memos"${h === 'memos' ? ' aria-current="page"' : ''}>Mémos</a><a href="#notions"${h === 'notions' ? ' aria-current="page"' : ''}>Notions</a></nav>`;
+  const fcpBar = h => `<nav class="fcp-bar" aria-label="Aide"><a href="#memos"${h === 'memos' ? ' aria-current="page"' : ''}>Mémos</a><a href="#homophones"${h === 'homophones' ? ' aria-current="page"' : ''}>Homophones</a><a href="#notions"${h === 'notions' ? ' aria-current="page"' : ''}>Notions</a></nav>`;
   vues.notions = h => h === 'notions' ? `${fcpBar('notions')}<div class="fcp">${FCP.notionsHTML(true, S.niveau)}</div>` : null;
   document.addEventListener('click', e => {
     const lv = e.target.closest('[data-nv-lv]');
@@ -8883,16 +9062,18 @@ const LABO = (function () {
     [/^Ajouter/, ico('<circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/>')],
     [/^Pronominaliser|^Pronom/, ico('<path d="M16 3l4 4-4 4"/><path d="M20 7H4"/><path d="M8 21l-4-4 4-4"/><path d="M4 17h16"/>')]
   ];
-  function vueMemos() {
-    const d = document.createElement('div'); d.innerHTML = MEMOS;
+  /* onglet « Homophones » de l'Aide (Augustin, 23/11/2026) : même page que les mémos, autre contenu (parcours-donnees/homophones.js) */
+  const PAGES_AIDE = { memos: ['Mémos', 'L’essentiel à retenir, avec un exemple et ce qu’il devient quand on le transforme.'], homophones: ['Homophones', 'Ils se prononcent pareil, mais ne s’écrivent pas pareil. Pour chacun, le test qui permet de choisir, et un exemple.'] };
+  function vueMemos(page = 'memos') {
+    const d = document.createElement('div'); d.innerHTML = page === 'homophones' ? HOMOPHONES : MEMOS;
     const secs = [...d.querySelectorAll('section')];
     secs.forEach((sec, i) => { sec.id = 'memo-' + i; });
-    const t = secs[0] && secs[0].querySelector('table');
+    const t = page === 'memos' && secs[0] && secs[0].querySelector('table');
     if (t) t.querySelectorAll('tr').forEach(tr => { const c = tr.querySelector('td'); if (!c) return; const m = MANIP.find(x => x[0].test(c.textContent.trim())); if (m) c.innerHTML = `<span class="manip">${m[1]}<span>${c.innerHTML}</span></span>`; });
     /* sur téléphone, chaque ligne devient une fiche : l'intitulé de colonne est repris devant chaque case */
     d.querySelectorAll('.tw table').forEach(tb => { const th = [...tb.querySelectorAll('tr:first-child th')].map(x => x.textContent.trim()); tb.querySelectorAll('tr').forEach(tr => { const k = th.length - tr.children.length; /* cases fusionnées (rowspan) : décalage */ [...tr.children].forEach((c, j) => { if (c.tagName === 'TD' && th[j + k]) c.dataset.l = th[j + k]; }); }); });
     const toc = secs.map((sec, i) => { const h = sec.querySelector('h2'); return `<button type="button" data-a="memo" data-i="${i}">${h ? h.innerHTML : 'Mémo ' + (i + 1)}</button>`; }).join('');
-    return `${LABO.fcpBar('memos')}<div class="page-h"><h2>Mémos</h2><p>L’essentiel à retenir, avec un exemple et ce qu’il devient quand on le transforme.</p></div>
+    return `${LABO.fcpBar(page)}<div class="page-h"><h2>${PAGES_AIDE[page][0]}</h2><p>${PAGES_AIDE[page][1]}</p></div>
     <div class="memos-g"><nav class="memos-toc" aria-label="Sommaire des mémos"><b>Sommaire</b>${toc}</nav><div class="cours memos">${d.innerHTML}</div></div>`;
   }
   document.addEventListener('click', ev => {
@@ -8914,7 +9095,7 @@ const LABO = (function () {
   vues.parcours = h => {
     let m;
     if (h === 'parcours') return liste();
-    if (h === 'memos') return vueMemos();
+    if (h === 'memos' || h === 'homophones') return vueMemos(h);
     if ((m = h.match(/^(?:parcours|diag|etape)-(cycle3|college|fle)(?:-\d+)?$/))) return ancien(m[1]);
     return null;
   };

@@ -282,7 +282,7 @@ html.dys .lot-tile{border:2px solid var(--line);border-radius:10px}
 .tw th,.tw td{border:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top}
 .tw table{border:1px solid var(--line);border-radius:10px;border-collapse:separate;border-spacing:0;overflow:hidden;background:var(--sheet)}
 .tw th,.tw td{border:0;border-top:1px solid var(--line)}
-.tw th+th,.tw td+td{border-left:1px solid var(--line)}
+.tw th+th,.tw td+td,.tw th+td{border-left:1px solid var(--line)}
 .tw tr:first-child>*{border-top:0}
 .tw th{background:var(--soft);color:var(--icon);border-bottom:1px solid var(--clay);font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:8px 10px;vertical-align:bottom}
 .tw tr:nth-child(even) td{background:color-mix(in srgb,var(--soft) 22%,var(--sheet))}
@@ -406,11 +406,17 @@ html.dys{--ct:#1d1d1d}
 .memos .err{color:var(--err);font-style:italic}
 .memos b{font-weight:700;color:var(--ink)}
 .memos .tw td{font-weight:400}
-.memos .tw td:first-child{font-weight:700}
+.memos .tw td:first-of-type{font-weight:700}
+/* groupes de lignes (ex. mots variables / invariables) : intitulé vertical dans une case fusionnée */
+.memos .tw th.lgrp-h{width:2.4em;padding:0}
+.memos .tw th.lgrp{width:2.4em;padding:10px 4px;vertical-align:middle;text-align:center;border-bottom:0;border-right:1px solid var(--clay);background:var(--soft);color:var(--icon);font-size:.74rem;letter-spacing:.12em}
+.memos .tw th.lgrp span{display:inline-block;writing-mode:vertical-rl;transform:rotate(180deg);white-space:nowrap}
+.memos .tw tr.lgrp-debut>*{border-top:2px solid var(--clay)}
+@media print{.memos .tw th.lgrp,.memos .tw tr{break-inside:avoid}}
 .memos .memo-lead{margin:4px 0 10px}
 .memos .memo-note{margin:8px 0 0;font-size:.92rem;color:var(--muted)}
 .memos .memo-note b{color:var(--ink)}
-@media (max-width:600px){.memos .tw table,.memos .tw tbody,.memos .tw tr,.memos .tw td{display:block;width:auto}.memos .tw tr:first-child{display:none}.memos .tw tr{border-top:1px solid var(--line);padding:8px 10px}.memos .tw tr:nth-child(2){border-top:0}.memos .tw td{border:0!important;padding:2px 0;background:transparent!important}.memos .tw td[data-l]:not(:first-child)::before{content:attr(data-l);display:block;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-top:4px}.memos .tw td:first-child{font-size:1rem}.memos .tw tr:nth-child(even){background:color-mix(in srgb,var(--soft) 22%,var(--sheet))}}
+@media (max-width:600px){.memos .tw table,.memos .tw tbody,.memos .tw tr,.memos .tw td{display:block;width:auto}.memos .tw tr:first-child{display:none}.memos .tw tr{border-top:1px solid var(--line);padding:8px 10px}.memos .tw tr:nth-child(2){border-top:0}.memos .tw td{border:0!important;padding:2px 0;background:transparent!important}.memos .tw td[data-l]:not(:first-of-type)::before{content:attr(data-l);display:block;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-top:4px}.memos .tw td:first-of-type{font-size:1rem}.memos .tw th.lgrp{display:block;width:auto;padding:6px 10px;text-align:left;border:0;border-bottom:1px solid var(--clay);margin:-8px -10px 8px}.memos .tw th.lgrp span{writing-mode:horizontal-tb;transform:none}.memos .tw tr.lgrp-debut{border-top:2px solid var(--clay)}.memos .tw tr.lgrp-debut>*{border-top:0}.memos .tw tr:nth-child(even){background:color-mix(in srgb,var(--soft) 22%,var(--sheet))}}
 .memos .tw-petit table{width:auto;max-width:560px;font-size:.84rem}.memos .tw-petit th,.memos .tw-petit td{padding:4px 9px}.memos .tw-petit th{font-size:.66rem}
 @media (max-width:600px){.memos .tw-petit table{width:auto}.memos .tw-petit tr{padding:5px 10px}}
 
@@ -530,6 +536,11 @@ html.dys .bl-ncol,html.dys .bl-errs li{border-width:2px}
 .tb-dot.ok{fill:var(--tb-ok)}.tb-dot.moy{fill:var(--tb-moy)}.tb-dot.ko{fill:var(--tb-ko)}
 .tb-pt:hover .tb-dot,.tb-pt:focus .tb-dot{r:6}
 .bl-prog{display:grid;gap:14px}
+
+/* onglet « Homophones » de l'Aide (23/11/2026) : étapes de la méthode, colonnes du tableau */
+.memos .hm-etapes{margin:4px 0 8px;padding-left:1.4em}.memos .hm-etapes li{margin:2px 0}
+.memos .tw.hm td:first-of-type{white-space:nowrap}.memos .tw.hm td:nth-of-type(3){white-space:nowrap}
+@media (max-width:900px){.memos .tw.hm td:first-of-type,.memos .tw.hm td:nth-of-type(3){white-space:normal}}
 
 /* Espace professeur */
 .p-tabs{display:flex;gap:6px;flex-wrap:wrap}
