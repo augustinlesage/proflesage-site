@@ -8458,9 +8458,7 @@ const LABO = (function () {
       ${rub('entrainements', 3, 'Entrainements', 'Les flashcards, pour acquérir les réflexes.', entr.map(d => li(lienLot(d.id), d.nom, th(d.rub || d.th), conseilles.includes(d.id))).join(''), `Les lots de ${L}`, '#entrainements')}
       ${rub('ceintures', 4, 'Ceintures', 'Certifier ce que tu sais, en grammaire, en conjugaison, en orthographe, en homophones et en vocabulaire.', C ? C.ECHELLES.map(e => li('#ceintures', e.nom + ' · ' + L, C.compte(e.id, S.niveau) + ' / 7')).join('') : '', 'Mon passeport de grammaire', '#passeport')}
     </div>
-  </section>
-  ${C ? `<section aria-labelledby="ceint-h"><div class="section-h"><h2 id="ceint-h">Mes ceintures</h2><p>Niveau ${L}</p></div>${C.pistes(S.niveau)}
-    <p class="belt-note">Chaque niveau a sept ceintures${NB}: de la blanche à la marron, puis la noire, qui fait le bilan du niveau. La ceinture Expert, noire et étincelante, termine chaque échelle${NB}: elle mélange les quatre niveaux et elle est ouverte à tous, dès la 6ᵉ. Une ceinture réussie est validée par ton professeur.</p></section>` : ''}`;
+  </section>`;
   }
 
   /* ---------- Approfondissement : page construite par parcours2.js (lot 5) ---------- */
