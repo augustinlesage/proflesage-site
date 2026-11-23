@@ -8675,8 +8675,7 @@ const LABO = (function () {
       const l = lots.filter(d => d.rub === r.id), ln = LIENS_FC.filter(x => x.rub === r.id); if (!l.length && !ln.length) return '';
       const compte = [l.length ? l.length + ' lot' + (l.length > 1 ? 's' : '') : '', ln.length ? ln.length + ' lien' + (ln.length > 1 ? 's' : '') : ''].filter(Boolean).join(' · ');
       return `<section class="theme-block"><h3>${esc(r.nom)}</h3><p>${compte}</p><div class="lot-grid">${l.map(carte).join('')}${ln.map(lien).join('')}</div></section>`;
-    }).join('') || `<p class="empty">Aucun lot pour ce niveau pour l’instant.</p>`}</div>
-    <p class="small muted"><a href="/flashcards/">Ouvrir l’application des flashcards</a> pour passer le test de positionnement.</p>`;
+    }).join('') || `<p class="empty">Aucun lot pour ce niveau pour l’instant.</p>`}</div>`;
   };
 
   /* Liste des lots à jour : sur proflesage.fr, relit flashcards/lots.json (publié avec les flashcards)
