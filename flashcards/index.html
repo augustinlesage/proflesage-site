@@ -1712,6 +1712,18 @@ a.el-tile{text-decoration:none;color:inherit}
 .el-writing .el-verdict .el-good{white-space:normal}
 .el-jabon{flex:0 1 200px!important;background:transparent!important;border-style:dashed!important}
 body.dys .ty-in{font-family:inherit;background:#fff;color:#000;border-color:#000}
+
+/* ---------- Il faut lire la correction (verso bloqué 2 s après une erreur) ---------- */
+.el-lire{align-self:center;font-weight:700;color:var(--ink);font-size:16px;text-align:center}
+.el-lire.nudge{animation:el-nudge .35s ease}
+@keyframes el-nudge{0%,100%{transform:none}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.el-big.el-attente{position:relative;overflow:hidden}
+.el-big.el-attente::after{content:"";position:absolute;left:0;bottom:0;height:4px;width:100%;background:rgba(255,255,255,.75);transform-origin:left;animation:el-attente var(--lire,2s) linear forwards}
+@keyframes el-attente{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+body.dys .el-lire{color:var(--ink)}
+body.dys .el-big.el-attente::after{background:var(--ink)}
+@media (prefers-reduced-motion: reduce){.el-lire.nudge,.el-big.el-attente::after{animation:none}}
+@media (max-width:520px){.el-acts:has(.el-lire){flex-direction:column;align-items:center}}
 </style>
 <style>
 /* Interface sobre et élégante sur le modèle du Cahier de suivi (bordures pleines, boutons simples, icônes au trait, pas d'émojis).
@@ -11400,6 +11412,14 @@ window.addEventListener('resize', () => { });
      (vignettes de lots.json). Le test de positionnement, « Me connecter » et l'envoi du bilan sont masqués : le Laboratoire s'en charge.
      Sans window.LABO_API (miroir Netlify), rien ne change. */
   const AVEC_LABO = !!window.LABO_API, VERS_LABO = AVEC_LABO && !/[?&]accueil\b/.test(location.search);
+  /* « Il faut lire la correction » (24/11/2026, Augustin) : après une réponse fausse (choix touché, réponse écrite, « Je ne sais pas »),
+     le verso reste affiché 2 secondes avant de pouvoir passer à la carte suivante. Réglage du professeur (espace prof › Classes et élèves),
+     lu sur le serveur du Laboratoire et gardé à part (flashcards.reglages), hors de la progression synchronisée. Activé par défaut. */
+  const KREG = 'flashcards.reglages', LIRE_MS = 2000;
+  const REGL = (() => { try { return JSON.parse(localStorage.getItem(KREG) || '{}') || {}; } catch (_) { return {}; } })();
+  const lireOn = () => REGL.lireCorrection !== false;
+  if (AVEC_LABO) fetch(window.LABO_API + '/reglages', { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}' })
+    .then(r => r.ok ? r.json() : null).then(d => { if (d && typeof d.lireCorrection === 'boolean') { REGL.lireCorrection = d.lireCorrection; try { localStorage.setItem(KREG, JSON.stringify(REGL)); } catch (_) { } } }).catch(() => { });
   /* ---------- Accueil : liste des lots ---------- */
   function home() {
     if (VERS_LABO) { location.href = '/labo/#entrainements'; return; }
@@ -11486,7 +11506,7 @@ window.addEventListener('resize', () => { });
     const c = card(); if (!c) return finish();
     const f = $('#el-flip');
     f.classList.add('no-anim'); f.classList.remove('flipped'); f.style.transform = '';
-    sess.flipped = false; sess.pick = null; sess.popped = false;
+    sess.flipped = false; sess.pick = null; sess.popped = false; sess.lock = 0;
     $('.el-f', f).innerHTML = stage(frontHTML(c, sess.d), 1);
     $('.el-b', f).innerHTML = stage(backHTML(c, sess.d), 1);
     sess.k = sess.one ? CJ1.draw(c) : null; /* une seule personne : tirée à chaque passage de la carte */
@@ -11509,6 +11529,7 @@ window.addEventListener('resize', () => { });
   }
   function acts() {
     /* « J’avais bon » : correction souple (vocabulaire, latin…), l’élève a pu écrire un synonyme non prévu */
+    if (sess.pick && bloque()) { $('#el-acts').innerHTML = `<div class="el-lire" id="el-lire" role="status">Il faut lire la correction.</div><button class="el-big ko el-attente" data-el="next" disabled style="--lire:${Math.max(0, sess.lock - Date.now())}ms">Carte suivante →</button>`; return; }
     if (sess.pick) { $('#el-acts').innerHTML = `${!sess.pick.ok && sess.typ && sess.typ.loose && sess.pick.r && !sess.pick.forced ? `<button class="el-big el-jabon" data-el="jabon" title="Ta réponse veut dire la même chose${NB}? Compte-la juste.">J’avais bon</button>` : ''}<button class="el-big ${sess.pick.ok ? 'ok' : 'ko'}" data-el="next">Carte suivante →</button>`; return; }
     if (sess.typ && !sess.flipped) { $('#el-acts').innerHTML = TY.formHTML(sess.typ, 'el-type', 'el-big primary', '<button type="button" class="el-big el-idk" data-el="idk">Je ne sais pas</button>');
       $('#el-acts').classList.toggle('el-acts-multi', sess.typ.fields.length > 1);
@@ -11533,7 +11554,7 @@ window.addEventListener('resize', () => { });
     const r = TY.check(sess.typ, vals);
     sess.pick = { i: -2, ok: r.ok, r };
     acts(); sess.busy = true;
-    setTimeout(() => { sess.busy = false; if (!sess.pick) return; sess.flipped = true; $('#el-flip').classList.add('flipped'); verdict(); }, reduce() ? 0 : 250);
+    setTimeout(() => { sess.busy = false; if (!sess.pick) return; sess.flipped = true; $('#el-flip').classList.add('flipped'); verdict(); bloquer(); }, reduce() ? 0 : 250);
   }
   /* i = rang du choix touché ; -1 = « Je ne sais pas » (compte comme une erreur) */
   function choose(i) {
@@ -11544,16 +11565,27 @@ window.addEventListener('resize', () => { });
     $('#el-zone').classList.remove('el-choosing');
     acts();
     sess.busy = true;
-    setTimeout(() => { sess.busy = false; if (!sess.pick) return; sess.flipped = true; $('#el-flip').classList.add('flipped'); verdict(); }, reduce() ? 0 : 450);
+    setTimeout(() => { sess.busy = false; if (!sess.pick) return; sess.flipped = true; $('#el-flip').classList.add('flipped'); verdict(); bloquer(); }, reduce() ? 0 : 450);
   }
+  /* verso bloqué après une erreur : le temps de lire la correction */
+  const bloque = () => !!(sess && sess.lock && Date.now() < sess.lock);
+  function bloquer() {
+    if (!lireOn() || !sess || !sess.pick || sess.pick.ok) return;
+    const s = sess; s.lock = Date.now() + LIRE_MS;
+    setTimeout(() => { if (sess === s && s.lock) { s.lock = 0; if (s.pick) acts(); } }, LIRE_MS + 30);
+    acts();
+  }
+  function insister() { const m = $('#el-lire'); if (!m) return; m.classList.remove('nudge'); void m.offsetWidth; m.classList.add('nudge'); }
   function flip() {
     if (!sess || sess.busy) return;
+    if (bloque()) return insister();
     if (sess.ch && !sess.pick && !sess.flipped) return; /* QCM : on répond d'abord (ou « Je ne sais pas ») */
     if (sess.pick) $('#el-verdict').classList.toggle('on', !sess.flipped); /* le bandeau accompagne le verso ; au recto, on revoit son choix corrigé */
     sess.flipped = !sess.flipped; $('#el-flip').classList.toggle('flipped', sess.flipped); acts();
   }
   function answer(ok) {
     if (!sess || sess.busy || (!sess.flipped && !sess.pick)) return;
+    if (bloque()) return insister();
     tick();
     /* Correction vérifiée (choix cliqué, réponse écrite) ou sur l'honneur (« Je savais ») : compté pour le bilan du professeur */
     sess.cnt = sess.cnt || { clic: 0, ecrit: 0, honneur: 0 };
@@ -11951,7 +11983,7 @@ window.addEventListener('resize', () => { });
       case 'flip': return flip();
       case 'idk': return choose(-1);
       case 'next': return answer(true);
-      case 'jabon': if (sess && sess.pick && !sess.pick.ok) { sess.pick.ok = true; sess.pick.forced = true; verdict(); acts(); } return;
+      case 'jabon': if (sess && sess.pick && !sess.pick.ok) { sess.pick.ok = true; sess.pick.forced = true; sess.lock = 0; verdict(); acts(); } return;
       case 'ok': return answer(true);
       case 'ko': return answer(false);
     }
@@ -11964,7 +11996,7 @@ window.addEventListener('resize', () => { });
     ptr = { x: e.clientX, y: e.clientY, dx: 0, id: e.pointerId };
   });
   document.addEventListener('pointermove', e => {
-    if (!ptr || ptr.id !== e.pointerId || !sess || !sess.flipped || sess.busy) return;
+    if (!ptr || ptr.id !== e.pointerId || !sess || !sess.flipped || sess.busy || bloque()) return;
     ptr.dx = e.clientX - ptr.x;
     const f = $('#el-flip'), z = $('#el-zone');
     f.classList.add('no-anim'); f.style.transform = `translateX(${ptr.dx}px) rotateY(180deg) rotate(${ptr.dx / 25}deg)`;
@@ -12161,10 +12193,16 @@ const LABO_SYNC = (function () {
 
   function etapeClasse() {
     let exp = false; try { exp = sessionStorage.getItem('labo.expire'); sessionStorage.removeItem('labo.expire'); } catch (e) { }
+    /* connexion enseignant à côté de celle des élèves (Augustin, 23/11/2026) : même mot de passe que l'espace professeur */
     cadre(`<div class="page-h"><h2>Bienvenue${NB}!</h2><p>Connecte-toi pour retrouver ta progression, tes scores et tes ceintures sur n’importe quel ordinateur.</p></div>
-<form class="card arr-card"><label class="field">Code de ta classe<input id="arr-code" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Il est donné par ton professeur"></label>
+<div class="arr-duo">
+<form class="card arr-card"><h3>Élève</h3><label class="field">Code de ta classe<input id="arr-code" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Il est donné par ton professeur"></label>
 <div class="row"><button class="btn" type="submit" data-a="classe">Continuer</button></div>
 <p class="small arr-msg" id="arr-msg" role="alert">${exp ? 'Ta session a expiré' + NB + ': reconnecte-toi.' : ''}</p></form>
+<form class="card arr-card arr-prof"><h3>Enseignant</h3><label class="field">Mot de passe enseignant<input id="arr-mdp" type="password" autocomplete="current-password"></label>
+<div class="row"><button class="btn ghost" type="submit" data-a="prof">Entrer dans l’espace professeur</button></div>
+<p class="small arr-msg" id="arr-msg-prof" role="alert"></p></form>
+</div>
 <p class="small arr-invite"><a href="#" data-a="invite">Continuer sans me connecter</a> (ta progression restera seulement sur cet ordinateur).</p>`);
   }
   function etapePrenom() {
@@ -12214,6 +12252,16 @@ ${nouveau ? '<label class="field">Tape-le une deuxième fois<input id="arr-pin2"
       if (a === 'invite') { try { sessionStorage.setItem('labo.invite', '1'); } catch (x) { } document.getElementById('arrivee').remove(); ecran = null; return demarrer(); }
       if (a === 'retour') return etapeClasse();
       if (a === 'prenoms') return etapePrenom();
+      if (a === 'prof') {
+        const mdp = document.getElementById('arr-mdp').value, mp = t => { document.getElementById('arr-msg-prof').textContent = t; };
+        if (!mdp) return mp('Tape le mot de passe enseignant.');
+        mp('Vérification…');
+        const r = await fetch(API + '/prof/classes', { method: 'POST', headers: { 'content-type': 'application/json', 'x-prof': mdp }, body: '{}' }).catch(() => null);
+        if (!r) return mp('Pas de connexion à Internet. Réessaie.');
+        if (!r.ok) { const d = await r.json().catch(() => ({})); return mp(d.erreur || 'Erreur du serveur.'); }
+        try { sessionStorage.setItem('labo.prof', mdp); } catch (x) { }
+        location.href = 'prof.html'; return;
+      }
       if (a === 'classe') {
         codeClasse = document.getElementById('arr-code').value.trim(); if (!codeClasse) return;
         msg('Recherche…'); classe = await appel('classe', { code: codeClasse }); return etapePrenom();

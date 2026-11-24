@@ -2462,7 +2462,7 @@ ${effacerJours(a, id)}
   const { jour } = window.LABO_MERGE;
 
   let mdp = ''; try { mdp = sessionStorage.getItem('labo.prof') || ''; } catch (e) { }
-  let CL = { list: [] }, SUIVI = [], onglet = 'tdb', clSel = '', modif = false;
+  let CL = { list: [] }, SUIVI = [], REGS = { lireCorrection: true }, onglet = 'tdb', clSel = '', modif = false;
   let REG = { du: '', au: '', objectif: 10, validees: false };
   try { Object.assign(REG, JSON.parse(localStorage.getItem('labo.prof.reglages')) || {}); } catch (e) { }
   const garderReg = () => { try { localStorage.setItem('labo.prof.reglages', JSON.stringify(REG)); } catch (e) { } };
@@ -2522,7 +2522,8 @@ ${effacerJours(a, id)}
     });
   }
   async function charger() {
-    const [c, s] = await Promise.all([appel('classes'), appel('suivi')]);
+    const [c, s, g] = await Promise.all([appel('classes'), appel('suivi'), appel('reglages').catch(() => null)]);
+    if (g) REGS = g;
     for (const k in BIL) delete BIL[k];
     CL = c; SUIVI = s.eleves; modif = false;
     if (!clSel || !CL.list.find(x => x.id === clSel)) clSel = (CL.list[0] || {}).id || '';
@@ -2582,6 +2583,9 @@ ${aValider.map(({ x, v }) => `<tr><td>${esc(x.e.prenom)}</td><td>${esc((ECH.find
     const c = CL.list.find(x => x.id === clSel);
     cadre(`<div class="page-h"><h2>Classes et élèves</h2><p>Le code de classe est à donner aux élèves (au tableau, par exemple). Change-le quand tu veux${NB}: les élèves déjà connectés le restent.</p></div>
 <div class="card"><div class="p-row">${selClasse()}<button class="btn ghost" type="button" data-x="ajout-classe">+ Nouvelle classe</button></div></div>
+<div class="card"><h3>Entrainements (flashcards)</h3>
+  <label class="p-check"><input type="checkbox" id="r-lire"${REGS.lireCorrection !== false ? ' checked' : ''}> Après une réponse fausse, bloquer la carte 2${NB}secondes sur la correction («${NB}Il faut lire la correction.${NB}»)</label>
+  <p class="small muted">Pour tous les élèves et toutes les classes. Enregistré dès que tu coches ou décoches.</p></div>
 ${c ? `<div class="card p-classe">
   <div class="p-row"><label class="field">Nom de la classe<input id="c-nom" value="${esc(c.nom)}"></label>
   <label class="field">Code de classe<input id="c-code" value="${esc(c.code)}" autocomplete="off"></label>
@@ -2595,6 +2599,11 @@ ${c ? `<div class="card p-classe">
   <div class="row"><button class="btn" type="button" data-x="enregistrer">Enregistrer les classes</button>${c.eleves.length === 0 ? '<button class="btn ghost danger" type="button" data-x="suppr-classe">Supprimer la classe</button>' : ''}</div>
 </div>` : '<p>Aucune classe.</p>'}`);
     $('#p-cl') && $('#p-cl').addEventListener('change', e => { lireForm(); clSel = e.target.value; classes(); });
+    $('#r-lire').addEventListener('change', async e => {
+      const v = e.target.checked;
+      try { REGS = await appel('reglages', { lireCorrection: v }); flash(v ? 'Activé\u202f: la correction reste affichée 2 secondes après une erreur.' : 'Désactivé\u202f: l’élève peut passer tout de suite à la carte suivante.'); }
+      catch (err) { e.target.checked = !v; erreurAppel(err); }
+    });
   }
   function lireForm() {
     const c = CL.list.find(x => x.id === clSel); if (!c || !$('#c-nom')) return;

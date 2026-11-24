@@ -103,6 +103,8 @@ function norm($s): string {
 function b64u(string $b): string { return rtrim(strtr(base64_encode($b), '+/', '-_'), '='); }
 function signe(string $s): string { return b64u(hash_hmac('sha256', $s, secret(), true)); }
 function maintenant(): string { return gmdate('Y-m-d\TH:i:s.v\Z'); }
+/* réglages du professeur pour les élèves (24/11/2026) : lireCorrection = verso bloqué 2 s après une réponse fausse (activé par défaut) */
+function reglages(): array { $r = lireJ('reglages.json', []); $r = is_array($r) ? $r : []; return ['lireCorrection' => ($r['lireCorrection'] ?? true) !== false]; }
 function classes(): array { $c = lireJ('classes.json', null); return is_array($c) && isset($c['list']) ? $c : ['list' => []]; }
 function classeParCode($code): ?array { foreach (classes()['list'] as $c) if (!empty($c['code']) && norm($c['code']) === norm($code)) return $c; return null; }
 function classeParId($id): ?array { foreach (classes()['list'] as $c) if ($c['id'] === $id) return $c; return null; }
@@ -216,6 +218,7 @@ function differences(array $avant, array $apres, string $ts): array {
 
 /* ---------------------------- élèves ---------------------------- */
 function eleve(string $action, array $body): void {
+  if ($action === 'reglages') repondre(reglages());
   if ($action === 'classe') {
     $c = classeParCode($body['code'] ?? ''); if (!$c) erreur('Code de classe inconnu.', 404);
     $actifs = [];
@@ -309,6 +312,13 @@ function listeBilans(string $cl, string $el): array {
 /* ---------------------------- professeur ---------------------------- */
 function prof(string $action, array $body): void {
   if ($action === 'classes') repondre(classes());
+  if ($action === 'reglages') {
+    if (array_key_exists('lireCorrection', $body)) {
+      if (!is_bool($body['lireCorrection'])) erreur('Réglage invalide.');
+      avecVerrou('reglages', function () use ($body) { $r = lireJ('reglages.json', []); $r = is_array($r) ? $r : []; $r['lireCorrection'] = $body['lireCorrection']; ecrireJ('reglages.json', $r); });
+    }
+    repondre(reglages());
+  }
   if ($action === 'enregistrer-classes') {
     $list = $body['list'] ?? null; $ok = is_array($list);
     if ($ok) foreach ($list as $c) { if (!okId($c['id'] ?? null) || !is_string($c['nom'] ?? null) || !is_array($c['eleves'] ?? null)) { $ok = false; break; }
