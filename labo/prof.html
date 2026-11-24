@@ -373,8 +373,10 @@ html.dys .etoiles{color:var(--ink)}
 .memos-toc button:hover{background:var(--paper);color:var(--ink)}
 .memos-toc button.on{background:var(--soft);color:var(--ink);font-weight:700}
 .memos-toc button:focus-visible{outline:2px solid var(--clay)}
-.memos section{scroll-margin-top:12px}
-@media (max-width:900px){.memos-g{grid-template-columns:minmax(0,1fr)}.memos-toc{top:0;z-index:5;flex-direction:row;overflow-x:auto;max-height:none;padding:8px;border-radius:12px;gap:4px}.memos-toc b{display:none}.memos-toc button{white-space:nowrap;border:1px solid var(--line);border-radius:999px;padding:4px 10px}.memos section{scroll-margin-top:64px}}
+.memos section,.entr-rubs>section{scroll-margin-top:12px}
+.entr-g{margin-top:14px}
+.memos-toc .toc-n{margin-left:6px;font-size:.74rem;color:var(--muted);font-weight:400}
+@media (max-width:900px){.memos-g{grid-template-columns:minmax(0,1fr)}.memos-toc{top:0;z-index:5;flex-direction:row;overflow-x:auto;max-height:none;padding:8px;border-radius:12px;gap:4px}.memos-toc b{display:none}.memos-toc button{white-space:nowrap;border:1px solid var(--line);border-radius:999px;padding:4px 10px}.memos section,.entr-rubs>section{scroll-margin-top:64px}}
 .manip{display:inline-flex;align-items:center;gap:8px}
 @media (min-width:561px){.manip{white-space:nowrap}}
 .manip svg{flex:none;color:var(--icon)}
