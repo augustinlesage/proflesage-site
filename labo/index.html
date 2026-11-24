@@ -377,8 +377,10 @@ html.dys .etoiles{color:var(--ink)}
 .memos-toc button:hover{background:var(--paper);color:var(--ink)}
 .memos-toc button.on{background:var(--soft);color:var(--ink);font-weight:700}
 .memos-toc button:focus-visible{outline:2px solid var(--clay)}
-.memos section{scroll-margin-top:12px}
-@media (max-width:900px){.memos-g{grid-template-columns:minmax(0,1fr)}.memos-toc{top:0;z-index:5;flex-direction:row;overflow-x:auto;max-height:none;padding:8px;border-radius:12px;gap:4px}.memos-toc b{display:none}.memos-toc button{white-space:nowrap;border:1px solid var(--line);border-radius:999px;padding:4px 10px}.memos section{scroll-margin-top:64px}}
+.memos section,.entr-rubs>section{scroll-margin-top:12px}
+.entr-g{margin-top:14px}
+.memos-toc .toc-n{margin-left:6px;font-size:.74rem;color:var(--muted);font-weight:400}
+@media (max-width:900px){.memos-g{grid-template-columns:minmax(0,1fr)}.memos-toc{top:0;z-index:5;flex-direction:row;overflow-x:auto;max-height:none;padding:8px;border-radius:12px;gap:4px}.memos-toc b{display:none}.memos-toc button{white-space:nowrap;border:1px solid var(--line);border-radius:999px;padding:4px 10px}.memos section,.entr-rubs>section{scroll-margin-top:64px}}
 .manip{display:inline-flex;align-items:center;gap:8px}
 @media (min-width:561px){.manip{white-space:nowrap}}
 .manip svg{flex:none;color:var(--icon)}
@@ -8674,14 +8676,22 @@ const LABO = (function () {
     const lien = x => `<a class="lot-tile" href="${esc(x.url)}" target="_blank" rel="noopener">${x.couv ? `<span class="lot-couv"><img src="${couvLot(x.couv)}" alt="" loading="lazy" decoding="async"></span>` : ''}<b class="lot-nom">${esc(x.nom)} ↗</b><span class="lot-meta">${esc(x.sous || '')}</span></a>`;
     const rubs = RUBRIQUES_FC.slice();
     lots.forEach(d => { if (!rubs.some(r => r.id === d.rub)) rubs.push({ id: d.rub, nom: d.rub || 'Autres' }); });
+    /* sommaire flottant des rubriques, sur le modèle de celui des mémos (Augustin, 24/11/2026) */
+    const blocs = rubs.map(r => {
+      const l = lots.filter(d => d.rub === r.id), ln = LIENS_FC.filter(x => x.rub === r.id); if (!l.length && !ln.length) return null;
+      const compte = [l.length ? l.length + ' lot' + (l.length > 1 ? 's' : '') : '', ln.length ? ln.length + ' lien' + (ln.length > 1 ? 's' : '') : ''].filter(Boolean).join(' · ');
+      return { r, n: l.length + ln.length, html: `<section class="theme-block" id="rub-${esc(r.id || 'autres')}"><h3>${esc(r.nom)}</h3><p>${compte}</p><div class="lot-grid">${l.map(carte).join('')}${ln.map(lien).join('')}</div></section>` };
+    }).filter(Boolean);
+    const toc = blocs.map(b => `<button type="button" data-a="rub" data-rub="rub-${esc(b.r.id || 'autres')}">${esc(b.r.nom)}<span class="toc-n">${b.n}</span></button>`).join('');
     return `<div class="page-h"><h2>Entrainements</h2><p>Les flashcards, pour acquérir les réflexes.</p></div>
     <div class="levels-row">${filtre}<span class="hint">${lots.length} lots${tous ? ', tous niveaux' : ' pour la ' + niv(S.niveau)}</span></div>
-    <div>${rubs.map(r => {
-      const l = lots.filter(d => d.rub === r.id), ln = LIENS_FC.filter(x => x.rub === r.id); if (!l.length && !ln.length) return '';
-      const compte = [l.length ? l.length + ' lot' + (l.length > 1 ? 's' : '') : '', ln.length ? ln.length + ' lien' + (ln.length > 1 ? 's' : '') : ''].filter(Boolean).join(' · ');
-      return `<section class="theme-block"><h3>${esc(r.nom)}</h3><p>${compte}</p><div class="lot-grid">${l.map(carte).join('')}${ln.map(lien).join('')}</div></section>`;
-    }).join('') || `<p class="empty">Aucun lot pour ce niveau pour l’instant.</p>`}</div>`;
+    ${blocs.length ? `<div class="memos-g entr-g"><nav class="memos-toc" aria-label="Sommaire des entrainements"><b>Sommaire</b>${toc}</nav><div class="entr-rubs">${blocs.map(b => b.html).join('')}</div></div>` : `<p class="empty">Aucun lot pour ce niveau pour l’instant.</p>`}`;
   };
+  document.addEventListener('click', ev => {
+    const b = ev.target.closest('[data-a="rub"]'); if (!b || !b.closest('#vue')) return;
+    const el = document.getElementById(b.dataset.rub);
+    if (el) el.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+  });
 
   /* Liste des lots à jour : sur proflesage.fr, relit flashcards/lots.json (publié avec les flashcards)
      et réaffiche l'accueil ou les Entrainements si un lot a été ajouté depuis la construction du Laboratoire. */
@@ -9088,7 +9098,7 @@ const LABO = (function () {
   /* surligne dans le sommaire le mémo en cours de lecture */
   window.addEventListener('scroll', () => {
     const toc = document.querySelector('.memos-toc'); if (!toc) return;
-    const secs = [...document.querySelectorAll('.memos section')]; let cur = 0;
+    const secs = [...document.querySelectorAll('.memos section, .entr-rubs > section')]; let cur = 0; /* aussi le sommaire des Entrainements */
     secs.forEach((s, i) => { if (s.getBoundingClientRect().top < 120) cur = i; });
     toc.querySelectorAll('button').forEach((b, i) => {
       const on = i === cur, avant = b.classList.contains('on'); b.classList.toggle('on', on);
