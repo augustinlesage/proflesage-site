@@ -8179,15 +8179,16 @@ const CONSEILS = {
 };
 
 ;
-/* Pages reprises de l'appli des flashcards (Augustin, 22/11/2026) : « Notions par niveau » et « À propos ».
+/* Pages reprises de l'appli des flashcards (Augustin, 22/11/2026) : « Notions par niveau », « À propos » et « Ressources officielles ».
    build.py recopie ici, à chaque construction, le code de flashcards/src/app.js (blocs ABOUT_* et NOTIONS*) :
    les deux espaces restent synchronisés. Ce fichier fournit seulement ce dont ce code a besoin
-   (niveaux, lots du Laboratoire, pictogramme de lien). */
+   (niveaux, lots du Laboratoire, pictogrammes de lien et de fichier). */
 const FCP = (function () {
   const LEVELS = ['6', '5', '4', '3'];
   const lvLabel = n => n + 'ᵉ';
   const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-  const ICO = { link: '<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>' };
+  const ICO = { link: '<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>',
+    file: '<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/>' };
   const FC_ICO = (n, s = 16) => `<svg class="ico" viewBox="0 0 24 24" width="${s}" height="${s}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICO[n] || ''}</svg>`;
   /* les lots du Laboratoire (decks.js, lots.json) vus comme des lots de l'appli */
   const state = { get decks() { return DECKS.map(d => ({ id: d.id, name: d.nom, cards: { length: d.n || 1 }, niveaux: d.niv })); } };
@@ -8433,7 +8434,38 @@ function notionsHTML(eleve, defLv) {
 }
 
 
-  return { aboutHTML, notionsHTML, ABOUT_SOURCES, niveau: v => { nvLevel = v; } };
+  /* Ressources officielles (24/11/2026, Augustin : « migrer le contenu des flashcards prof vers l’onglet Ressources ») :
+     liste RESSOURCES et ressourcesHTML() recopiées de app.js ; les documents intégrés (PDF Colau) sont liés au fichier publié avec les flashcards (RES_URL, calculé par build.py). */
+  const RES_URL = {"colau": "/flashcards/a/916b68bc4ac1.pdf"};
+const RESSOURCES = [
+  { titre: 'Les deux guides de référence', intro: 'Les textes sur lesquels s’appuient les cartes de grammaire de l’appli.', liens: [
+    { t: 'La grammaire du français. Terminologie grammaticale', org: 'Éduscol (DGESCO), 2020', type: 'PDF', d: 'Le vocabulaire grammatical officiel, de l’école au lycée : c’est la terminologie suivie dans les cartes.', u: 'https://eduscol.education.gouv.fr/sites/default/files/document/guide-la-grammaire-du-francais-terminologie-grammaticale-67998.pdf' },
+    { t: 'La grammaire du français du CP à la 6ᵉ', org: 'Éduscol (DGESCO)', type: 'PDF', d: 'Comment la grammaire s’enseigne de l’école à la 6ᵉ : démarches, manipulations, progressivité.', u: 'https://eduscol.education.gouv.fr/sites/default/files/document/guide-la-grammaire-du-francais-du-cp-la-6e-97251.pdf' }] },
+  { titre: 'Programmes et repères', intro: 'Ce que le programme demande à chaque niveau, pour situer une notion.', liens: [
+    { t: 'Programme de français du cycle 3', org: 'BO n° 16 du 17 avril 2025', type: 'Bulletin officiel', d: 'En vigueur en CM1 et en 6ᵉ depuis la rentrée 2025, et en CM2 depuis la rentrée 2026.', u: 'https://education.gouv.fr/bo/2025/Hebdo16/MENE2504620A' },
+    { t: 'Repères annuels de progression et attendus de fin d’année, du CP à la troisième', org: 'Éduscol', type: 'Page Éduscol', d: 'Ce que l’élève doit maîtriser à la fin de chaque année, dont la grammaire du cycle 4.', u: 'https://eduscol.education.gouv.fr/6910/reperes-annuels-de-progression-et-attendus-de-fin-d-annee-du-cp-la-troisieme' },
+    { t: 'Programme de français de seconde et de première', org: 'BO spécial n° 1 du 22 janvier 2019', type: 'Bulletin officiel', d: 'La partie « Grammaire » est celle de la question de grammaire de l’oral du bac.', u: 'https://www.education.gouv.fr/bo/19/Special1/MENE1901575A.htm' }] },
+  { titre: 'Progressions de langue au collège', intro: 'Des progressions de grammaire année par année, pour ordonner les notions et choisir les manipulations.', liens: [
+    { t: 'Proposition d’une progression spiralaire de grammaire du cycle 3 au cycle 4', org: 'Bénédicte Colau, IA-IPR de Lettres, académie d’Aix-Marseille', type: 'PDF', d: 'Grammaire de phrase de la 6ᵉ à la 3ᵉ : notions nouvelles de chaque année et manipulations à mettre en œuvre. Document intégré à l’appli : le clic le télécharge.', file: 'colau', fname: 'Progression spiralaire grammaire cycles 3-4 (B. Colau).pdf' },
+    { t: 'Progression grammaticale 6ᵉ, établie à partir de la progression de l’académie d’Aix-Marseille', org: 'Charly Prabel-Guignard, site Lettres de l’académie de Versailles', type: 'PDF', d: 'Les objectifs de 6ᵉ dans l’ordre, avec des corpus pour trois groupes de niveau et les manipulations (remplacement, négation, insertion).', u: 'https://lettres.ac-versailles.fr/IMG/pdf/pdl_progression_6e-grammaire.pdf' },
+    { t: 'Progression grammaticale 5ᵉ, établie à partir de la progression de l’académie d’Aix-Marseille', org: 'Charly Prabel-Guignard, site Lettres de l’académie de Versailles', type: 'PDF', d: 'La même démarche en 5ᵉ : relative, CC de moyen, manière et but, forme passive.', u: 'https://lettres.ac-versailles.fr/IMG/pdf/pdl_progression_5e-grammaire.pdf' },
+    { t: 'Une progression en langue pour la classe de 5ᵉ', org: 'Éduscol, ressources d’accompagnement du cycle 4', type: 'PDF', d: 'Grammaire, conjugaison et orthographe articulées, avec des écrits de transfert (dont futur et conditionnel présent).', u: 'https://eduscol.education.gouv.fr/sites/default/files/document/ra16c4francaisetudelangueprogressionlangue5e774321pdf-78492.pdf' }] },
+  { titre: 'Ressources d’accompagnement', intro: 'Pour aller plus loin avec les élèves ou préparer une séance.', liens: [
+    { t: 'Ressources d’accompagnement du programme de français au cycle 3', org: 'Éduscol', type: 'Page Éduscol', d: 'Documents et exemples de mise en œuvre du programme du cycle 3.', u: 'https://eduscol.education.gouv.fr/4800/ressources-d-accompagnement-du-programme-de-francais-au-cycle-3' }] }
+];
+/* Page reprise telle quelle dans l’onglet Ressources du Laboratoire (laboratoire/src/build.py, 24/11/2026).
+   fichier(l) : lien direct vers un document intégré (Laboratoire) ; sans lui, le clic télécharge le base64 de RES_FILES. */
+function ressourcesHTML(fichier) {
+  const ico = { 'PDF': FC_ICO('file'), 'Bulletin officiel': FC_ICO('file') };
+  return `<div class="res-page">
+    <div class="deck-head"><div class="deck-title"><div class="res-kicker">Références officielles</div><h1>Ressources officielles</h1><div class="muted">Les textes de l’Éducation nationale sur lesquels s’appuient les cartes. Les liens s’ouvrent dans un nouvel onglet.</div></div></div>
+    ${RESSOURCES.map(g => `<section class="res-group"><h2>${g.titre}</h2><p class="muted">${g.intro}</p><div class="res-list">${g.liens.map(l => `<a class="res-card" ${l.file ? (fichier ? `href="${fichier(l)}" download="${esc(l.fname)}"` : `href="#" data-res-file="${l.file}" data-res-name="${esc(l.fname)}"`) : `href="${l.u}" target="_blank" rel="noopener noreferrer"`}><span class="res-ico" aria-hidden="true">${ico[l.type] || FC_ICO('link')}</span><span class="res-body"><span class="res-t">${l.t}<span class="res-ext" aria-hidden="true">${l.file ? ' ↓' : ' ↗'}</span></span><span class="res-meta">${l.org} · <span class="res-type">${l.type}</span></span><span class="res-d">${l.d}</span></span><span class="sr-only">${l.file ? ' (téléchargement)' : ' (nouvel onglet)'}</span></a>`).join('')}</div></section>`).join('')}
+    <p class="muted small res-src">Liste reprise de l’onglet « Ressources officielles » de l’<a href="https://grammatelier.forge.apps.education.fr" target="_blank" rel="noopener noreferrer">Atelier de grammaire</a> (Christèle Proisy, Forge des communs numériques éducatifs).</p>
+  </div>`;
+}
+
+
+  return { aboutHTML, notionsHTML, ressourcesHTML: () => ressourcesHTML(l => RES_URL[l.file] || '#'), ABOUT_SOURCES, niveau: v => { nvLevel = v; } };
 })();
 
 ;
@@ -8703,14 +8735,14 @@ const LABO = (function () {
   }
 
   /* ---------- Ressources et À propos ---------- */
+  /* Ressources officielles : la page de l'appli des flashcards du professeur (même liste, recopiée à la construction, fcpages.js), 24/11/2026 */
   vues.res = h => {
     if (h !== 'ressources') return null;
-    const R = [
-      ['La grammaire du français — Terminologie grammaticale', 'Éduscol, 2020 : la référence pour tous les termes employés sur ce site.', 'https://eduscol.education.gouv.fr/sites/default/files/document/guide-la-grammaire-du-francais-terminologie-grammaticale-67998.pdf'],
-      ['La grammaire du français du CP à la 6ᵉ', 'Éduscol : le guide du cycle 2 et du cycle 3.', 'https://eduscol.education.gouv.fr/sites/default/files/document/guide-la-grammaire-du-francais-du-cp-la-6e-97251.pdf']
-    ];
-    return `<div class="page-h"><h2>Ressources officielles</h2><p>Les textes institutionnels sur lesquels s’appuie le Laboratoire. La liste complète (programmes, repères de progression, progressions de langue) est dans l’application des flashcards du professeur${NB}; elle sera reprise ici.</p></div>
-    <div class="grid2">${R.map(r => `<a class="card" href="${r[2]}" target="_blank" rel="noopener" style="text-decoration:none"><h3>${esc(r[0])} ↗</h3><p class="muted small">${esc(r[1])}</p></a>`).join('')}</div>`;
+    const r = FCP.ressourcesHTML()
+      .replace('Les textes de l’Éducation nationale sur lesquels s’appuient les cartes.', 'Les textes de l’Éducation nationale sur lesquels s’appuient le Laboratoire et les flashcards.')
+      .replace('Les textes sur lesquels s’appuient les cartes de grammaire de l’appli.', 'Les textes sur lesquels s’appuient les mémos, les parcours et les cartes de grammaire.')
+      .replace('Document intégré à l’appli : le clic le télécharge.', 'Document publié avec le site : le clic le télécharge.');
+    return `<div class="fcp">${r}</div>`;
   };
   /* À propos : celui de l'appli des flashcards (même code, recopié à la construction, fcpages.js), puis ce qui est propre au Laboratoire */
   vues.about = h => {
