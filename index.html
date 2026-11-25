@@ -62,7 +62,8 @@ a.lien:hover{background:var(--line)}
 .lien .ext{margin-left:auto;opacity:.55;width:14px;height:14px}
 .puce{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;flex:none;color:var(--g);background:color-mix(in srgb,var(--g) 14%,transparent)}
 .puce svg.i{width:16px;height:16px}
-details.grp{margin-top:2px}
+details.grp{margin:2px 0 0;padding:0;border:0;border-radius:0;background:none;box-shadow:none;color:inherit;font:inherit}
+details.grp>summary::before{content:none}
 details.grp>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;padding:5px 8px;border-radius:8px;font-weight:650;font-size:.95rem}
 details.grp>summary::-webkit-details-marker{display:none}
 details.grp>summary:hover{background:var(--line)}
@@ -801,7 +802,7 @@ var BADGES_CAHIER = {"cats":["Travail","Participation","Coopération","Responsab
 - Orthographe | Accords et règles
 - Conjugaison | Leçons et tableaux
 - Vocabulaire | Formation des mots, sens, registres
-- Mots nouveaux | Le carnet de mots nouveaux du cahier | #p-ma-classe-cahier
+- Mots nouveaux | Les mots appris en classe, avec leur définition | /mots/
 - Dictées | Dictées préparées et d’entraînement
 - Chantiers
 - Laboratoire | Parcours, entraînements et ceintures | /labo/
@@ -1002,10 +1003,12 @@ function construireNav(){
 
 /* Barre réduite : automatique quand la fenêtre est étroite (1180 px ou moins), ou au choix avec le bouton (mémorisé) */
 const RAIL_AUTO = 1180, TIROIR = 600;
-function etatRail(){ let v=null; try{ v = localStorage.getItem("classe.rail"); }catch(e){} return v; }
+/* Sur les autres pages du site (Lire au collège, Laboratoire), le menu est réduit par défaut ; réglage mémorisé à part */
+const CLE_RAIL = window.CLASSE_BASE ? "classe.rail.apps" : "classe.rail";
+function etatRail(){ let v=null; try{ v = localStorage.getItem(CLE_RAIL); }catch(e){} return v; }
 function appliquerRail(){
   const w = innerWidth, v = etatRail(), side = document.getElementById("side");
-  const on = w > TIROIR && (v==="1" || (v===null && w <= RAIL_AUTO));
+  const on = w > TIROIR && (v==="1" || (v===null && (!!window.CLASSE_BASE || w <= RAIL_AUTO)));
   document.documentElement.classList.toggle("cn-rail", on);
   if(!on && side) side.classList.remove("deploye");
   const b = document.getElementById("rail-b");
@@ -1016,7 +1019,7 @@ function initRail(){
   const b = document.createElement("button"); b.type = "button"; b.className = "rail-b"; b.id = "rail-b";
   b.innerHTML = ic("replier")+'<span class="t"></span>'; bas.appendChild(b);
   b.addEventListener("click", ev=>{ ev.stopPropagation(); const on = document.documentElement.classList.contains("cn-rail");
-    try{ localStorage.setItem("classe.rail", on ? "0" : "1"); }catch(e){} side.classList.remove("deploye"); appliquerRail(); });
+    try{ localStorage.setItem(CLE_RAIL, on ? "0" : "1"); }catch(e){} side.classList.remove("deploye"); appliquerRail(); });
   /* en mode réduit, un clic sur une partie déplie le menu par-dessus la page */
   side.addEventListener("click", ev=>{
     if(!document.documentElement.classList.contains("cn-rail")) return;
