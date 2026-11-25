@@ -1034,7 +1034,6 @@ function vuePage(v){
   const actif = ongl.find(e=>slug(e.t)===sous) || null;
   const qui = actif || it;
   let h = '<div data-g style="--g:var(--c-'+r.col+')">'+
-    '<p class="fil"><a href="#plan">'+esc(r.t)+'</a></p>'+
     '<div class="page-h"><span class="puce">'+ic(ICO_RUB[r.t.toLowerCase()])+'</span><h2>'+esc(it.t)+'</h2></div>';
   if(ongl.length){
     h += '<nav class="onglets" aria-label="Sous-pages"><a href="#'+it.vue+'"'+(actif?'':' aria-current="page"')+'>Présentation</a>'+
