@@ -1,0 +1,6 @@
+# Flashcards version professeur : la page n'est servie que par index.php (mot de passe enseignant)
+Options -Indexes
+DirectoryIndex index.php
+<FilesMatch "\.(gz|html)$">
+  Require all denied
+</FilesMatch>

@@ -30,6 +30,14 @@ jobs:
             if [ -n "${!n}" ]; then echo "$n : présent"; else echo "$n : absent"; fi
           done
 
+      - name: Mot de passe enseignant du Laboratoire (config.php créé ici, jamais dans le dépôt)
+        env:
+          PROF_MDP: ${{ secrets.PROF_MDP }}
+        run: |
+          if [ -z "$PROF_MDP" ]; then echo "Secret PROF_MDP absent : l'espace professeur du Laboratoire restera fermé."; exit 1; fi
+          php -r 'file_put_contents("labo/api/config.php", "<?php\nreturn " . var_export(["prof_mdp" => getenv("PROF_MDP"), "code_eleve" => false], true) . ";\n");'
+          php -l labo/api/config.php
+
       - name: Envoi FTP vers www/
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
@@ -45,3 +53,12 @@ jobs:
             **/.git*/**
             .github/**
             README.md
+
+      - name: Vérifier la compression et le cache (flashcards)
+        continue-on-error: true
+        run: |
+          sleep 20
+          curl -s -o /dev/null -H 'Accept-Encoding: gzip' -D - https://proflesage.fr/flashcards/ | grep -iE '^(HTTP|content-encoding|content-length|cache-control)' || true
+          curl -s -o /dev/null -H 'Accept-Encoding: gzip' -w 'page flashcards transférée : %{size_download} octets en %{time_total} s\n' https://proflesage.fr/flashcards/
+          f=$(ls flashcards/a | grep -m1 webp)
+          curl -s -o /dev/null -D - "https://proflesage.fr/flashcards/a/$f" | grep -iE '^(HTTP|content-type|cache-control)' || true
