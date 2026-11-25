@@ -10,7 +10,7 @@ $conf = @include __DIR__ . '/../api/config.php';
 $mdp = is_array($conf) ? (string) ($conf['prof_mdp'] ?? '') : '';
 const DUREE = 12 * 3600;
 $chemin = '/labo/flashcards-prof/';
-function signe(string $mdp, int $exp): string { return hash_hmac('sha256', "flashcards-prof|$exp", hash('sha256', 'fcprof' . $mdp)); }
+function signeFc(string $mdp, int $exp): string { return hash_hmac('sha256', "flashcards-prof|$exp", hash('sha256', 'fcprof' . $mdp)); }
 function poser(string $v, int $exp, string $chemin): void {
   setcookie('fcprof', $v, ['expires' => $exp, 'path' => $chemin, 'secure' => !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off', 'httponly' => true, 'samesite' => 'Lax']);
 }
@@ -24,16 +24,29 @@ function refus(string $m, int $code = 403): void {
 }
 if (isset($_GET['sortir'])) { poser('', 1, $chemin); http_response_code(204); exit; }
 if ($mdp === '') refus('L’espace professeur n’est pas configuré sur ce serveur.', 503);
+/* onglet « Réglages » de l'appli (25/11/2026) : POST ?reglages (JSON), cookie enseignant exigé ; même stockage que le serveur du Laboratoire */
+function cookieOk(string $mdp): bool {
+  $c = (string) ($_COOKIE['fcprof'] ?? '');
+  return preg_match('/^(\d{10})\.([0-9a-f]{64})$/', $c, $m) === 1 && (int) $m[1] > time() && hash_equals(signeFc($mdp, (int) $m[1]), $m[2]);
+}
+if (isset($_GET['reglages'])) {
+  header('Content-Type: application/json; charset=utf-8'); header('Cache-Control: no-store');
+  if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') { http_response_code(405); echo '{"erreur":"Méthode non permise."}'; exit; }
+  if (!cookieOk($mdp)) { http_response_code(403); echo '{"erreur":"Session enseignant expirée : rouvre les flashcards depuis l’espace professeur."}'; exit; }
+  define('LABO_SANS_AIGUILLAGE', true);
+  require __DIR__ . '/../api/index.php';
+  $body = json_decode((string) file_get_contents('php://input'), true);
+  try { repondre(majReglages(is_array($body) ? $body : [])); }
+  catch (Throwable $e) { error_log('fcprof reglages: ' . $e->getMessage()); erreur('Erreur du serveur.', 500); }
+}
 if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
   $donne = (string) ($_POST['mdp'] ?? '');
   if (!hash_equals(hash('sha256', $mdp), hash('sha256', $donne))) { usleep(400000); refus('Mot de passe enseignant incorrect. Connectez-vous d’abord à l’espace professeur, puis cliquez sur « Flashcards (version prof) ».'); }
   $exp = time() + DUREE;
-  poser($exp . '.' . signe($mdp, $exp), $exp, $chemin);
+  poser($exp . '.' . signeFc($mdp, $exp), $exp, $chemin);
   header('Location: ' . $chemin, true, 303); exit;
 }
-$c = (string) ($_COOKIE['fcprof'] ?? '');
-$ok = preg_match('/^(\d{10})\.([0-9a-f]{64})$/', $c, $m) === 1 && (int) $m[1] > time() && hash_equals(signe($mdp, (int) $m[1]), $m[2]);
-if (!$ok) refus('Cette page est réservée à l’enseignant. Ouvrez-la depuis l’espace professeur du Laboratoire (onglet « Flashcards (version prof) »).');
+if (!cookieOk($mdp)) refus('Cette page est réservée à l’enseignant. Ouvrez-la depuis l’espace professeur du Laboratoire (onglet « Flashcards (version prof) »).');
 $f = __DIR__ . '/page.html.gz';
 if (!is_file($f)) refus('Les flashcards version professeur ne sont pas encore publiées.', 404);
 header('Content-Type: text/html; charset=utf-8');

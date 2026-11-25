@@ -1803,6 +1803,11 @@ a.deck-item{text-decoration:none;color:inherit}
 main{padding:20px 24px;min-width:0}
 .res-link.on{background:var(--soft);border-color:var(--line);font-weight:600}
 .res-page{max-width:860px}
+/* Réglages des élèves (25/11/2026) */
+.reg-form{display:flex;flex-direction:column;gap:12px;max-width:520px;padding:16px;border:1px solid var(--line);border-radius:10px;background:var(--panel)}
+.reg-check{display:flex;align-items:center;gap:8px;font-weight:600}
+.reg-sec{margin:0}.reg-inline{display:inline-flex;align-items:center;gap:8px}.reg-inline input{width:80px}
+.reg-msg{margin:0;font-size:14px;min-height:1.2em}.reg-msg.bad{color:#b25751}
 .res-kicker{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--brand);font-weight:700;margin-bottom:2px}
 .res-group{margin:22px 0 0}.res-group h2{font-size:16px;margin:0 0 2px}.res-group>p{margin:0 0 10px;font-size:14px}
 .res-list{display:grid;gap:10px}
@@ -9030,22 +9035,25 @@ const RESSOURCES = [
     { t: 'Repères annuels de progression et attendus de fin d’année, du CP à la troisième', org: 'Éduscol', type: 'Page Éduscol', d: 'Ce que l’élève doit maîtriser à la fin de chaque année, dont la grammaire du cycle 4.', u: 'https://eduscol.education.gouv.fr/6910/reperes-annuels-de-progression-et-attendus-de-fin-d-annee-du-cp-la-troisieme' },
     { t: 'Programme de français de seconde et de première', org: 'BO spécial n° 1 du 22 janvier 2019', type: 'Bulletin officiel', d: 'La partie « Grammaire » est celle de la question de grammaire de l’oral du bac.', u: 'https://www.education.gouv.fr/bo/19/Special1/MENE1901575A.htm' }] },
   { titre: 'Progressions de langue au collège', intro: 'Des progressions de grammaire année par année, pour ordonner les notions et choisir les manipulations.', liens: [
-    { t: 'Proposition d’une progression spiralaire de grammaire du cycle 3 au cycle 4', org: 'Bénédicte Colau, IA-IPR de Lettres, académie d’Aix-Marseille', type: 'PDF', d: 'Grammaire de phrase de la 6ᵉ à la 3ᵉ : notions nouvelles de chaque année et manipulations à mettre en œuvre. Document intégré à l’appli : le clic le télécharge.', file: 'colau', fname: 'Progression spiralaire grammaire cycles 3-4 (B. Colau).pdf' },
+    { t: 'Proposition d’une progression spiralaire de grammaire du cycle 3 au cycle 4', org: 'Bénédicte Colau, IA-IPR de Lettres, académie d’Aix-Marseille', type: 'PDF', d: 'Grammaire de phrase de la 6ᵉ à la 3ᵉ : notions nouvelles de chaque année et manipulations à mettre en œuvre. Document intégré à l’appli : le clic le télécharge.', file: 'colau', fname: 'Progression spiralaire grammaire cycles 3-4 (B. Colau).pdf' },
     { t: 'Progression grammaticale 6ᵉ, établie à partir de la progression de l’académie d’Aix-Marseille', org: 'Charly Prabel-Guignard, site Lettres de l’académie de Versailles', type: 'PDF', d: 'Les objectifs de 6ᵉ dans l’ordre, avec des corpus pour trois groupes de niveau et les manipulations (remplacement, négation, insertion).', u: 'https://lettres.ac-versailles.fr/IMG/pdf/pdl_progression_6e-grammaire.pdf' },
-    { t: 'Progression grammaticale 5ᵉ, établie à partir de la progression de l’académie d’Aix-Marseille', org: 'Charly Prabel-Guignard, site Lettres de l’académie de Versailles', type: 'PDF', d: 'La même démarche en 5ᵉ : relative, CC de moyen, manière et but, forme passive.', u: 'https://lettres.ac-versailles.fr/IMG/pdf/pdl_progression_5e-grammaire.pdf' },
+    { t: 'Progression grammaticale 5ᵉ, établie à partir de la progression de l’académie d’Aix-Marseille', org: 'Charly Prabel-Guignard, site Lettres de l’académie de Versailles', type: 'PDF', d: 'La même démarche en 5ᵉ : relative, CC de moyen, manière et but, forme passive.', u: 'https://lettres.ac-versailles.fr/IMG/pdf/pdl_progression_5e-grammaire.pdf' },
     { t: 'Une progression en langue pour la classe de 5ᵉ', org: 'Éduscol, ressources d’accompagnement du cycle 4', type: 'PDF', d: 'Grammaire, conjugaison et orthographe articulées, avec des écrits de transfert (dont futur et conditionnel présent).', u: 'https://eduscol.education.gouv.fr/sites/default/files/document/ra16c4francaisetudelangueprogressionlangue5e774321pdf-78492.pdf' }] },
   { titre: 'Ressources d’accompagnement', intro: 'Pour aller plus loin avec les élèves ou préparer une séance.', liens: [
     { t: 'Ressources d’accompagnement du programme de français au cycle 3', org: 'Éduscol', type: 'Page Éduscol', d: 'Documents et exemples de mise en œuvre du programme du cycle 3.', u: 'https://eduscol.education.gouv.fr/4800/ressources-d-accompagnement-du-programme-de-francais-au-cycle-3' }] }
 ];
-let showRes = false; /* true = la zone principale affiche les ressources officielles au lieu d’un lot */
-function renderRessources() {
+/* Page reprise telle quelle dans l’onglet Ressources du Laboratoire (laboratoire/src/build.py, 24/11/2026).
+   fichier(l) : lien direct vers un document intégré (Laboratoire) ; sans lui, le clic télécharge le base64 de RES_FILES. */
+function ressourcesHTML(fichier) {
   const ico = { 'PDF': FC_ICO('file'), 'Bulletin officiel': FC_ICO('file') };
-  $('#main').innerHTML = `<div class="res-page">
+  return `<div class="res-page">
     <div class="deck-head"><div class="deck-title"><div class="res-kicker">Références officielles</div><h1>Ressources officielles</h1><div class="muted">Les textes de l’Éducation nationale sur lesquels s’appuient les cartes. Les liens s’ouvrent dans un nouvel onglet.</div></div></div>
-    ${RESSOURCES.map(g => `<section class="res-group"><h2>${g.titre}</h2><p class="muted">${g.intro}</p><div class="res-list">${g.liens.map(l => `<a class="res-card" ${l.file ? `href="#" data-res-file="${l.file}" data-res-name="${esc(l.fname)}"` : `href="${l.u}" target="_blank" rel="noopener noreferrer"`}><span class="res-ico" aria-hidden="true">${ico[l.type] || FC_ICO('link')}</span><span class="res-body"><span class="res-t">${l.t}<span class="res-ext" aria-hidden="true">${l.file ? ' ↓' : ' ↗'}</span></span><span class="res-meta">${l.org} · <span class="res-type">${l.type}</span></span><span class="res-d">${l.d}</span></span><span class="sr-only">${l.file ? ' (téléchargement)' : ' (nouvel onglet)'}</span></a>`).join('')}</div></section>`).join('')}
+    ${RESSOURCES.map(g => `<section class="res-group"><h2>${g.titre}</h2><p class="muted">${g.intro}</p><div class="res-list">${g.liens.map(l => `<a class="res-card" ${l.file ? (fichier ? `href="${fichier(l)}" download="${esc(l.fname)}"` : `href="#" data-res-file="${l.file}" data-res-name="${esc(l.fname)}"`) : `href="${l.u}" target="_blank" rel="noopener noreferrer"`}><span class="res-ico" aria-hidden="true">${ico[l.type] || FC_ICO('link')}</span><span class="res-body"><span class="res-t">${l.t}<span class="res-ext" aria-hidden="true">${l.file ? ' ↓' : ' ↗'}</span></span><span class="res-meta">${l.org} · <span class="res-type">${l.type}</span></span><span class="res-d">${l.d}</span></span><span class="sr-only">${l.file ? ' (téléchargement)' : ' (nouvel onglet)'}</span></a>`).join('')}</div></section>`).join('')}
     <p class="muted small res-src">Liste reprise de l’onglet « Ressources officielles » de l’<a href="https://grammatelier.forge.apps.education.fr" target="_blank" rel="noopener noreferrer">Atelier de grammaire</a> (Christèle Proisy, Forge des communs numériques éducatifs).</p>
   </div>`;
 }
+let showRes = false; /* true = la zone principale affiche les ressources officielles au lieu d’un lot */
+function renderRessources() { $('#main').innerHTML = ressourcesHTML(); }
 
 /* ---------- À propos : licence, sources, crédits (page de la version prof, et de la version élève via eleve.js) ---------- */
 const ABOUT_SOURCES = [
@@ -9353,12 +9361,8 @@ function renderSidebar() {
     return `${grp}<div class="side-title side-cat ${c.group ? 'side-sub' : ''}">${c.label}</div>
     <ul class="deck-list" data-cat="${c.id}">${all.length ? all.map((d, i) => `<li draggable="true" data-drag="${esc(d.id)}" title="Glisser pour réordonner (ou pour changer de catégorie)"><span class="deck-move"><button class="mv" data-move="-1" data-mdeck="${esc(d.id)}" title="Monter" ${i ? '' : 'disabled'}>↑</button><button class="mv" data-move="1" data-mdeck="${esc(d.id)}" title="Descendre" ${i < all.length - 1 ? '' : 'disabled'}>↓</button></span><button class="deck-item ${d === cur && !showRes ? 'active' : ''}" data-deck="${esc(d.id)}"><span class="deck-name">${deckNameHTML(d)}${levelsText(d) ? `<small class="lv-line" title="Niveaux : ${deckLevels(d).map(lvLabel).join(', ')}">${levelsText(d)}</small>` : ''}</span><span class="badge">${d.cards.length}</span></button></li>`).join('') : links.length ? '' : `<li class="deck-empty">${lf ? 'Aucun lot en ' + lvLabel(lf) : 'Aucun lot'}</li>`}${links.map(l => `<li class="deck-link"><a class="deck-item" href="${l.url}" target="_blank" rel="noopener" title="${esc(l.sub)} (s’ouvre dans un nouvel onglet)"><span class="deck-name">${esc(l.title)}<small class="lv-line">${esc(l.sub)}</small></span><span class="badge">↗</span></a></li>`).join('')}</ul>`;
   };
-  $('#sidebar').innerHTML = `<a class="btn block ghost el-link-top" href="${ELEVE_URL}" target="_blank" rel="noopener" title="Version élève : révision en lecture seule, test de positionnement, mode dys">Version élève ↗</a>
-    <button class="btn block ghost res-link ${showRes === true ? 'on' : ''}" id="btn-res" title="Programmes, guides Éduscol et textes officiels">Ressources officielles</button>
-    <button class="btn block ghost res-link ${showRes === 'notions' ? 'on' : ''}" id="btn-notions" title="Synthèse des programmes et tableau des notions de langue 6ᵉ–3ᵉ">Notions par niveau</button>
-    <button class="btn block ghost res-link ${showRes === 'about' ? 'on' : ''}" id="btn-about" title="Licence, sources et crédits">À propos</button>
-    <div class="side-sep"></div>
-    <div class="lv-filter" role="group" aria-label="Filtrer par niveau"><span>Niveau</span><button class="lv-chip ${lf ? '' : 'on'}" data-lvf="">Tous</button>${LEVELS.map(n => `<button class="lv-chip ${lf === n ? 'on' : ''}" data-lvf="${n}">${lvLabel(n)}</button>`).join('')}</div>
+  /* Boutons Version élève, Ressources officielles, Notions par niveau et À propos retirés (Augustin, 25/11/2026) : ces pages sont dans le Laboratoire. */
+  $('#sidebar').innerHTML = `<div class="lv-filter" role="group" aria-label="Filtrer par niveau"><span>Niveau</span><button class="lv-chip ${lf ? '' : 'on'}" data-lvf="">Tous</button>${LEVELS.map(n => `<button class="lv-chip ${lf === n ? 'on' : ''}" data-lvf="${n}">${lvLabel(n)}</button>`).join('')}</div>
     ${DECK_CATS.map(section).join('')}
     <button class="btn block" id="btn-new-deck">+ Nouveau lot</button>
     <div class="side-sep"></div>
@@ -9367,9 +9371,47 @@ function renderSidebar() {
     <button class="btn block ghost" id="btn-csv-all">Exporter tout en CSV</button>
     <button class="btn block ghost" id="btn-backup">Sauvegarde complète (.json)</button>
     <button class="btn block ghost" id="btn-restore">Restaurer une sauvegarde</button>
+    <div class="side-sep"></div>
+    <button class="btn block ${showRes === 'reglages' ? '' : 'ghost'}" id="btn-reglages">Réglages</button>
     ${storageOk ? '' : '<p class="warn-note">L’enregistrement automatique ne fonctionne pas dans ce navigateur : pensez à faire une sauvegarde.</p>'}`;
 }
+/* ---------- Réglages des élèves (25/11/2026, Augustin) ----------
+   « Il faut lire la correction » : après une réponse fausse, la carte reste sur la correction N secondes chez les élèves (eleve.js).
+   Enregistré sur le serveur du Laboratoire (labo-donnees/reglages.json) par index.php de /labo/flashcards-prof/ (cookie enseignant).
+   Hors de proflesage.fr (artefact, fichier local) : page affichée en lecture seule. */
+const REG_URL = /^\/labo\/flashcards-prof\//.test(location.pathname) ? location.pathname.replace(/[^/]*$/, '') + '?reglages' : null;
+let regSrv = null;
+async function regAppel(body) {
+  const r = await fetch(REG_URL, { method: 'POST', credentials: 'same-origin', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body || {}) });
+  const d = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(d.erreur || 'Erreur du serveur.');
+  return d;
+}
+function renderReglages(msg, bad) {
+  const NBs = '\u202f', g = regSrv || { lireCorrection: true, lireSec: 2 };
+  $('#main').innerHTML = `<div class="res-page reg-page">
+    <div class="deck-head"><div class="deck-title"><div class="res-kicker">Réglages</div><h1>Réglages des élèves</h1><div class="muted">Ils s’appliquent à tous les élèves, dans les flashcards du Laboratoire (proflesage.fr).</div></div></div>
+    <section class="res-group"><h2>Lire la correction</h2>
+      <p class="muted">Après une réponse fausse (mauvais choix, mauvaise réponse écrite ou «${NBs}Je ne sais pas${NBs}»), la carte reste sur la correction avec le message «${NBs}Il faut lire la correction.${NBs}» avant de pouvoir passer à la suivante.</p>
+      ${REG_URL ? '' : '<p class="warn-note">Ces réglages ne s’enregistrent que dans la version prof en ligne (Laboratoire, espace professeur, onglet «\u202fFlashcards (version prof)\u202f»).</p>'}
+      <form class="reg-form" id="reg-form">
+        <label class="reg-check"><input type="checkbox" id="reg-lire"${g.lireCorrection ? ' checked' : ''}${REG_URL && regSrv ? '' : ' disabled'}> Bloquer la carte après une réponse fausse</label>
+        <label class="field reg-sec">Durée du blocage<span class="reg-inline"><input type="number" id="reg-sec" min="1" max="30" step="1" value="${g.lireSec}"${REG_URL && regSrv ? '' : ' disabled'}> secondes</span></label>
+        <div><button class="btn" type="submit"${REG_URL && regSrv ? '' : ' disabled'}>Enregistrer</button></div>
+        <p class="reg-msg${bad ? ' bad' : ''}" id="reg-msg" role="status">${msg || ''}</p>
+      </form></section>
+  </div>`;
+  $('#reg-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    const sec = Math.round(+$('#reg-sec').value);
+    if (!(sec >= 1 && sec <= 30)) return renderReglages('La durée doit être comprise entre 1 et 30\u202fsecondes.', true);
+    try { regSrv = await regAppel({ lireCorrection: $('#reg-lire').checked, lireSec: sec }); renderReglages('Enregistré. Les élèves l’auront à la prochaine ouverture d’un lot.'); }
+    catch (err) { renderReglages(err.message, true); }
+  });
+  if (REG_URL && !regSrv) regAppel().then(d => { regSrv = d; if (showRes === 'reglages') renderReglages(); }).catch(err => { if (showRes === 'reglages') renderReglages(err.message, true); });
+}
 function renderMain() {
+  if (showRes === 'reglages') return renderReglages();
   if (showRes === 'about') return renderAbout();
   if (showRes === 'notions') return renderNotions();
   if (showRes) return renderRessources();
@@ -9487,6 +9529,7 @@ document.addEventListener('click', async e => {
   const resFile = e.target.closest('[data-res-file]');
   if (resFile) { e.preventDefault(); const b64 = RES_FILES[resFile.dataset.resFile]; if (b64 && /^a\//.test(b64)) { const l = document.createElement('a'); l.href = b64; l.download = resFile.dataset.resName || ''; document.body.appendChild(l); l.click(); l.remove(); return; } if (b64) { const bin = atob(b64), u8 = new Uint8Array(bin.length); for (let k = 0; k < bin.length; k++) u8[k] = bin.charCodeAt(k); download(new Blob([u8], { type: 'application/pdf' }), resFile.dataset.resName); } return; }
   if (e.target.closest('#btn-notions')) { showRes = 'notions'; nvLevel = null; render(); $('#main').scrollTop = 0; window.scrollTo(0, 0); return; }
+  if (e.target.closest('#btn-reglages')) { showRes = 'reglages'; render(); $('#main').scrollTop = 0; window.scrollTo(0, 0); return; }
   if (e.target.closest('#btn-about')) { showRes = 'about'; render(); $('#main').scrollTop = 0; window.scrollTo(0, 0); return; }
   if (e.target.closest('#btn-res, #btn-res-2')) { showRes = true; render(); $('#main').scrollTop = 0; window.scrollTo(0, 0); return; }
   if (e.target.closest('#btn-new-deck')) return deckSettings(null);
@@ -11413,13 +11456,15 @@ window.addEventListener('resize', () => { });
      Sans window.LABO_API (miroir Netlify), rien ne change. */
   const AVEC_LABO = !!window.LABO_API, VERS_LABO = AVEC_LABO && !/[?&]accueil\b/.test(location.search);
   /* « Il faut lire la correction » (24/11/2026, Augustin) : après une réponse fausse (choix touché, réponse écrite, « Je ne sais pas »),
-     le verso reste affiché 2 secondes avant de pouvoir passer à la carte suivante. Réglage du professeur (espace prof › Classes et élèves),
-     lu sur le serveur du Laboratoire et gardé à part (flashcards.reglages), hors de la progression synchronisée. Activé par défaut. */
-  const KREG = 'flashcards.reglages', LIRE_MS = 2000;
+     le verso reste affiché N secondes (2 par défaut) avant de pouvoir passer à la carte suivante. Réglage du professeur
+     (onglet « Réglages » des flashcards version prof, 25/11/2026), lu sur le serveur du Laboratoire et gardé à part (flashcards.reglages),
+     hors de la progression synchronisée. Activé par défaut. */
+  const KREG = 'flashcards.reglages';
   const REGL = (() => { try { return JSON.parse(localStorage.getItem(KREG) || '{}') || {}; } catch (_) { return {}; } })();
   const lireOn = () => REGL.lireCorrection !== false;
+  const lireMs = () => { const n = +REGL.lireSec; return (n >= 1 && n <= 30 ? n : 2) * 1000; };
   if (AVEC_LABO) fetch(window.LABO_API + '/reglages', { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}' })
-    .then(r => r.ok ? r.json() : null).then(d => { if (d && typeof d.lireCorrection === 'boolean') { REGL.lireCorrection = d.lireCorrection; try { localStorage.setItem(KREG, JSON.stringify(REGL)); } catch (_) { } } }).catch(() => { });
+    .then(r => r.ok ? r.json() : null).then(d => { if (d && typeof d.lireCorrection === 'boolean') { REGL.lireCorrection = d.lireCorrection; REGL.lireSec = d.lireSec; try { localStorage.setItem(KREG, JSON.stringify(REGL)); } catch (_) { } } }).catch(() => { });
   /* ---------- Accueil : liste des lots ---------- */
   function home() {
     if (VERS_LABO) { location.href = '/labo/#entrainements'; return; }
@@ -11571,8 +11616,8 @@ window.addEventListener('resize', () => { });
   const bloque = () => !!(sess && sess.lock && Date.now() < sess.lock);
   function bloquer() {
     if (!lireOn() || !sess || !sess.pick || sess.pick.ok) return;
-    const s = sess; s.lock = Date.now() + LIRE_MS;
-    setTimeout(() => { if (sess === s && s.lock) { s.lock = 0; if (s.pick) acts(); } }, LIRE_MS + 30);
+    const s = sess, ms = lireMs(); s.lock = Date.now() + ms;
+    setTimeout(() => { if (sess === s && s.lock) { s.lock = 0; if (s.pick) acts(); } }, ms + 30);
     acts();
   }
   function insister() { const m = $('#el-lire'); if (!m) return; m.classList.remove('nudge'); void m.offsetWidth; m.classList.add('nudge'); }

@@ -103,8 +103,20 @@ function norm($s): string {
 function b64u(string $b): string { return rtrim(strtr(base64_encode($b), '+/', '-_'), '='); }
 function signe(string $s): string { return b64u(hash_hmac('sha256', $s, secret(), true)); }
 function maintenant(): string { return gmdate('Y-m-d\TH:i:s.v\Z'); }
-/* réglages du professeur pour les élèves (24/11/2026) : lireCorrection = verso bloqué 2 s après une réponse fausse (activé par défaut) */
-function reglages(): array { $r = lireJ('reglages.json', []); $r = is_array($r) ? $r : []; return ['lireCorrection' => ($r['lireCorrection'] ?? true) !== false]; }
+/* réglages du professeur pour les élèves (24-25/11/2026) : lireCorrection = verso bloqué après une réponse fausse (activé par défaut),
+   lireSec = durée du blocage en secondes (1 à 30, 2 par défaut). Modifiés depuis l'onglet « Réglages » des flashcards version prof. */
+function reglages(): array {
+  $r = lireJ('reglages.json', []); $r = is_array($r) ? $r : [];
+  $s = (int) ($r['lireSec'] ?? 2);
+  return ['lireCorrection' => ($r['lireCorrection'] ?? true) !== false, 'lireSec' => ($s >= 1 && $s <= 30) ? $s : 2];
+}
+function majReglages(array $body): array {
+  $neuf = [];
+  if (array_key_exists('lireCorrection', $body)) { if (!is_bool($body['lireCorrection'])) erreur('Réglage invalide.'); $neuf['lireCorrection'] = $body['lireCorrection']; }
+  if (array_key_exists('lireSec', $body)) { $s = $body['lireSec']; if (!is_int($s) || $s < 1 || $s > 30) erreur('La durée doit être comprise entre 1 et 30 secondes.'); $neuf['lireSec'] = $s; }
+  if ($neuf) avecVerrou('reglages', function () use ($neuf) { $r = lireJ('reglages.json', []); $r = is_array($r) ? $r : []; ecrireJ('reglages.json', array_merge($r, $neuf)); });
+  return reglages();
+}
 function classes(): array { $c = lireJ('classes.json', null); return is_array($c) && isset($c['list']) ? $c : ['list' => []]; }
 function classeParCode($code): ?array { foreach (classes()['list'] as $c) if (!empty($c['code']) && norm($c['code']) === norm($code)) return $c; return null; }
 function classeParId($id): ?array { foreach (classes()['list'] as $c) if ($c['id'] === $id) return $c; return null; }
@@ -312,13 +324,7 @@ function listeBilans(string $cl, string $el): array {
 /* ---------------------------- professeur ---------------------------- */
 function prof(string $action, array $body): void {
   if ($action === 'classes') repondre(classes());
-  if ($action === 'reglages') {
-    if (array_key_exists('lireCorrection', $body)) {
-      if (!is_bool($body['lireCorrection'])) erreur('Réglage invalide.');
-      avecVerrou('reglages', function () use ($body) { $r = lireJ('reglages.json', []); $r = is_array($r) ? $r : []; $r['lireCorrection'] = $body['lireCorrection']; ecrireJ('reglages.json', $r); });
-    }
-    repondre(reglages());
-  }
+  if ($action === 'reglages') repondre(majReglages($body));
   if ($action === 'enregistrer-classes') {
     $list = $body['list'] ?? null; $ok = is_array($list);
     if ($ok) foreach ($list as $c) { if (!okId($c['id'] ?? null) || !is_string($c['nom'] ?? null) || !is_array($c['eleves'] ?? null)) { $ok = false; break; }
@@ -751,4 +757,5 @@ function traiter(): void {
     erreur('Erreur du serveur.', 500);
   }
 }
-traiter();
+/* flashcards-prof/index.php inclut ce fichier pour ses réglages : il définit LABO_SANS_AIGUILLAGE avant */
+if (!defined('LABO_SANS_AIGUILLAGE')) traiter();
