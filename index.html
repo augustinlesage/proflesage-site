@@ -172,6 +172,7 @@ a.tuile:hover{border-color:var(--g);transform:translateY(-2px)}
 .vide b{display:block;color:var(--ink);font:700 1.05rem var(--f-titre);margin-bottom:4px}
 /* Contenus des pages (contenus.html) */
 .contenu{max-width:72ch}
+.contenu:has(.triangle){max-width:980px}.contenu:has(.triangle)>p,.contenu:has(.triangle) .bloc>p{max-width:72ch}
 .contenu .chapo{font-size:1.05rem;color:var(--ink);margin:0 0 16px;line-height:1.55}
 .contenu p{line-height:1.55}
 .contenu a{color:var(--g)}
@@ -199,10 +200,23 @@ a.tuile:hover{border-color:var(--g);transform:translateY(-2px)}
 .paliers{list-style:none;padding:0;margin:0;display:grid;gap:6px}
 .paliers li{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;align-items:baseline;background:var(--card);border:1px solid var(--line);border-left:6px solid color-mix(in srgb,#c0392b calc(var(--n)*25%),#e8b64c);border-radius:10px;padding:8px 12px}
 .paliers li span{color:var(--muted);font-size:.9rem}
-.echelle{display:grid;gap:8px}
-.ech{--c:color-mix(in srgb,#2b2b2b calc((var(--e) - 4)*33%),color-mix(in srgb,#c0392b calc((var(--e) - 1)*33%),#e8b64c));display:grid;grid-template-columns:38px 1fr;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;border-left:6px solid var(--c)}
-.ech-n{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font:700 1rem var(--f-titre);background:var(--c);color:#fff}
-.ech b{display:block;line-height:1.35}.ech p{margin:4px 0 2px;font-size:.93rem}.ech small{color:var(--muted)}
+.triangle{display:grid;gap:6px;margin:10px 0}
+.tri-haut{text-align:center;font:700 1.05rem var(--f-titre);margin:0 0 2px;grid-column:1/-1}
+.tri-l{--t:calc(100% - (var(--e) - 1) * 13%);--b:calc(100% - var(--e) * 13%);display:grid;grid-template-columns:150px minmax(0,1fr) 230px;gap:14px;align-items:center}
+.tri-l:nth-child(2){--f:#ffe500;--x:#3b3200}.tri-l:nth-child(3){--f:#fcd66a;--x:#4a3500}.tri-l:nth-child(4){--f:#fbb81c;--x:#422a00}
+.tri-l:nth-child(5){--f:#e8231b;--x:#fff}.tri-l:nth-child(6){--f:#a8130f;--x:#fff}.tri-l:nth-child(7){--f:#161616;--x:#fff}
+.tri-b{background:var(--f);color:var(--x);min-height:96px;display:grid;place-items:center;text-align:center;font-size:.84rem;line-height:1.3;
+  clip-path:polygon(calc(50% - var(--t)/2) 0,calc(50% + var(--t)/2) 0,calc(50% + var(--b)/2) 100%,calc(50% - var(--b)/2) 100%);
+  padding:8px calc((100% - var(--b))/2 + 10px)}
+.tri-l:last-child .tri-b{clip-path:polygon(calc(50% - var(--t)/2) 0,calc(50% + var(--t)/2) 0,50% 100%);place-items:start center;min-height:170px;padding:12px calc((100% - var(--t))/2 + 34px) 70px;font-size:.8rem}
+.tri-qui{justify-self:start;font-size:.82rem;font-weight:600;padding:8px 22px 8px 12px;background:color-mix(in srgb,var(--g) 14%,var(--card));clip-path:polygon(0 0,calc(100% - 12px) 0,100% 50%,calc(100% - 12px) 100%,0 100%)}
+.tri-s{display:flex;gap:8px;align-items:center;margin:0;font-size:.86rem;font-weight:600;line-height:1.35}
+.tri-s .i{flex:none;width:26px;height:26px;color:var(--ink)}
+@media (max-width:700px){
+  .tri-l{grid-template-columns:minmax(0,1fr);gap:4px;--t:calc(100% - (var(--e) - 1) * 9%);--b:calc(100% - var(--e) * 9%)}
+  .tri-qui{order:2;justify-self:start}.tri-s{order:3}.tri-s .i{transform:rotate(90deg);width:20px;height:20px}
+  .tri-l:last-child .tri-b{min-height:150px;padding:12px calc((100% - var(--t))/2 + 38px) 60px;font-size:.8rem}
+}
 .nvc{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin:8px 0}
 .nvc-col{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
 .nvc-col h4{display:flex;gap:8px;align-items:center;margin:0 0 6px;font:700 .98rem var(--f-titre)}
@@ -330,14 +344,15 @@ footer.pied{margin-top:44px;padding-top:16px;border-top:1px solid var(--line);co
 
 <section class="bloc" id="r-echelle">
   <h3>L’échelle des sanctions du collège</h3>
-  <p>Tout commence par une <b>mise en garde orale</b>. Ensuite, plus la faute est grave, plus on monte dans l’échelle.</p>
-  <div class="echelle">
-    <div class="ech" style="--e:1"><span class="ech-n">1</span><div><b>Bavardages, attitude non correcte, leçon non sue, travail non fait, oubli de matériel ou de tenue en EPS</b><p>Mot ou croix dans le carnet.</p><small>Décidé par tout le personnel</small></div></div>
-    <div class="ech" style="--e:2"><span class="ech-n">2</span><div><b>Observations qui se multiplient, perturbation du cours, carnet non signé, absentéisme, retards répétés, refus de donner son carnet</b><p>Appel aux parents, rapport transmis au professeur principal et au CPE, retenue, horaire bloqué, signalement de l’absentéisme, rendez-vous avec les parents.</p><small>Décidé par tout le personnel</small></div></div>
-    <div class="ech" style="--e:3"><span class="ech-n">3</span><div><b>Falsification, perturbations répétées du cours, dégradation du matériel</b><p>Exclusion de cours, travail d’intérêt général, réunion éducative, rendez-vous avec les parents, le professeur et le CPE.</p><small>Décidé par tout le personnel</small></div></div>
-    <div class="ech" style="--e:4"><span class="ech-n">4</span><div><b>Insolence, jeu dangereux, manque de respect, bagarre, harcèlement, vol</b><p>Exclusion temporaire, à l’extérieur ou à l’intérieur du collège, rendez-vous avec les parents.</p><small>Décidé par la direction et le CPE</small></div></div>
-    <div class="ech" style="--e:5"><span class="ech-n">5</span><div><b>Manquements graves et répétés</b><p>Commission éducative, mesure d’accompagnement.</p><small>Décidé par la direction et le CPE</small></div></div>
-    <div class="ech" style="--e:6"><span class="ech-n">6</span><div><b>Insulte envers un adulte, violence physique, mise en danger</b><p>Conseil de discipline : risque d’exclusion définitive.</p><small>Décidé par la direction</small></div></div>
+  <p>Tout commence par une <b>mise en garde orale</b>. Ensuite, plus la faute est grave, plus on descend dans le triangle et plus la sanction est lourde.</p>
+  <div class="triangle" role="list">
+    <p class="tri-haut">Mise en garde orale</p>
+    <div class="tri-l" role="listitem" style="--e:1"><span class="tri-qui">Tout le personnel</span><div class="tri-b"><span>Bavardages, attitude non correcte, leçon non sue, travail non fait, oubli de matériel ou de tenue en EPS</span></div><p class="tri-s"><i data-ico="fleche"></i><span>Mot ou croix dans le carnet.</span></p></div>
+    <div class="tri-l" role="listitem" style="--e:2"><span class="tri-qui">Tout le personnel</span><div class="tri-b"><span>Observations qui se multiplient, perturbation du cours, carnet non signé, absentéisme, retards répétés, refus de donner son carnet</span></div><p class="tri-s"><i data-ico="fleche"></i><span>Appel aux parents, rapport transmis au professeur principal et au CPE, retenue, horaire bloqué, signalement de l’absentéisme, rendez-vous avec les parents.</span></p></div>
+    <div class="tri-l" role="listitem" style="--e:3"><span class="tri-qui">Tout le personnel</span><div class="tri-b"><span>Falsification, perturbations répétées du cours, dégradation du matériel</span></div><p class="tri-s"><i data-ico="fleche"></i><span>Exclusion de cours, travail d’intérêt général, réunion éducative, rendez-vous avec les parents, le professeur et le CPE.</span></p></div>
+    <div class="tri-l" role="listitem" style="--e:4"><span class="tri-qui">Direction et CPE</span><div class="tri-b"><span>Insolence, jeu dangereux, manque de respect, bagarre, harcèlement, vol</span></div><p class="tri-s"><i data-ico="fleche"></i><span>Exclusion temporaire, à l’extérieur ou à l’intérieur du collège, rendez-vous avec les parents.</span></p></div>
+    <div class="tri-l" role="listitem" style="--e:5"><span class="tri-qui">Direction et CPE</span><div class="tri-b"><span>Manquements graves et répétés</span></div><p class="tri-s"><i data-ico="fleche"></i><span>Commission éducative, mesure d’accompagnement.</span></p></div>
+    <div class="tri-l" role="listitem" style="--e:6"><span class="tri-qui">Direction</span><div class="tri-b"><span>Insulte envers un adulte, violence physique, mise en danger</span></div><p class="tri-s"><i data-ico="fleche"></i><span>Conseil de discipline : risque d’exclusion définitive.</span></p></div>
   </div>
 </section>
 
@@ -670,6 +685,7 @@ const SITE = "https://proflesage.fr";
 const SUR_SITE = location.hostname.endsWith("proflesage.fr");
 
 const ICO = {
+  fleche:'<path d="M4 12h15M13 6l6 6-6 6"/>',
   horloge:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
   bonjour:'<path d="M21 12a8 8 0 0 1-11.8 7L3 21l2-5.4A8 8 0 1 1 21 12z"/><path d="M8.5 9.5v5M8.5 12h3.5M12 9.5v5M15.5 9.5v5"/>',
   cintre:'<path d="M10 5a2 2 0 1 1 2 2v1.5"/><path d="M12 8.5 3.4 15.6A1.4 1.4 0 0 0 4.3 18h15.4a1.4 1.4 0 0 0 .9-2.4z"/>',
