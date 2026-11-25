@@ -218,21 +218,19 @@ a.tuile:hover{border-color:var(--g);transform:translateY(-2px)}
 .cumul b{color:#b03a2e}
 .tri-sommet{max-width:72ch;margin:12px 0 4px;padding:4px 12px;text-align:center;font:700 1rem var(--f-titre)}
 .tri-sommet+.triangle{margin-top:0}
-.triangle{list-style:none;margin:12px 0;padding:0;display:grid;gap:4px;max-width:72ch}
-.triangle li{--t:calc(100% - (var(--e) - 1) * 15%);--b:calc(100% - var(--e) * 15%);display:grid;grid-template-columns:110px minmax(0,1fr);gap:14px;align-items:stretch}
+.triangle{list-style:none;margin:12px 0;padding:0;display:grid;grid-template-columns:110px minmax(0,1fr) 10em;gap:4px 14px;max-width:72ch}
+.triangle li{display:contents;--t:calc(100% - (var(--e) - 1) * 15%);--b:calc(100% - var(--e) * 15%)}
 .triangle li:nth-child(1){--f:#ffe100;--x:#3b3200}.triangle li:nth-child(2){--f:#fcd263;--x:#4a3500}.triangle li:nth-child(3){--f:#f9a825;--x:#3d2600}
 .triangle li:nth-child(4){--f:#e53525;--x:#fff}.triangle li:nth-child(5){--f:#a5150f;--x:#fff}.triangle li:nth-child(6){--f:#1c1c1c;--x:#fff}
-.tri-b{background:var(--f);color:var(--x);display:grid;place-items:center;font:700 1.15rem var(--f-titre);min-height:64px;
+.tri-b{grid-column:1;grid-row:var(--e);background:var(--f);color:var(--x);display:grid;place-items:center;font:700 1.15rem var(--f-titre);min-height:64px;
   clip-path:polygon(calc(50% - var(--t)/2) 0,calc(50% + var(--t)/2) 0,calc(50% + var(--b)/2) 100%,calc(50% - var(--b)/2) 100%)}
 .triangle li:last-child .tri-b{clip-path:polygon(calc(50% - var(--t)/2) 0,calc(50% + var(--t)/2) 0,50% 100%);place-items:start center;padding-top:8px}
-.tri-c{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--f);border-radius:10px;padding:8px 12px;align-self:center;display:grid;grid-template-columns:minmax(0,1fr) 9.5em;column-gap:14px}
-.tri-c>b,.tri-c>p{grid-column:1}
-.tri-c>small{grid-column:2;grid-row:1/span 2;align-self:center;text-align:right;padding-left:12px;border-left:1px solid var(--line)}
+.tri-c{grid-column:2;grid-row:var(--e);background:var(--card);border:1px solid var(--line);border-left:5px solid var(--f);border-radius:10px;padding:8px 12px;align-self:center}
 .tri-c b{display:block;line-height:1.35;font-weight:400}
 .tri-c p{display:flex;gap:6px;align-items:center;margin:3px 0 1px;font-weight:600;color:var(--g)}
 .tri-c p .i{flex:none;width:18px;height:18px}
-.tri-c small{color:var(--muted);font-size:.8rem;line-height:1.35}
-@media (max-width:560px){.triangle li{grid-template-columns:44px minmax(0,1fr);gap:10px}.tri-b{font-size:1rem}.tri-c{grid-template-columns:minmax(0,1fr)}.tri-c>small{grid-column:1;grid-row:auto;text-align:left;padding:3px 0 0;border-left:0}}
+.tri-qui{grid-column:3;align-self:stretch;display:flex;align-items:center;margin:6px 0;padding-left:12px;border-left:2px solid var(--line);color:var(--muted);font-size:.85rem;line-height:1.35}
+@media (max-width:560px){.triangle{grid-template-columns:44px minmax(0,1fr) 22px;gap:4px 8px}.tri-b{font-size:1rem}.tri-qui{writing-mode:vertical-rl;transform:rotate(180deg);justify-content:center;font-size:.72rem;padding:0 4px 0 0;border-left:0;border-right:2px solid var(--line)}}
 .nvc{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin:8px 0}
 .nvc-col{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
 .nvc-col h4{display:flex;gap:8px;align-items:center;margin:0 0 6px;font:700 .98rem var(--f-titre)}
@@ -370,12 +368,12 @@ footer.pied{margin-top:44px;padding-top:16px;border-top:1px solid var(--line);co
   <h3>L’échelle des sanctions du collège</h3>
   <p class="tri-sommet">Mise en garde orale</p>
   <ol class="triangle">
-    <li style="--e:1"><span class="tri-b" aria-hidden="true">1</span><div class="tri-c"><b>Bavardages, attitude non correcte, leçon non sue, travail non fait, oubli de matériel ou de tenue en EPS</b><p><i data-ico="fleche"></i>Observation dans le carnet</p><small>Décidé par tout le personnel</small></div></li>
-    <li style="--e:2"><span class="tri-b" aria-hidden="true">2</span><div class="tri-c"><b>Observations qui se multiplient, perturbation du cours, carnet non signé, absentéisme, retards répétés, refus de donner son carnet</b><p><i data-ico="fleche"></i>Appel aux parents · Retenue</p><small>Décidé par tout le personnel</small></div></li>
-    <li style="--e:3"><span class="tri-b" aria-hidden="true">3</span><div class="tri-c"><b>Falsification, perturbations répétées du cours, dégradation du matériel</b><p><i data-ico="fleche"></i>Exclusion de cours · Travail d’intérêt général</p><small>Décidé par tout le personnel</small></div></li>
-    <li style="--e:4"><span class="tri-b" aria-hidden="true">4</span><div class="tri-c"><b>Insolence, jeu dangereux, manque de respect, bagarre, harcèlement, vol</b><p><i data-ico="fleche"></i>Exclusion temporaire</p><small>Décidé par la direction et le CPE</small></div></li>
-    <li style="--e:5"><span class="tri-b" aria-hidden="true">5</span><div class="tri-c"><b>Manquements graves et répétés</b><p><i data-ico="fleche"></i>Commission éducative</p><small>Décidé par la direction et le CPE</small></div></li>
-    <li style="--e:6"><span class="tri-b" aria-hidden="true">6</span><div class="tri-c"><b>Insulte envers un adulte, violence physique, mise en danger</b><p><i data-ico="fleche"></i>Conseil de discipline</p><small>Décidé par la direction</small></div></li>
+    <li style="--e:1"><span class="tri-b" aria-hidden="true">1</span><div class="tri-c"><b>Bavardages, attitude non correcte, leçon non sue, travail non fait, oubli de matériel ou de tenue en EPS</b><p><i data-ico="fleche"></i>Observation dans le carnet</p></div><small class="tri-qui" style="grid-row:1/span 3">Décidé par tout le personnel</small></li>
+    <li style="--e:2"><span class="tri-b" aria-hidden="true">2</span><div class="tri-c"><b>Observations qui se multiplient, perturbation du cours, carnet non signé, absentéisme, retards répétés, refus de donner son carnet</b><p><i data-ico="fleche"></i>Appel aux parents · Retenue</p></div></li>
+    <li style="--e:3"><span class="tri-b" aria-hidden="true">3</span><div class="tri-c"><b>Falsification, perturbations répétées du cours, dégradation du matériel</b><p><i data-ico="fleche"></i>Exclusion de cours · Travail d’intérêt général</p></div></li>
+    <li style="--e:4"><span class="tri-b" aria-hidden="true">4</span><div class="tri-c"><b>Insolence, jeu dangereux, manque de respect, bagarre, harcèlement, vol</b><p><i data-ico="fleche"></i>Exclusion temporaire</p></div><small class="tri-qui" style="grid-row:4/span 2">Décidé par la direction et le CPE</small></li>
+    <li style="--e:5"><span class="tri-b" aria-hidden="true">5</span><div class="tri-c"><b>Manquements graves et répétés</b><p><i data-ico="fleche"></i>Commission éducative</p></div></li>
+    <li style="--e:6"><span class="tri-b" aria-hidden="true">6</span><div class="tri-c"><b>Insulte envers un adulte, violence physique, mise en danger</b><p><i data-ico="fleche"></i>Conseil de discipline</p></div><small class="tri-qui" style="grid-row:6/span 1">Décidé par la direction</small></li>
   </ol>
 </section>
 
