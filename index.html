@@ -206,12 +206,14 @@ a.tuile:hover{border-color:var(--g);transform:translateY(-2px)}
 .tri-b{background:var(--f);color:var(--x);display:grid;place-items:center;font:700 1.15rem var(--f-titre);min-height:64px;
   clip-path:polygon(calc(50% - var(--t)/2) 0,calc(50% + var(--t)/2) 0,calc(50% + var(--b)/2) 100%,calc(50% - var(--b)/2) 100%)}
 .triangle li:last-child .tri-b{clip-path:polygon(calc(50% - var(--t)/2) 0,calc(50% + var(--t)/2) 0,50% 100%);place-items:start center;padding-top:8px}
-.tri-c{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--f);border-radius:10px;padding:8px 12px;align-self:center}
+.tri-c{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--f);border-radius:10px;padding:8px 12px;align-self:center;display:grid;grid-template-columns:minmax(0,1fr) 9.5em;column-gap:14px}
+.tri-c>b,.tri-c>p{grid-column:1}
+.tri-c>small{grid-column:2;grid-row:1/span 2;align-self:center;text-align:right;padding-left:12px;border-left:1px solid var(--line)}
 .tri-c b{display:block;line-height:1.35}
 .tri-c p{display:flex;gap:6px;align-items:center;margin:3px 0 1px;font-weight:600;color:var(--g)}
 .tri-c p .i{flex:none;width:18px;height:18px}
-.tri-c small{color:var(--muted);font-size:.8rem}
-@media (max-width:560px){.triangle li{grid-template-columns:56px minmax(0,1fr);gap:10px}.tri-b{font-size:1rem}}
+.tri-c small{color:var(--muted);font-size:.8rem;line-height:1.35}
+@media (max-width:560px){.triangle li{grid-template-columns:44px minmax(0,1fr);gap:10px}.tri-b{font-size:1rem}.tri-c{grid-template-columns:minmax(0,1fr)}.tri-c>small{grid-column:1;grid-row:auto;text-align:left;padding:3px 0 0;border-left:0}}
 .nvc{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin:8px 0}
 .nvc-col{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
 .nvc-col h4{display:flex;gap:8px;align-items:center;margin:0 0 6px;font:700 .98rem var(--f-titre)}
