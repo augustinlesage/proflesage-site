@@ -43,7 +43,10 @@ a{color:inherit}
 svg.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 [data-g]{--g:var(--c-ardoise)}
 .app{display:grid;grid-template-columns:280px minmax(0,1fr);min-height:100vh}
+html.cn-rail .app{grid-template-columns:68px minmax(0,1fr)}
+html.cn-rail .app>main{grid-column:2}
 
+/*NAV-CSS*/
 /* ── Barre latérale ── */
 .side{position:sticky;top:0;height:100vh;overflow-y:auto;background:var(--side);border-right:1px solid var(--line);
   display:flex;flex-direction:column;padding:20px 14px 16px max(14px,env(safe-area-inset-left,0px))}
@@ -79,6 +82,17 @@ details.grp ul ul .lien{font-size:.84rem;padding:3px 10px}
 .pt.off{background:transparent;border:1.5px solid var(--muted);opacity:.7}
 .lien .pt{margin-left:auto}
 .side .bas{margin-top:auto;padding-top:14px;border-top:1px solid var(--line)}
+/* Barre réduite aux icônes (fenêtre étroite, ou bouton « Réduire le menu ») */
+.rail-b{display:flex;align-items:center;gap:10px;width:100%;margin-top:8px;padding:6px 10px;border:0;border-radius:8px;background:none;color:var(--muted);font:inherit;font-size:.85rem;cursor:pointer}
+.rail-b:hover{background:var(--line);color:var(--ink)}
+.rail-b svg.i{transition:transform .15s}
+html.cn-rail .side:not(.deploye){width:68px;padding-left:10px;padding-right:10px;overflow-x:hidden}
+html.cn-rail .side:not(.deploye) .marque{justify-content:center;padding:4px 0 16px}
+html.cn-rail .side:not(.deploye) .t,html.cn-rail .side:not(.deploye) .chev,html.cn-rail .side:not(.deploye) details.grp>ul,html.cn-rail .side:not(.deploye) .marque>span:last-child{display:none}
+html.cn-rail .side:not(.deploye) details.grp>summary,html.cn-rail .side:not(.deploye) .nav-seul,html.cn-rail .side:not(.deploye) .lien,html.cn-rail .side:not(.deploye) .rail-b{justify-content:center;padding-left:0;padding-right:0}
+html.cn-rail .side:not(.deploye) .rail-b svg.i{transform:rotate(180deg)}
+html.cn-rail .side.deploye{position:fixed;z-index:45;top:0;left:0;bottom:0;width:280px;height:100vh;box-shadow:0 10px 40px rgb(0 0 0 / .25)}
+/*/NAV-CSS*/
 .outils{display:flex;gap:8px;align-items:center;justify-content:flex-end;flex-wrap:wrap;margin:0 0 18px}
 .dys-btn{height:34px;min-width:34px;padding:0 10px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:700 .8rem var(--f-titre);cursor:pointer}
 .dys-btn:hover{border-color:var(--clay)}
@@ -268,8 +282,8 @@ a.tuile:hover{border-color:var(--g);transform:translateY(-2px)}
 @media (max-width:560px){.doc{grid-template-columns:24px 1fr}.doc em{display:none}}
 footer.pied{margin-top:44px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:.85rem;display:flex;gap:14px;flex-wrap:wrap;justify-content:space-between}
 
-@media (max-width:860px){
-  .app{grid-template-columns:minmax(0,1fr)}
+@media (max-width:600px){
+  .app,html.cn-rail .app{grid-template-columns:minmax(0,1fr)}
   .haut{display:flex;align-items:center;gap:10px;position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--side);border-bottom:1px solid var(--line);
     padding-block:10px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
   body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--side)}
@@ -286,7 +300,7 @@ footer.pied{margin-top:44px;padding-top:16px;border-top:1px solid var(--line);co
 <body>
 <div class="app">
   <aside class="side" id="side" aria-label="Plan du site">
-    <a class="marque" href="#accueil"><span class="ardoise">L</span><span><b>La classe de M.&nbsp;Lesage</b><small>Français · 6ᵉ à 3ᵉ</small></span></a>
+    <a class="marque" href="#accueil"><span class="ardoise">L</span><span><b>La classe de M.&nbsp;Lesage</b><small>Français · 2026-2027</small></span></a>
     <nav id="nav"></nav>
     <div class="bas">
       <ul id="nav-bas" style="list-style:none;margin:0;padding:0"></ul>
@@ -309,7 +323,7 @@ footer.pied{margin-top:44px;padding-top:16px;border-top:1px solid var(--line);co
 <!-- Contenus des pages : contenus.html -->
 <!-- ===================== MA CLASSE › RÈGLES ===================== -->
 <template data-page="p-ma-classe-regles">
-<p class="chapo">En classe, on apprend mieux quand chacun connait les règles et les respecte. Voici ce que l’on fait, ce qui arrive quand on ne le fait pas, et comment on valorise les efforts.</p>
+<p class="chapo">En classe, on apprend mieux quand chacun connait les règles et les respecte. Voici ce que l’on fait, et ce qui arrive quand on ne le fait pas.</p>
 <nav class="sommaire" aria-label="Sur cette page">
   <a data-ancre="r-regles">Les 15 règles</a><a data-ancre="r-classe">Si je ne respecte pas les règles</a><a data-ancre="r-echelle">L’échelle des sanctions</a><a data-ancre="r-nvc">La note de vie de classe</a>
 </nav>
@@ -828,7 +842,9 @@ var BADGES_CAHIER = {"cats":["Travail","Participation","Coopération","Responsab
 
 <script>
 (function(){
+//NAV-JS
 const NB = " ";
+const BASE = window.CLASSE_BASE || "";
 const SITE = "https://proflesage.fr";
 const SUR_SITE = location.hostname.endsWith("proflesage.fr");
 
@@ -883,6 +899,7 @@ const ICO = {
   info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/>',
   cartes:'<rect x="3" y="6" width="14" height="14" rx="2"/><path d="M7 6V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-2"/>',
   chev:'<path d="M9 6l6 6-6 6"/>',
+  replier:'<path d="M11 17l-5-5 5-5M18 17l-5-5 5-5"/>',
   ext:'<path d="M14 4h6v6M20 4l-9 9"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>',
   menu:'<path d="M4 6h16M4 12h16M4 18h16"/>',
   soleil:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
@@ -939,18 +956,19 @@ const horsSite = it => !!it.url && (!SUR_SITE || /^https?:/.test(it.url));
 /* Chaque page sans lien externe a sa vue dans le site : #p-<rubrique>-<page>, onglet : #p-<rubrique>-<page>--<sous-page> */
 const PAGES = {};
 PLAN.forEach(r=>r.items.forEach(it=>{ it.rub=r; it.vue="p-"+r.id+"-"+slug(it.t); PAGES[it.vue]=it; it.enfants.forEach(e=>{ e.vue=it.vue+"--"+slug(e.t); }); }));
-const lienDe = it => it.url ? href(it) : "#"+it.vue;
+const lienDe = it => it.url ? href(it) : BASE+"#"+it.vue;
 const cible = it => horsSite(it) ? ' target="_blank" rel="noopener"' : '';
 
 /* Une page est en ligne quand elle a un contenu (contenus.html), elle ou l’un de ses onglets */
-const aContenu = it => !!document.querySelector('template[data-page="'+it.vue+'"]') || (it.enfants||[]).some(e=>!!document.querySelector('template[data-page="'+e.vue+'"]'));
+const aTpl = k => window.CLASSE_CONTENUS ? window.CLASSE_CONTENUS.includes(k) : !!document.querySelector('template[data-page="'+k+'"]');
+const aContenu = it => aTpl(it.vue) || (it.enfants||[]).some(e=>aTpl(e.vue));
 
 function lienNav(it){
   if(!visible(it)) return "";
   const h = href(it);
   const tete = h ? '<a class="lien" href="'+esc(h)+'"'+cible(it)+'>'+esc(it.t)+(horsSite(it)?ic("ext","ext"):'<i class="pt on" title="En ligne"></i>')+'</a>'
-                 : aContenu(it) ? '<a class="lien" data-vue="'+it.vue+'" href="#'+it.vue+'">'+esc(it.t)+'<i class="pt on" title="En ligne"></i></a>'
-                 : '<a class="lien bientot" data-vue="'+it.vue+'" href="#'+it.vue+'">'+esc(it.t)+'<i class="pt off" title="En cours de construction"></i></a>';
+                 : aContenu(it) ? '<a class="lien" data-vue="'+it.vue+'" href="'+BASE+'#'+it.vue+'">'+esc(it.t)+'<i class="pt on" title="En ligne"></i></a>'
+                 : '<a class="lien bientot" data-vue="'+it.vue+'" href="'+BASE+'#'+it.vue+'">'+esc(it.t)+'<i class="pt off" title="En cours de construction"></i></a>';
   return '<li>'+tete+'</li>';
 }
 
@@ -963,19 +981,50 @@ function construireNav(){
   for(const r of PLAN){
     const g = ' data-g style="--g:var(--c-'+r.col+')"';
     if(r.id==="accueil"){
-      h += '<a class="nav-seul" data-vue="accueil" href="#accueil"'+g+'><span class="puce">'+ic("maison")+'</span>Accueil</a>';
+      h += '<a class="nav-seul" data-vue="accueil" href="'+BASE+'#accueil" title="Accueil"'+g+'><span class="puce">'+ic("maison")+'</span><span class="t">Accueil</span></a>';
       continue;
     }
-    h += '<details class="grp" data-id="'+r.id+'"'+(ouverts.includes(r.id)?' open':'')+g+'><summary><span class="puce">'+ic(ICO_RUB[r.t.toLowerCase()])+'</span>'+esc(r.t)+ic("chev","chev")+'</summary><ul>'+r.items.map(lienNav).join("")+'</ul></details>';
+    h += '<details class="grp" data-id="'+r.id+'"'+(ouverts.includes(r.id)?' open':'')+g+'><summary title="'+esc(r.t)+'"><span class="puce">'+ic(ICO_RUB[r.t.toLowerCase()])+'</span><span class="t">'+esc(r.t)+'</span>'+ic("chev","chev")+'</summary><ul>'+r.items.map(lienNav).join("")+'</ul></details>';
   }
   document.getElementById("nav").innerHTML = h;
   const bas = (BAS ? BAS.items : [{t:"Plan du site"},{t:"À propos"}]);
   document.getElementById("nav-bas").innerHTML = bas.map(b=>{
     const v = VUES_BAS[b.t.toLowerCase()] || "plan";
-    return '<li><a class="lien" data-vue="'+v+'" href="#'+v+'">'+ic(ICO_BAS[v]||"plan")+esc(b.t)+'</a></li>';
+    return '<li><a class="lien" data-vue="'+v+'" href="'+BASE+'#'+v+'" title="'+esc(b.t)+'">'+ic(ICO_BAS[v]||"plan")+'<span class="t">'+esc(b.t)+'</span></a></li>';
   }).join("");
   document.querySelectorAll("details.grp").forEach(d=>d.addEventListener("toggle", garderOuverts));
 }
+
+/* Barre réduite : automatique quand la fenêtre est étroite (1180 px ou moins), ou au choix avec le bouton (mémorisé) */
+const RAIL_AUTO = 1180, TIROIR = 600;
+function etatRail(){ let v=null; try{ v = localStorage.getItem("classe.rail"); }catch(e){} return v; }
+function appliquerRail(){
+  const w = innerWidth, v = etatRail(), side = document.getElementById("side");
+  const on = w > TIROIR && (v==="1" || (v===null && w <= RAIL_AUTO));
+  document.documentElement.classList.toggle("cn-rail", on);
+  if(!on && side) side.classList.remove("deploye");
+  const b = document.getElementById("rail-b");
+  if(b){ b.title = on ? "Agrandir le menu" : "Réduire le menu"; b.setAttribute("aria-label", b.title); b.querySelector(".t").textContent = on ? "Agrandir" : "Réduire le menu"; }
+}
+function initRail(){
+  const side = document.getElementById("side"), bas = side.querySelector(".bas");
+  const b = document.createElement("button"); b.type = "button"; b.className = "rail-b"; b.id = "rail-b";
+  b.innerHTML = ic("replier")+'<span class="t"></span>'; bas.appendChild(b);
+  b.addEventListener("click", ev=>{ ev.stopPropagation(); const on = document.documentElement.classList.contains("cn-rail");
+    try{ localStorage.setItem("classe.rail", on ? "0" : "1"); }catch(e){} side.classList.remove("deploye"); appliquerRail(); });
+  /* en mode réduit, un clic sur une partie déplie le menu par-dessus la page */
+  side.addEventListener("click", ev=>{
+    if(!document.documentElement.classList.contains("cn-rail")) return;
+    const s = ev.target.closest("summary");
+    if(s && !side.classList.contains("deploye")){ ev.preventDefault(); side.classList.add("deploye"); s.parentElement.open = true; return; }
+    if(ev.target.closest("a")) side.classList.remove("deploye");
+  });
+  document.addEventListener("click", ev=>{ if(side.classList.contains("deploye") && !ev.target.closest("#side")) side.classList.remove("deploye"); });
+  document.addEventListener("keydown", ev=>{ if(ev.key==="Escape") side.classList.remove("deploye"); });
+  addEventListener("resize", appliquerRail);
+  appliquerRail();
+}
+///NAV-JS
 
 function dateDuJour(){
   const s = new Date().toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
@@ -1186,6 +1235,7 @@ function construireCompte(){
 construireCompte();
 
 construireNav();
+initRail();
 afficher();
 addEventListener("hashchange", afficher);
 })();
