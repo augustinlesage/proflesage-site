@@ -216,6 +216,8 @@ a.tuile:hover{border-color:var(--g);transform:translateY(-2px)}
 .cumul{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
 .cumul p{margin:0;flex:1 1 220px;padding:8px 12px;border-radius:10px;border:1px dashed #c0392b;background:color-mix(in srgb,#c0392b 6%,var(--card));text-align:center}
 .cumul b{color:#b03a2e}
+.tri-sommet{max-width:72ch;margin:12px 0 4px;padding:9px 12px;border-radius:10px 10px 0 0;background:color-mix(in srgb,#ffe100 28%,var(--card));border:1px solid var(--line);text-align:center;font:700 1rem var(--f-titre)}
+.tri-sommet+.triangle{margin-top:0}
 .triangle{list-style:none;margin:12px 0;padding:0;display:grid;gap:4px;max-width:72ch}
 .triangle li{--t:calc(100% - (var(--e) - 1) * 15%);--b:calc(100% - var(--e) * 15%);display:grid;grid-template-columns:110px minmax(0,1fr);gap:14px;align-items:stretch}
 .triangle li:nth-child(1){--f:#ffe100;--x:#3b3200}.triangle li:nth-child(2){--f:#fcd263;--x:#4a3500}.triangle li:nth-child(3){--f:#f9a825;--x:#3d2600}
@@ -366,7 +368,7 @@ footer.pied{margin-top:44px;padding-top:16px;border-top:1px solid var(--line);co
 
 <section class="bloc" id="r-echelle">
   <h3>L’échelle des sanctions du collège</h3>
-  <p>Tout commence par une <b>mise en garde orale</b>. Plus la faute est grave, plus on descend dans le triangle et plus la sanction est lourde.</p>
+  <p class="tri-sommet">Mise en garde orale</p>
   <ol class="triangle">
     <li style="--e:1"><span class="tri-b" aria-hidden="true">1</span><div class="tri-c"><b>Bavardages, attitude non correcte, leçon non sue, travail non fait, oubli de matériel ou de tenue en EPS</b><p><i data-ico="fleche"></i>Observation dans le carnet</p><small>Décidé par tout le personnel</small></div></li>
     <li style="--e:2"><span class="tri-b" aria-hidden="true">2</span><div class="tri-c"><b>Observations qui se multiplient, perturbation du cours, carnet non signé, absentéisme, retards répétés, refus de donner son carnet</b><p><i data-ico="fleche"></i>Appel aux parents · Retenue</p><small>Décidé par tout le personnel</small></div></li>
