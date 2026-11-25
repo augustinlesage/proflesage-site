@@ -389,9 +389,6 @@ function vueAccueil(){
     '<div class="craies" aria-hidden="true"><i></i><i></i><i></i></div></section>'+
     '<h2 class="titre">Raccourcis</h2><div class="tuiles">'+
       TUILES.map(t=>'<a class="tuile" data-g style="--g:var(--c-'+t.col+')" href="'+esc(href(t))+'"'+cible(t)+'><span class="puce">'+ic(t.ico)+'</span><b>'+t.t+'</b><span>'+t.d+'</span></a>').join("")+
-    '</div>'+
-    '<h2 class="titre">Les parties du site</h2><div class="fiches">'+
-      PLAN.filter(r=>r.id!=="accueil").map(r=>ficheRub(r,false)).join("")+
     '</div>'+pied();
 }
 
