@@ -257,7 +257,7 @@ a.tuile:hover{border-color:var(--g);transform:translateY(-2px)}
 .doc em{font-style:normal;font-size:.78rem;color:var(--g);border:1px solid color-mix(in srgb,var(--g) 40%,transparent);border-radius:999px;padding:1px 8px;white-space:nowrap}
 .vide-filtre{color:var(--muted)}
 .tuile-badge{text-decoration:none;color:var(--ink)!important;cursor:pointer;display:flex;flex-direction:column;transition:border-color .15s}
-.tuile-badge:hover{border-color:var(--g)}.tuile-badge .btn{align-self:flex-start;margin-top:auto}
+.tuile-badge:hover,.tuile-badge[aria-expanded="true"]{border-color:var(--g)}.tuile-badge[aria-expanded="true"]{box-shadow:inset 0 0 0 1px var(--g)}.tuile-badge .btn{align-self:flex-start;margin-top:auto}
 .vitrine-cat{font:700 .78rem var(--f-titre);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:14px 0 6px}
 .vitrine{display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:8px}
 .medaille{display:grid;justify-items:center;text-align:center;gap:3px;padding:10px 6px;border:1px solid var(--line);border-radius:12px;background:var(--card)}
@@ -373,26 +373,33 @@ footer.pied{margin-top:44px;padding-top:16px;border-top:1px solid var(--line);co
 
 <!-- ===================== MA CLASSE › BADGES ===================== -->
 <template data-page="p-ma-classe-badges">
-<p class="chapo">Les badges récompensent ton travail, tes progrès et ton comportement en classe. Clique sur une famille pour voir tous les badges à gagner.</p>
+<p class="chapo">Les badges récompensent ton travail, tes progrès et ton comportement en classe. Clique sur une famille pour voir les badges à gagner.</p>
 <div class="cartes3">
-  <a class="carte tuile-badge" data-ancre="bd-classe"><i data-ico="brevet"></i><h4>Les badges de la classe</h4><p>Donnés en cours par l’enseignant, quand tu fais des efforts, quand tu aides les autres ou quand tu réussis un défi.</p><span class="btn">Voir les badges</span></a>
-  <a class="carte tuile-badge" data-ancre="bd-labo"><i data-ico="langue"></i><h4>Les badges du Laboratoire</h4><p>Gagnés en t’entrainant dans le Laboratoire de la langue : séries réussies, temps passé, régularité.</p><span class="btn">Voir les badges</span></a>
-  <a class="carte tuile-badge" data-ancre="bd-ceintures"><i data-ico="ceinture"></i><h4>Les ceintures et les trophées</h4><p>Chaque ceinture valide un niveau dans une notion. Les trophées récompensent les ceintures gagnées.</p><span class="btn">Voir les trophées</span></a>
+  <a class="carte tuile-badge" data-ouvre="bd-classe" aria-expanded="false"><i data-ico="brevet"></i><h4>Les badges de la classe</h4><p>Donnés en cours par l’enseignant, quand tu fais des efforts, quand tu aides les autres ou quand tu réussis un défi.</p><span class="btn">Voir les badges</span></a>
+  <a class="carte tuile-badge" data-ouvre="bd-labo" aria-expanded="false"><i data-ico="langue"></i><h4>Les badges du Laboratoire</h4><p>Gagnés en t’entrainant dans le Laboratoire de la langue : séries réussies, temps passé, régularité.</p><span class="btn">Voir les badges</span></a>
+  <a class="carte tuile-badge" data-ouvre="bd-ceintures" aria-expanded="false"><i data-ico="ceinture"></i><h4>Les ceintures et les trophées</h4><p>Chaque ceinture valide un niveau dans une notion. Les trophées récompensent les ceintures gagnées.</p><span class="btn">Voir les trophées</span></a>
 </div>
 <p class="note-bas">Les badges en gris sont ceux qui restent à gagner. Pour voir en couleur ceux que tu as déjà, connecte-toi puis ouvre <b>Mes badges</b> dans le menu de ton prénom.</p>
 
-<section class="bloc" id="bd-classe">
+<section class="bloc vitrine-bloc" id="bd-classe" hidden>
   <h3>Les badges de la classe</h3>
   <div data-vitrine="classe"></div>
 </section>
-<section class="bloc" id="bd-labo">
+<section class="bloc vitrine-bloc" id="bd-labo" hidden>
   <h3>Les badges du Laboratoire</h3>
   <div data-vitrine="labo"></div>
 </section>
-<section class="bloc" id="bd-ceintures">
+<section class="bloc vitrine-bloc" id="bd-ceintures" hidden>
   <h3>Les trophées des ceintures</h3>
   <p>Dans le Laboratoire, cinq échelles (grammaire, conjugaison, orthographe, homophones, vocabulaire) ont chacune sept ceintures par niveau, de la blanche à la noire, et une ceinture Expert. <a href="/labo/#ceintures">Voir les ceintures</a></p>
   <div data-vitrine="ceintures"></div>
+</section>
+
+<section class="bloc" id="bd-calcul">
+  <h3>Ce que rapportent les badges</h3>
+  <p>Les badges de la classe comptent dans ta <a href="#p-ma-classe-regles">note de vie de classe</a>. Chaque badge ajoute <b>un demi-point</b>. Avec <b>10 badges</b>, ton passeport est complet : c’est <b>un point de plus</b>.</p>
+  <div class="calcul"><b>Ma note</b> = 10 + (mes points × 0,5) + (mes badges × 0,5) + (mes passeports complets × 1)</div>
+  <p class="note-bas">Exemple : 6 points gagnés en cours et 10 badges, cela fait 10 + 3 + 5 + 1 = 19 sur 20. La note reste entre 0 et 20 et elle est arrondie au demi-point.</p>
 </section>
 </template>
 
@@ -1080,6 +1087,10 @@ function preparerContenu(z){
   if(!SUR_SITE) z.querySelectorAll('[href^="/"],[src^="/"],[poster^="/"]').forEach(e=>["href","src","poster"].forEach(a=>{ const v=e.getAttribute(a); if(v&&v.startsWith("/")) e.setAttribute(a, SITE+v); }));
   z.querySelectorAll(".contenu a[href^='http'],.contenu a[href*='/labo/']").forEach(a=>{ a.target="_blank"; a.rel="noopener"; });
   z.querySelectorAll("[data-ancre]").forEach(a=>{ a.href="#"; a.addEventListener("click",ev=>{ ev.preventDefault(); const c=document.getElementById(a.dataset.ancre); if(c) c.scrollIntoView({behavior:"smooth",block:"start"}); }); });
+  z.querySelectorAll("[data-ouvre]").forEach(a=>{ a.href="#"; a.addEventListener("click",ev=>{ ev.preventDefault();
+    const ouvert = a.getAttribute("aria-expanded")==="true";
+    z.querySelectorAll("[data-ouvre]").forEach(x=>{ x.setAttribute("aria-expanded","false"); const s=document.getElementById(x.dataset.ouvre); if(s) s.hidden=true; });
+    if(!ouvert){ a.setAttribute("aria-expanded","true"); const s=document.getElementById(a.dataset.ouvre); if(s){ s.hidden=false; s.scrollIntoView({behavior:"smooth",block:"start"}); } } }); });
   z.querySelectorAll("[data-filtres]").forEach(f=>{
     const liste = z.querySelector('[data-liste="'+f.dataset.filtres+'"]'), vide = z.querySelector(".vide-filtre"), choix = {};
     const appliquer = ()=>{ let n=0; liste.querySelectorAll(".doc").forEach(d=>{ const ok = Object.entries(choix).every(([k,v])=>!v || (d.dataset[k]||"").split(" ").includes(v)); d.hidden=!ok; if(ok) n++; }); if(vide) vide.hidden = n>0; };
