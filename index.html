@@ -803,6 +803,7 @@ var BADGES_CAHIER = {"cats":["Travail","Participation","Coopération","Responsab
 - Orthographe | Accords et règles
 - Conjugaison | Leçons et tableaux
 - Vocabulaire | Formation des mots, sens, registres
+- Mots nouveaux | Le carnet de mots nouveaux du cahier | #p-ma-classe-cahier
 - Dictées | Dictées préparées et d’entraînement
 - Chantiers
 - Laboratoire | Parcours, entraînements et ceintures | /labo/
@@ -957,8 +958,8 @@ const visible = it => it.prof ? PROF : it.connecte ? (PROF || !!COMPTE) : true;
 const VUES_BAS = {"outils":"outils","plan du site":"plan","à propos":"apropos"};
 const ICO_BAS = {outils:"outils",plan:"plan",apropos:"info"};
 
-const href = it => it.url ? (/^https?:/.test(it.url) ? it.url : (SUR_SITE ? it.url : SITE + it.url)) : null;
-const horsSite = it => !!it.url && (!SUR_SITE || /^https?:/.test(it.url));
+const href = it => it.url ? (it.url[0]==="#" ? BASE + it.url : /^https?:/.test(it.url) ? it.url : (SUR_SITE ? it.url : SITE + it.url)) : null;
+const horsSite = it => !!it.url && it.url[0]!=="#" && (!SUR_SITE || /^https?:/.test(it.url));
 /* Chaque page sans lien externe a sa vue dans le site : #p-<rubrique>-<page>, onglet : #p-<rubrique>-<page>--<sous-page> */
 const PAGES = {};
 PLAN.forEach(r=>r.items.forEach(it=>{ it.rub=r; it.vue="p-"+r.id+"-"+slug(it.t); PAGES[it.vue]=it; it.enfants.forEach(e=>{ e.vue=it.vue+"--"+slug(e.t); }); }));
