@@ -213,6 +213,9 @@ a.tuile:hover{border-color:var(--g);transform:translateY(-2px)}
 .paliers{list-style:none;padding:0;margin:0;display:grid;gap:6px}
 .paliers li{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;align-items:baseline;background:var(--card);border:1px solid var(--line);border-left:6px solid color-mix(in srgb,#c0392b calc(var(--n)*25%),#e8b64c);border-radius:10px;padding:8px 12px}
 .paliers li span{color:var(--muted);font-size:.9rem}
+.cumul{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.cumul p{margin:0;flex:1 1 220px;padding:8px 12px;border-radius:10px;border:1px dashed #c0392b;background:color-mix(in srgb,#c0392b 6%,var(--card));text-align:center}
+.cumul b{color:#b03a2e}
 .triangle{list-style:none;margin:12px 0;padding:0;display:grid;gap:4px;max-width:72ch}
 .triangle li{--t:calc(100% - (var(--e) - 1) * 15%);--b:calc(100% - var(--e) * 15%);display:grid;grid-template-columns:110px minmax(0,1fr);gap:14px;align-items:stretch}
 .triangle li:nth-child(1){--f:#ffe100;--x:#3b3200}.triangle li:nth-child(2){--f:#fcd263;--x:#4a3500}.triangle li:nth-child(3){--f:#f9a825;--x:#3d2600}
@@ -358,6 +361,7 @@ footer.pied{margin-top:44px;padding-top:16px;border-top:1px solid var(--line);co
     <li style="--n:3"><b>Appel ou message à la famille</b><span>Pour trouver ensemble une solution.</span></li>
     <li style="--n:4"><b>Exclusion de cours et rapport d’incident</b><span>Transmis à la vie scolaire.</span></li>
   </ol>
+  <div class="cumul"><p><b>3 observations</b> = 1 heure de retenue</p><p><b>3 retards</b> = 1 heure de retenue</p></div>
 </section>
 
 <section class="bloc" id="r-echelle">
