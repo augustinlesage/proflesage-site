@@ -554,22 +554,24 @@ html.dys .bl-ncol,html.dys .bl-errs li{border-width:2px}
   --m-parcours:#35609e; --m-parcours-soft:rgba(53,96,158,.11);
   --m-approfondissement:#6d4f9a; --m-approfondissement-soft:rgba(109,79,154,.11);
   --m-entrainements:#2a7356; --m-entrainements-soft:rgba(42,115,86,.11);
-  --m-ceintures:#a1521e; --m-ceintures-soft:rgba(161,82,30,.11);
-  --mod:var(--ink); --mod-soft:var(--soft); --mod-ligne:var(--line);
+  --m-ceintures:#8a6414; --m-ceintures-soft:rgba(138,100,20,.12);
+  --labo:#b25751; --labo-soft:rgba(178,87,81,.12); --mod:var(--ink); --mod-soft:var(--soft); --mod-ligne:var(--labo);
   --pied:#dfe3ec;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --m-parcours:#93b4e6; --m-parcours-soft:rgba(147,180,230,.14);
   --m-approfondissement:#bea6e0; --m-approfondissement-soft:rgba(190,166,224,.14);
   --m-entrainements:#84cfab; --m-entrainements-soft:rgba(132,207,171,.13);
-  --m-ceintures:#eba36f; --m-ceintures-soft:rgba(235,163,111,.14);
+  --m-ceintures:#e2bb62; --m-ceintures-soft:rgba(226,187,98,.14);
+  --labo:#e08a83; --labo-soft:rgba(224,138,131,.16);
   --pied:#1c212d;
 }}
 :root[data-theme="dark"]{
   --m-parcours:#93b4e6; --m-parcours-soft:rgba(147,180,230,.14);
   --m-approfondissement:#bea6e0; --m-approfondissement-soft:rgba(190,166,224,.14);
   --m-entrainements:#84cfab; --m-entrainements-soft:rgba(132,207,171,.13);
-  --m-ceintures:#eba36f; --m-ceintures-soft:rgba(235,163,111,.14);
+  --m-ceintures:#e2bb62; --m-ceintures-soft:rgba(226,187,98,.14);
+  --labo:#e08a83; --labo-soft:rgba(224,138,131,.16);
   --pied:#1c212d;
 }
 html[data-rub="parcours"]{--mod:var(--m-parcours);--mod-soft:var(--m-parcours-soft);--mod-ligne:var(--m-parcours)}
@@ -577,7 +579,7 @@ html[data-rub="approfondissement"]{--mod:var(--m-approfondissement);--mod-soft:v
 html[data-rub="entrainements"]{--mod:var(--m-entrainements);--mod-soft:var(--m-entrainements-soft);--mod-ligne:var(--m-entrainements)}
 html[data-rub="ceintures"]{--mod:var(--m-ceintures);--mod-soft:var(--m-ceintures-soft);--mod-ligne:var(--m-ceintures)}
 html:root.dys{--m-parcours:#1d1d1d;--m-approfondissement:#1d1d1d;--m-entrainements:#1d1d1d;--m-ceintures:#1d1d1d;
-  --m-parcours-soft:#efeadc;--m-approfondissement-soft:#efeadc;--m-entrainements-soft:#efeadc;--m-ceintures-soft:#efeadc;--pied:#efeadc}
+  --m-parcours-soft:#efeadc;--m-approfondissement-soft:#efeadc;--m-entrainements-soft:#efeadc;--m-ceintures-soft:#efeadc;--pied:#efeadc;--labo:#1d1d1d;--labo-soft:#efeadc}
 
 /* Entête figé */
 html{scroll-padding-top:calc(var(--haut,0px) + 12px)}
@@ -637,6 +639,12 @@ nav.tabs a[data-r][aria-current="page"]{background:var(--c,var(--ink));border-co
 .rub[id^="rub-"] .more{color:var(--c)}
 .rub[id^="rub-"] li a:hover{text-decoration-color:var(--c)}
 html.dys .rub[id^="rub-"]{border-top-width:2px}
+
+/* Couleur repère de la langue (terracotta de la légende du cahier, comme sur le site) et icône de la Langue (fiole)
+   à la place du monogramme « Ll » (Augustin, 26/11/2026). Le filet sous l'entête est terracotta sur Accueil et Aide. */
+header.top h1{color:var(--labo)}
+.mark{border-color:var(--labo);background:var(--labo-soft);color:var(--labo)}
+.mark svg{display:block}
 
 /* Sauvegarde en ligne : écran d'arrivée et pastille de l'élève (version Netlify) */
 #arrivee main{display:flex;flex-direction:column;gap:18px;padding-bottom:40px}
@@ -774,7 +782,7 @@ code{font-family:ui-monospace,Menlo,monospace;font-size:.9em}
 <body>
 <div class="wrap">
   <header class="top">
-    <a class="brand" href="/labo/" style="text-decoration:none"><div class="mark" aria-hidden="true">L<span>l</span></div><div><h1>Laboratoire de la langue</h1><small>Espace professeur · M. Lesage</small></div></a>
+    <a class="brand" href="/labo/" style="text-decoration:none"><div class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6M10 3v6L4.5 18.5A1.7 1.7 0 0 0 6 21h12a1.7 1.7 0 0 0 1.5-2.5L14 9V3"/><path d="M7.5 15h9"/></svg></div><div><h1>Laboratoire de la langue</h1><small>Espace professeur · M. Lesage</small></div></a>
     <div class="top-outils">
       <button class="theme" id="plein" type="button" aria-label="Afficher en plein écran" title="Afficher en plein écran"></button>
       <button class="theme" id="theme" type="button" aria-label="Changer de thème" title="Mode clair ou sombre"></button>
