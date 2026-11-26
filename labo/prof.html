@@ -612,16 +612,13 @@ html.dys #labo>header.top .theme,html.dys #labo>header.top #plein{background:var
 #labo>footer a{color:var(--ink);text-decoration-color:var(--clay);text-underline-offset:3px}
 #labo>footer>span:first-child{font-weight:600;color:var(--ink)}
 
-/* Onglets : une pastille de couleur par module ; l'onglet ouvert prend la couleur de son module */
+/* Onglets : bordure à la couleur du module (Augustin, 26/11/2026 : pas de pastille) ; l'onglet ouvert prend la couleur de son module */
 nav.tabs a[data-r="parcours"]{--c:var(--m-parcours)}
 nav.tabs a[data-r="approfondissement"]{--c:var(--m-approfondissement)}
 nav.tabs a[data-r="entrainements"]{--c:var(--m-entrainements)}
 nav.tabs a[data-r="ceintures"]{--c:var(--m-ceintures)}
-nav.tabs a[data-r="parcours"],nav.tabs a[data-r="approfondissement"],nav.tabs a[data-r="entrainements"],nav.tabs a[data-r="ceintures"]{display:inline-flex;align-items:center;gap:7px}
-nav.tabs a[data-r="parcours"]::before,nav.tabs a[data-r="approfondissement"]::before,nav.tabs a[data-r="entrainements"]::before,nav.tabs a[data-r="ceintures"]::before{content:"";flex:none;width:8px;height:8px;border-radius:50%;background:var(--c)}
-nav.tabs a[data-r="parcours"]:hover,nav.tabs a[data-r="approfondissement"]:hover,nav.tabs a[data-r="entrainements"]:hover,nav.tabs a[data-r="ceintures"]:hover{border-color:var(--c)}
+nav.tabs a[data-r="parcours"],nav.tabs a[data-r="approfondissement"],nav.tabs a[data-r="entrainements"],nav.tabs a[data-r="ceintures"]{border-color:var(--c)}
 nav.tabs a[data-r][aria-current="page"]{background:var(--c,var(--ink));border-color:var(--c,var(--ink));color:var(--sheet)}
-nav.tabs a[data-r][aria-current="page"]::before{background:var(--sheet)}
 
 /* Dans la page du module */
 #labo .page-h h2{color:var(--mod)}
