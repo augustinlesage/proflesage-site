@@ -393,9 +393,11 @@ html.dys .tw tr:nth-child(even) td{background:transparent}
 .fcp .deck-head h1{font-size:1.6rem}
 .fcp .res-kicker{color:var(--muted)}
 .fcp .lv-chip{font-size:.8rem;padding:4px 12px}
-.fcp-bar{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}
-.fcp-bar a{text-decoration:none;font-weight:600;font-size:.85rem;padding:5px 14px;border-radius:999px;border:1px solid var(--line);background:var(--sheet);color:var(--ink)}
-.fcp-bar a[aria-current="page"]{background:var(--ink);border-color:var(--ink);color:var(--sheet)}
+/* Sous-onglets Mémos · Homophones · Notions : sélecteur segmenté, même modèle que les onglets du site d'accueil (Présentation · Matériel · Légende) */
+.fcp-bar{display:inline-flex;flex-wrap:wrap;gap:2px;width:fit-content;align-self:flex-start;margin:0 0 18px;padding:3px;border-radius:999px;background:color-mix(in srgb,var(--mod,var(--ink)) 9%,transparent);max-width:100%}
+.fcp-bar a{font-size:.88rem;text-decoration:none;color:var(--muted);padding:4px 13px;border-radius:999px;border:1px solid transparent}
+.fcp-bar a:hover{color:var(--ink)}
+.fcp-bar a[aria-current="page"]{background:var(--sheet);border-color:var(--line);color:var(--ink);font-weight:600}
 .labo-about{margin-top:26px}
 
 /* Mémos réécrits (22/11/2026) : règles des explications des flashcards */
@@ -544,6 +546,108 @@ html.dys .bl-ncol,html.dys .bl-errs li{border-width:2px}
 .memos .tw.hm td:first-of-type{white-space:nowrap}.memos .tw.hm td:nth-of-type(3){white-space:nowrap}
 @media (max-width:900px){.memos .tw.hm td:first-of-type,.memos .tw.hm td:nth-of-type(3){white-space:normal}}
 
+/* ===================== Entête, pied de page et couleurs des modules (Augustin, 26/11/2026) =====================
+   Entête : bandeau blanc pleine largeur, figé en haut de l'écran, souligné d'un filet à la couleur du module ouvert.
+   Pied : bandeau teinté pleine largeur, toujours en bas de page (même quand la page est courte).
+   Modules : une couleur par module (Parcours, Approfondissement, Entrainements, Ceintures), reprise dans l'onglet,
+   le filet de l'entête, le titre de la page, les boutons principaux, les sélections et la carte du module à l'accueil.
+   Accueil et Aide restent neutres (encre). Le mode Dys ramène tout au noir. */
+:root{
+  --m-parcours:#35609e; --m-parcours-soft:rgba(53,96,158,.11);
+  --m-approfondissement:#6d4f9a; --m-approfondissement-soft:rgba(109,79,154,.11);
+  --m-entrainements:#2a7356; --m-entrainements-soft:rgba(42,115,86,.11);
+  --m-ceintures:#8a6414; --m-ceintures-soft:rgba(138,100,20,.12);
+  --labo:#b25751; --labo-soft:rgba(178,87,81,.12); --mod:var(--ink); --mod-soft:var(--soft); --mod-ligne:var(--ink);
+  --pied:#dfe3ec;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --m-parcours:#93b4e6; --m-parcours-soft:rgba(147,180,230,.14);
+  --m-approfondissement:#bea6e0; --m-approfondissement-soft:rgba(190,166,224,.14);
+  --m-entrainements:#84cfab; --m-entrainements-soft:rgba(132,207,171,.13);
+  --m-ceintures:#e2bb62; --m-ceintures-soft:rgba(226,187,98,.14);
+  --labo:#e08a83; --labo-soft:rgba(224,138,131,.16);
+  --pied:#1c212d;
+}}
+:root[data-theme="dark"]{
+  --m-parcours:#93b4e6; --m-parcours-soft:rgba(147,180,230,.14);
+  --m-approfondissement:#bea6e0; --m-approfondissement-soft:rgba(190,166,224,.14);
+  --m-entrainements:#84cfab; --m-entrainements-soft:rgba(132,207,171,.13);
+  --m-ceintures:#e2bb62; --m-ceintures-soft:rgba(226,187,98,.14);
+  --labo:#e08a83; --labo-soft:rgba(224,138,131,.16);
+  --pied:#1c212d;
+}
+html[data-rub="parcours"]{--mod:var(--m-parcours);--mod-soft:var(--m-parcours-soft);--mod-ligne:var(--m-parcours)}
+html[data-rub="approfondissement"]{--mod:var(--m-approfondissement);--mod-soft:var(--m-approfondissement-soft);--mod-ligne:var(--m-approfondissement)}
+html[data-rub="entrainements"]{--mod:var(--m-entrainements);--mod-soft:var(--m-entrainements-soft);--mod-ligne:var(--m-entrainements)}
+html[data-rub="ceintures"]{--mod:var(--m-ceintures);--mod-soft:var(--m-ceintures-soft);--mod-ligne:var(--m-ceintures)}
+html:root.dys{--m-parcours:#1d1d1d;--m-approfondissement:#1d1d1d;--m-entrainements:#1d1d1d;--m-ceintures:#1d1d1d;
+  --m-parcours-soft:#efeadc;--m-approfondissement-soft:#efeadc;--m-entrainements-soft:#efeadc;--m-ceintures-soft:#efeadc;--pied:#efeadc;--labo:#1d1d1d;--labo-soft:#efeadc}
+
+/* Entête figé */
+html{scroll-padding-top:calc(var(--haut,0px) + 12px)}
+#labo.wrap{padding-top:0;padding-bottom:0;min-height:100vh;min-height:100dvh}
+#labo>main{flex:1 0 auto}
+#labo>header.top,#arrivee>header.top{position:relative;background:var(--sheet);padding-block:16px 14px;
+  box-shadow:0 0 0 100vmax var(--sheet);clip-path:inset(-100vmax -100vmax -3px)}
+#labo>header.top::after,#arrivee>header.top::after{content:"";position:absolute;left:-100vmax;right:-100vmax;bottom:-3px;height:3px;background:var(--mod-ligne)}
+#arrivee.wrap{padding-top:0}
+#labo>header.top{position:sticky;top:0;z-index:30}
+@media (prefers-reduced-motion:no-preference){#labo>header.top::after{transition:background .2s}}
+#labo>header.top .theme,#labo>header.top .dys-btn{background:var(--paper)}
+html.dys #labo>header.top .theme,html.dys #labo>header.top #plein{background:var(--sheet)}
+/* téléphone : entête plus compact une fois la page défilée */
+@media (max-width:720px){
+  #labo>header.top{padding-block:10px}
+  #labo>header.top.reduit .brand small,#labo>header.top.reduit .mark{display:none}
+  #labo>header.top.reduit h1{font-size:1.05rem}
+  #labo>header.top.reduit .top-outils .theme,#labo>header.top.reduit .dys-btn{width:32px;height:32px}
+  #labo>header.top.reduit nav.tabs a{padding:4px 10px;font-size:.82rem}
+}
+/* les éléments figés de la page passent sous l'entête */
+#labo .memos-toc,#labo .layout-step aside{top:calc(var(--haut,0px) + 12px);max-height:calc(100vh - var(--haut,0px) - 24px)}
+@media (max-width:900px){#labo .memos-toc{top:var(--haut,0px);max-height:none}}
+#labo .memos section,#labo .entr-rubs>section{scroll-margin-top:calc(var(--haut,0px) + 12px)}
+@media (max-width:900px){#labo .memos section,#labo .entr-rubs>section{scroll-margin-top:calc(var(--haut,0px) + 64px)}}
+
+/* Pied de page */
+#labo>footer{position:relative;background:var(--pied);color:var(--muted);border-top:0;padding-block:18px calc(18px + env(safe-area-inset-bottom,0px));
+  box-shadow:0 0 0 100vmax var(--pied);clip-path:inset(-1px -100vmax -100vmax);font-size:.82rem;align-items:center}
+#labo>footer::before{content:"";position:absolute;left:-100vmax;right:-100vmax;top:-1px;height:1px;background:var(--line)}
+#labo>footer a{color:var(--ink);text-decoration-color:var(--clay);text-underline-offset:3px}
+#labo>footer>span:first-child{font-weight:600;color:var(--ink)}
+
+/* Onglets : bordure à la couleur du module (Augustin, 26/11/2026 : pas de pastille) ; l'onglet ouvert prend la couleur de son module */
+nav.tabs a[data-r="parcours"]{--c:var(--m-parcours)}
+nav.tabs a[data-r="approfondissement"]{--c:var(--m-approfondissement)}
+nav.tabs a[data-r="entrainements"]{--c:var(--m-entrainements)}
+nav.tabs a[data-r="ceintures"]{--c:var(--m-ceintures)}
+nav.tabs a[data-r="parcours"],nav.tabs a[data-r="approfondissement"],nav.tabs a[data-r="entrainements"],nav.tabs a[data-r="ceintures"]{border-color:var(--c)}
+nav.tabs a[data-r][aria-current="page"]{background:var(--c,var(--ink));border-color:var(--c,var(--ink));color:var(--sheet)}
+
+/* Dans la page du module */
+#labo .page-h h2{color:var(--mod)}
+#labo #vue .btn:not(.ghost){background:var(--mod);color:var(--sheet)}
+#labo #vue .btn.ghost:hover{border-color:var(--mod)}
+#labo #vue .levels button[aria-pressed="true"],#labo #vue .filters button[aria-pressed="true"],#labo #vue .pill.on{background:var(--mod);border-color:var(--mod);color:var(--sheet)}
+#labo #vue .prog>div{background:var(--mod)}
+#labo .memos-toc button.on{background:var(--mod-soft);color:var(--mod)}
+#labo .side-plan a.cur{background:var(--mod-soft);color:var(--mod)}
+#labo .crumbs a{color:var(--mod)}
+
+/* Accueil : chaque carte de module à sa couleur */
+#rub-parcours{--c:var(--m-parcours)}#rub-approfondissement{--c:var(--m-approfondissement)}#rub-entrainements{--c:var(--m-entrainements)}#rub-ceintures{--c:var(--m-ceintures)}
+.rub[id^="rub-"]{border-top:3px solid var(--c)}
+.rub[id^="rub-"] .num{border-color:var(--c);color:var(--c)}
+.rub[id^="rub-"] .more{color:var(--c)}
+.rub[id^="rub-"] li a:hover{text-decoration-color:var(--c)}
+html.dys .rub[id^="rub-"]{border-top-width:2px}
+
+/* Icône de la Langue (fiole, comme dans la barre du site) à la place du monogramme « Ll », en terracotta (couleur de la Langue
+   dans la légende du cahier) ; titre principal en bleu encre (Augustin, 26/11/2026). Filet bleu encre sous l'entête sur Accueil et Aide. */
+header.top h1{color:var(--ink)}
+.mark{border-color:var(--labo);background:var(--labo-soft);color:var(--labo)}
+.mark svg{display:block}
+
 /* Sauvegarde en ligne : écran d'arrivée et pastille de l'élève (version Netlify) */
 #arrivee main{display:flex;flex-direction:column;gap:18px;padding-bottom:40px}
 .arr-card{display:flex;flex-direction:column;gap:12px;max-width:420px}
@@ -680,7 +784,7 @@ code{font-family:ui-monospace,Menlo,monospace;font-size:.9em}
 <body>
 <div class="wrap">
   <header class="top">
-    <a class="brand" href="/labo/" style="text-decoration:none"><div class="mark" aria-hidden="true">L<span>l</span></div><div><h1>Laboratoire de la langue</h1><small>Espace professeur · M. Lesage</small></div></a>
+    <a class="brand" href="/labo/" style="text-decoration:none"><div class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6M10 3v6L4.5 18.5A1.7 1.7 0 0 0 6 21h12a1.7 1.7 0 0 0 1.5-2.5L14 9V3"/><path d="M7.5 15h9"/></svg></div><div><h1>Laboratoire de la langue</h1><small>Espace professeur · M. Lesage</small></div></a>
     <div class="top-outils">
       <button class="theme" id="plein" type="button" aria-label="Afficher en plein écran" title="Afficher en plein écran"></button>
       <button class="theme" id="theme" type="button" aria-label="Changer de thème" title="Mode clair ou sombre"></button>
