@@ -393,9 +393,11 @@ html.dys .tw tr:nth-child(even) td{background:transparent}
 .fcp .deck-head h1{font-size:1.6rem}
 .fcp .res-kicker{color:var(--muted)}
 .fcp .lv-chip{font-size:.8rem;padding:4px 12px}
-.fcp-bar{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}
-.fcp-bar a{text-decoration:none;font-weight:600;font-size:.85rem;padding:5px 14px;border-radius:999px;border:1px solid var(--line);background:var(--sheet);color:var(--ink)}
-.fcp-bar a[aria-current="page"]{background:var(--ink);border-color:var(--ink);color:var(--sheet)}
+/* Sous-onglets Mémos · Homophones · Notions : sélecteur segmenté, même modèle que les onglets du site d'accueil (Présentation · Matériel · Légende) */
+.fcp-bar{display:inline-flex;flex-wrap:wrap;gap:2px;width:fit-content;align-self:flex-start;margin:0 0 18px;padding:3px;border-radius:999px;background:color-mix(in srgb,var(--mod,var(--ink)) 9%,transparent);max-width:100%}
+.fcp-bar a{font-size:.88rem;text-decoration:none;color:var(--muted);padding:4px 13px;border-radius:999px;border:1px solid transparent}
+.fcp-bar a:hover{color:var(--ink)}
+.fcp-bar a[aria-current="page"]{background:var(--sheet);border-color:var(--line);color:var(--ink);font-weight:600}
 .labo-about{margin-top:26px}
 
 /* Mémos réécrits (22/11/2026) : règles des explications des flashcards */
